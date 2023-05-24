@@ -1,7 +1,6 @@
 import "./globals.css";
-import Link from "next/link";
+
 import localFont from "next/font/local";
-import Image from "next/image";
 
 // Font files can be colocated inside of `app`
 const vazir = localFont({
@@ -18,26 +17,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${vazir.variable}`}>
-      <body className="h-[4000px] overflow-x-hidden bg-soft-blue font-vazir font-medium">
-        <nav className="container mx-auto flex w-full items-center justify-between space-x-4 px-20 pt-7 text-xl text-royale-green">
-          <Link
-            className="rounded-md bg-royale-green px-8 py-2 text-sky-blue"
-            href="/"
-          >
-            ثبت نام
-          </Link>
-          <Link href="/">درباره ما</Link>
-          <Link href="/">تعرفه ها</Link>
-          <Link href="/">مشاهده دمو</Link>
-          <Link href="/">
-            <Image
-              src="/images/menumaker-logo.svg"
-              width={166}
-              height={50}
-              alt="menumaker logo"
-            />
-          </Link>
-        </nav>
+      <body className="overflow-x-hidden bg-soft-blue font-vazir font-medium">
         {children}
       </body>
     </html>

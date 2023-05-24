@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import Benefits from "./components/benefits";
+import Benefits from "../components/benefits";
 
 export default function Home() {
   return (
