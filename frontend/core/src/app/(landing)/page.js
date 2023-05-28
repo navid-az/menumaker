@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import Benefits from "../components/benefits";
+import GetHomePages from "./components/getAllHomePages";
 
 export default function Home() {
   return (
@@ -90,6 +91,7 @@ export default function Home() {
           <br />و هرگاه نیاز به هرگونه تغییری بود به سادگی تغییرات را اعمال کنید
         </p>
       </div>
+      <GetHomePages></GetHomePages>
     </main>
   );
 }
