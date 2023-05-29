@@ -1,40 +1,84 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useRef, forwardRef } from "react";
 
 function FormTabInput() {
+  const [value, setValue] = useState("");
+  let icon = "";
+  if (value.includes("instagram.com")) {
+    icon = "/images/instagram.svg";
+  } else if (value.includes("t.me")) {
+    icon = "/images/telegram.svg";
+  }
   return (
-    <div className="flex h-11 w-full items-end rounded-lg border-2 border-royale-green bg-sad-blue p-2 text-end text-xs">
-      <button className="flex h-full flex-grow items-center justify-center rounded-md bg-royale-green text-center text-sky-blue">
+    <div className="flex h-11 w-full items-end gap-2 rounded-lg bg-sad-blue p-2 text-end text-xs">
+      <button className="flex h-full w-auto flex-grow items-center justify-center rounded-md bg-royale-green text-center font-bold text-sky-blue">
         ثبت
       </button>
       <input
-        className="h-full flex-grow bg-sad-blue text-end placeholder:text-royale-green-dark"
+        className="h-full w-3/5 flex-grow bg-sad-blue text-end placeholder:text-royale-green-dark focus:outline-0"
         placeholder="لینک را در اینجا کپی کنید"
         type="text"
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
       />
+      {icon == "" ? (
+        ""
+      ) : (
+        <Image
+          className="flex h-full items-center"
+          src={icon}
+          width={18}
+          height={18}
+          alt="link icon"
+        ></Image>
+      )}
     </div>
   );
 }
 
-function FormTabBooleanBtn() {
+const ToggleBtn = forwardRef(({ onClick, toggle, isCheckbox }) => {
   return (
-    <button className="flex w-14 items-center rounded-full border-2 border-royale-green p-1 shadow-inner">
-      <span className="h-4 w-4 rounded-full bg-royale-green"></span>
-      <input type="radio" name="" id="" />
+    <button
+      onClick={(e) => onClick(e)}
+      className={`flex h-7 w-14 items-center rounded-full border-2 border-royale-green p-1 shadow-inner transition-colors duration-300 ease-in-out ${
+        toggle == false ? "bg-none" : "bg-royale-green"
+      }`}
+    >
+      <span
+        className={`circle h-4 w-4 translate-x-0 rounded-full bg-royale-green transition-transform duration-300 ease-in-out ${
+          toggle == false
+            ? "translate-x-0 bg-royale-green"
+            : " translate-x-7 bg-sky-blue"
+        }`}
+      ></span>
+      {isCheckbox ? (
+        <input
+          type="checkbox"
+          name={`toggle-${isCheckbox.id}`}
+          id={`toggle-${isCheckbox.id}`}
+          value={isCheckbox.value}
+          checked={isCheckbox.isChecked}
+        />
+      ) : (
+        ""
+      )}
     </button>
   );
-}
+});
 
-function FormTabRadioBtn() {
-  const handleRadioBtn = () => {
+function RadioBtn() {
+  const handleRadioBtn = (e) => {
+    e.preventDefault();
+
     let yes = document.getElementById("yes");
+    console.log(yes);
     yes.style.transform = "scale(1)";
   };
   return (
     <button
-      onClick={handleRadioBtn}
+      onClick={(e) => handleRadioBtn(e)}
       className="flex items-center justify-center rounded-full border-2 border-royale-green p-1"
     >
       <span
@@ -45,14 +89,42 @@ function FormTabRadioBtn() {
   );
 }
 
-function FormTab({ title, description, icon_src, type, input_type = "" }) {
+export function FormTab({
+  title,
+  description,
+  icon_src,
+  type = "radio",
+  input_type = "",
+  id = {},
+}) {
+  const tabRef = useRef(null);
+  const [btn, setBtn] = useState(false);
+  const [radio, setRadio] = useState(0);
+
+  const handleClick = (e) => {
+    e.preventDefault();
+    if (btn == false) {
+      tabRef.current.style.maxHeight = "450px";
+      setBtn(true);
+    } else {
+      tabRef.current.style.maxHeight = "96px";
+      setBtn(false);
+    }
+  };
+  const handleRadio = (e) => {
+    e.preventDefault();
+  };
+
   return (
-    <li className="flex w-96 cursor-pointer flex-col items-end gap-2 rounded-lg border-[3px] border-sad-blue bg-soft-blue p-3 text-royale-green">
+    <li
+      ref={tabRef}
+      className="flex max-h-24 w-96 cursor-pointer flex-col items-end gap-2 overflow-hidden rounded-lg border-[3px] border-sad-blue bg-soft-blue p-3 text-royale-green transition-all duration-500 ease-in-out"
+    >
       <div className="flex w-full items-center justify-between">
-        {type == "boolean" ? (
-          <FormTabBooleanBtn></FormTabBooleanBtn>
+        {type == "toggle" ? (
+          <ToggleBtn onClick={handleClick} toggle={btn}></ToggleBtn>
         ) : type == "radio" ? (
-          <FormTabRadioBtn></FormTabRadioBtn>
+          <RadioBtn onClick={handleRadio}></RadioBtn>
         ) : (
           <Image
             src="/images/locked.svg"
@@ -81,8 +153,9 @@ function FormTab({ title, description, icon_src, type, input_type = "" }) {
   );
 }
 
-function FormSection({ children, first_section = true }) {
+export default function FormSection({ children, title, first_section = true }) {
   const [current, setCurrent] = useState(0);
+
   const changeFormSection = (id) => {};
   const prev = () => {
     let formSections = document.querySelectorAll(".form-sections");
@@ -104,7 +177,7 @@ function FormSection({ children, first_section = true }) {
         first_section == true ? "flex" : "hidden"
       }`}
     >
-      <h1 className="text-3xl font-black text-royale-green">صفحه اصلی</h1>
+      <h1 className="text-3xl font-black text-royale-green">{title}</h1>
       {children}
       <footer className="flex w-full items-center justify-between">
         <button id="previous" onClick={prev}>
@@ -119,65 +192,75 @@ function FormSection({ children, first_section = true }) {
   );
 }
 
-export default function Form() {
-  return (
-    <section className="flex w-96 overflow-hidden">
-      <FormSection>
-        <FormTab
-          title="تک بخشی"
-          description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-          type="radio"
-          icon_src="/images/single.svg"
-        ></FormTab>
-        <FormTab
-          title="چند بخشی"
-          description="دارای بخش های جداگانه مانند: منو کافه و منو رستوران"
-          type="radio"
-          icon_src="/images/couple.svg"
-        ></FormTab>
-        <FormTab
-          title="بدون صفحه اصلی"
-          description="بلافاصله پس از استفاده از QR code وارد منو میشود"
-          icon_src="/images/none.svg"
-          type="radio"
-        ></FormTab>
-      </FormSection>
-      <FormSection>
-        <FormTab
-          title="لینک ها"
-          description="... لینک های تلگرام و اینستاگرام و"
-          type="boolean"
-          input_type="text"
-        ></FormTab>
-        <FormTab
-          title="شماره تماس"
-          description="نمایش شماره تماس کافه / رستوران"
-          type="radio"
-        ></FormTab>
-        <FormTab
-          title="موقعیت مکانی"
-          description="نمایش آدرس و یا موقعت شما بر روی نقشه"
-          icon_src="/images/none.svg"
-        ></FormTab>
-      </FormSection>
-      <FormSection>
-        <FormTab
-          title="bitch "
-          description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-          type="boolean"
-          input_type="text"
-        ></FormTab>
-        <FormTab
-          title="تک بخشی"
-          description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-          type="radio"
-        ></FormTab>
-        <FormTab
-          title="بدون صفحه اصلی"
-          description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-          icon_src="/images/none.svg"
-        ></FormTab>
-      </FormSection>
-    </section>
-  );
-}
+// export default function Form() {
+//   return (
+//     <section className="flex w-96 overflow-hidden">
+//       <FormSection>
+//         <FormTab
+//           title="تک بخشی"
+//           description="دارای یک دکمه اصلی برای ورود به صفحه منو"
+//           icon_src="/images/single.svg"
+//           type="toggle"
+//           input_type="text"
+//           id={1}
+//         ></FormTab>
+//         <FormTab
+//           title="چند بخشی"
+//           description="دارای بخش های جداگانه مانند: منو کافه و منو رستوران"
+//           type="toggle"
+//           icon_src="/images/couple.svg"
+//           id={2}
+//         ></FormTab>
+//         <FormTab
+//           title="بدون صفحه اصلی"
+//           description="بلافاصله پس از استفاده از QR code وارد منو میشود"
+//           icon_src="/images/none.svg"
+//           type="radio"
+//           id={3}
+//         ></FormTab>
+//       </FormSection>
+//       <FormSection>
+//         <FormTab
+//           title="لینک ها"
+//           description="... لینک های تلگرام و اینستاگرام و"
+//           type="toggle"
+//           input_type="text"
+//           id={4}
+//         ></FormTab>
+//         <FormTab
+//           title="شماره تماس"
+//           description="نمایش شماره تماس کافه / رستوران"
+//           type="radio"
+//           id={5}
+//         ></FormTab>
+//         <FormTab
+//           title="موقعیت مکانی"
+//           description="نمایش آدرس و یا موقعت شما بر روی نقشه"
+//           icon_src="/images/none.svg"
+//           id={6}
+//         ></FormTab>
+//       </FormSection>
+//       <FormSection>
+//         <FormTab
+//           title="bitch "
+//           description="دارای یک دکمه اصلی برای ورود به صفحه منو"
+//           type="toggle"
+//           input_type="text"
+//           id={7}
+//         ></FormTab>
+//         <FormTab
+//           title="تک بخشی"
+//           description="دارای یک دکمه اصلی برای ورود به صفحه منو"
+//           type="radio"
+//           id={8}
+//         ></FormTab>
+//         <FormTab
+//           title="بدون صفحه اصلی"
+//           description="دارای یک دکمه اصلی برای ورود به صفحه منو"
+//           icon_src="/images/none.svg"
+//           id={9}
+//         ></FormTab>
+//       </FormSection>
+//     </section>
+//   );
+// }

@@ -12,7 +12,7 @@ function Navbar() {
           ثبت نام
         </Link>
         <Link href="/">درباره ما</Link>
-        <Link href="/">تعرفه ها</Link>
+        <Link href="/pricing">تعرفه ها</Link>
         <Link href="/builder">مشاهده دمو</Link>
         <Link href="/">
           <Image
