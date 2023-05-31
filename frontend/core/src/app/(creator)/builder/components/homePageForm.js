@@ -3,42 +3,88 @@
 import Image from "next/image";
 import { useState, useRef, forwardRef } from "react";
 
-function FormTabInput() {
-  const [value, setValue] = useState("");
-  let icon = "";
-  if (value.includes("instagram.com")) {
-    icon = "/images/instagram.svg";
-  } else if (value.includes("t.me")) {
-    icon = "/images/telegram.svg";
-  }
+function SmallTiles({ value }) {
   return (
-    <div className="flex h-11 w-full items-end gap-2 rounded-lg bg-sad-blue p-2 text-end text-xs">
-      <button className="flex h-full w-auto flex-grow items-center justify-center rounded-md bg-royale-green text-center font-bold text-sky-blue">
-        ثبت
-      </button>
-      <input
-        className="h-full w-3/5 flex-grow bg-sad-blue text-end placeholder:text-royale-green-dark focus:outline-0"
-        placeholder="لینک را در اینجا کپی کنید"
-        type="text"
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-      />
-      {icon == "" ? (
-        ""
+    <div className="flex items-center justify-between gap-2 rounded-lg bg-sad-blue p-2">
+      {value.linkType}
+      {value.icon != "" ? (
+        <Image src={value.icon} width={24} height={24}></Image>
       ) : (
-        <Image
-          className="flex h-full items-center"
-          src={icon}
-          width={18}
-          height={18}
-          alt="link icon"
-        ></Image>
+        ""
       )}
     </div>
   );
 }
 
-const ToggleBtn = forwardRef(({ onClick, toggle, isCheckbox }) => {
+function FormTabInput({ id }) {
+  const [value, setValue] = useState("");
+  const [links, setLinks] = useState([]);
+  // set icon of the input depending on the value
+  let icon = "";
+  let linkType = "";
+  if (value.includes("instagram.com")) {
+    icon = "/images/instagram.svg";
+    linkType = "اینستاگرام";
+  } else if (value.includes("t.me")) {
+    icon = "/images/telegram.svg";
+    linkType = "تلگرام";
+  }
+  const handleClick = (e) => {
+    e.preventDefault();
+    let input = document.getElementById(`input-${id}`);
+    if (links.length <= 2) {
+      setLinks(
+        links.concat(
+          <SmallTiles
+            value={{ value: input.value, icon: icon, linkType: linkType }}
+            key={links.length}
+          ></SmallTiles>
+        )
+      );
+    }
+  };
+  return (
+    <>
+      <div className="flex h-11 w-full items-end gap-2 rounded-lg bg-sad-blue p-2 text-end text-xs">
+        <button
+          onClick={(e) => handleClick(e)}
+          className="flex h-full w-auto flex-grow items-center justify-center rounded-md bg-royale-green text-center font-bold text-sky-blue"
+        >
+          ثبت
+        </button>
+        <input
+          name="link-input"
+          className="h-full w-3/5 flex-grow bg-sad-blue text-end placeholder:text-royale-green-dark focus:outline-0"
+          placeholder="لینک را در اینجا کپی کنید"
+          type="text"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          id={`input-${id}`}
+        />
+        {icon == "" ? (
+          ""
+        ) : (
+          <Image
+            className="flex h-full items-center"
+            src={icon}
+            width={18}
+            height={18}
+            alt="link icon"
+          ></Image>
+        )}
+      </div>
+      {links.length > 0 ? (
+        <div className="grid w-full grid-flow-row grid-cols-2 grid-rows-2 justify-start gap-2">
+          {links}
+        </div>
+      ) : (
+        ""
+      )}
+    </>
+  );
+}
+
+export const ToggleBtn = ({ onClick, toggle, isCheckbox }) => {
   return (
     <button
       onClick={(e) => onClick(e)}
@@ -66,7 +112,7 @@ const ToggleBtn = forwardRef(({ onClick, toggle, isCheckbox }) => {
       )}
     </button>
   );
-});
+};
 
 function RadioBtn() {
   const handleRadioBtn = (e) => {
@@ -118,13 +164,13 @@ export function FormTab({
   return (
     <li
       ref={tabRef}
-      className="flex max-h-24 w-96 cursor-pointer flex-col items-end gap-2 overflow-hidden rounded-lg border-[3px] border-sad-blue bg-soft-blue p-3 text-royale-green transition-all duration-500 ease-in-out"
+      className="flex max-h-24 w-96 cursor-pointer flex-col items-end justify-between gap-2 overflow-hidden rounded-lg border-[3px] border-sad-blue bg-soft-blue p-3 text-royale-green transition-all duration-500 ease-in-out"
     >
       <div className="flex w-full items-center justify-between">
         {type == "toggle" ? (
-          <ToggleBtn onClick={handleClick} toggle={btn}></ToggleBtn>
+          <ToggleBtn onClick={handleClick} toggle={btn} id={id}></ToggleBtn>
         ) : type == "radio" ? (
-          <RadioBtn onClick={handleRadio}></RadioBtn>
+          <RadioBtn onClick={handleRadio} id={id}></RadioBtn>
         ) : (
           <Image
             src="/images/locked.svg"
@@ -148,119 +194,37 @@ export function FormTab({
         </div>
       </div>
       <p className="text-end font-normal">{description}</p>
-      {input_type == "text" ? <FormTabInput></FormTabInput> : ""}
+      {input_type == "text" ? <FormTabInput id={id}></FormTabInput> : ""}
     </li>
   );
 }
 
-export default function FormSection({ children, title, first_section = true }) {
-  const [current, setCurrent] = useState(0);
-
-  const changeFormSection = (id) => {};
-  const prev = () => {
-    let formSections = document.querySelectorAll(".form-sections");
-
-    setCurrent((current) =>
-      current == 0 ? formSections.length - 1 : current - 1
-    );
-  };
-  const next = () => {
-    let formSections = document.querySelectorAll(".form-sections");
-
-    setCurrent((current) =>
-      current == formSections.length - 1 ? 0 : current + 1
-    );
+export function FormSection({ children }) {
+  const handleRadio = (e) => {
+    e.preventDefault();
   };
   return (
     <section
-      className={`form-sections h-full flex-col items-end gap-7  ${
-        first_section == true ? "flex" : "hidden"
-      }`}
+      className={
+        "form-sections flex h-full flex-col items-end justify-between gap-7"
+      }
     >
-      <h1 className="text-3xl font-black text-royale-green">{title}</h1>
       {children}
-      <footer className="flex w-full items-center justify-between">
-        <button id="previous" onClick={prev}>
-          قبلی
-        </button>
-        <div>{current}</div>
-        <button id="next" onClick={next}>
-          بعدی
-        </button>
-      </footer>
     </section>
   );
 }
 
-// export default function Form() {
-//   return (
-//     <section className="flex w-96 overflow-hidden">
-//       <FormSection>
-//         <FormTab
-//           title="تک بخشی"
-//           description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-//           icon_src="/images/single.svg"
-//           type="toggle"
-//           input_type="text"
-//           id={1}
-//         ></FormTab>
-//         <FormTab
-//           title="چند بخشی"
-//           description="دارای بخش های جداگانه مانند: منو کافه و منو رستوران"
-//           type="toggle"
-//           icon_src="/images/couple.svg"
-//           id={2}
-//         ></FormTab>
-//         <FormTab
-//           title="بدون صفحه اصلی"
-//           description="بلافاصله پس از استفاده از QR code وارد منو میشود"
-//           icon_src="/images/none.svg"
-//           type="radio"
-//           id={3}
-//         ></FormTab>
-//       </FormSection>
-//       <FormSection>
-//         <FormTab
-//           title="لینک ها"
-//           description="... لینک های تلگرام و اینستاگرام و"
-//           type="toggle"
-//           input_type="text"
-//           id={4}
-//         ></FormTab>
-//         <FormTab
-//           title="شماره تماس"
-//           description="نمایش شماره تماس کافه / رستوران"
-//           type="radio"
-//           id={5}
-//         ></FormTab>
-//         <FormTab
-//           title="موقعیت مکانی"
-//           description="نمایش آدرس و یا موقعت شما بر روی نقشه"
-//           icon_src="/images/none.svg"
-//           id={6}
-//         ></FormTab>
-//       </FormSection>
-//       <FormSection>
-//         <FormTab
-//           title="bitch "
-//           description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-//           type="toggle"
-//           input_type="text"
-//           id={7}
-//         ></FormTab>
-//         <FormTab
-//           title="تک بخشی"
-//           description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-//           type="radio"
-//           id={8}
-//         ></FormTab>
-//         <FormTab
-//           title="بدون صفحه اصلی"
-//           description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-//           icon_src="/images/none.svg"
-//           id={9}
-//         ></FormTab>
-//       </FormSection>
-//     </section>
-//   );
-// }
+export default function Form({ children, title }) {
+  const handleNextBtn = () => {};
+  return (
+    <section className="flex w-96 flex-col items-end gap-7 overflow-x-auto">
+      <h1 className="text-3xl font-black text-royale-green">{title}</h1>
+      <div className="flex">{children}</div>
+      <footer className="flex w-full items-center justify-between">
+        <button onClick={(e) => handlePrevBtn(e)}>قبلی</button>
+        <div>gello</div>
+        <button onClick={(e) => handleNextBtn(e)}>بعدی</button>
+      </footer>
+    </section>
+  );
+}
