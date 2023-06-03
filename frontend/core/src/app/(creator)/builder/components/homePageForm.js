@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useRef, forwardRef } from "react";
+import { useState, useEffect, useRef } from "react";
 
 function SmallTiles({ value }) {
   return (
@@ -206,7 +206,7 @@ export function FormSection({ children }) {
   return (
     <section
       className={
-        "form-sections flex h-full flex-col items-end justify-between gap-7"
+        "form-sections flex h-min flex-1 flex-col items-end justify-between gap-7"
       }
     >
       {children}
@@ -215,11 +215,37 @@ export function FormSection({ children }) {
 }
 
 export default function Form({ children, title }) {
-  const handleNextBtn = () => {};
+  const formTabWrapperRef = useRef(null);
+  const [widthAmount, setWidthAmount] = useState(0);
+  const [counts, setCounts] = useState(0);
+  useEffect(() => {
+    const tabCount = formTabWrapperRef.current.childNodes.length;
+    setWidthAmount(100 / tabCount);
+    setCounts(100 / tabCount);
+  }, []);
+  const handleNextBtn = (e) => {
+    e.preventDefault();
+    if (widthAmount < 100) {
+      formTabWrapperRef.current.style.transform = `translateX(calc(${widthAmount}%))`;
+      setWidthAmount(widthAmount + counts);
+    }
+  };
+  const handlePrevBtn = (e) => {
+    e.preventDefault();
+    if (widthAmount >= 0) {
+      formTabWrapperRef.current.style.transform = `translateX(calc(-${widthAmount}%))`;
+      setWidthAmount(widthAmount - counts);
+    }
+  };
   return (
-    <section className="flex w-96 flex-col items-end gap-7 overflow-x-auto">
+    <section className="flex w-96 flex-col items-end gap-7 overflow-hidden transition-all duration-300 ease-in-out">
       <h1 className="text-3xl font-black text-royale-green">{title}</h1>
-      <div className="flex">{children}</div>
+      <div
+        ref={formTabWrapperRef}
+        className="flex transition-all duration-300 ease-in-out"
+      >
+        {children}
+      </div>
       <footer className="flex w-full items-center justify-between">
         <button onClick={(e) => handlePrevBtn(e)}>قبلی</button>
         <div>gello</div>
