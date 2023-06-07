@@ -9,7 +9,7 @@ export default function Register() {
         <div className="flex flex-col gap-2 text-center">
           <h1 className="text-3xl font-black text-royale-green">خوش آمدید</h1>
           <p className="text-royale-green-light">
-            لطفا مشخصات حساب خود را وارد کنید
+            لطفا ایمیل یا شماره تلفن خود را وارد کنید
           </p>
         </div>
         <LoginForm></LoginForm>
