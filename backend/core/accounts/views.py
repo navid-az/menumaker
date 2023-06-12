@@ -26,6 +26,7 @@ class OtpCodeView(APIView):
                 )
             elif email:
                 OtpCode.objects.create(
+                    fadfa
                     email=email,
                     code=new_code,
                 )
