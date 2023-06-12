@@ -18,14 +18,13 @@ class OtpCodeView(APIView):
         if srz_data.is_valid():
             phone_number = srz_data.data["phone_number"]
             email = srz_data.data["email"]
+            new_code = random.randint(100000, 999999)
             if phone_number:
-                new_code = random.randint(100000, 999999)
                 OtpCode.objects.create(
                     phone_number=phone_number,
                     code=new_code,
                 )
             elif email:
-                new_code = random.randint(100000, 999999)
                 OtpCode.objects.create(
                     email=email,
                     code=new_code,
