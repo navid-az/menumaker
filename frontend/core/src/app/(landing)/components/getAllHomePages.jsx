@@ -1,7 +1,5 @@
-import React from "react";
-
 async function getData() {
-  const res = await fetch("https://jsonplaceholder.typicode.com/posts");
+  const res = await fetch("http://127.0.0.1:8000/api/");
   return res.json();
 }
 export default async function GetHomePages() {

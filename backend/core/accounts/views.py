@@ -14,8 +14,9 @@ class OtpCodeView(APIView):
         return Response(data=srz_data.data)
 
     def post(self, request):
-        srz_data = SendOptCodeSerializer(data=request.POST)
+        srz_data = SendOptCodeSerializer(data=request.data)
         if srz_data.is_valid():
+            print(srz_data.data, "$" * 50)
             phone_number = srz_data.data["phone_number"]
             email = srz_data.data["email"]
             new_code = random.randint(100000, 999999)
@@ -24,12 +25,17 @@ class OtpCodeView(APIView):
                     phone_number=phone_number,
                     code=new_code,
                 )
+                return Response(
+                    f"The code has been sent to you phone number {srz_data.data}"
+                )
             elif email:
                 OtpCode.objects.create(
-                    fadfa
                     email=email,
                     code=new_code,
                 )
-            return Response(f"The code has been sent to you phone number")
+                return Response(
+                    f"The code has been sent to you phone number {srz_data.data}"
+                )
+            return Response(srz_data.data)
         else:
             return Response("received data is not valid")
