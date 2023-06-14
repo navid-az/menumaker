@@ -11,7 +11,6 @@ export default function LoginForm() {
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        // userCredential, { phoneNumber: "09129733002" };
         handleSubmit(userCredential);
       }}
       className="flex w-[400px] flex-col gap-7"
