@@ -1,19 +1,12 @@
 export default async function handleSubmit(
-  userCredential = "" //email or phone_number
+  data //email or phone_number
 ) {
-  //check if the input value is phoneNumber(only numbers) or email
-  var isPhoneNumber = /^-?\d+$/.test(userCredential);
-
   const response = await fetch("http://127.0.0.1:8000/api/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(
-      isPhoneNumber
-        ? { phone_number: userCredential }
-        : { email: userCredential }
-    ),
+    body: JSON.stringify(data),
   });
   if (response.ok) {
     alert("SUCCESS");

@@ -43,16 +43,16 @@ class OtpCodeView(APIView):
             return Response("unsupported data")
 
         # validating the received code
-        elif CodeSerializer.is_valid():
-            saved_code = OtpCode.objects.filter(
-                phone_number=srz_code.data["code"], code=srz_code.data["code"]
-            )
-            user = User.objects.filter(phone_number=srz_code.data["phone_number"])
-            if saved_code.exists():
-                if user.exists():
-                    authenticate(phone_number=srz_code.data[phone_number], password="")
-                    return Response("you are now in!")
-                else:
-                    return Response("this user is not in the db(should sign up)")
+        # elif CodeSerializer.is_valid():
+        #     saved_code = OtpCode.objects.filter(
+        #         phone_number=srz_code.data["code"], code=srz_code.data["code"]
+        #     )
+        #     user = User.objects.filter(phone_number=srz_code.data["phone_number"])
+        #     if saved_code.exists():
+        #         if user.exists():
+        #             authenticate(phone_number=srz_code.data[phone_number], password="")
+        #             return Response("you are now in!")
+        #         else:
+        #             return Response("this user is not in the db(should sign up)")
         else:
             return Response("received data is not valid")
