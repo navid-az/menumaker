@@ -11,13 +11,11 @@ class User(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
 
-    objects = UserManager()
+    # objects = UserManager()
+    objects: UserManager = UserManager()
 
     USERNAME_FIELD = "phone_number"
     REQUIRED_FIELDS = ["email", "full_name"]
-
-    def __str__(self):
-        return self.email
 
     def has_perm(self, perm, obj=None):
         return True

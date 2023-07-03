@@ -3,13 +3,22 @@
 import handleSubmit from "@/app/lib/handleSubmit";
 
 let code = [];
-function DigitInput({ credentialType, userCredential }) {
+var obj = {};
+function DigitInput({ userCredential, isPhoneNumber }) {
+  console.log(userCredential, isPhoneNumber, "yes bro");
   const handleValue = (e) => {
     let newValue = e.target.value;
     code.push(newValue);
-    console.log(code.join(""));
+
     if (code.length == 6) {
-      handleSubmit({ credentialType: userCredential, code: code });
+      obj["code"] = code.join("");
+      if (isPhoneNumber) {
+        obj["phone_number"] = userCredential;
+        handleSubmit(obj, "http://127.0.0.1:8000/api/validate-code");
+      } else {
+        obj["email"] = userCredential;
+        handleSubmit(obj, "http://127.0.0.1:8000/api/validate-code");
+      }
     }
   };
   return (
@@ -22,15 +31,33 @@ function DigitInput({ credentialType, userCredential }) {
   );
 }
 
-export default function SixDigitInput() {
+export default function SixDigitInput({ userCredential, isPhoneNumber }) {
   return (
     <div className="flex h-auto w-full gap-2 px-10">
-      <DigitInput id={1}></DigitInput>
-      <DigitInput id={2}></DigitInput>
-      <DigitInput id={3}></DigitInput>
-      <DigitInput id={4}></DigitInput>
-      <DigitInput id={5}></DigitInput>
-      <DigitInput id={6}></DigitInput>
+      <DigitInput
+        userCredential={userCredential}
+        isPhoneNumber={isPhoneNumber}
+      ></DigitInput>
+      <DigitInput
+        userCredential={userCredential}
+        isPhoneNumber={isPhoneNumber}
+      ></DigitInput>
+      <DigitInput
+        userCredential={userCredential}
+        isPhoneNumber={isPhoneNumber}
+      ></DigitInput>
+      <DigitInput
+        userCredential={userCredential}
+        isPhoneNumber={isPhoneNumber}
+      ></DigitInput>
+      <DigitInput
+        userCredential={userCredential}
+        isPhoneNumber={isPhoneNumber}
+      ></DigitInput>
+      <DigitInput
+        userCredential={userCredential}
+        isPhoneNumber={isPhoneNumber}
+      ></DigitInput>
     </div>
   );
 }

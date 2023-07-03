@@ -1,7 +1,12 @@
+import { redirect } from "next/dist/server/api-utils";
+
 export default async function handleSubmit(
-  data //email or phone_number
+  data, //email or phone_number
+  endpoint
 ) {
-  const response = await fetch("http://127.0.0.1:8000/api/", {
+  alert(data["phone_number"], data["code"]);
+  console.log(data);
+  const response = await fetch(endpoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -13,6 +18,12 @@ export default async function handleSubmit(
   }
   return response.json();
 }
+// async function GoHome() {
+//   const fetchResult = await handleSubmit();
+//   if (fetchResult) {
+//     redirect("/builder");
+//   }
+// }
 // async function getData() {
 //   const res = await fetch("http://127.0.0.1:8000/api/", {
 //     method: "GET",

@@ -1,10 +1,11 @@
 from django.shortcuts import render
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import OtpCode, User
 from .serializers import SendOptCodeSerializer, CodeSerializer
 import random
+from django.db.models import Q
 
 
 # Create your views here.
@@ -16,7 +17,6 @@ class OtpCodeView(APIView):
 
     def post(self, request):
         srz_data = SendOptCodeSerializer(data=request.data)
-        srz_code = CodeSerializer(data=request.data)
         if srz_data.is_valid():
             print(srz_data.data, "$" * 50)
             phone_number = srz_data.data["phone_number"]
@@ -37,22 +37,47 @@ class OtpCodeView(APIView):
                     email=email,
                     code=new_code,
                 )
-                return Response(
-                    f"The code has been sent to you phone number {srz_data.data}"
-                )
+                return Response(f"The code has been sent to you email {srz_data.data}")
             return Response("unsupported data")
+        return Response(srz_data.errors)
 
-        # validating the received code
-        # elif CodeSerializer.is_valid():
-        #     saved_code = OtpCode.objects.filter(
-        #         phone_number=srz_code.data["code"], code=srz_code.data["code"]
-        #     )
-        #     user = User.objects.filter(phone_number=srz_code.data["phone_number"])
-        #     if saved_code.exists():
-        #         if user.exists():
-        #             authenticate(phone_number=srz_code.data[phone_number], password="")
-        #             return Response("you are now in!")
-        #         else:
-        #             return Response("this user is not in the db(should sign up)")
-        else:
-            return Response("received data is not valid")
+
+# validating the received code
+class ValidateOtpCodeView(APIView):
+    def post(self, request):
+        srz_code = CodeSerializer(data=request.data)
+
+        if srz_code.is_valid():
+            srz_code_email = srz_code.data["email"]
+            # srz_code_email = srz_code.validated_data["email"]
+            srz_code_phone_number = srz_code.data["phone_number"]
+
+            saved_code = OtpCode.objects.filter(
+                Q(phone_number=srz_code_phone_number) | Q(email=srz_code_email),
+                code=srz_code.data["code"],
+            )
+            if saved_code.exists():
+                new_user = authenticate(
+                    phone_number=srz_code_phone_number,
+                    password="",
+                )
+                if new_user is not None:
+                    login(request, new_user)
+                    OtpCode.objects.get(
+                        Q(email=srz_code_email) | Q(phone_number=srz_code_phone_number),
+                        code=srz_code.data["code"],
+                    ).delete()
+                    return Response("user has been authorized")
+                else:
+                    User.objects.create_user(
+                        phone_number=srz_code_phone_number,
+                        email=srz_code_email,
+                        full_name="",
+                        password="",
+                    )
+                    OtpCode.objects.get(
+                        Q(email=srz_code_email) | Q(phone_number=srz_code_phone_number),
+                        code=srz_code.data["code"],
+                    ).delete()
+                    return Response("The new user has been created")
+        return Response(srz_code.errors)

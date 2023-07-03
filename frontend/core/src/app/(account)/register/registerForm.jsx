@@ -21,7 +21,7 @@ export default function LoginForm() {
     } else {
       obj["email"] = userCredential;
     }
-    handleSubmit(obj);
+    handleSubmit(obj, "http://127.0.0.1:8000/api/");
   };
 
   return (
@@ -31,9 +31,10 @@ export default function LoginForm() {
           value={userCredential}
           setValue={(e) => setUserCredential(e.target.value)}
         ></TextInput>
-        {/* <SixDigitInput
-          userCredential={(credentialType, userCredential)}
-        ></SixDigitInput> */}
+        <SixDigitInput
+          userCredential={userCredential}
+          isPhoneNumber={isPhoneNumber}
+        ></SixDigitInput>
       </div>
       <button
         className="rounded-lg border-2 bg-royale-green/80 px-[12px] py-4 text-lg font-semibold text-sky-blue transition-all duration-300 ease-out hover:scale-105 hover:bg-royale-green"
