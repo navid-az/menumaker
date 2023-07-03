@@ -31,8 +31,10 @@ class User(AbstractBaseUser):
 class OtpCode(models.Model):
     phone_number = models.CharField(max_length=11, unique=True, null=True, blank=True)
     email = models.EmailField(max_length=255, unique=True, null=True, blank=True)
-    code = models.PositiveIntegerField()
+    password = models.PositiveIntegerField()
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"code: {self.code} ---> num: {self.phone_number}   email: {self.email}"
+        return (
+            f"code: {self.password} ---> num: {self.phone_number}   email: {self.email}"
+        )
