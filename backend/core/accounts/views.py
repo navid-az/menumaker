@@ -1,6 +1,7 @@
 import random
 from django.contrib.auth import authenticate, login
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 from .models import OtpCode, User
 
 # rest dependencies
@@ -63,21 +64,27 @@ class ValidateOtpCodeView(APIView):
             # check if the given code is the same as the one which is store in db
             if saved_code.exists():
                 # change user's pass to the new otp code
-                # user.set_password(str(srz_code_code))
-                # user = User.objects.get(
-                #     Q(phone_number=srz_code_phone_number) | Q(email=srz_code_email),
-                # )
+                old_user = get_object_or_404(
+                    User,
+                    Q(phone_number=srz_code_phone_number) | Q(email=srz_code_email),
+                )
+                old_user.set_password(str(srz_code_code))
+                old_user.save()
+                print("DONE%" * 50, old_user)
                 user = authenticate(
                     phone_number=srz_code_phone_number,
                     password=str(srz_code_code),
                 )
                 if user is not None:
                     login(request, user)
+                    refresh = RefreshToken.for_user(old_user)
                     OtpCode.objects.get(
                         Q(email=srz_code_email) | Q(phone_number=srz_code_phone_number),
                         password=srz_code_code,
                     ).delete()
-                    return Response("user has been authorized")
+                    return Response(
+                        f"'refresh': {str(refresh)}, 'access': {str(refresh.access_token)}"
+                    )  # this is for branch jwt-auth
                 else:
                     new_user = User.objects.create_user(
                         phone_number=srz_code_phone_number,
@@ -85,10 +92,6 @@ class ValidateOtpCodeView(APIView):
                         full_name="",
                         password=str(srz_code_code),
                     )
-                    # user = User.objects.get(
-                    #     Q(phone_number=srz_code_phone_number) | Q(email=srz_code_email),
-                    # )
-                    print("NIGGA" * 50, new_user)
                     refresh = RefreshToken.for_user(new_user)
                     OtpCode.objects.get(
                         Q(email=srz_code_email) | Q(phone_number=srz_code_phone_number),
