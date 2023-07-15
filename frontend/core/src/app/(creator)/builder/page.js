@@ -1,4 +1,4 @@
-import Form from "./components/homePageForm";
+import Form from "./components/builderForm";
 // import {
 //   FormTab,
 //   RadioBtn,
@@ -9,7 +9,7 @@ import Form from "./components/homePageForm";
 export default function MenuBuilder() {
   return (
     <main className="flex">
-      <Form></Form>
+      <Form title={"صفحه اصلی"}></Form>
     </main>
   );
 }
