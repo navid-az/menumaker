@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { FormTabInput } from "@/app/components/inputs";
 import { ToggleBtn, RadioBtn } from "@/app/components/buttons";
+import { gsap } from "gsap";
 
 function SmallTiles({ value }) {
   return (
@@ -35,7 +36,7 @@ export function FormTab({
     <li
       id={`form-tab-${id}`}
       ref={tabRef}
-      className="flex w-96 cursor-pointer select-none flex-col items-end justify-between gap-2 overflow-hidden rounded-lg border-[3px] border-sad-blue bg-soft-blue p-3 text-royale-green transition-all duration-500 ease-in-out"
+      className="duration-2000 flex w-96 cursor-pointer select-none flex-col items-end justify-between  gap-2 rounded-lg border-[3px] border-sad-blue bg-soft-blue p-3 text-royale-green transition-all ease-in-out"
     >
       <div className="flex w-full items-center justify-between">
         {children}
@@ -60,6 +61,17 @@ export function FormTab({
 }
 
 //////////////////form step ///////////////
+export function FormStep({ children }) {
+  return (
+    <section
+      className={
+        "form-sections invisible absolute flex h-min w-96 flex-1 translate-x-[200px] flex-col items-end justify-between gap-7 opacity-0 transition duration-200 ease-in-out"
+      }
+    >
+      {children}
+    </section>
+  );
+}
 
 export default function Form({ title }) {
   // const formTabWrapperRef = useRef(null);
@@ -70,6 +82,8 @@ export default function Form({ title }) {
   const [stepCount, setStepCount] = useState(1);
   // will change depending on which changeStepBtn has been clicked(next/prev)
   const [changeStepBtn, setChangeStepBtn] = useState("next");
+
+  const [sectionTitle, setSectionTitle] = useState("");
 
   const [mainPageType, setMainPageType] = useState("");
   const [links, setLinks] = useState([]);
@@ -82,14 +96,16 @@ export default function Form({ title }) {
 
   // calculate current section step count
   useEffect(() => {
-    let stepsCount = document.getElementById(`form-section-${currentSection}`)
-      .childNodes.length;
+    let stepsCount = document.querySelector(
+      `#form-section-${currentSection} div`
+    ).childNodes.length;
     setStepCount(stepsCount);
     if (changeStepBtn == "next") {
       setCurrentStep(1);
     } else if (changeStepBtn == "prev") {
-      let stepCounts = document.getElementById(`form-section-${currentSection}`)
-        .childNodes.length;
+      let stepCounts = document.querySelector(
+        `#form-section-${currentSection} div`
+      ).childNodes.length;
       setCurrentStep(stepCounts);
     }
   }, [currentSection]);
@@ -99,41 +115,62 @@ export default function Form({ title }) {
     if (changeStepBtn == "next") {
       if (currentStep != 1) {
         let prevStep = document.querySelector(
-          `#form-section-${currentSection} section:nth-child(${
+          `#form-section-${currentSection} div section:nth-child(${
             currentStep - 1
           })`
         );
-        prevStep.style.background = "green";
+        // prevStep.style.background = "green";
+        gsap.to(prevStep, {
+          x: -200,
+          duration: 0.05,
+          opacity: 0,
+        });
       } else if (currentSection > 1 && currentStep == 1) {
         let prevSectionLastChild = document.querySelector(
-          `#form-section-${currentSection - 1}`
+          `#form-section-${currentSection - 1} div`
         ).lastChild;
-        prevSectionLastChild.style.background = "green";
+        gsap.to(prevSectionLastChild, {
+          x: -200,
+          duration: 0.05,
+          opacity: 0,
+        });
       }
     } else if (changeStepBtn == "prev") {
       if (currentStep != stepCount) {
         let nextStep = document.querySelector(
-          `#form-section-${currentSection} section:nth-child(${
+          `#form-section-${currentSection} div section:nth-child(${
             currentStep + 1
           })`
         );
-        nextStep.style.background = "green";
+        gsap.to(nextStep, {
+          x: 200,
+          duration: 0.05,
+          opacity: 0,
+        });
       }
       if (currentSection < sectionCount && currentStep == stepCount) {
         let nextSectionLastChild = document.querySelector(
-          `#form-section-${currentSection + 1}`
+          `#form-section-${currentSection + 1} div`
         ).firstChild;
-        nextSectionLastChild.style.background = "green";
+        gsap.to(nextSectionLastChild, {
+          x: 200,
+          duration: 0.05,
+          opacity: 0,
+        });
       }
     }
     // shows the current step after the change btn click
     let currentSteps = document.querySelector(
-      `#form-section-${currentSection} section:nth-child(${currentStep})`
+      `#form-section-${currentSection} div section:nth-child(${currentStep})`
     );
-    currentSteps.style.background = "purple";
+    gsap.to(currentSteps, {
+      x: 0,
+      duration: 0.05,
+      opacity: 1,
+      visibility: "visible",
+      delay: 0.03,
+    });
   }, [currentStep]);
-
-  /////////////// gsap wiggle
 
   // for when the change buttons are clicked next/prev
   const handleChangeBtn = (e) => {
@@ -160,13 +197,36 @@ export default function Form({ title }) {
           setCurrentStep(currentStep - 1);
         } else {
           setCurrentSection(currentSection - 1);
-          // let stepCounts = document.getElementById(
-          //   `form-section-${currentSection}`
-          // ).childNodes.length;
-          // setCurrentStep(stepCounts);
         }
       }
     }
+  };
+
+  const handleDotBtn = (btnId) => {
+    let difference = Math.abs(btnId - currentStep);
+    let currentSteps = document.querySelector(
+      `#form-section-${currentSection} div section:nth-child(${currentStep})`
+    );
+    if (currentStep > btnId) {
+      setChangeStepBtn("prev");
+      for (let i = 1; i <= difference; i++) {
+        gsap.to(currentSteps, {
+          x: 200,
+          duration: 0.05,
+          opacity: 0,
+          delay: 0.03,
+        });
+      }
+    } else if (currentStep < btnId) {
+      setChangeStepBtn("next");
+      gsap.to(currentSteps, {
+        x: 200,
+        duration: 0.05,
+        opacity: 0,
+        delay: 0.03,
+      });
+    }
+    setCurrentStep(btnId);
   };
 
   // sets the selected radio btn to the state
@@ -197,23 +257,20 @@ export default function Form({ title }) {
   };
 
   return (
-    <section className="flex flex-col items-end gap-7 overflow-hidden transition-all duration-300 ease-in-out">
+    <section className="flex flex-col items-end gap-7 transition-all duration-300 ease-in-out">
       {/* form section title  */}
       <h1 className="text-end text-3xl font-black text-royale-green">
-        {title}
+        {/* {title} */}
+        {sectionTitle}
       </h1>
-      <div className="flex transition-all duration-300 ease-in-out">
-        {/* <FormSection title={"صفحه اصلی"}></FormSection> */}
-        <div id="form-wrapper" className=" flex">
-          <section
-            id="form-section-1"
-            className="flex bg-red-300 transition duration-200 ease-in-out"
-          >
-            <section
-              className={
-                "form-sections flex h-min w-96 flex-1 flex-col items-end justify-between gap-7"
-              }
-            >
+      {/* <div className="flex w-full bg-yellow-600 transition-all duration-300 ease-in-out"> */}
+      <div id="form-wrapper" className="relative flex h-96 w-96 justify-center">
+        <section
+          id="form-section-1"
+          className="absolute flex w-96 transition duration-200 ease-in-out"
+        >
+          <div className="relative">
+            <FormStep>
               <FormTab
                 title="لینک ها"
                 description="دارای یک دکمه اصلی برای ورود به صفحه منو"
@@ -239,12 +296,8 @@ export default function Form({ title }) {
               >
                 <ToggleBtn id={"location"}></ToggleBtn>
               </FormTab>
-            </section>
-            <section
-              className={
-                "form-sections flex h-min w-96 flex-1 flex-col items-end justify-between gap-7"
-              }
-            >
+            </FormStep>
+            <FormStep>
               <FormTab
                 title="لینک ها"
                 description="دارای یک دکمه اصلی برای ورود به صفحه منو"
@@ -270,17 +323,15 @@ export default function Form({ title }) {
               >
                 <ToggleBtn id={"location"}></ToggleBtn>
               </FormTab>
-            </section>
-          </section>
-          <section
-            id="form-section-2"
-            className="flex bg-red-600 transition duration-200 ease-in-out"
-          >
-            <section
-              className={
-                "form-sections flex h-min w-96 flex-1 flex-col items-end justify-between gap-7"
-              }
-            >
+            </FormStep>
+          </div>
+        </section>
+        <section
+          id="form-section-2"
+          className="absolute flex h-min w-96 transition duration-200 ease-in-out"
+        >
+          <div className="relative">
+            <FormStep>
               <FormTab
                 title="لینک ها"
                 description="دارای یک دکمه اصلی برای ورود به صفحه منو"
@@ -306,12 +357,8 @@ export default function Form({ title }) {
               >
                 <ToggleBtn id={"location"}></ToggleBtn>
               </FormTab>
-            </section>
-            <section
-              className={
-                "form-sections flex h-min w-96 flex-1 flex-col items-end justify-between gap-7"
-              }
-            >
+            </FormStep>
+            <FormStep>
               <FormTab
                 title="لینک ها"
                 description="دارای یک دکمه اصلی برای ورود به صفحه منو"
@@ -337,12 +384,8 @@ export default function Form({ title }) {
               >
                 <ToggleBtn id={"location"}></ToggleBtn>
               </FormTab>
-            </section>
-            <section
-              className={
-                "form-sections flex h-min w-96 flex-1 flex-col items-end justify-between gap-7"
-              }
-            >
+            </FormStep>
+            <FormStep>
               <FormTab
                 title="تک بخشی"
                 description="دارای یک دکمه اصلی برای ورود به صفحه منو"
@@ -382,136 +425,45 @@ export default function Form({ title }) {
                   handler={handleRadioInput}
                 ></RadioBtn>
               </FormTab>
-            </section>
-          </section>
-          <section
-            id="form-section-3"
-            className="flex bg-red-200 transition duration-200 ease-in-out"
-          >
-            <section
-              className={
-                "form-sections flex h-min w-96 flex-1 flex-col items-end justify-between gap-7"
-              }
-            >
-              <FormTab
-                title="لینک ها"
-                description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/single.svg"
-                input_type="text"
-                id={1}
-              >
-                <ToggleBtn id={"links"}></ToggleBtn>
-              </FormTab>
-              <FormTab
-                title="شماره تماس"
-                description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/single.svg"
-                id={2}
-              >
-                <ToggleBtn id={"phone-number"}></ToggleBtn>
-              </FormTab>
-              <FormTab
-                title="موقعیت مکانی"
-                description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/single.svg"
-                id={3}
-              >
-                <ToggleBtn id={"location"}></ToggleBtn>
-              </FormTab>
-            </section>
-            <section
-              className={
-                "form-sections flex h-min w-96 flex-1 flex-col items-end justify-between gap-7"
-              }
-            >
-              <FormTab
-                title="لینک ها"
-                description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/single.svg"
-                input_type="text"
-                id={1}
-              >
-                <ToggleBtn id={"links"}></ToggleBtn>
-              </FormTab>
-              <FormTab
-                title="شماره تماس"
-                description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/single.svg"
-                id={2}
-              >
-                <ToggleBtn id={"phone-number"}></ToggleBtn>
-              </FormTab>
-              <FormTab
-                title="موقعیت مکانی"
-                description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/single.svg"
-                id={3}
-              >
-                <ToggleBtn id={"location"}></ToggleBtn>
-              </FormTab>
-            </section>
-            <section
-              className={
-                "form-sections flex h-min w-96 flex-1 flex-col items-end justify-between gap-7"
-              }
-            >
-              <FormTab
-                title="لینک ها"
-                description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/single.svg"
-                input_type="text"
-                id={1}
-              >
-                <ToggleBtn id={"links"}></ToggleBtn>
-              </FormTab>
-              <FormTab
-                title="شماره تماس"
-                description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/single.svg"
-                id={2}
-              >
-                <ToggleBtn id={"phone-number"}></ToggleBtn>
-              </FormTab>
-              <FormTab
-                title="موقعیت مکانی"
-                description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/single.svg"
-                id={3}
-              >
-                <ToggleBtn id={"location"}></ToggleBtn>
-              </FormTab>
-            </section>
-          </section>
-        </div>
+            </FormStep>
+          </div>
+        </section>
       </div>
       {/* form navigation buttons  */}
-      <footer className="flex w-full items-center justify-center">
+      <footer className="flex w-full items-center justify-between">
         <button
-          className="select-none duration-400 flex items-center justify-between gap-1 rounded-full bg-royale-green px-6 py-2 text-sm font-normal text-sky-blue transition-all ease-in-out hover:gap-4 active:scale-90"
+          className="flex select-none items-center justify-between gap-1 rounded-full bg-royale-green px-6 py-2 text-sm font-normal text-sky-blue transition-all duration-200 ease-in-out hover:gap-4 active:scale-90"
           onClick={(e) => handleChangeBtn(e, currentSection)}
           name="prev"
         >
           قبلی
         </button>
         <div>
-          currentSection:{currentSection}
-          <br></br> sectionCount:{sectionCount}
-          <br></br> currentStep:{currentStep}
-          <br></br> stepCount:{stepCount}
           <div className="flex w-min items-center justify-between gap-1 rounded-full bg-soft-blue p-1">
             {[...Array(stepCount)].map((e, i) => (
-              <span className="border-1 h-3 w-3 select-none rounded-full border-2 border-sad-blue bg-sad-blue transition duration-200 ease-in-out hover:border-2 hover:border-royale-green hover:bg-sky-blue"></span>
+              <span
+                onClick={() => handleDotBtn(i + 1)}
+                className={`${
+                  currentStep == i + 1
+                    ? "border-royale-green bg-royale-green"
+                    : "border-sad-blue bg-sad-blue"
+                } border-1 h-3 w-3 cursor-pointer select-none rounded-full border-2 transition duration-200 ease-in-out hover:border-2 hover:border-royale-green hover:bg-sky-blue`}
+              ></span>
             ))}
           </div>
         </div>
         <button
-          className="duration-400 flex select-none items-center justify-between gap-1 rounded-full bg-royale-green px-6 py-2 text-sm font-normal text-sky-blue transition-all ease-in-out hover:gap-4 active:scale-90"
+          className="flex select-none items-center justify-between gap-1 rounded-full bg-royale-green px-6 py-2 text-sm font-normal text-sky-blue transition-all duration-200 ease-in-out hover:gap-4 active:scale-90"
           onClick={(e) => handleChangeBtn(e, currentSection)}
           name="next"
         >
           بعدی
         </button>
       </footer>
+      {/* currentSection:{currentSection}
+      <br></br> sectionCount:{sectionCount}
+      <br></br> currentStep:{currentStep}
+      <br></br> stepCount:{stepCount} */}
     </section>
   );
 }
