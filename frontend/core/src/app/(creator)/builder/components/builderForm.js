@@ -83,9 +83,10 @@ export default function Form({ title }) {
   // will change depending on which changeStepBtn has been clicked(next/prev)
   const [changeStepBtn, setChangeStepBtn] = useState("next");
 
-  const [sectionTitle, setSectionTitle] = useState("");
+  let titles = ["صفحه اصلی", "صفحه آیتم ها", "صفحه سفارشات"];
+  const [sectionTitle, setSectionTitle] = useState();
 
-  const [mainPageType, setMainPageType] = useState("");
+  const [mainPageType, setMainPageType] = useState(titles[0]);
   const [links, setLinks] = useState([]);
 
   // calculating sectionCount
@@ -108,6 +109,11 @@ export default function Form({ title }) {
       ).childNodes.length;
       setCurrentStep(stepCounts);
     }
+    // change section title depending on the current section
+    let currentSectionTitle = document.getElementById("section-title");
+    gsap.to(currentSectionTitle, { x: 200, duration: 0.25, opacity: 0 });
+    setSectionTitle(titles[currentSection - 1]);
+    gsap.to(currentSectionTitle, { x: 0, duration: 0.25, opacity: 1 });
   }, [currentSection]);
 
   useEffect(() => {
@@ -259,7 +265,10 @@ export default function Form({ title }) {
   return (
     <section className="flex flex-col items-end gap-7 transition-all duration-300 ease-in-out">
       {/* form section title  */}
-      <h1 className="text-end text-3xl font-black text-royale-green">
+      <h1
+        id="section-title"
+        className="translate-x-[200px] text-end text-3xl font-black text-royale-green opacity-0"
+      >
         {/* {title} */}
         {sectionTitle}
       </h1>
