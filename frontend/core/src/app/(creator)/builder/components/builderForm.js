@@ -82,12 +82,13 @@ export function FormStep({ children }) {
 
 export default function Form() {
   const [currentSection, setCurrentSection] = useState(1);
+
   const [sectionCount, setSectionCount] = useState(1);
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStepNum, setCurrentStepNum] = useState(1);
+  const [currentStep, setCurrentStep] = useState();
   const [stepCount, setStepCount] = useState(1);
 
   const [formHeight, setFormHeight] = useState("");
-  const [formBg, setFormBg] = useState("");
   // will change depending on which changeStepBtn has been clicked(next/prev)
   const [changeStepBtn, setChangeStepBtn] = useState("next");
 
@@ -96,6 +97,14 @@ export default function Form() {
 
   const [mainPageType, setMainPageType] = useState(titles[0]);
   const [links, setLinks] = useState([]);
+
+  const [formData, setFormData] = useState({
+    //main page
+    mainPageType: null,
+    sectionOneName: "",
+    sectionTwoName: "",
+    //items page
+  });
 
   // calculating sectionCount
   useEffect(() => {
@@ -109,11 +118,11 @@ export default function Form() {
       .childNodes.length;
     setStepCount(stepsCount);
     if (changeStepBtn == "next") {
-      setCurrentStep(1);
+      setCurrentStepNum(1);
     } else if (changeStepBtn == "prev") {
       let stepCounts = document.querySelector(`#form-section-${currentSection}`)
         .childNodes.length;
-      setCurrentStep(stepCounts);
+      setCurrentStepNum(stepCounts);
     }
     // change section title depending on the current section
     let currentSectionTitle = document.getElementById("section-title");
@@ -125,18 +134,17 @@ export default function Form() {
   useEffect(() => {
     // animating prev and next steps when the next/prev btn is clicked
     if (changeStepBtn == "next") {
-      if (currentStep != 1) {
+      if (currentStepNum != 1) {
         let prevStep = document.querySelector(
-          `#form-section-${currentSection} ul:nth-child(${currentStep - 1})`
+          `#form-section-${currentSection} ul:nth-child(${currentStepNum - 1})`
         );
-        // prevStep.style.background = "green";
         gsap.to(prevStep, {
           x: -200,
           duration: 0.05,
           opacity: 0,
           pointerEvents: "none",
         });
-      } else if (currentSection > 1 && currentStep == 1) {
+      } else if (currentSection > 1 && currentStepNum == 1) {
         let prevSectionLastChild = document.querySelector(
           `#form-section-${currentSection - 1}`
         ).lastChild;
@@ -148,9 +156,9 @@ export default function Form() {
         });
       }
     } else if (changeStepBtn == "prev") {
-      if (currentStep != stepCount) {
+      if (currentStepNum != stepCount) {
         let nextStep = document.querySelector(
-          `#form-section-${currentSection} ul:nth-child(${currentStep + 1})`
+          `#form-section-${currentSection} ul:nth-child(${currentStepNum + 1})`
         );
         gsap.to(nextStep, {
           x: 200,
@@ -159,7 +167,7 @@ export default function Form() {
           pointerEvents: "none",
         });
       }
-      if (currentSection < sectionCount && currentStep == stepCount) {
+      if (currentSection < sectionCount && currentStepNum == stepCount) {
         let nextSectionLastChild = document.querySelector(
           `#form-section-${currentSection + 1}`
         ).firstChild;
@@ -171,12 +179,15 @@ export default function Form() {
         });
       }
     }
+
     // shows the current step after the change btn click
     let currentSteps = document.querySelector(
-      `#form-section-${currentSection} ul:nth-child(${currentStep})`
+      `#form-section-${currentSection} ul:nth-child(${currentStepNum})`
     );
-    let formWrapper = document.getElementById("form-wrapper");
-    formWrapper.style.height = `${currentSteps.offsetHeight}px`;
+    setCurrentStep(currentSteps);
+
+    setFormHeight(currentSteps.offsetHeight);
+
     gsap.to(currentSteps, {
       x: 0,
       duration: 0.05,
@@ -184,7 +195,12 @@ export default function Form() {
       pointerEvents: "auto",
       delay: 0.03,
     });
-  }, [currentStep]);
+  }, [currentStepNum]);
+
+  useEffect(() => {
+    let formWrapper = document.getElementById("form-wrapper");
+    formWrapper.style.height = `${formHeight}px`;
+  }, [formHeight]);
 
   // for when the change buttons are clicked(next/prev)
   const handleChangeBtn = (e) => {
@@ -192,12 +208,12 @@ export default function Form() {
     if (e.target.name == "next") {
       setChangeStepBtn("next");
       // if its the last step don't move anymore
-      if (currentSection == sectionCount && currentStep == stepCount) {
+      if (currentSection == sectionCount && currentStepNum == stepCount) {
         // wiggle.restart();
       } else {
         // move to the 'next' step
-        if (stepCount != currentStep) {
-          setCurrentStep(currentStep + 1);
+        if (stepCount != currentStepNum) {
+          setCurrentStepNum(currentStepNum + 1);
         } else {
           setCurrentSection(currentSection + 1);
         }
@@ -205,10 +221,10 @@ export default function Form() {
     } else if (e.target.name == "prev") {
       // move to the 'prev' step
       setChangeStepBtn("prev");
-      if (currentSection == 1 && currentStep == 1) {
+      if (currentSection == 1 && currentStepNum == 1) {
       } else {
-        if (currentStep != 1) {
-          setCurrentStep(currentStep - 1);
+        if (currentStepNum != 1) {
+          setCurrentStepNum(currentStepNum - 1);
         } else {
           setCurrentSection(currentSection - 1);
         }
@@ -217,30 +233,41 @@ export default function Form() {
   };
 
   const handleDotBtn = (btnId) => {
-    let difference = Math.abs(btnId - currentStep);
-    let currentSteps = document.querySelector(
-      `#form-section-${currentSection} ul:nth-child(${currentStep})`
-    );
-    if (currentStep > btnId) {
+    let difference = Math.abs(btnId - currentStepNum);
+
+    if (currentStepNum > btnId) {
       setChangeStepBtn("prev");
       for (let i = 1; i <= difference; i++) {
-        gsap.to(currentSteps, {
+        gsap.to(currentStep, {
           x: -200,
           duration: 0.05,
           opacity: 0,
           delay: 0.03,
         });
       }
-    } else if (currentStep < btnId) {
+    } else if (currentStepNum < btnId) {
       setChangeStepBtn("next");
-      gsap.to(currentSteps, {
+      gsap.to(currentStep, {
         x: 200,
         duration: 0.05,
         opacity: 0,
         delay: 0.03,
       });
     }
-    setCurrentStep(btnId);
+    setCurrentStepNum(btnId);
+  };
+
+  const handleToggle = (data, parentId) => {
+    let tab = document.getElementById(`form-tab-${parentId}`);
+
+    if (data == 0) {
+      tab.style.borderColor = "#0F2C30";
+      tab.style.height = "200px";
+    } else {
+      tab.style.borderColor = "#C5E5E9";
+      tab.style.height = "100px";
+    }
+    setFormHeight(currentStep.offsetHeight);
   };
 
   // sets the selected radio btn to the state
@@ -290,20 +317,7 @@ export default function Form() {
               title="تک بخشی"
               description="دارای یک دکمه اصلی برای ورود به صفحه منو"
               icon_src="/images/form-icons/single.svg"
-              id={4}
-            >
-              <RadioBtn
-                name={"main_page_type"}
-                id={"single"}
-                value={"single"}
-                handler={handleRadioInput}
-              ></RadioBtn>
-            </FormTab>
-            <FormTab
-              title="تک بخشی"
-              description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-              icon_src="/images/form-icons/single.svg"
-              id={4}
+              id={1}
             >
               <RadioBtn
                 name={"main_page_type"}
@@ -316,7 +330,7 @@ export default function Form() {
               title="چند بخشی"
               description="دارای بخش های جداگانه مانند: منو کافه و منو رستوران"
               icon_src="/images/form-icons/couple.svg"
-              id={5}
+              id={2}
             >
               <RadioBtn
                 name={"main_page_type"}
@@ -329,7 +343,7 @@ export default function Form() {
               title="بدون صفحه اصلی"
               description="کاربر با اسکن کد بلافاصله به صفحه آیتم ها هدایت میشود"
               icon_src="/images/form-icons/none.svg"
-              id={6}
+              id={3}
             >
               <RadioBtn
                 name={"main_page_type"}
@@ -344,51 +358,26 @@ export default function Form() {
               title="لینک ها"
               description="... لینک های تلگرام و اینستاگرام و"
               icon_src="/images/form-icons/link.svg"
-              // input_type="text"
-              id={1}
+              id={4}
             >
-              <ToggleBtn id={"links"}></ToggleBtn>
+              <ToggleBtn
+                id={"links"}
+                action={(toggleStatus) => handleToggle(toggleStatus, 4)}
+              ></ToggleBtn>
             </FormTab>
             <FormTab
               title="شماره تماس"
-              description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-              icon_src="/images/single.svg"
-              id={2}
+              description="نمایش شماره تماس کافه/رستوران"
+              icon_src="/images/form-icons/phone.svg"
+              id={5}
             >
               <ToggleBtn id={"phone-number"}></ToggleBtn>
             </FormTab>
             <FormTab
               title="موقعیت مکانی"
-              description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-              icon_src="/images/single.svg"
-              id={3}
-            >
-              <ToggleBtn id={"location"}></ToggleBtn>
-            </FormTab>
-          </FormStep>
-          <FormStep>
-            <FormTab
-              title="لینک ها"
-              description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-              icon_src="/images/single.svg"
-              // input_type="text"
-              id={1}
-            >
-              <ToggleBtn id={"links"}></ToggleBtn>
-            </FormTab>
-            <FormTab
-              title="شماره تماس"
-              description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-              icon_src="/images/single.svg"
-              id={2}
-            >
-              <ToggleBtn id={"phone-number"}></ToggleBtn>
-            </FormTab>
-            <FormTab
-              title="موقعیت مکانی"
-              description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-              icon_src="/images/single.svg"
-              id={3}
+              description="نمایش آدرس و یا موقعت شما بر روی نقشه"
+              icon_src="/images/form-icons/pin.svg"
+              id={6}
             >
               <ToggleBtn id={"location"}></ToggleBtn>
             </FormTab>
@@ -401,52 +390,17 @@ export default function Form() {
               description="دارای یک دکمه اصلی برای ورود به صفحه منو"
               icon_src="/images/single.svg"
               input_type="text"
-              id={1}
+              id={10}
             >
-              <ToggleBtn id={"links"}></ToggleBtn>
+              <ToggleBtn id={"random"}></ToggleBtn>
             </FormTab>
             <FormTab
               title="شماره تماس"
               description="دارای یک دکمه اصلی برای ورود به صفحه منو"
               icon_src="/images/single.svg"
-              id={2}
+              id={11}
             >
-              <ToggleBtn id={"phone-number"}></ToggleBtn>
-            </FormTab>
-            <FormTab
-              title="موقعیت مکانی"
-              description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-              icon_src="/images/single.svg"
-              id={3}
-            >
-              <ToggleBtn id={"location"}></ToggleBtn>
-            </FormTab>
-          </FormStep>
-          <FormStep>
-            <FormTab
-              title="لینک ها"
-              description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-              icon_src="/images/single.svg"
-              input_type="text"
-              id={1}
-            >
-              <ToggleBtn id={"linkss"}></ToggleBtn>
-            </FormTab>
-            <FormTab
-              title="شماره تماس"
-              description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-              icon_src="/images/single.svg"
-              id={2}
-            >
-              <ToggleBtn id={"phone-number"}></ToggleBtn>
-            </FormTab>
-            <FormTab
-              title="موقعیت مکانی"
-              description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-              icon_src="/images/single.svg"
-              id={3}
-            >
-              <ToggleBtn id={"location"}></ToggleBtn>
+              <ToggleBtn id={"random2"}></ToggleBtn>
             </FormTab>
           </FormStep>
         </FormSection>
@@ -461,12 +415,11 @@ export default function Form() {
           قبلی
         </button>
         <div className="flex w-min items-center justify-between gap-1 rounded-full bg-soft-blue p-2">
-          {formHeight}
           {[...Array(stepCount)].map((e, i) => (
             <span
               onClick={() => handleDotBtn(i + 1)}
               className={`${
-                currentStep == i + 1
+                currentStepNum == i + 1
                   ? "border-royale-green bg-royale-green"
                   : "border-sad-blue bg-sad-blue"
               } border-1 h-3 w-3 cursor-pointer select-none rounded-full border-2 transition duration-200 ease-in-out hover:border-2 hover:border-royale-green hover:bg-sky-blue`}
@@ -481,11 +434,12 @@ export default function Form() {
           بعدی
         </button>
       </footer>
+      {formHeight}
     </section>
   );
 }
 
 /* currentSection:{currentSection}
 <br></br> sectionCount:{sectionCount}
-<br></br> currentStep:{currentStep}
+<br></br> currentStepNum:{currentStepNum}
 <br></br> stepCount:{stepCount} */

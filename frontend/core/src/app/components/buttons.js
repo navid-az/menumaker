@@ -27,13 +27,13 @@ export function ToggleBtn({ id, action }) {
       toggleSwitch.style.left = "30px";
       toggleBg.style.background = "#0F2C30";
       toggleSwitch.style.background = "#94D9E2";
-      // action(toggleStatus);
+      action(toggleStatus);
       setToggleStatus(1);
     } else {
       toggleSwitch.style.left = "3px";
       toggleBg.style.background = "none";
       toggleSwitch.style.background = "#0F2C30";
-      // action(toggleStatus);
+      action(toggleStatus);
       setToggleStatus(0);
     }
   };

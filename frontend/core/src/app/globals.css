@@ -16,4 +16,22 @@
   }
 }
 
-body {}
+.apple,
+.banana {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.apple section,
+.banana div {
+  grid-row-start: 1;
+  grid-column-start: 1;
+  transition: all 0.25s ease-in-out;
+}
+
+.banana div {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  height: max-content;
+}
