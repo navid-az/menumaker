@@ -19,8 +19,6 @@ function SmallTiles({ value }) {
   );
 }
 
-///////////////////////toggle btn
-
 export function FormTab({
   title,
   description,
@@ -31,12 +29,11 @@ export function FormTab({
 }) {
   const tabRef = useRef(null);
   const [btn, setBtn] = useState(false);
-  ///////////////////toggle btn action function
   return (
     <li
       id={`form-tab-${id}`}
       ref={tabRef}
-      className="duration-2000 flex w-96 cursor-pointer select-none flex-col items-end justify-between  gap-2 rounded-lg border-[3px] border-sad-blue bg-soft-blue p-3 text-royale-green transition-all ease-in-out"
+      className="duration-2000 flex w-96 select-none flex-col items-end justify-between gap-2 rounded-lg border-[3px] border-sad-blue bg-soft-blue p-3 text-royale-green transition-all ease-in-out"
     >
       <div className="flex w-full items-center justify-between">
         {children}
@@ -60,26 +57,37 @@ export function FormTab({
   );
 }
 
-//////////////////form step ///////////////
-export function FormStep({ children }) {
+export function FormSection({ children, id }) {
   return (
     <section
-      className={
-        "form-sections invisible absolute flex h-min w-96 flex-1 translate-x-[200px] flex-col items-end justify-between gap-7 opacity-0 transition duration-200 ease-in-out"
-      }
+      id={`form-section-${id}`}
+      className={"relative transition duration-200 ease-in-out"}
     >
       {children}
     </section>
   );
 }
 
-export default function Form({ title }) {
-  // const formTabWrapperRef = useRef(null);
-  // const FormSectionRef = useRef(null);
+export function FormStep({ children }) {
+  return (
+    <ul
+      className={
+        "pointer-events-none absolute flex translate-x-[200px] flex-col justify-between gap-7 opacity-0 transition duration-200 ease-in-out"
+      }
+    >
+      {children}
+    </ul>
+  );
+}
+
+export default function Form() {
   const [currentSection, setCurrentSection] = useState(1);
   const [sectionCount, setSectionCount] = useState(1);
   const [currentStep, setCurrentStep] = useState(1);
   const [stepCount, setStepCount] = useState(1);
+
+  const [formHeight, setFormHeight] = useState("");
+  const [formBg, setFormBg] = useState("");
   // will change depending on which changeStepBtn has been clicked(next/prev)
   const [changeStepBtn, setChangeStepBtn] = useState("next");
 
@@ -97,16 +105,14 @@ export default function Form({ title }) {
 
   // calculate current section step count
   useEffect(() => {
-    let stepsCount = document.querySelector(
-      `#form-section-${currentSection} div`
-    ).childNodes.length;
+    let stepsCount = document.querySelector(`#form-section-${currentSection}`)
+      .childNodes.length;
     setStepCount(stepsCount);
     if (changeStepBtn == "next") {
       setCurrentStep(1);
     } else if (changeStepBtn == "prev") {
-      let stepCounts = document.querySelector(
-        `#form-section-${currentSection} div`
-      ).childNodes.length;
+      let stepCounts = document.querySelector(`#form-section-${currentSection}`)
+        .childNodes.length;
       setCurrentStep(stepCounts);
     }
     // change section title depending on the current section
@@ -121,64 +127,66 @@ export default function Form({ title }) {
     if (changeStepBtn == "next") {
       if (currentStep != 1) {
         let prevStep = document.querySelector(
-          `#form-section-${currentSection} div section:nth-child(${
-            currentStep - 1
-          })`
+          `#form-section-${currentSection} ul:nth-child(${currentStep - 1})`
         );
         // prevStep.style.background = "green";
         gsap.to(prevStep, {
           x: -200,
           duration: 0.05,
           opacity: 0,
+          pointerEvents: "none",
         });
       } else if (currentSection > 1 && currentStep == 1) {
         let prevSectionLastChild = document.querySelector(
-          `#form-section-${currentSection - 1} div`
+          `#form-section-${currentSection - 1}`
         ).lastChild;
         gsap.to(prevSectionLastChild, {
           x: -200,
           duration: 0.05,
           opacity: 0,
+          pointerEvents: "none",
         });
       }
     } else if (changeStepBtn == "prev") {
       if (currentStep != stepCount) {
         let nextStep = document.querySelector(
-          `#form-section-${currentSection} div section:nth-child(${
-            currentStep + 1
-          })`
+          `#form-section-${currentSection} ul:nth-child(${currentStep + 1})`
         );
         gsap.to(nextStep, {
           x: 200,
           duration: 0.05,
           opacity: 0,
+          pointerEvents: "none",
         });
       }
       if (currentSection < sectionCount && currentStep == stepCount) {
         let nextSectionLastChild = document.querySelector(
-          `#form-section-${currentSection + 1} div`
+          `#form-section-${currentSection + 1}`
         ).firstChild;
         gsap.to(nextSectionLastChild, {
           x: 200,
           duration: 0.05,
           opacity: 0,
+          pointerEvents: "none",
         });
       }
     }
     // shows the current step after the change btn click
     let currentSteps = document.querySelector(
-      `#form-section-${currentSection} div section:nth-child(${currentStep})`
+      `#form-section-${currentSection} ul:nth-child(${currentStep})`
     );
+    let formWrapper = document.getElementById("form-wrapper");
+    formWrapper.style.height = `${currentSteps.offsetHeight}px`;
     gsap.to(currentSteps, {
       x: 0,
       duration: 0.05,
       opacity: 1,
-      visibility: "visible",
+      pointerEvents: "auto",
       delay: 0.03,
     });
   }, [currentStep]);
 
-  // for when the change buttons are clicked next/prev
+  // for when the change buttons are clicked(next/prev)
   const handleChangeBtn = (e) => {
     e.preventDefault();
     if (e.target.name == "next") {
@@ -192,10 +200,10 @@ export default function Form({ title }) {
           setCurrentStep(currentStep + 1);
         } else {
           setCurrentSection(currentSection + 1);
-          // setCurrentStep(1);
         }
       }
     } else if (e.target.name == "prev") {
+      // move to the 'prev' step
       setChangeStepBtn("prev");
       if (currentSection == 1 && currentStep == 1) {
       } else {
@@ -211,13 +219,13 @@ export default function Form({ title }) {
   const handleDotBtn = (btnId) => {
     let difference = Math.abs(btnId - currentStep);
     let currentSteps = document.querySelector(
-      `#form-section-${currentSection} div section:nth-child(${currentStep})`
+      `#form-section-${currentSection} ul:nth-child(${currentStep})`
     );
     if (currentStep > btnId) {
       setChangeStepBtn("prev");
       for (let i = 1; i <= difference; i++) {
         gsap.to(currentSteps, {
-          x: 200,
+          x: -200,
           duration: 0.05,
           opacity: 0,
           delay: 0.03,
@@ -261,182 +269,187 @@ export default function Form({ title }) {
       );
     }
   };
-
   return (
-    <section className="flex flex-col items-end gap-7 transition-all duration-300 ease-in-out">
-      {/* form section title  */}
-      <h1
-        id="section-title"
-        className="translate-x-[200px] text-end text-3xl font-black text-royale-green opacity-0"
+    <section className="flex w-96 flex-col justify-center gap-7 transition-all duration-300 ease-in-out">
+      <header>
+        {/* section title  */}
+        <h1
+          id="section-title"
+          className="translate-x-[200px] text-end text-3xl font-black text-royale-green opacity-0"
+        >
+          {sectionTitle}
+        </h1>
+      </header>
+      <div
+        id="form-wrapper"
+        className={`flex w-full transition-all duration-300 ease-in-out`}
       >
-        {/* {title} */}
-        {sectionTitle}
-      </h1>
-      {/* <div className="flex w-full bg-yellow-600 transition-all duration-300 ease-in-out"> */}
-      <div id="form-wrapper" className="relative flex h-96 w-96 justify-center">
-        <section
-          id="form-section-1"
-          className="absolute flex w-96 transition duration-200 ease-in-out"
-        >
-          <div className="relative">
-            <FormStep>
-              <FormTab
-                title="لینک ها"
-                description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/single.svg"
-                input_type="text"
-                id={1}
-              >
-                <ToggleBtn id={"links"}></ToggleBtn>
-              </FormTab>
-              <FormTab
-                title="شماره تماس"
-                description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/single.svg"
-                id={2}
-              >
-                <ToggleBtn id={"phone-number"}></ToggleBtn>
-              </FormTab>
-              <FormTab
-                title="موقعیت مکانی"
-                description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/single.svg"
-                id={3}
-              >
-                <ToggleBtn id={"location"}></ToggleBtn>
-              </FormTab>
-            </FormStep>
-            <FormStep>
-              <FormTab
-                title="لینک ها"
-                description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/single.svg"
-                input_type="text"
-                id={1}
-              >
-                <ToggleBtn id={"linkss"}></ToggleBtn>
-              </FormTab>
-              <FormTab
-                title="شماره تماس"
-                description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/single.svg"
-                id={2}
-              >
-                <ToggleBtn id={"phone-number"}></ToggleBtn>
-              </FormTab>
-              <FormTab
-                title="موقعیت مکانی"
-                description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/single.svg"
-                id={3}
-              >
-                <ToggleBtn id={"location"}></ToggleBtn>
-              </FormTab>
-            </FormStep>
-          </div>
-        </section>
-        <section
-          id="form-section-2"
-          className="absolute flex h-min w-96 transition duration-200 ease-in-out"
-        >
-          <div className="relative">
-            <FormStep>
-              <FormTab
-                title="لینک ها"
-                description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/single.svg"
-                input_type="text"
-                id={1}
-              >
-                <ToggleBtn id={"links"}></ToggleBtn>
-              </FormTab>
-              <FormTab
-                title="شماره تماس"
-                description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/single.svg"
-                id={2}
-              >
-                <ToggleBtn id={"phone-number"}></ToggleBtn>
-              </FormTab>
-              <FormTab
-                title="موقعیت مکانی"
-                description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/single.svg"
-                id={3}
-              >
-                <ToggleBtn id={"location"}></ToggleBtn>
-              </FormTab>
-            </FormStep>
-            <FormStep>
-              <FormTab
-                title="لینک ها"
-                description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/single.svg"
-                input_type="text"
-                id={1}
-              >
-                <ToggleBtn id={"links"}></ToggleBtn>
-              </FormTab>
-              <FormTab
-                title="شماره تماس"
-                description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/single.svg"
-                id={2}
-              >
-                <ToggleBtn id={"phone-number"}></ToggleBtn>
-              </FormTab>
-              <FormTab
-                title="موقعیت مکانی"
-                description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/single.svg"
-                id={3}
-              >
-                <ToggleBtn id={"location"}></ToggleBtn>
-              </FormTab>
-            </FormStep>
-            <FormStep>
-              <FormTab
-                title="تک بخشی"
-                description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/single.svg"
-                id={4}
-              >
-                <RadioBtn
-                  name={"main_page_type"}
-                  id={"single"}
-                  value={"single"}
-                  handler={handleRadioInput}
-                ></RadioBtn>
-              </FormTab>
-              <FormTab
-                title="چند بخشی"
-                description="دارای بخش های جداگانه مانند: منو کافه و منو رستوران"
-                icon_src="/images/single.svg"
-                id={5}
-              >
-                <RadioBtn
-                  name={"main_page_type"}
-                  id={"double"}
-                  value={"double"}
-                  handler={handleRadioInput}
-                ></RadioBtn>
-              </FormTab>
-              <FormTab
-                title="بدون صفحه اصلی"
-                description="کاربر با اسکن کد بلافاصله به صفحه آیتم ها هدایت میشود"
-                icon_src="/images/single.svg"
-                id={6}
-              >
-                <RadioBtn
-                  name={"main_page_type"}
-                  id={"none"}
-                  value={"none"}
-                  handler={handleRadioInput}
-                ></RadioBtn>
-              </FormTab>
-            </FormStep>
-          </div>
-        </section>
+        <FormSection id={1}>
+          <FormStep>
+            <FormTab
+              title="تک بخشی"
+              description="دارای یک دکمه اصلی برای ورود به صفحه منو"
+              icon_src="/images/form-icons/single.svg"
+              id={4}
+            >
+              <RadioBtn
+                name={"main_page_type"}
+                id={"single"}
+                value={"single"}
+                handler={handleRadioInput}
+              ></RadioBtn>
+            </FormTab>
+            <FormTab
+              title="تک بخشی"
+              description="دارای یک دکمه اصلی برای ورود به صفحه منو"
+              icon_src="/images/form-icons/single.svg"
+              id={4}
+            >
+              <RadioBtn
+                name={"main_page_type"}
+                id={"single"}
+                value={"single"}
+                handler={handleRadioInput}
+              ></RadioBtn>
+            </FormTab>
+            <FormTab
+              title="چند بخشی"
+              description="دارای بخش های جداگانه مانند: منو کافه و منو رستوران"
+              icon_src="/images/form-icons/couple.svg"
+              id={5}
+            >
+              <RadioBtn
+                name={"main_page_type"}
+                id={"double"}
+                value={"double"}
+                handler={handleRadioInput}
+              ></RadioBtn>
+            </FormTab>
+            <FormTab
+              title="بدون صفحه اصلی"
+              description="کاربر با اسکن کد بلافاصله به صفحه آیتم ها هدایت میشود"
+              icon_src="/images/form-icons/none.svg"
+              id={6}
+            >
+              <RadioBtn
+                name={"main_page_type"}
+                id={"none"}
+                value={"none"}
+                handler={handleRadioInput}
+              ></RadioBtn>
+            </FormTab>
+          </FormStep>
+          <FormStep>
+            <FormTab
+              title="لینک ها"
+              description="... لینک های تلگرام و اینستاگرام و"
+              icon_src="/images/form-icons/link.svg"
+              // input_type="text"
+              id={1}
+            >
+              <ToggleBtn id={"links"}></ToggleBtn>
+            </FormTab>
+            <FormTab
+              title="شماره تماس"
+              description="دارای یک دکمه اصلی برای ورود به صفحه منو"
+              icon_src="/images/single.svg"
+              id={2}
+            >
+              <ToggleBtn id={"phone-number"}></ToggleBtn>
+            </FormTab>
+            <FormTab
+              title="موقعیت مکانی"
+              description="دارای یک دکمه اصلی برای ورود به صفحه منو"
+              icon_src="/images/single.svg"
+              id={3}
+            >
+              <ToggleBtn id={"location"}></ToggleBtn>
+            </FormTab>
+          </FormStep>
+          <FormStep>
+            <FormTab
+              title="لینک ها"
+              description="دارای یک دکمه اصلی برای ورود به صفحه منو"
+              icon_src="/images/single.svg"
+              // input_type="text"
+              id={1}
+            >
+              <ToggleBtn id={"links"}></ToggleBtn>
+            </FormTab>
+            <FormTab
+              title="شماره تماس"
+              description="دارای یک دکمه اصلی برای ورود به صفحه منو"
+              icon_src="/images/single.svg"
+              id={2}
+            >
+              <ToggleBtn id={"phone-number"}></ToggleBtn>
+            </FormTab>
+            <FormTab
+              title="موقعیت مکانی"
+              description="دارای یک دکمه اصلی برای ورود به صفحه منو"
+              icon_src="/images/single.svg"
+              id={3}
+            >
+              <ToggleBtn id={"location"}></ToggleBtn>
+            </FormTab>
+          </FormStep>
+        </FormSection>
+        <FormSection id={2}>
+          <FormStep>
+            <FormTab
+              title="لینک ها"
+              description="دارای یک دکمه اصلی برای ورود به صفحه منو"
+              icon_src="/images/single.svg"
+              input_type="text"
+              id={1}
+            >
+              <ToggleBtn id={"links"}></ToggleBtn>
+            </FormTab>
+            <FormTab
+              title="شماره تماس"
+              description="دارای یک دکمه اصلی برای ورود به صفحه منو"
+              icon_src="/images/single.svg"
+              id={2}
+            >
+              <ToggleBtn id={"phone-number"}></ToggleBtn>
+            </FormTab>
+            <FormTab
+              title="موقعیت مکانی"
+              description="دارای یک دکمه اصلی برای ورود به صفحه منو"
+              icon_src="/images/single.svg"
+              id={3}
+            >
+              <ToggleBtn id={"location"}></ToggleBtn>
+            </FormTab>
+          </FormStep>
+          <FormStep>
+            <FormTab
+              title="لینک ها"
+              description="دارای یک دکمه اصلی برای ورود به صفحه منو"
+              icon_src="/images/single.svg"
+              input_type="text"
+              id={1}
+            >
+              <ToggleBtn id={"linkss"}></ToggleBtn>
+            </FormTab>
+            <FormTab
+              title="شماره تماس"
+              description="دارای یک دکمه اصلی برای ورود به صفحه منو"
+              icon_src="/images/single.svg"
+              id={2}
+            >
+              <ToggleBtn id={"phone-number"}></ToggleBtn>
+            </FormTab>
+            <FormTab
+              title="موقعیت مکانی"
+              description="دارای یک دکمه اصلی برای ورود به صفحه منو"
+              icon_src="/images/single.svg"
+              id={3}
+            >
+              <ToggleBtn id={"location"}></ToggleBtn>
+            </FormTab>
+          </FormStep>
+        </FormSection>
       </div>
       {/* form navigation buttons  */}
       <footer className="flex w-full items-center justify-between">
@@ -447,19 +460,18 @@ export default function Form({ title }) {
         >
           قبلی
         </button>
-        <div>
-          <div className="flex w-min items-center justify-between gap-1 rounded-full bg-soft-blue p-1">
-            {[...Array(stepCount)].map((e, i) => (
-              <span
-                onClick={() => handleDotBtn(i + 1)}
-                className={`${
-                  currentStep == i + 1
-                    ? "border-royale-green bg-royale-green"
-                    : "border-sad-blue bg-sad-blue"
-                } border-1 h-3 w-3 cursor-pointer select-none rounded-full border-2 transition duration-200 ease-in-out hover:border-2 hover:border-royale-green hover:bg-sky-blue`}
-              ></span>
-            ))}
-          </div>
+        <div className="flex w-min items-center justify-between gap-1 rounded-full bg-soft-blue p-2">
+          {formHeight}
+          {[...Array(stepCount)].map((e, i) => (
+            <span
+              onClick={() => handleDotBtn(i + 1)}
+              className={`${
+                currentStep == i + 1
+                  ? "border-royale-green bg-royale-green"
+                  : "border-sad-blue bg-sad-blue"
+              } border-1 h-3 w-3 cursor-pointer select-none rounded-full border-2 transition duration-200 ease-in-out hover:border-2 hover:border-royale-green hover:bg-sky-blue`}
+            ></span>
+          ))}
         </div>
         <button
           className="flex select-none items-center justify-between gap-1 rounded-full bg-royale-green px-6 py-2 text-sm font-normal text-sky-blue transition-all duration-200 ease-in-out hover:gap-4 active:scale-90"
@@ -469,10 +481,11 @@ export default function Form({ title }) {
           بعدی
         </button>
       </footer>
-      {/* currentSection:{currentSection}
-      <br></br> sectionCount:{sectionCount}
-      <br></br> currentStep:{currentStep}
-      <br></br> stepCount:{stepCount} */}
     </section>
   );
 }
+
+/* currentSection:{currentSection}
+<br></br> sectionCount:{sectionCount}
+<br></br> currentStep:{currentStep}
+<br></br> stepCount:{stepCount} */
