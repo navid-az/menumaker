@@ -52,7 +52,11 @@ export function FormTab({
         </div>
       </div>
       <p className="text-end font-normal">{description}</p>
-      {input_type == "text" ? <FormTabInput id={id}></FormTabInput> : ""}
+      {input_type == "text" && <FormTabInput id={id}></FormTabInput>}
+      <div className="hidden">
+        hello <br /> <br />
+        broooo
+      </div>
     </li>
   );
 }
@@ -262,10 +266,10 @@ export default function Form() {
 
     if (data == 0) {
       tab.style.borderColor = "#0F2C30";
-      tab.style.height = "200px";
+      tab.lastChild.style.display = "flex";
     } else {
       tab.style.borderColor = "#C5E5E9";
-      tab.style.height = "100px";
+      tab.lastChild.style.display = "none";
     }
     setFormHeight(currentStep.offsetHeight);
   };
@@ -323,7 +327,7 @@ export default function Form() {
                 name={"main_page_type"}
                 id={"single"}
                 value={"single"}
-                handler={handleRadioInput}
+                handler={() => handleRadioInput(1)}
               ></RadioBtn>
             </FormTab>
             <FormTab
@@ -371,7 +375,10 @@ export default function Form() {
               icon_src="/images/form-icons/phone.svg"
               id={5}
             >
-              <ToggleBtn id={"phone-number"}></ToggleBtn>
+              <ToggleBtn
+                id={"phone-number"}
+                action={(toggleStatus) => handleToggle(toggleStatus, 5)}
+              ></ToggleBtn>
             </FormTab>
             <FormTab
               title="موقعیت مکانی"
@@ -384,6 +391,60 @@ export default function Form() {
           </FormStep>
         </FormSection>
         <FormSection id={2}>
+          <FormStep>
+            <FormTab
+              title="لینک ها"
+              description="دارای یک دکمه اصلی برای ورود به صفحه منو"
+              icon_src="/images/single.svg"
+              input_type="text"
+              id={10}
+            >
+              <ToggleBtn id={"random"}></ToggleBtn>
+            </FormTab>
+            <FormTab
+              title="شماره تماس"
+              description="دارای یک دکمه اصلی برای ورود به صفحه منو"
+              icon_src="/images/single.svg"
+              id={11}
+            >
+              <ToggleBtn id={"random2"}></ToggleBtn>
+            </FormTab>
+          </FormStep>
+          <FormStep>
+            <FormTab
+              title="لینک ها"
+              description="دارای یک دکمه اصلی برای ورود به صفحه منو"
+              icon_src="/images/single.svg"
+              input_type="text"
+              id={10}
+            >
+              <ToggleBtn id={"random"}></ToggleBtn>
+            </FormTab>
+            <FormTab
+              title="شماره تماس"
+              description="دارای یک دکمه اصلی برای ورود به صفحه منو"
+              icon_src="/images/single.svg"
+              id={11}
+            >
+              <ToggleBtn id={"random2"}></ToggleBtn>
+            </FormTab>
+            <FormTab
+              title="شماره تماس"
+              description="دارای یک دکمه اصلی برای ورود به صفحه منو"
+              icon_src="/images/single.svg"
+              id={11}
+            >
+              <ToggleBtn id={"random2"}></ToggleBtn>
+            </FormTab>
+            <FormTab
+              title="شماره تماس"
+              description="دارای یک دکمه اصلی برای ورود به صفحه منو"
+              icon_src="/images/single.svg"
+              id={11}
+            >
+              <ToggleBtn id={"random2"}></ToggleBtn>
+            </FormTab>
+          </FormStep>
           <FormStep>
             <FormTab
               title="لینک ها"
@@ -434,11 +495,11 @@ export default function Form() {
           بعدی
         </button>
       </footer>
-      {formHeight}
     </section>
   );
 }
 
+// {formHeight}
 /* currentSection:{currentSection}
 <br></br> sectionCount:{sectionCount}
 <br></br> currentStepNum:{currentStepNum}

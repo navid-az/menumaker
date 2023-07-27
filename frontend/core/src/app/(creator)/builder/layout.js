@@ -3,7 +3,7 @@ import GoBackBtn from "@/app/components/goBackBtn";
 
 export default function MenuBuilderLayout({ children }) {
   return (
-    <section className="overflow-x-auto bg-white">
+    <section className="overflow-hidden bg-white">
       {/* form and prototype  */}
       <div className="container mx-auto flex h-screen justify-between px-40 ">
         <GoBackBtn></GoBackBtn>

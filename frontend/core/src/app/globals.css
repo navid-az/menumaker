@@ -16,7 +16,7 @@
   }
 }
 
-.apple,
+/* .apple,
 .banana {
   display: grid;
   grid-template-columns: 1fr;
@@ -34,4 +34,4 @@
   flex-direction: column;
   gap: 2rem;
   height: max-content;
-}
+} */
