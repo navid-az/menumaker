@@ -2,7 +2,19 @@
 
 import { useState } from "react";
 
-export function RadioBtn({ id, name, value, handler }) {
+export function RadioBtn({ id, name, value, action }) {
+  const [btnStatus, setBtnStatus] = useState(0);
+
+  const handleRadio = (e) => {
+    if (e.target.checked) {
+      action(btnStatus);
+      setBtnStatus(1);
+    } else {
+      action(btnStatus);
+      setBtnStatus(0);
+    }
+  };
+
   return (
     <>
       <input
@@ -11,30 +23,32 @@ export function RadioBtn({ id, name, value, handler }) {
         id={id}
         name={name}
         value={value}
-        onChange={(e) => handler(e, name)}
+        onClick={(e) => handleRadio(e)}
+        // onChange={(e) => handler(e, btnStatus)}
       />
     </>
   );
 }
 
 export function ToggleBtn({ id, action }) {
-  const [toggleStatus, setToggleStatus] = useState(0);
+  const [btnStatus, setBtnStatus] = useState(0);
+
   const handleToggle = () => {
     var toggleSwitch = document.querySelector(`label>div[id=${id}]`);
     var toggleBg = document.querySelector(`label[for=${id}]`);
 
-    if (toggleStatus == 0) {
+    if (btnStatus == 0) {
       toggleSwitch.style.left = "30px";
       toggleBg.style.background = "#0F2C30";
       toggleSwitch.style.background = "#94D9E2";
-      action(toggleStatus);
-      setToggleStatus(1);
+      action(btnStatus);
+      setBtnStatus(1);
     } else {
       toggleSwitch.style.left = "3px";
       toggleBg.style.background = "none";
       toggleSwitch.style.background = "#0F2C30";
-      action(toggleStatus);
-      setToggleStatus(0);
+      action(btnStatus);
+      setBtnStatus(0);
     }
   };
   return (
