@@ -16,6 +16,36 @@
   }
 }
 
+/* icon selector list scrollbar    */
+#icon-selector-list {
+  ::-webkit-scrollbar-track {
+    border-radius: 9px;
+  }
+}
+
+html,
+#icon-selector-list {
+  ::-webkit-scrollbar {
+    width: 14px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: #0C2123;
+    /* border-radius: 9px; */
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #94D9E2;
+    border: 4.6px solid transparent;
+    border-radius: 9px;
+    background-clip: content-box;
+  }
+}
+
+
+
+/* } */
+
 /* .apple,
 .banana {
   display: grid;
