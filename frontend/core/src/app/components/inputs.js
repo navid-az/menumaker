@@ -1,6 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
+import Image from "next/image";
+import {
+  useFloating,
+  autoUpdate,
+  useHover,
+  offset,
+  shift,
+  flip,
+  useInteractions,
+  useTransitionStyles,
+} from "@floating-ui/react";
 
 export function TextInput({
   type = "text",
@@ -78,3 +89,128 @@ export function FormTabInput({ id, action }) {
     </>
   );
 }
+
+export const NameGiverInput = ({ placeholder }) => {
+  const [inputValues, setInputValues] = useState([]);
+
+  const handleSubmit = (value) => {
+    inputValues.length <= 2 && setInputValues([...inputValues, value]);
+  };
+
+  return (
+    <div className="hidden w-full flex-col gap-2">
+      <Input placeholder={placeholder} action={handleSubmit}>
+        <InputButton
+          name="آیکون"
+          toolTip="انتخاب یک آیکون برای بخش مورد نظر"
+        ></InputButton>
+      </Input>
+      {inputValues.length > 0 && (
+        <div className="rounded-md bg-sad-blue p-2">
+          <header className="flex flex-col gap-2">
+            <h3 className="w-full text-right font-semibold text-royale-green">
+              لیست بخش ها
+            </h3>
+            <div className="flex flex-col gap-2">
+              {inputValues.map((item) => (
+                <li className="border-b-2 border-royale-green/80 p-2 text-right text-royale-green last-of-type:border-b-0">
+                  {item}
+                </li>
+              ))}
+            </div>
+          </header>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const Input = ({ placeholder, isSubmit = true, children, action }) => {
+  const [value, setValue] = useState("");
+  const inputWrapper = useRef();
+
+  const inputFocus = () => {
+    inputWrapper.current.style.borderColor = "#0F2C30";
+  };
+
+  return (
+    <>
+      <div
+        ref={inputWrapper}
+        onClick={inputFocus}
+        className="flex h-11 w-full flex-initial items-end gap-2 rounded-lg border-2 border-sad-blue bg-sad-blue p-1 text-end text-xs transition-all"
+      >
+        {isSubmit && (
+          <InputButton
+            name="ثبت"
+            options={{ isSubmit: isSubmit }}
+            action={() => action(value)}
+          ></InputButton>
+        )}
+        {children}
+        <input
+          name="link-input"
+          className="h-full w-auto grow rounded-lg bg-sad-blue p-1 text-end text-sm placeholder:text-royale-green-dark focus:outline-0"
+          placeholder={placeholder}
+          type="text"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          // id={`input-${id}`}
+        />
+      </div>
+    </>
+  );
+};
+
+export const InputButton = ({
+  name,
+  iconName,
+  toolTip,
+  action,
+  options = { isSubmit: false },
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const { refs, floatingStyles, context } = useFloating({
+    open: isOpen,
+    onOpenChange: setIsOpen,
+    whileElementsMounted: autoUpdate,
+    placement: "top",
+    middleware: [offset(4), flip(), shift()],
+  });
+
+  const hover = useHover(context, { delay: { open: 500, close: 0 } });
+
+  const { getReferenceProps, getFloatingProps } = useInteractions([hover]);
+  const { isMounted, styles } = useTransitionStyles(context);
+  return (
+    <>
+      <button
+        ref={refs.setReference}
+        {...getReferenceProps()}
+        onClick={action}
+        className="flex h-full w-full grow-0 items-center justify-center rounded-md bg-royale-green text-center text-sm font-bold text-sky-blue transition-all active:scale-90"
+      >
+        {name}
+        {/* {iconName && (
+          <Image width={24} height={24} src={`images/${iconName}.svg`}></Image>
+        )} */}
+      </button>
+
+      {/* add toolTip for buttons which are not submit buttons */}
+      {isOpen && isMounted && options.isSubmit == false && (
+        <div
+          ref={refs.setFloating}
+          {...getFloatingProps()}
+          style={{ ...styles, ...floatingStyles }}
+          className="rounded-md bg-royale-green-dark p-2 text-xs font-normal text-soft-blue opacity-90"
+        >
+          {toolTip}
+        </div>
+      )}
+    </>
+  );
+};
+
+const ToolTip = () => {
+  return <div className="bg-gray-800 text-white">hello</div>;
+};

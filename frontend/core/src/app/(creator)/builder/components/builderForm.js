@@ -2,9 +2,8 @@
 
 import Image from "next/image";
 import { useState, useEffect, useRef, useContext, createContext } from "react";
-import { FormTabInput } from "@/app/components/inputs";
+import { FormTabInput, NameGiverInput } from "@/app/components/inputs";
 import { ToggleBtn, RadioBtn } from "@/app/components/buttons";
-import IconSelectorList from "@/app/components/iconSelectorLIst";
 import { gsap } from "gsap";
 
 const HeightContext = createContext(null);
@@ -65,13 +64,15 @@ export function FormTab({
 
   return (
     <li
-      onClick={btn_type == "radio" ? handleRadioInput : undefined}
       id={`form-tab-${id}`}
       className={`${
         btn_type == "radio" && radioBtnInfo["group_name"]
       } duration-2000 flex w-96 select-none flex-col items-end justify-between gap-2 rounded-lg border-[3px] border-sad-blue bg-soft-blue p-3 text-royale-green transition-all ease-in-out`}
     >
-      <div className="flex w-full items-center justify-between">
+      <div
+        onClick={btn_type == "radio" ? handleRadioInput : undefined}
+        className="flex w-full items-center justify-between"
+      >
         {/* tab button type  */}
         {btn_type == "toggle" ? (
           <ToggleBtn
@@ -104,10 +105,7 @@ export function FormTab({
       </div>
       <p className="text-end font-normal">{description}</p>
       {input_type == "text" && <FormTabInput id={id}></FormTabInput>}
-      <div className="hidden">
-        hello <br /> <br />
-        broooo
-      </div>
+      <NameGiverInput placeholder="نام بخش را در اینجا بنویسید"></NameGiverInput>
     </li>
   );
 }
@@ -329,7 +327,7 @@ export default function Form() {
   //     );
   //   }
   // };
-  
+
   return (
     <section className="flex w-96 flex-col justify-center gap-7 transition-all duration-300 ease-in-out">
       <header>
