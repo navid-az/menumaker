@@ -5,7 +5,6 @@ import { useState, useEffect, useRef, useContext, createContext } from "react";
 import { FormTabInput, NameGiverInput } from "@/app/components/inputs";
 import { ToggleBtn, RadioBtn } from "@/app/components/buttons";
 import { gsap } from "gsap";
-import { PopOver } from "@/app/components/popOver";
 
 const HeightContext = createContext(null);
 const RadioGroupContext = createContext(null);
@@ -402,14 +401,14 @@ export default function Form() {
               <FormTab
                 title="لینک ها"
                 description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/single.svg"
+                icon_src="/images/form-icons/single.svg"
                 input_type="text"
                 id={10}
               ></FormTab>
               <FormTab
                 title="شماره تماس"
                 description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/single.svg"
+                icon_src="/images/form-icons/single.svg"
                 id={11}
               ></FormTab>
             </FormStep>
@@ -417,26 +416,26 @@ export default function Form() {
               <FormTab
                 title="لینک ها"
                 description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/single.svg"
+                icon_src="/images/form-icons/single.svg"
                 input_type="text"
                 id={10}
               ></FormTab>
               <FormTab
                 title="شماره تماس"
                 description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/single.svg"
+                icon_src="/images/form-icons/single.svg"
                 id={11}
               ></FormTab>
               <FormTab
                 title="شماره تماس"
                 description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/single.svg"
+                icon_src="/images/form-icons/single.svg"
                 id={11}
               ></FormTab>
               <FormTab
                 title="شماره تماس"
                 description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/single.svg"
+                icon_src="/images/form-icons/single.svg"
                 id={11}
               ></FormTab>
             </FormStep>
@@ -444,14 +443,14 @@ export default function Form() {
               <FormTab
                 title="لینک ها"
                 description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/single.svg"
+                icon_src="/images/form-icons/single.svg"
                 input_type="text"
                 id={10}
               ></FormTab>
               <FormTab
                 title="شماره تماس"
                 description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/single.svg"
+                icon_src="/images/form-icons/single.svg"
                 id={11}
               ></FormTab>
             </FormStep>
