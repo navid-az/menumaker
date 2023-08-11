@@ -15,27 +15,27 @@ import {
 import { Popover, PopoverTrigger, PopoverContent } from "./PopOver";
 import IconSelectorList from "./IconSelectorLIst";
 
-// export function TextInput({
-//   type = "text",
-//   name,
-//   id,
-//   value,
-//   setValue,
-//   placeholder = "",
-// }) {
-//   return (
-//     <div className="flex w-full rounded-lg border-2 border-sad-blue bg-white p-[12px] transition-colors duration-300 ease-in-out">
-//       {/* <Image src="/images/envelope.svg" width={20} height={20}></Image> */}
-//       <input
-//         className="h-full w-full text-sm font-normal text-royale-green outline-none autofill:bg-inherit"
-//         type={type}
-//         value={value}
-//         onChange={setValue}
-//         placeholder={placeholder}
-//       />
-//     </div>
-//   );
-// }
+export function TextInput({
+  type = "text",
+  name,
+  id,
+  value,
+  setValue,
+  placeholder = "",
+}) {
+  return (
+    <div className="flex w-full rounded-lg border-2 border-sad-blue bg-white p-[12px] transition-colors duration-300 ease-in-out">
+      {/* <Image src="/images/envelope.svg" width={20} height={20}></Image> */}
+      <input
+        className="h-full w-full text-sm font-normal text-royale-green outline-none autofill:bg-inherit"
+        type={type}
+        value={value}
+        onChange={setValue}
+        placeholder={placeholder}
+      />
+    </div>
+  );
+}
 
 export function FormTabInput({ id, action }) {
   const [value, setValue] = useState("");
@@ -93,14 +93,17 @@ export function FormTabInput({ id, action }) {
 }
 
 export const NameGiverInput = ({ placeholder, valueCount = 2 }) => {
+  const [icons, setIcons] = useState([]);
   const [inputValues, setInputValues] = useState([]);
 
   const handleSubmit = (value) => {
     inputValues.length <= valueCount && setInputValues([...inputValues, value]);
   };
 
-  const openSelector = () => {};
-
+  const handleSelect = (selectedIcon) => {
+    setIcons([...icons, selectedIcon]);
+    console.log(icons);
+  };
   return (
     <div className="hidden w-full flex-col gap-2">
       <Input placeholder={placeholder} action={handleSubmit}>
@@ -112,7 +115,9 @@ export const NameGiverInput = ({ placeholder, valueCount = 2 }) => {
             ></InputButton>
           </PopoverTrigger>
           <PopoverContent className="Popover">
-            <IconSelectorList></IconSelectorList>
+            <IconSelectorList
+              action={(selectedIcon) => handleSelect(selectedIcon)}
+            ></IconSelectorList>
           </PopoverContent>
         </Popover>
       </Input>
@@ -124,9 +129,10 @@ export const NameGiverInput = ({ placeholder, valueCount = 2 }) => {
               لیست بخش ها
             </h3>
             <div className="flex flex-col gap-2">
-              {inputValues.map((item) => (
+              {inputValues.map((item, index) => (
                 <li className="border-b-2 border-royale-green/80 p-2 text-right text-royale-green last-of-type:border-b-0">
                   {item}
+                  {icons[index + 1]}
                 </li>
               ))}
             </div>
@@ -220,8 +226,4 @@ export const InputButton = ({
       )}
     </>
   );
-};
-
-const ToolTip = () => {
-  return <div className="bg-gray-800 text-white">hello</div>;
 };

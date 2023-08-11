@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { gsap } from "gsap";
 
 let iconList = [
@@ -29,9 +29,13 @@ let iconList = [
   },
 ];
 
-export default function IconSelectorList({ name }) {
-  const [selectedIcon, setSelectedIcon] = useState("");
+export default function IconSelectorList({ name, action }) {
+  const [selectedIcon, setSelectedIcon] = useState(null);
   const [groupIndex, setGroupIndex] = useState("");
+
+  useEffect(() => {
+    action(selectedIcon);
+  }, [selectedIcon]);
 
   const tilesStyle =
     "h-20 flex cursor-pointer items-center justify-center rounded-lg bg-sad-blue transition-all ease-in-out hover:scale-95";
@@ -61,7 +65,6 @@ export default function IconSelectorList({ name }) {
     // let input = document.querySelector(`input[value=${groupName}-${icon}]`);
     // input.checked = true;
     setSelectedIcon(iconId);
-    alert("selected");
   };
 
   const groups = iconList.map((group, index) => (
@@ -69,25 +72,26 @@ export default function IconSelectorList({ name }) {
       {group.groupName}
     </div>
   ));
-
+  // list of groups
   const icons = iconList.map((group, index) => (
     <div
+      key={`icons-tab-${index}`}
       id={`icons-tab-${index}`}
       className="hidden h-full w-full grid-cols-3 gap-2 rounded-lg pr-2 transition-all ease-in-out scrollbar-thin scrollbar-track-[#0C2123] scrollbar-thumb-sky-blue scrollbar-thumb-rounded-lg"
     >
+      {/* list of icons  */}
       {group.icons.map((icon) => (
-        <div className={tilesStyle} onClick={() => checkInput(icon.id)}>
+        <div
+          key={icon.id}
+          className={tilesStyle}
+          onClick={() => checkInput(icon.id)}
+        >
           <Image
             width={55}
             height={55}
+            alt={icon.iconName}
             src={`images/icon-selector/${group.groupName}/${icon.iconName}.svg`}
           ></Image>
-          {/* <input
-            className="hidden"
-            type="radio"
-            name={name}
-            value={`${group.groupName}-${icon}`}
-          /> */}
         </div>
       ))}
     </div>
@@ -105,7 +109,12 @@ export default function IconSelectorList({ name }) {
             className="opacity-0"
             onClick={() => handleClick(groupIndex, true)}
           >
-            <Image width={24} height={24} src={"images/arrow-left.svg"}></Image>
+            <Image
+              width={24}
+              height={24}
+              alt="arrow left"
+              src={"images/arrow-left.svg"}
+            ></Image>
           </button>
           <h2 className="text-xl font-bold text-sky-blue">لیست آیکون ها</h2>
         </div>

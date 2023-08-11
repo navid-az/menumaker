@@ -12,6 +12,7 @@ export default function MenuBuilderLayout({ children }) {
           src="/images/iphone-14-prototype.svg"
           width={260}
           height={450}
+          priority={true}
           alt="menu prototype"
         ></Image>
         {/* <section className="flex w-96 flex-col gap-4 bg-green-600 p-2">
