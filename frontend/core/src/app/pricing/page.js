@@ -1,5 +1,5 @@
 import React from "react";
-import IconSelectorList from "../components/iconSelectorLIst";
+import IconSelectorList from "../components/IconSelectorLIst";
 import GoBackBtn from "../components/goBackBtn";
 
 export default function Pricing() {

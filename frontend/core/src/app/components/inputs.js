@@ -12,28 +12,30 @@ import {
   useInteractions,
   useTransitionStyles,
 } from "@floating-ui/react";
+import { Popover, PopoverTrigger, PopoverContent } from "./PopOver";
+import IconSelectorList from "./IconSelectorLIst";
 
-export function TextInput({
-  type = "text",
-  name,
-  id,
-  value,
-  setValue,
-  placeholder = "",
-}) {
-  return (
-    <div className="flex w-full rounded-lg border-2 border-sad-blue bg-white p-[12px] transition-colors duration-300 ease-in-out">
-      {/* <Image src="/images/envelope.svg" width={20} height={20}></Image> */}
-      <input
-        className="h-full w-full text-sm font-normal text-royale-green outline-none autofill:bg-inherit"
-        type={type}
-        value={value}
-        onChange={setValue}
-        placeholder={placeholder}
-      />
-    </div>
-  );
-}
+// export function TextInput({
+//   type = "text",
+//   name,
+//   id,
+//   value,
+//   setValue,
+//   placeholder = "",
+// }) {
+//   return (
+//     <div className="flex w-full rounded-lg border-2 border-sad-blue bg-white p-[12px] transition-colors duration-300 ease-in-out">
+//       {/* <Image src="/images/envelope.svg" width={20} height={20}></Image> */}
+//       <input
+//         className="h-full w-full text-sm font-normal text-royale-green outline-none autofill:bg-inherit"
+//         type={type}
+//         value={value}
+//         onChange={setValue}
+//         placeholder={placeholder}
+//       />
+//     </div>
+//   );
+// }
 
 export function FormTabInput({ id, action }) {
   const [value, setValue] = useState("");
@@ -90,21 +92,31 @@ export function FormTabInput({ id, action }) {
   );
 }
 
-export const NameGiverInput = ({ placeholder }) => {
+export const NameGiverInput = ({ placeholder, valueCount = 2 }) => {
   const [inputValues, setInputValues] = useState([]);
 
   const handleSubmit = (value) => {
-    inputValues.length <= 2 && setInputValues([...inputValues, value]);
+    inputValues.length <= valueCount && setInputValues([...inputValues, value]);
   };
+
+  const openSelector = () => {};
 
   return (
     <div className="hidden w-full flex-col gap-2">
       <Input placeholder={placeholder} action={handleSubmit}>
-        <InputButton
-          name="آیکون"
-          toolTip="انتخاب یک آیکون برای بخش مورد نظر"
-        ></InputButton>
+        <Popover>
+          <PopoverTrigger>
+            <InputButton
+              name="آیکون"
+              toolTip="انتخاب یک آیکون برای بخش مورد نظر"
+            ></InputButton>
+          </PopoverTrigger>
+          <PopoverContent className="Popover">
+            <IconSelectorList></IconSelectorList>
+          </PopoverContent>
+        </Popover>
       </Input>
+      {/* added items list */}
       {inputValues.length > 0 && (
         <div className="rounded-md bg-sad-blue p-2">
           <header className="flex flex-col gap-2">
@@ -140,6 +152,7 @@ const Input = ({ placeholder, isSubmit = true, children, action }) => {
         onClick={inputFocus}
         className="flex h-11 w-full flex-initial items-end gap-2 rounded-lg border-2 border-sad-blue bg-sad-blue p-1 text-end text-xs transition-all"
       >
+        {/* submit btn  */}
         {isSubmit && (
           <InputButton
             name="ثبت"
@@ -147,6 +160,7 @@ const Input = ({ placeholder, isSubmit = true, children, action }) => {
             action={() => action(value)}
           ></InputButton>
         )}
+
         {children}
         <input
           name="link-input"
@@ -191,9 +205,6 @@ export const InputButton = ({
         className="flex h-full w-full grow-0 items-center justify-center rounded-md bg-royale-green text-center text-sm font-bold text-sky-blue transition-all active:scale-90"
       >
         {name}
-        {/* {iconName && (
-          <Image width={24} height={24} src={`images/${iconName}.svg`}></Image>
-        )} */}
       </button>
 
       {/* add toolTip for buttons which are not submit buttons */}
