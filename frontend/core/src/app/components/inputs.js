@@ -102,7 +102,7 @@ export const NameGiverInput = ({ placeholder, valueCount = 2 }) => {
 
   const handleSelect = (selectedIcon) => {
     setIcons([...icons, selectedIcon]);
-    console.log(icons);
+    // console.log(icons);
   };
   return (
     <div className="hidden w-full flex-col gap-2">

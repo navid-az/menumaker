@@ -1,17 +1,24 @@
 import { redirect } from "next/dist/server/api-utils";
 
+let body = "";
+
 export default async function handleSubmit(
-  data, //email or phone_number
-  endpoint
+  data = "", //email or phone_number
+  endpoint,
+  method = "POST"
 ) {
-  alert(data["phone_number"], data["code"]);
+  if (data != "") {
+    body = JSON.stringify(data);
+    console.log(body);
+  }
+  // alert(data["phone_number"], data["code"]);
   console.log(data);
   const response = await fetch(endpoint, {
-    method: "POST",
+    method: method,
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(data),
+    body: body,
   });
   if (response.ok) {
     alert("SUCCESS");

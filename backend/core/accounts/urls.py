@@ -5,7 +5,7 @@ from .views import OtpCodeView, ValidateOtpCodeView, TestView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 
-app_name = "api"
+app_name = "accounts"
 
 urlpatterns = [
     path("", OtpCodeView.as_view(), name="otp code"),

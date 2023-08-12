@@ -1,37 +1,28 @@
 "use client";
+
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { gsap } from "gsap";
-
-let iconList = [
-  {
-    groupName: "colored",
-    icons: [
-      { iconName: "salad", id: 1 },
-      { iconName: "burger", id: 2 },
-      { iconName: "burrito", id: 3 },
-      { iconName: "pasta", id: 4 },
-    ],
-  },
-  {
-    groupName: "colored-outline",
-    icons: [
-      { iconName: "tea", id: 5 },
-      { iconName: "coffee", id: 6 },
-      { iconName: "drink", id: 7 },
-      { iconName: "salad", id: 8 },
-      { iconName: "chicken", id: 9 },
-      { iconName: "stake", id: 10 },
-      { iconName: "hot-dog", id: 11 },
-      { iconName: "pizza-slice", id: 12 },
-      { iconName: "burger", id: 13 },
-    ],
-  },
-];
+import handleSubmit from "@/app/lib/handleSubmit";
 
 export default function IconSelectorList({ name, action }) {
   const [selectedIcon, setSelectedIcon] = useState(null);
   const [groupIndex, setGroupIndex] = useState("");
+  const [Icons, setIcons] = useState([]);
+
+  const fetchIconsData = () => {
+    fetch("http://127.0.0.1:8000/pickers/icon-pickers")
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        setIcons(data);
+      });
+  };
+
+  useEffect(() => {
+    fetchIconsData();
+  }, []);
 
   useEffect(() => {
     action(selectedIcon);
@@ -67,40 +58,10 @@ export default function IconSelectorList({ name, action }) {
     setSelectedIcon(iconId);
   };
 
-  const groups = iconList.map((group, index) => (
-    <div onClick={() => handleClick(index)} className={tilesStyle}>
-      {group.groupName}
-    </div>
-  ));
-  // list of groups
-  const icons = iconList.map((group, index) => (
-    <div
-      key={`icons-tab-${index}`}
-      id={`icons-tab-${index}`}
-      className="hidden h-full w-full grid-cols-3 gap-2 rounded-lg pr-2 transition-all ease-in-out scrollbar-thin scrollbar-track-[#0C2123] scrollbar-thumb-sky-blue scrollbar-thumb-rounded-lg"
-    >
-      {/* list of icons  */}
-      {group.icons.map((icon) => (
-        <div
-          key={icon.id}
-          className={tilesStyle}
-          onClick={() => checkInput(icon.id)}
-        >
-          <Image
-            width={55}
-            height={55}
-            alt={icon.iconName}
-            src={`images/icon-selector/${group.groupName}/${icon.iconName}.svg`}
-          ></Image>
-        </div>
-      ))}
-    </div>
-  ));
-
   return (
     <div
       id="icon-selector-list"
-      className="m-2 flex max-h-96 w-80 select-none flex-col gap-4 rounded-lg bg-royale-green p-3 transition-all ease-in-out"
+      className=" m-2 flex max-h-max w-80 select-none flex-col gap-4 rounded-lg bg-royale-green p-3 transition-all ease-in-out"
     >
       <header className="flex flex-col items-end gap-2">
         <div className="flex w-full justify-between">
@@ -127,9 +88,40 @@ export default function IconSelectorList({ name, action }) {
           id="groups-tab"
           className="grid w-full grid-cols-3 gap-2 rounded-lg pr-2 transition-all ease-in-out scrollbar-thin scrollbar-track-[#0C2123] scrollbar-thumb-sky-blue scrollbar-thumb-rounded-lg"
         >
-          {groups}
+          {/* {groups} */}
+          {Icons.map((group, index) => (
+            <div
+              key={group.pk}
+              onClick={() => handleClick(index)}
+              className={tilesStyle}
+            >
+              {group.name}
+            </div>
+          ))}
         </section>
-        {icons}
+        {/* {icons} */}
+        {Icons.map((group, index) => (
+          <div
+            key={group.pk}
+            id={`icons-tab-${index}`}
+            className="hidden h-full w-full grid-cols-3 gap-2 rounded-lg pr-2 transition-all ease-in-out scrollbar-thin scrollbar-track-[#0C2123] scrollbar-thumb-sky-blue scrollbar-thumb-rounded-lg"
+          >
+            {group.icons.map((icon) => (
+              <div
+                key={icon.pk}
+                className={tilesStyle}
+                onClick={() => checkInput(icon.id)}
+              >
+                <Image
+                  width={55}
+                  height={55}
+                  alt={icon.name}
+                  src={icon.image}
+                ></Image>
+              </div>
+            ))}
+          </div>
+        ))}
       </section>
     </div>
   );
