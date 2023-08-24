@@ -5,6 +5,7 @@ import { useState, useEffect, useRef, useContext, createContext } from "react";
 import { FormTabInput, NameGiverInput } from "@/app/components/inputs";
 import { ToggleBtn, RadioBtn } from "@/app/components/buttons";
 import { gsap } from "gsap";
+import Button from "@/app/components/Button";
 
 const HeightContext = createContext(null);
 const RadioGroupContext = createContext(null);
@@ -28,7 +29,9 @@ export function FormTab({
   icon_src,
   btn_type = "",
   input_type = "",
+  // input={type:'text',name: "آیکون", toolTip: "prop2" } },
   id = "",
+  children,
 }) {
   const formHeight = useContext(HeightContext);
   const radioBtnInfo = useContext(RadioGroupContext);
@@ -104,8 +107,10 @@ export function FormTab({
         </div>
       </div>
       <p className="text-end font-normal">{description}</p>
-      {input_type == "text" && <FormTabInput id={id}></FormTabInput>}
-      <NameGiverInput placeholder="نام بخش را در اینجا بنویسید"></NameGiverInput>
+      {/* {input_type == "text" && (
+        
+      )} */}
+      {children}
     </li>
   );
 }
@@ -355,20 +360,33 @@ export default function Form() {
                   icon_src="/images/form-icons/single.svg"
                   id={1}
                   btn_type="radio"
-                ></FormTab>
+                  // input_type="text"
+                >
+                  <NameGiverInput
+                    secondary_btn={{ name: "آیکون", toolTip: "prop2" }}
+                    placeholder="نام بخش را در اینجا بنویسید"
+                  ></NameGiverInput>
+                </FormTab>
                 <FormTab
                   title="چند بخشی"
                   description="دارای بخش های جداگانه مانند: منو کافه و منو رستوران"
                   icon_src="/images/form-icons/couple.svg"
                   id={2}
                   btn_type="radio"
-                ></FormTab>
+                  // input_type="text"
+                >
+                  <NameGiverInput
+                    secondary_btn={{ name: "آیکون", toolTip: "prop2" }}
+                    placeholder="نام بخش را در اینجا بنویسید"
+                  ></NameGiverInput>
+                </FormTab>
                 <FormTab
                   title="بدون صفحه اصلی"
                   description="کاربر با اسکن کد بلافاصله به صفحه آیتم ها هدایت میشود"
                   icon_src="/images/form-icons/none.svg"
                   id={3}
                   btn_type="radio"
+                  input_type="text"
                 ></FormTab>
               </RadioGroupContext.Provider>
             </FormStep>
@@ -377,22 +395,25 @@ export default function Form() {
                 title="لینک ها"
                 description="... لینک های تلگرام و اینستاگرام و"
                 icon_src="/images/form-icons/link.svg"
-                btn_type="toggle"
                 id={4}
+                btn_type="toggle"
+                input_type="text"
               ></FormTab>
               <FormTab
                 title="شماره تماس"
                 description="نمایش شماره تماس کافه/رستوران"
                 icon_src="/images/form-icons/phone.svg"
-                btn_type="toggle"
                 id={5}
+                btn_type="toggle"
+                input_type="text"
               ></FormTab>
               <FormTab
                 title="موقعیت مکانی"
                 description="نمایش آدرس و یا موقعت شما بر روی نقشه"
                 icon_src="/images/form-icons/pin.svg"
-                btn_type="toggle"
                 id={6}
+                btn_type="toggle"
+                input_type="text"
               ></FormTab>
             </FormStep>
           </FormSection>
@@ -459,13 +480,12 @@ export default function Form() {
       </div>
       {/* form navigation buttons  */}
       <footer className="flex w-full items-center justify-between">
-        <button
-          className="flex select-none items-center justify-between gap-1 rounded-full bg-royale-green px-6 py-2 text-sm font-normal text-sky-blue transition-all duration-200 ease-in-out hover:gap-4 active:scale-90"
-          onClick={(e) => handleChangeBtn(e, currentSection)}
+        <Button
           name="prev"
-        >
-          قبلی
-        </button>
+          variant="circular"
+          content="قبلی"
+          onClick={(e) => handleChangeBtn(e, currentSection)}
+        ></Button>
         <div className="flex w-min items-center justify-between gap-1 rounded-full bg-soft-blue p-2">
           {[...Array(stepCount)].map((e, i) => (
             <span
@@ -478,13 +498,12 @@ export default function Form() {
             ></span>
           ))}
         </div>
-        <button
-          className="flex select-none items-center justify-between gap-1 rounded-full bg-royale-green px-6 py-2 text-sm font-normal text-sky-blue transition-all duration-200 ease-in-out hover:gap-4 active:scale-90"
-          onClick={(e) => handleChangeBtn(e, currentSection)}
+        <Button
           name="next"
-        >
-          بعدی
-        </button>
+          variant="circular"
+          content="بعدی"
+          onClick={(e) => handleChangeBtn(e, currentSection)}
+        ></Button>
       </footer>
     </section>
   );

@@ -3,12 +3,11 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { gsap } from "gsap";
-import handleSubmit from "@/app/lib/handleSubmit";
 
 export default function IconSelectorList({ name, action }) {
-  const [selectedIcon, setSelectedIcon] = useState(null);
+  const [selectedIcon, setSelectedIcon] = useState({});
   const [groupIndex, setGroupIndex] = useState("");
-  const [Icons, setIcons] = useState([]);
+  const [iconsList, setIcons] = useState([]);
 
   const fetchIconsData = () => {
     fetch("http://127.0.0.1:8000/pickers/icon-pickers")
@@ -52,10 +51,9 @@ export default function IconSelectorList({ name, action }) {
   };
 
   // checks the input of the clicked iconTile
-  const checkInput = (iconId) => {
-    // let input = document.querySelector(`input[value=${groupName}-${icon}]`);
-    // input.checked = true;
-    setSelectedIcon(iconId);
+  const checkInput = (icon) => {
+    setSelectedIcon(icon);
+    console.log(icon.image + icon.pk + icon.name + " has been selected");
   };
 
   return (
@@ -88,8 +86,7 @@ export default function IconSelectorList({ name, action }) {
           id="groups-tab"
           className="grid w-full grid-cols-3 gap-2 rounded-lg pr-2 transition-all ease-in-out scrollbar-thin scrollbar-track-[#0C2123] scrollbar-thumb-sky-blue scrollbar-thumb-rounded-lg"
         >
-          {/* {groups} */}
-          {Icons.map((group, index) => (
+          {iconsList.map((group, index) => (
             <div
               key={group.pk}
               onClick={() => handleClick(index)}
@@ -99,8 +96,7 @@ export default function IconSelectorList({ name, action }) {
             </div>
           ))}
         </section>
-        {/* {icons} */}
-        {Icons.map((group, index) => (
+        {iconsList.map((group, index) => (
           <div
             key={group.pk}
             id={`icons-tab-${index}`}
@@ -110,14 +106,9 @@ export default function IconSelectorList({ name, action }) {
               <div
                 key={icon.pk}
                 className={tilesStyle}
-                onClick={() => checkInput(icon.id)}
+                onClick={() => checkInput(icon)}
               >
-                <Image
-                  width={55}
-                  height={55}
-                  alt={icon.name}
-                  src={icon.image}
-                ></Image>
+                <p>{icon.name}</p>
               </div>
             ))}
           </div>
