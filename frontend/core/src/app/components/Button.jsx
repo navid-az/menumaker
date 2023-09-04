@@ -8,11 +8,13 @@ export default function Button({
   style = "",
   name = "",
   toolTip = "",
+  type = "button",
 }) {
   return (
     <Tooltip>
       <TooltipTrigger>
         <button
+          type={type}
           onClick={onClick}
           name={name}
           className={`flex select-none items-center justify-between gap-1  ${
@@ -21,7 +23,7 @@ export default function Button({
               : variant == "square"
               ? "rounded-md"
               : ""
-          }  bg-royale-green px-6 py-2 text-sm font-bold text-sky-blue transition-all duration-200 ease-in-out hover:gap-4 active:scale-90 ${style}`}
+          }  bg-royale-green px-5 py-2 text-sm font-bold text-sky-blue transition-all duration-200 ease-in-out hover:gap-4 active:scale-90 ${style}`}
         >
           {content}
         </button>

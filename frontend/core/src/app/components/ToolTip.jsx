@@ -112,6 +112,7 @@ export const TooltipTrigger = React.forwardRef(function TooltipTrigger(
 
   return (
     <button
+      type="button"
       className="h-full"
       ref={ref}
       // The user can style the trigger based on the state

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import GoBackBtn from "@/app/components/goBackBtn";
+import GoBackBtn from "@/app/components/GoBackBtn";
 import IconSelectorList from "@/app/components/IconSelectorLIst";
 
 export default function MenuBuilderLayout({ children }) {

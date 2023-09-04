@@ -153,15 +153,17 @@ export default function Form() {
   let titles = ["صفحه اصلی", "صفحه آیتم ها", "صفحه سفارشات"];
   const [sectionTitle, setSectionTitle] = useState();
 
-  // const [mainPageType, setMainPageType] = useState(titles[0]);
   const [links, setLinks] = useState([]);
 
-  // const [formData, setFormData] = useState({
-  //   //main page
-  //   mainPageType: null,
-  //   sectionOneName: "",
-  //   sectionTwoName: "",
-  // });
+  const [formData, setFormData] = useState({
+    mainPageType: "single",
+    menuSectionsCount: 1,
+    menuSections: [],
+    links: [],
+    phoneNumbers: [],
+    locations: [],
+    ItemsPageType: "horizenal",
+  });
 
   // calculating sectionCount
   useEffect(() => {
@@ -419,19 +421,24 @@ export default function Form() {
           </FormSection>
           <FormSection id={2}>
             <FormStep>
-              <FormTab
-                title="لینک ها"
-                description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/form-icons/single.svg"
-                input_type="text"
-                id={10}
-              ></FormTab>
-              <FormTab
-                title="شماره تماس"
-                description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/form-icons/single.svg"
-                id={11}
-              ></FormTab>
+              <RadioGroupContext.Provider
+                value={{ group_name: "main_page_type" }}
+              >
+                <FormTab
+                  title="عمودی"
+                  description="لیست آیتم ها به صورت عمودی نمایش داده میشود"
+                  icon_src="/images/form-icons/vertical-menu-icon.svg"
+                  btn_type="radio"
+                  id={10}
+                ></FormTab>
+                <FormTab
+                  title="افقی"
+                  description="لیست آیتم ها در بالای صفحه به صورت افقی نمایش داده میشود"
+                  btn_type="radio"
+                  icon_src="/images/form-icons/horizenal-menu-icon.svg"
+                  id={11}
+                ></FormTab>
+              </RadioGroupContext.Provider>
             </FormStep>
             <FormStep>
               <FormTab

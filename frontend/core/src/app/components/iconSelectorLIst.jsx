@@ -53,7 +53,6 @@ export default function IconSelectorList({ name, action }) {
   // checks the input of the clicked iconTile
   const checkInput = (icon) => {
     setSelectedIcon(icon);
-    console.log(icon.image + icon.pk + icon.name + " has been selected");
   };
 
   return (
@@ -64,6 +63,7 @@ export default function IconSelectorList({ name, action }) {
       <header className="flex flex-col items-end gap-2">
         <div className="flex w-full justify-between">
           <button
+            type="button"
             id="go-back-btn"
             className="opacity-0"
             onClick={() => handleClick(groupIndex, true)}

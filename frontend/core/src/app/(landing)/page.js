@@ -91,7 +91,7 @@ export default function Home() {
           <br />و هرگاه نیاز به هرگونه تغییری بود به سادگی تغییرات را اعمال کنید
         </p>
       </div>
-      <GetHomePages></GetHomePages>
+      {/* <GetHomePages></GetHomePages> */}
     </main>
   );
 }

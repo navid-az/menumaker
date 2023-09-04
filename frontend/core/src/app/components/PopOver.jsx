@@ -117,7 +117,7 @@ export const PopoverTrigger = React.forwardRef(function PopoverTrigger(
 
   return (
     <button
-      className="h-full w-full"
+      className="h-max w-max"
       ref={ref}
       type="button"
       // The user can style the trigger based on the state
