@@ -41,15 +41,14 @@ export function ToggleBtn({ id, action }) {
       toggleSwitch.style.left = "30px";
       toggleBg.style.background = "#0F2C30";
       toggleSwitch.style.background = "#94D9E2";
-      action(btnStatus);
-      setBtnStatus(1);
+      setBtnStatus(!btnStatus);
     } else {
       toggleSwitch.style.left = "3px";
       toggleBg.style.background = "none";
       toggleSwitch.style.background = "#0F2C30";
-      action(btnStatus);
-      setBtnStatus(0);
+      setBtnStatus(!btnStatus);
     }
+    action(btnStatus);
   };
   return (
     <>

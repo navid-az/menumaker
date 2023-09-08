@@ -1,68 +1,67 @@
 "use client";
 
-import Image from "next/image";
 import { useState, useEffect, useRef, useContext, createContext } from "react";
-import { FormTabInput, NameGiverInput } from "@/app/components/inputs";
+import { NameGiverInput } from "@/app/components/inputs";
 import { ToggleBtn, RadioBtn } from "@/app/components/buttons";
-import { gsap } from "gsap";
 import Button from "@/app/components/Button";
+import { gsap } from "gsap";
+import Image from "next/image";
 
-const HeightContext = createContext(null);
+export const HeightContext = createContext(null);
 const RadioGroupContext = createContext(null);
 
-function SmallTiles({ value }) {
-  return (
-    <div className="flex items-center justify-between gap-2 rounded-lg bg-sad-blue p-2">
-      {value.linkType}
-      {value.icon != "" ? (
-        <Image src={value.icon} width={24} height={24}></Image>
-      ) : (
-        ""
-      )}
-    </div>
-  );
-}
+// function SmallTiles({ value }) {
+//   return (
+//     <div className="flex items-center justify-between gap-2 rounded-lg bg-sad-blue p-2">
+//       {value.linkType}
+//       {value.icon != "" ? (
+//         <Image src={value.icon} width={24} height={24}></Image>
+//       ) : (
+//         ""
+//       )}
+//     </div>
+//   );
+// }
 
 export function FormTab({
   title,
   description,
   icon_src,
   btn_type = "",
-  input_type = "",
-  // input={type:'text',name: "آیکون", toolTip: "prop2" } },
   id = "",
   children,
+  button,
 }) {
   const formHeight = useContext(HeightContext);
   const radioBtnInfo = useContext(RadioGroupContext);
-  let tab = document.getElementById(`form-tab-${id}`);
+  const childrenSection = useRef(null);
+  let formTab = document.getElementById(`form-tab-${id}`);
 
+  // shows/hide formTab children
   const handleToggle = (btnStatus) => {
     if (btnStatus == 0) {
-      tab.style.borderColor = "#0F2C30";
-      tab.lastChild.style.display = "flex";
+      formTab.style.borderColor = "#0F2C30";
+      childrenSection.current.style.display = "flex";
     } else {
-      tab.style.borderColor = "#C5E5E9";
-      tab.lastChild.style.display = "none";
+      formTab.style.borderColor = "#C5E5E9";
+      childrenSection.current.style.display = "none";
     }
     formHeight();
   };
 
   // sets the selected radio btn to the state
-  const handleRadioInput = (e, btnStatus) => {
+  const handleRadioInput = () => {
     var tabsGroup = document.querySelectorAll(`.${radioBtnInfo["group_name"]}`);
     let radioBtn = document.getElementById(`radio-btn-${id}`);
+
     tabsGroup.forEach((formTab) => {
       formTab.style.borderColor = "#C5E5E9";
       formTab.lastChild.style.display = "none";
     });
+    radioBtn.checked = true;
+    formTab.style.borderColor = "#0F2C30";
+    childrenSection.current.style.display = "flex";
     formHeight();
-    setTimeout(() => {
-      radioBtn.checked = true;
-      tab.style.borderColor = "#0F2C30";
-      tab.lastChild.style.display = "flex";
-      formHeight();
-    }, 300);
   };
 
   return (
@@ -76,6 +75,7 @@ export function FormTab({
         onClick={btn_type == "radio" ? handleRadioInput : undefined}
         className="flex w-full items-center justify-between"
       >
+        {button}
         {/* tab button type  */}
         {btn_type == "toggle" ? (
           <ToggleBtn
@@ -107,10 +107,12 @@ export function FormTab({
         </div>
       </div>
       <p className="text-end font-normal">{description}</p>
-      {/* {input_type == "text" && (
-        
-      )} */}
-      {children}
+      <section
+        className={`hidden ${!children ? "absolute" : ""}`}
+        ref={childrenSection}
+      >
+        {children}
+      </section>
     </li>
   );
 }
@@ -143,20 +145,19 @@ export default function Form() {
 
   const [sectionCount, setSectionCount] = useState(1);
   const [currentStepNum, setCurrentStepNum] = useState(1);
-  const [currentStep, setCurrentStep] = useState();
+  const [currentStep, setCurrentStep] = useState(1);
   const [stepCount, setStepCount] = useState(1);
 
   const [formHeight, setFormHeight] = useState("");
   // will change depending on which changeStepBtn has been clicked(next/prev)
   const [changeStepBtn, setChangeStepBtn] = useState("next");
 
-  let titles = ["صفحه اصلی", "صفحه آیتم ها", "صفحه سفارشات"];
   const [sectionTitle, setSectionTitle] = useState();
 
-  const [links, setLinks] = useState([]);
+  // const [links, setLinks] = useState([]);
 
   const [formData, setFormData] = useState({
-    mainPageType: "single",
+    mainPageType: 1,
     menuSectionsCount: 1,
     menuSections: [],
     links: [],
@@ -165,14 +166,25 @@ export default function Form() {
     ItemsPageType: "horizenal",
   });
 
-  // calculating sectionCount
   useEffect(() => {
-    let sectionCount = document.getElementById("form-wrapper");
-    setSectionCount(sectionCount.childNodes.length);
+    // let radioBtn = document.getElementById(
+    //   `radio-btn-${formData.mainPageType}`
+    // );
+    // radioBtn.checked = true;
   }, []);
 
-  // calculate current section step count
   useEffect(() => {
+    let formWrapper = document.getElementById("form-wrapper");
+
+    // calculating sectionCount
+    setSectionCount(formWrapper.childNodes.length);
+
+    // changes the form height depending on the children
+    formWrapper.style.height = `${formHeight}px`;
+  }, [formHeight]);
+
+  useEffect(() => {
+    // calculate current section step count
     let stepsCount = document.querySelector(`#form-section-${currentSection}`)
       .childNodes.length;
     setStepCount(stepsCount);
@@ -183,8 +195,11 @@ export default function Form() {
         .childNodes.length;
       setCurrentStepNum(stepCounts);
     }
+
     // change section title depending on the current section
+    let titles = ["صفحه اصلی", "صفحه آیتم ها", "صفحه سفارشات"];
     let currentSectionTitle = document.getElementById("section-title");
+
     gsap.to(currentSectionTitle, { x: 200, duration: 0.25, opacity: 0 });
     gsap.to(currentSectionTitle, { x: 0, duration: 0.25, opacity: 1 });
     setSectionTitle(titles[currentSection - 1]);
@@ -256,10 +271,10 @@ export default function Form() {
     });
   }, [currentStepNum]);
 
-  useEffect(() => {
-    let formWrapper = document.getElementById("form-wrapper");
-    formWrapper.style.height = `${formHeight}px`;
-  }, [formHeight]);
+  // changes form height to the size of current active step
+  const changeFormHeight = () => {
+    setFormHeight(currentStep.offsetHeight);
+  };
 
   // for when the change buttons are clicked(next/prev)
   const handleChangeBtn = (e) => {
@@ -316,10 +331,6 @@ export default function Form() {
     setCurrentStepNum(btnId);
   };
 
-  const changeFormHeight = () => {
-    setFormHeight(currentStep.offsetHeight);
-  };
-
   // const handleLinks = (e) => {
   //   e.preventDefault();
   //   let input = document.getElementById(`input-${id}`);
@@ -362,7 +373,6 @@ export default function Form() {
                   icon_src="/images/form-icons/single.svg"
                   id={1}
                   btn_type="radio"
-                  // input_type="text"
                 >
                   <NameGiverInput
                     secondary_btn={{ name: "آیکون", toolTip: "prop2" }}
@@ -375,7 +385,6 @@ export default function Form() {
                   icon_src="/images/form-icons/couple.svg"
                   id={2}
                   btn_type="radio"
-                  // input_type="text"
                 >
                   <NameGiverInput
                     secondary_btn={{ name: "آیکون", toolTip: "prop2" }}
@@ -388,7 +397,6 @@ export default function Form() {
                   icon_src="/images/form-icons/none.svg"
                   id={3}
                   btn_type="radio"
-                  input_type="text"
                 ></FormTab>
               </RadioGroupContext.Provider>
             </FormStep>
@@ -399,7 +407,6 @@ export default function Form() {
                 icon_src="/images/form-icons/link.svg"
                 id={4}
                 btn_type="toggle"
-                input_type="text"
               ></FormTab>
               <FormTab
                 title="شماره تماس"
@@ -407,7 +414,6 @@ export default function Form() {
                 icon_src="/images/form-icons/phone.svg"
                 id={5}
                 btn_type="toggle"
-                input_type="text"
               ></FormTab>
               <FormTab
                 title="موقعیت مکانی"
@@ -415,7 +421,6 @@ export default function Form() {
                 icon_src="/images/form-icons/pin.svg"
                 id={6}
                 btn_type="toggle"
-                input_type="text"
               ></FormTab>
             </FormStep>
           </FormSection>
@@ -445,7 +450,6 @@ export default function Form() {
                 title="لینک ها"
                 description="دارای یک دکمه اصلی برای ورود به صفحه منو"
                 icon_src="/images/form-icons/single.svg"
-                input_type="text"
                 id={10}
               ></FormTab>
               <FormTab
@@ -472,7 +476,6 @@ export default function Form() {
                 title="لینک ها"
                 description="دارای یک دکمه اصلی برای ورود به صفحه منو"
                 icon_src="/images/form-icons/single.svg"
-                input_type="text"
                 id={10}
               ></FormTab>
               <FormTab
@@ -485,7 +488,7 @@ export default function Form() {
           </FormSection>
         </HeightContext.Provider>
       </div>
-      {/* form navigation buttons  */}
+
       <footer className="flex w-full items-center justify-between">
         <Button
           name="prev"

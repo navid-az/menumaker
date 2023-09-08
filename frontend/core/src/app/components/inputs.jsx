@@ -1,18 +1,8 @@
 "use client";
 
-import { useState, useRef, useReducer, useEffect } from "react";
+import { useState, useRef, useReducer, useEffect, useContext } from "react";
+import { HeightContext } from "../(creator)/builder/components/builderForm";
 import Image from "next/image";
-import {
-  useFloating,
-  autoUpdate,
-  useHover,
-  offset,
-  shift,
-  flip,
-  useInteractions,
-  useTransitionStyles,
-} from "@floating-ui/react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ToolTip";
 import { Popover, PopoverTrigger, PopoverContent } from "./PopOver";
 import IconSelectorList from "./IconSelectorLIst";
 import Button from "./Button";
@@ -106,14 +96,12 @@ const reducer = (item, action) => {
       return { ...item, icon: action.payload };
     case ACTIONS.ADD_NAME:
       return { ...item, name: action.payload };
+    case ACTIONS.CLEAR_ITEM:
+      return { icon: "", name: "" };
     default:
       item;
   }
 };
-
-// function newItem(name, icon) {
-//   return { name: name, icon: icon.name };
-// }
 
 export const NameGiverInput = ({
   placeholder,
@@ -122,20 +110,25 @@ export const NameGiverInput = ({
 }) => {
   const [items, setItems] = useState([]);
   const [item, dispatch] = useReducer(reducer, { icon: "", name: "" });
+  const formHeight = useContext(HeightContext);
 
   useEffect(() => {
     console.log(items);
   });
+  useEffect(() => {
+    formHeight();
+  }, [items]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!item) return;
     setItems([...items, item]);
+    dispatch({ type: ACTIONS.CLEAR_ITEM });
     alert("submited");
   };
 
   return (
-    <div className="hidden h-max w-full flex-col gap-2">
+    <div className="flex h-max w-full flex-col gap-2">
       <form
         onSubmit={handleSubmit}
         className="flex h-max w-full flex-row items-center justify-between gap-2 rounded-lg bg-sad-blue p-2"
