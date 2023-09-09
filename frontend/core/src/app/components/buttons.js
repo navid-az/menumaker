@@ -1,19 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
+import { FormDataContext } from "../(creator)/builder/components/builderForm";
 
 export function RadioBtn({ id, name, value, action }) {
-  const [btnStatus, setBtnStatus] = useState(0);
+  const [btnStatus, setBtnStatus] = useState(false);
+  const formData = useContext(FormDataContext);
 
-  const handleRadio = (e) => {
-    if (e.target.checked) {
-      action(btnStatus);
-      setBtnStatus(1);
-    } else {
-      action(btnStatus);
-      setBtnStatus(0);
+  useEffect(() => {
+    if (formData[name] == value) {
+      setBtnStatus((prev) => !prev);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    action(btnStatus);
+  }, [btnStatus]);
 
   return (
     <>
@@ -23,8 +25,7 @@ export function RadioBtn({ id, name, value, action }) {
         id={id}
         name={name}
         value={value}
-        onClick={(e) => handleRadio(e)}
-        // onChange={(e) => handler(e, btnStatus)}
+        onClick={() => setBtnStatus((prev) => !prev)}
       />
     </>
   );

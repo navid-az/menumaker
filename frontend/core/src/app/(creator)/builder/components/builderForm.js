@@ -8,6 +8,7 @@ import { gsap } from "gsap";
 import Image from "next/image";
 
 export const HeightContext = createContext(null);
+export const FormDataContext = createContext(null);
 const RadioGroupContext = createContext(null);
 
 // function SmallTiles({ value }) {
@@ -28,9 +29,9 @@ export function FormTab({
   description,
   icon_src,
   btn_type = "",
+  value = "",
   id = "",
   children,
-  button,
 }) {
   const formHeight = useContext(HeightContext);
   const radioBtnInfo = useContext(RadioGroupContext);
@@ -50,32 +51,32 @@ export function FormTab({
   };
 
   // sets the selected radio btn to the state
-  const handleRadioInput = () => {
-    var tabsGroup = document.querySelectorAll(`.${radioBtnInfo["group_name"]}`);
-    let radioBtn = document.getElementById(`radio-btn-${id}`);
-
-    tabsGroup.forEach((formTab) => {
-      formTab.style.borderColor = "#C5E5E9";
-      formTab.lastChild.style.display = "none";
-    });
-    radioBtn.checked = true;
-    formTab.style.borderColor = "#0F2C30";
-    childrenSection.current.style.display = "flex";
-    formHeight();
+  const handleRadioInput = (btnStatus) => {
+    var radioGroup = document.querySelectorAll(`.${radioBtnInfo.group_name}`);
+    let radioBtn = document.querySelector(`input[value=${value}]`);
+    if (btnStatus) {
+      radioGroup.forEach((formTab) => {
+        formTab.style.borderColor = "#C5E5E9";
+        formTab.lastChild.style.display = "none";
+      });
+      radioBtn.checked = btnStatus;
+      formTab.style.borderColor = "#0F2C30";
+      childrenSection.current.style.display = "flex";
+      formHeight();
+    }
   };
 
   return (
     <li
       id={`form-tab-${id}`}
       className={`${
-        btn_type == "radio" && radioBtnInfo["group_name"]
+        btn_type == "radio" && radioBtnInfo.group_name
       } duration-2000 flex w-96 select-none flex-col items-end justify-between gap-2 rounded-lg border-[3px] border-sad-blue bg-soft-blue p-3 text-royale-green transition-all ease-in-out`}
     >
       <div
         onClick={btn_type == "radio" ? handleRadioInput : undefined}
         className="flex w-full items-center justify-between"
       >
-        {button}
         {/* tab button type  */}
         {btn_type == "toggle" ? (
           <ToggleBtn
@@ -86,29 +87,27 @@ export function FormTab({
           <RadioBtn
             name={radioBtnInfo["group_name"]}
             id={`radio-btn-${id}`}
-            value={"single"}
-            action={(e, btnStatus) => handleRadioInput(e, btnStatus)}
+            value={value}
+            action={(btnStatus) => handleRadioInput(btnStatus)}
           ></RadioBtn>
         ) : (
           ""
         )}
         <div className="flex items-center justify-between gap-2">
           <h3 className="text-2xl font-bold">{title}</h3>
-          {icon_src ? (
+          {icon_src && (
             <Image
               src={icon_src}
               width={30}
               height={30}
               alt="section icon"
             ></Image>
-          ) : (
-            ""
           )}
         </div>
       </div>
       <p className="text-end font-normal">{description}</p>
       <section
-        className={`hidden ${!children ? "absolute" : ""}`}
+        className={`hidden w-full ${!children ? "absolute" : ""}`}
         ref={childrenSection}
       >
         {children}
@@ -157,21 +156,14 @@ export default function Form() {
   // const [links, setLinks] = useState([]);
 
   const [formData, setFormData] = useState({
-    mainPageType: 1,
+    main_page_type: "single",
     menuSectionsCount: 1,
     menuSections: [],
     links: [],
     phoneNumbers: [],
     locations: [],
-    ItemsPageType: "horizenal",
+    item_page_type: "horizenal",
   });
-
-  useEffect(() => {
-    // let radioBtn = document.getElementById(
-    //   `radio-btn-${formData.mainPageType}`
-    // );
-    // radioBtn.checked = true;
-  }, []);
 
   useEffect(() => {
     let formWrapper = document.getElementById("form-wrapper");
@@ -349,7 +341,6 @@ export default function Form() {
   return (
     <section className="flex w-96 flex-col justify-center gap-7 transition-all duration-300 ease-in-out">
       <header>
-        {/* section title  */}
         <h1
           id="section-title"
           className="translate-x-[200px] text-end text-3xl font-black text-royale-green opacity-0"
@@ -357,137 +348,144 @@ export default function Form() {
           {sectionTitle}
         </h1>
       </header>
-      <div
-        id="form-wrapper"
-        className={`flex w-full transition-all duration-300 ease-in-out`}
-      >
-        <HeightContext.Provider value={changeFormHeight}>
-          <FormSection id={1}>
-            <FormStep>
-              <RadioGroupContext.Provider
-                value={{ group_name: "main_page_type" }}
-              >
+      <FormDataContext.Provider value={formData}>
+        <div
+          id="form-wrapper"
+          className={`flex w-full transition-all duration-300 ease-in-out`}
+        >
+          <HeightContext.Provider value={changeFormHeight}>
+            <FormSection id={1}>
+              <FormStep>
+                <RadioGroupContext.Provider
+                  value={{ group_name: "main_page_type" }}
+                >
+                  <FormTab
+                    title="تک بخشی"
+                    description="دارای یک دکمه اصلی برای ورود به صفحه منو"
+                    icon_src="/images/form-icons/single.svg"
+                    id={1}
+                    btn_type="radio"
+                    value="single"
+                  >
+                    <NameGiverInput
+                      secondary_btn={{ name: "آیکون", toolTip: "prop2" }}
+                      placeholder="نام بخش را در اینجا بنویسید"
+                    ></NameGiverInput>
+                  </FormTab>
+                  <FormTab
+                    title="چند بخشی"
+                    description="دارای بخش های جداگانه مانند: منو کافه و منو رستوران"
+                    icon_src="/images/form-icons/couple.svg"
+                    id={2}
+                    btn_type="radio"
+                    value="couple"
+                  >
+                    <NameGiverInput
+                      secondary_btn={{ name: "آیکون", toolTip: "prop2" }}
+                      placeholder="نام بخش را در اینجا بنویسید"
+                    ></NameGiverInput>
+                  </FormTab>
+                  <FormTab
+                    title="بدون صفحه اصلی"
+                    description="کاربر با اسکن کد بلافاصله به صفحه آیتم ها هدایت میشود"
+                    icon_src="/images/form-icons/none.svg"
+                    id={3}
+                    btn_type="radio"
+                    value="none"
+                  ></FormTab>
+                </RadioGroupContext.Provider>
+              </FormStep>
+              <FormStep>
                 <FormTab
-                  title="تک بخشی"
+                  title="لینک ها"
+                  description="... لینک های تلگرام و اینستاگرام و"
+                  icon_src="/images/form-icons/link.svg"
+                  id={4}
+                  btn_type="toggle"
+                ></FormTab>
+                <FormTab
+                  title="شماره تماس"
+                  description="نمایش شماره تماس کافه/رستوران"
+                  icon_src="/images/form-icons/phone.svg"
+                  id={5}
+                  btn_type="toggle"
+                ></FormTab>
+                <FormTab
+                  title="موقعیت مکانی"
+                  description="نمایش آدرس و یا موقعت شما بر روی نقشه"
+                  icon_src="/images/form-icons/pin.svg"
+                  id={6}
+                  btn_type="toggle"
+                ></FormTab>
+              </FormStep>
+            </FormSection>
+            <FormSection id={2}>
+              <FormStep>
+                <RadioGroupContext.Provider
+                  value={{ group_name: "item_page_type" }}
+                >
+                  <FormTab
+                    title="عمودی"
+                    description="لیست آیتم ها به صورت عمودی نمایش داده میشود"
+                    icon_src="/images/form-icons/vertical-menu-icon.svg"
+                    btn_type="radio"
+                    value="vertical"
+                    id={10}
+                  ></FormTab>
+                  <FormTab
+                    title="افقی"
+                    description="لیست آیتم ها در بالای صفحه به صورت افقی نمایش داده میشود"
+                    icon_src="/images/form-icons/horizenal-menu-icon.svg"
+                    btn_type="radio"
+                    value="horizenal"
+                    id={11}
+                  ></FormTab>
+                </RadioGroupContext.Provider>
+              </FormStep>
+              <FormStep>
+                <FormTab
+                  title="لینک ها"
                   description="دارای یک دکمه اصلی برای ورود به صفحه منو"
                   icon_src="/images/form-icons/single.svg"
-                  id={1}
-                  btn_type="radio"
-                >
-                  <NameGiverInput
-                    secondary_btn={{ name: "آیکون", toolTip: "prop2" }}
-                    placeholder="نام بخش را در اینجا بنویسید"
-                  ></NameGiverInput>
-                </FormTab>
-                <FormTab
-                  title="چند بخشی"
-                  description="دارای بخش های جداگانه مانند: منو کافه و منو رستوران"
-                  icon_src="/images/form-icons/couple.svg"
-                  id={2}
-                  btn_type="radio"
-                >
-                  <NameGiverInput
-                    secondary_btn={{ name: "آیکون", toolTip: "prop2" }}
-                    placeholder="نام بخش را در اینجا بنویسید"
-                  ></NameGiverInput>
-                </FormTab>
-                <FormTab
-                  title="بدون صفحه اصلی"
-                  description="کاربر با اسکن کد بلافاصله به صفحه آیتم ها هدایت میشود"
-                  icon_src="/images/form-icons/none.svg"
-                  id={3}
-                  btn_type="radio"
-                ></FormTab>
-              </RadioGroupContext.Provider>
-            </FormStep>
-            <FormStep>
-              <FormTab
-                title="لینک ها"
-                description="... لینک های تلگرام و اینستاگرام و"
-                icon_src="/images/form-icons/link.svg"
-                id={4}
-                btn_type="toggle"
-              ></FormTab>
-              <FormTab
-                title="شماره تماس"
-                description="نمایش شماره تماس کافه/رستوران"
-                icon_src="/images/form-icons/phone.svg"
-                id={5}
-                btn_type="toggle"
-              ></FormTab>
-              <FormTab
-                title="موقعیت مکانی"
-                description="نمایش آدرس و یا موقعت شما بر روی نقشه"
-                icon_src="/images/form-icons/pin.svg"
-                id={6}
-                btn_type="toggle"
-              ></FormTab>
-            </FormStep>
-          </FormSection>
-          <FormSection id={2}>
-            <FormStep>
-              <RadioGroupContext.Provider
-                value={{ group_name: "main_page_type" }}
-              >
-                <FormTab
-                  title="عمودی"
-                  description="لیست آیتم ها به صورت عمودی نمایش داده میشود"
-                  icon_src="/images/form-icons/vertical-menu-icon.svg"
-                  btn_type="radio"
                   id={10}
                 ></FormTab>
                 <FormTab
-                  title="افقی"
-                  description="لیست آیتم ها در بالای صفحه به صورت افقی نمایش داده میشود"
-                  btn_type="radio"
-                  icon_src="/images/form-icons/horizenal-menu-icon.svg"
+                  title="شماره تماس"
+                  description="دارای یک دکمه اصلی برای ورود به صفحه منو"
+                  icon_src="/images/form-icons/single.svg"
                   id={11}
                 ></FormTab>
-              </RadioGroupContext.Provider>
-            </FormStep>
-            <FormStep>
-              <FormTab
-                title="لینک ها"
-                description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/form-icons/single.svg"
-                id={10}
-              ></FormTab>
-              <FormTab
-                title="شماره تماس"
-                description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/form-icons/single.svg"
-                id={11}
-              ></FormTab>
-              <FormTab
-                title="شماره تماس"
-                description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/form-icons/single.svg"
-                id={11}
-              ></FormTab>
-              <FormTab
-                title="شماره تماس"
-                description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/form-icons/single.svg"
-                id={11}
-              ></FormTab>
-            </FormStep>
-            <FormStep>
-              <FormTab
-                title="لینک ها"
-                description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/form-icons/single.svg"
-                id={10}
-              ></FormTab>
-              <FormTab
-                title="شماره تماس"
-                description="دارای یک دکمه اصلی برای ورود به صفحه منو"
-                icon_src="/images/form-icons/single.svg"
-                id={11}
-              ></FormTab>
-            </FormStep>
-          </FormSection>
-        </HeightContext.Provider>
-      </div>
+                <FormTab
+                  title="شماره تماس"
+                  description="دارای یک دکمه اصلی برای ورود به صفحه منو"
+                  icon_src="/images/form-icons/single.svg"
+                  id={11}
+                ></FormTab>
+                <FormTab
+                  title="شماره تماس"
+                  description="دارای یک دکمه اصلی برای ورود به صفحه منو"
+                  icon_src="/images/form-icons/single.svg"
+                  id={11}
+                ></FormTab>
+              </FormStep>
+              <FormStep>
+                <FormTab
+                  title="لینک ها"
+                  description="دارای یک دکمه اصلی برای ورود به صفحه منو"
+                  icon_src="/images/form-icons/single.svg"
+                  id={10}
+                ></FormTab>
+                <FormTab
+                  title="شماره تماس"
+                  description="دارای یک دکمه اصلی برای ورود به صفحه منو"
+                  icon_src="/images/form-icons/single.svg"
+                  id={11}
+                ></FormTab>
+              </FormStep>
+            </FormSection>
+          </HeightContext.Provider>
+        </div>
+      </FormDataContext.Provider>
 
       <footer className="flex w-full items-center justify-between">
         <Button
