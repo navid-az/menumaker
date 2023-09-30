@@ -1,10 +1,12 @@
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ToolTip";
+import Image from "next/image";
 
 export default function Button({
   variant,
   size,
   onClick,
   content,
+  iconSrc = "",
   style = "",
   name = "",
   toolTip = "",
@@ -26,6 +28,11 @@ export default function Button({
           }  bg-royale-green px-5 py-2 text-sm font-bold text-sky-blue transition-all duration-200 ease-in-out hover:gap-4 active:scale-90 ${style}`}
         >
           {content}
+          {iconSrc ? (
+            <Image src={iconSrc} width={20} height={20} alt={content}></Image>
+          ) : (
+            ""
+          )}
         </button>
       </TooltipTrigger>
       {toolTip ? (

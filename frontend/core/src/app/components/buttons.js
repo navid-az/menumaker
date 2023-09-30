@@ -56,7 +56,7 @@ export function ToggleBtn({ id, action }) {
       <input className="hidden" type="checkbox" id={id} />
       <label
         className="relative flex h-7 w-14 cursor-pointer items-center rounded-full border-2 border-royale-green bg-none transition-all duration-200 ease-in-out "
-        for={id}
+        htmlFor={id}
         onClick={handleToggle}
       >
         <div

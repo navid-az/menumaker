@@ -153,17 +153,24 @@ export default function Form() {
 
   const [sectionTitle, setSectionTitle] = useState();
 
-  // const [links, setLinks] = useState([]);
-
   const [formData, setFormData] = useState({
-    main_page_type: "single",
+    main_page_type: "couple",
     menuSectionsCount: 1,
-    menuSections: [],
+    single_menu_sections: [],
+    couple_menu_sections: [
+      { id: 1, icon: "5", name: "menu" },
+      { id: 25, icon: "3", name: "burger" },
+    ],
     links: [],
     phoneNumbers: [],
     locations: [],
     item_page_type: "horizenal",
   });
+
+  //chnages the form height each time the formData changes
+  useEffect(() => {
+    changeFormHeight();
+  }, [formData]);
 
   useEffect(() => {
     let formWrapper = document.getElementById("form-wrapper");
@@ -368,6 +375,8 @@ export default function Form() {
                     value="single"
                   >
                     <NameGiverInput
+                      setFormData={setFormData}
+                      name="single_menu_sections"
                       secondary_btn={{ name: "آیکون", toolTip: "prop2" }}
                       placeholder="نام بخش را در اینجا بنویسید"
                     ></NameGiverInput>
@@ -381,6 +390,8 @@ export default function Form() {
                     value="couple"
                   >
                     <NameGiverInput
+                      setFormData={setFormData}
+                      name="couple_menu_sections"
                       secondary_btn={{ name: "آیکون", toolTip: "prop2" }}
                       placeholder="نام بخش را در اینجا بنویسید"
                     ></NameGiverInput>

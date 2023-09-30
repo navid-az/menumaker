@@ -1,11 +1,179 @@
 "use client";
 
 import { useState, useRef, useReducer, useEffect, useContext } from "react";
-import { HeightContext } from "../(creator)/builder/components/builderForm";
-import Image from "next/image";
+import { FormDataContext } from "../(creator)/builder/components/builderForm";
 import { Popover, PopoverTrigger, PopoverContent } from "./PopOver";
 import IconSelectorList from "./IconSelectorLIst";
 import Button from "./Button";
+
+const ACTIONS = {
+  ADD_ITEM: "addItem",
+  ADD_ICON: "addIcon",
+  ADD_NAME: "add_name",
+};
+
+const reducer = (item, action) => {
+  switch (action.type) {
+    case ACTIONS.ADD_ICON:
+      return { ...item, icon: action.payload };
+    case ACTIONS.ADD_NAME:
+      return { ...item, name: action.payload, id: crypto.randomUUID() };
+    default:
+      item;
+  }
+};
+
+export const NameGiverInput = ({
+  placeholder,
+  valueCount = 2,
+  name = "",
+  secondary_btn = { name: "iconSelector", toolTip: "" },
+  setFormData,
+}) => {
+  const [item, dispatch] = useReducer(reducer, { icon: "", name: "" });
+  const [editMode, setEditMode] = useState(false);
+  const [itemId, setItemId] = useState(null);
+  const formData = useContext(FormDataContext);
+
+  const inputRef = useRef(null);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!item) return;
+    setFormData({
+      ...formData,
+      [name]: [...formData[name], item],
+    });
+  };
+
+  const deleteItem = (itemId) => {
+    let newInputArrey = formData[name].filter((item) => item.id !== itemId);
+
+    setFormData({ ...formData, [name]: newInputArrey });
+    setEditMode(false);
+  };
+  const editItem = (itemName, id) => {
+    setItemId(id);
+    setEditMode(true);
+    inputRef.current.focus();
+    inputRef.current.value = itemName;
+  };
+  //needs attention
+  const editing = () => {
+    const updatedItemList = [...formData[name]].map((bro) => {
+      if (bro.id === itemId) {
+        bro.name = item.name;
+        bro.icon = item.icon;
+      }
+      return bro;
+    });
+    setFormData({
+      ...formData,
+      [name]: updatedItemList,
+    });
+    setTimeout(() => {
+      setEditMode(false);
+    }, 250);
+  };
+
+  return (
+    <div className="flex h-max w-full flex-col gap-2">
+      <form
+        onSubmit={handleSubmit}
+        className="flex h-max w-full flex-row items-center justify-between gap-2 rounded-lg bg-sad-blue p-2"
+      >
+        <section className="flex gap-2">
+          {editMode == true ? (
+            <Button
+              type="button"
+              content="ویرایش"
+              variant="square"
+              style="!h-full"
+              onClick={editing}
+            ></Button>
+          ) : (
+            <Button
+              type="submit"
+              content="ثبت"
+              variant="square"
+              style="!h-full"
+            ></Button>
+          )}
+
+          <Popover>
+            <PopoverTrigger>
+              <Button
+                variant="square"
+                content="آیکون"
+                style="!h-full"
+                toolTip="انتخاب یک آیکون برای بخش مورد نظر"
+              ></Button>
+            </PopoverTrigger>
+            <PopoverContent className="Popover">
+              <IconSelectorList
+                action={(selectedIcon) => {
+                  dispatch({
+                    type: ACTIONS.ADD_ICON,
+                    payload: selectedIcon.pk,
+                  });
+                }}
+              ></IconSelectorList>
+            </PopoverContent>
+          </Popover>
+        </section>
+        <input
+          ref={inputRef}
+          type="text"
+          name={name}
+          className="h-full w-full rounded-lg bg-sad-blue p-1 text-end text-sm placeholder:text-royale-green-dark focus:outline-0"
+          placeholder={placeholder}
+          value={item.name}
+          onChange={(e) => {
+            dispatch({
+              type: ACTIONS.ADD_NAME,
+              payload: e.target.value,
+            });
+          }}
+        />
+      </form>
+      {/* items list */}
+      {formData[name].length != 0 && (
+        <section className="flex flex-col gap-2 rounded-md bg-sad-blue p-2">
+          {/* <h3 className="w-full text-right font-semibold text-royale-green">
+            لیست بخش ها
+          </h3> */}
+          {formData[name].map((item) => (
+            <div
+              key={item.id}
+              className="flex items-center justify-between p-1"
+            >
+              <section className="flex gap-2">
+                <p>{item.icon}</p>
+                <p>{item.name}</p>
+              </section>
+              <div className="flex gap-2">
+                <Button
+                  variant="square"
+                  style={"!bg-inherit !p-2"}
+                  iconSrc="/images/form-icons/edit.svg"
+                  name="edit"
+                  onClick={() => editItem(item.name, item.id)}
+                ></Button>
+                <Button
+                  variant="square"
+                  style={"!bg-inherit !p-2"}
+                  iconSrc="/images/form-icons/trash.svg"
+                  name="delete"
+                  onClick={() => deleteItem(item.id)}
+                ></Button>
+              </div>
+            </div>
+          ))}
+        </section>
+      )}
+    </div>
+  );
+};
 
 // export function TextInput({
 //   type = "text",
@@ -83,116 +251,6 @@ import Button from "./Button";
 //     </>
 //   );
 // }
-
-const ACTIONS = {
-  ADD_ITEM: "addItem",
-  ADD_ICON: "addIcon",
-  ADD_NAME: "add_name",
-};
-
-const reducer = (item, action) => {
-  switch (action.type) {
-    case ACTIONS.ADD_ICON:
-      return { ...item, icon: action.payload };
-    case ACTIONS.ADD_NAME:
-      return { ...item, name: action.payload };
-    case ACTIONS.CLEAR_ITEM:
-      return { icon: "", name: "" };
-    default:
-      item;
-  }
-};
-
-export const NameGiverInput = ({
-  placeholder,
-  valueCount = 2,
-  secondary_btn = { name: "iconSelector", toolTip: "" },
-}) => {
-  const [items, setItems] = useState([]);
-  const [item, dispatch] = useReducer(reducer, { icon: "", name: "" });
-  const formHeight = useContext(HeightContext);
-
-  useEffect(() => {
-    console.log(items);
-  });
-  useEffect(() => {
-    formHeight();
-  }, [items]);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!item) return;
-    setItems([...items, item]);
-    dispatch({ type: ACTIONS.CLEAR_ITEM });
-    alert("submited");
-  };
-
-  return (
-    <div className="flex h-max w-full flex-col gap-2">
-      <form
-        onSubmit={handleSubmit}
-        className="flex h-max w-full flex-row items-center justify-between gap-2 rounded-lg bg-sad-blue p-2"
-      >
-        <section className="flex gap-2">
-          <Button
-            type="submit"
-            content="ثبت"
-            variant="square"
-            style="!h-full"
-          ></Button>
-          <Popover>
-            <PopoverTrigger>
-              <Button
-                variant="square"
-                content="آیکون"
-                style="!h-full"
-                toolTip="انتخاب یک آیکون برای بخش مورد نظر"
-              ></Button>
-            </PopoverTrigger>
-            <PopoverContent className="Popover">
-              <IconSelectorList
-                action={(selectedIcon) => {
-                  dispatch({
-                    type: ACTIONS.ADD_ICON,
-                    payload: selectedIcon.pk,
-                  });
-                }}
-              ></IconSelectorList>
-            </PopoverContent>
-          </Popover>
-        </section>
-        <input
-          name="link-input"
-          className="h-full w-full rounded-lg bg-sad-blue p-1 text-end text-sm placeholder:text-royale-green-dark focus:outline-0"
-          placeholder={placeholder}
-          type="text"
-          value={item.name}
-          onChange={(e) => {
-            dispatch({
-              type: ACTIONS.ADD_NAME,
-              payload: e.target.value,
-            });
-          }}
-        />
-      </form>
-      {/* items list */}
-      {items.length != 0 && (
-        <section className="flex flex-col gap-2 rounded-md bg-sad-blue p-2">
-          <h3 className="w-full text-right font-semibold text-royale-green">
-            لیست بخش ها
-          </h3>
-          {items.map((item) => (
-            <div className="border-t-2 border-royale-green p-1">
-              {item.name}
-              {item.icon}
-            </div>
-          ))}
-        </section>
-      )}
-    </div>
-  );
-};
-
 const Input = ({
   placeholder,
   hasSubmitBtn = true,
