@@ -4,7 +4,7 @@ import { useState, useContext, useEffect } from "react";
 import { FormDataContext } from "../(creator)/builder/components/builderForm";
 
 export function RadioBtn({ id, name, value, action }) {
-  const [btnStatus, setBtnStatus] = useState(false);
+  const [btnStatus, setBtnStatus] = useState(0);
   const formData = useContext(FormDataContext);
 
   useEffect(() => {
@@ -20,7 +20,7 @@ export function RadioBtn({ id, name, value, action }) {
   return (
     <>
       <input
-        className="m-0 grid h-7 w-7 appearance-none place-content-center rounded-full border-2 border-solid border-royale-green content-none before:h-5 before:w-5 before:scale-0 before:rounded-full before:bg-royale-green before:transition-transform before:duration-200 before:ease-in-out checked:before:scale-100"
+        className="m-0 grid h-7 w-7 cursor-pointer appearance-none place-content-center rounded-full border-2 border-solid border-royale-green content-none before:h-5 before:w-5 before:scale-0 before:rounded-full before:bg-royale-green before:transition-transform before:duration-200 before:ease-in-out checked:before:scale-100"
         type="radio"
         id={id}
         name={name}

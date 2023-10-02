@@ -3,26 +3,12 @@
 import { useState, useEffect, useRef, useContext, createContext } from "react";
 import { NameGiverInput } from "@/app/components/inputs";
 import { ToggleBtn, RadioBtn } from "@/app/components/buttons";
-import Button from "@/app/components/Button";
-import { gsap } from "gsap";
 import Image from "next/image";
+import StepNavigator from "./StepNavigator";
 
 export const HeightContext = createContext(null);
 export const FormDataContext = createContext(null);
 const RadioGroupContext = createContext(null);
-
-// function SmallTiles({ value }) {
-//   return (
-//     <div className="flex items-center justify-between gap-2 rounded-lg bg-sad-blue p-2">
-//       {value.linkType}
-//       {value.icon != "" ? (
-//         <Image src={value.icon} width={24} height={24}></Image>
-//       ) : (
-//         ""
-//       )}
-//     </div>
-//   );
-// }
 
 export function FormTab({
   title,
@@ -38,57 +24,57 @@ export function FormTab({
   const childrenSection = useRef(null);
   let formTab = document.getElementById(`form-tab-${id}`);
 
-  // shows/hide formTab children
-  const handleToggle = (btnStatus) => {
-    if (btnStatus == 0) {
-      formTab.style.borderColor = "#0F2C30";
-      childrenSection.current.style.display = "flex";
-    } else {
-      formTab.style.borderColor = "#C5E5E9";
-      childrenSection.current.style.display = "none";
-    }
-    formHeight();
-  };
-
-  // sets the selected radio btn to the state
-  const handleRadioInput = (btnStatus) => {
-    var radioGroup = document.querySelectorAll(`.${radioBtnInfo.group_name}`);
-    let radioBtn = document.querySelector(`input[value=${value}]`);
-    if (btnStatus) {
-      radioGroup.forEach((formTab) => {
+  // handles both toggle and radio buttons
+  const handleBtn = (btnType, btnStatus) => {
+    if (btnType == "toggle") {
+      if (btnStatus == 0) {
+        formTab.style.borderColor = "#0F2C30";
+        childrenSection.current.style.display = "flex";
+      } else {
         formTab.style.borderColor = "#C5E5E9";
-        formTab.lastChild.style.display = "none";
-      });
-      radioBtn.checked = btnStatus;
-      formTab.style.borderColor = "#0F2C30";
-      childrenSection.current.style.display = "flex";
-      formHeight();
+        childrenSection.current.style.display = "none";
+      }
+    } else if (btnType == "radio") {
+      var radioGroup = document.querySelectorAll(`.${radioBtnInfo.group_name}`);
+      let radioBtn = document.querySelector(`input[value=${value}]`);
+      if (btnStatus) {
+        radioGroup.forEach((formTab) => {
+          formTab.style.borderColor = "#C5E5E9";
+          formTab.lastChild.style.display = "none";
+        });
+        radioBtn.checked = btnStatus;
+        formTab.style.borderColor = "#0F2C30";
+        childrenSection.current.style.display = "flex";
+        formHeight();
+      }
     }
   };
 
   return (
     <li
+      onClick={
+        btn_type == "radio"
+          ? (btnStatus) => handleBtn(btn_type, btnStatus)
+          : undefined
+      }
       id={`form-tab-${id}`}
       className={`${
         btn_type == "radio" && radioBtnInfo.group_name
-      } duration-2000 flex w-96 select-none flex-col items-end justify-between gap-2 rounded-lg border-[3px] border-sad-blue bg-soft-blue p-3 text-royale-green transition-all ease-in-out`}
+      } duration-2000 flex w-96 cursor-pointer select-none flex-col items-end justify-between gap-2 rounded-lg border-[3px] border-sad-blue bg-soft-blue p-3 text-royale-green transition-all ease-in-out`}
     >
-      <div
-        onClick={btn_type == "radio" ? handleRadioInput : undefined}
-        className="flex w-full items-center justify-between"
-      >
+      <div className="flex w-full items-center justify-between">
         {/* tab button type  */}
         {btn_type == "toggle" ? (
           <ToggleBtn
             id={`toggle-btn-${id}`}
-            action={(toggleStatus) => handleToggle(toggleStatus)}
+            action={(btnStatus) => handleBtn(btn_type, btnStatus)}
           ></ToggleBtn>
         ) : btn_type == "radio" ? (
           <RadioBtn
             name={radioBtnInfo["group_name"]}
             id={`radio-btn-${id}`}
             value={value}
-            action={(btnStatus) => handleRadioInput(btnStatus)}
+            action={(btnStatus) => handleBtn(btn_type, btnStatus)}
           ></RadioBtn>
         ) : (
           ""
@@ -107,7 +93,7 @@ export function FormTab({
       </div>
       <p className="text-end font-normal">{description}</p>
       <section
-        className={`hidden w-full ${!children ? "absolute" : ""}`}
+        className={`hidden w-full ${!children && "absolute"}`}
         ref={childrenSection}
       >
         {children}
@@ -128,6 +114,8 @@ export function FormSection({ children, id }) {
 }
 
 export function FormStep({ children }) {
+  const [activeStep, setActiveStep] = useState(null);
+
   return (
     <ul
       className={
@@ -140,19 +128,11 @@ export function FormStep({ children }) {
 }
 
 export default function Form() {
-  const [currentSection, setCurrentSection] = useState(1);
-
-  const [sectionCount, setSectionCount] = useState(1);
-  const [currentStepNum, setCurrentStepNum] = useState(1);
   const [currentStep, setCurrentStep] = useState(1);
-  const [stepCount, setStepCount] = useState(1);
-
   const [formHeight, setFormHeight] = useState("");
-  // will change depending on which changeStepBtn has been clicked(next/prev)
-  const [changeStepBtn, setChangeStepBtn] = useState("next");
-
   const [sectionTitle, setSectionTitle] = useState();
 
+  // user's form data
   const [formData, setFormData] = useState({
     main_page_type: "couple",
     menuSectionsCount: 1,
@@ -175,159 +155,13 @@ export default function Form() {
   useEffect(() => {
     let formWrapper = document.getElementById("form-wrapper");
 
-    // calculating sectionCount
-    setSectionCount(formWrapper.childNodes.length);
-
     // changes the form height depending on the children
     formWrapper.style.height = `${formHeight}px`;
   }, [formHeight]);
 
-  useEffect(() => {
-    // calculate current section step count
-    let stepsCount = document.querySelector(`#form-section-${currentSection}`)
-      .childNodes.length;
-    setStepCount(stepsCount);
-    if (changeStepBtn == "next") {
-      setCurrentStepNum(1);
-    } else if (changeStepBtn == "prev") {
-      let stepCounts = document.querySelector(`#form-section-${currentSection}`)
-        .childNodes.length;
-      setCurrentStepNum(stepCounts);
-    }
-
-    // change section title depending on the current section
-    let titles = ["صفحه اصلی", "صفحه آیتم ها", "صفحه سفارشات"];
-    let currentSectionTitle = document.getElementById("section-title");
-
-    gsap.to(currentSectionTitle, { x: 200, duration: 0.25, opacity: 0 });
-    gsap.to(currentSectionTitle, { x: 0, duration: 0.25, opacity: 1 });
-    setSectionTitle(titles[currentSection - 1]);
-  }, [currentSection]);
-
-  useEffect(() => {
-    // animating prev and next steps when the next/prev btn is clicked
-    if (changeStepBtn == "next") {
-      if (currentStepNum != 1) {
-        let prevStep = document.querySelector(
-          `#form-section-${currentSection} ul:nth-child(${currentStepNum - 1})`
-        );
-        gsap.to(prevStep, {
-          x: -200,
-          duration: 0.05,
-          opacity: 0,
-          pointerEvents: "none",
-        });
-      } else if (currentSection > 1 && currentStepNum == 1) {
-        let prevSectionLastChild = document.querySelector(
-          `#form-section-${currentSection - 1}`
-        ).lastChild;
-        gsap.to(prevSectionLastChild, {
-          x: -200,
-          duration: 0.05,
-          opacity: 0,
-          pointerEvents: "none",
-        });
-      }
-    } else if (changeStepBtn == "prev") {
-      if (currentStepNum != stepCount) {
-        let nextStep = document.querySelector(
-          `#form-section-${currentSection} ul:nth-child(${currentStepNum + 1})`
-        );
-        gsap.to(nextStep, {
-          x: 200,
-          duration: 0.05,
-          opacity: 0,
-          pointerEvents: "none",
-        });
-      }
-      if (currentSection < sectionCount && currentStepNum == stepCount) {
-        let nextSectionLastChild = document.querySelector(
-          `#form-section-${currentSection + 1}`
-        ).firstChild;
-        gsap.to(nextSectionLastChild, {
-          x: 200,
-          duration: 0.05,
-          opacity: 0,
-          pointerEvents: "none",
-        });
-      }
-    }
-
-    // shows the current step after the change btn click
-    let currentSteps = document.querySelector(
-      `#form-section-${currentSection} ul:nth-child(${currentStepNum})`
-    );
-    setCurrentStep(currentSteps);
-
-    setFormHeight(currentSteps.offsetHeight);
-
-    gsap.to(currentSteps, {
-      x: 0,
-      duration: 0.05,
-      opacity: 1,
-      pointerEvents: "auto",
-      delay: 0.03,
-    });
-  }, [currentStepNum]);
-
   // changes form height to the size of current active step
   const changeFormHeight = () => {
     setFormHeight(currentStep.offsetHeight);
-  };
-
-  // for when the change buttons are clicked(next/prev)
-  const handleChangeBtn = (e) => {
-    e.preventDefault();
-    if (e.target.name == "next") {
-      setChangeStepBtn("next");
-      // if its the last step don't move anymore
-      if (currentSection == sectionCount && currentStepNum == stepCount) {
-        // wiggle.restart();
-      } else {
-        // move to the 'next' step
-        if (stepCount != currentStepNum) {
-          setCurrentStepNum(currentStepNum + 1);
-        } else {
-          setCurrentSection(currentSection + 1);
-        }
-      }
-    } else if (e.target.name == "prev") {
-      // move to the 'prev' step
-      setChangeStepBtn("prev");
-      if (currentSection == 1 && currentStepNum == 1) {
-      } else {
-        if (currentStepNum != 1) {
-          setCurrentStepNum(currentStepNum - 1);
-        } else {
-          setCurrentSection(currentSection - 1);
-        }
-      }
-    }
-  };
-
-  const handleDotBtn = (btnId) => {
-    let difference = Math.abs(btnId - currentStepNum);
-
-    if (currentStepNum > btnId) {
-      setChangeStepBtn("prev");
-      for (let i = 1; i <= difference; i++) {
-        gsap.to(currentStep, {
-          x: -200,
-          duration: 0.05,
-          opacity: 0,
-          delay: 0.03,
-        });
-      }
-    } else if (currentStepNum < btnId) {
-      setChangeStepBtn("next");
-      gsap.to(currentStep, {
-        x: 200,
-        duration: 0.05,
-        opacity: 0,
-        delay: 0.03,
-      });
-    }
-    setCurrentStepNum(btnId);
   };
 
   // const handleLinks = (e) => {
@@ -499,30 +333,12 @@ export default function Form() {
       </FormDataContext.Provider>
 
       <footer className="flex w-full items-center justify-between">
-        <Button
-          name="prev"
-          variant="circular"
-          content="قبلی"
-          onClick={(e) => handleChangeBtn(e, currentSection)}
-        ></Button>
-        <div className="flex w-min items-center justify-between gap-1 rounded-full bg-soft-blue p-2">
-          {[...Array(stepCount)].map((e, i) => (
-            <span
-              onClick={() => handleDotBtn(i + 1)}
-              className={`${
-                currentStepNum == i + 1
-                  ? "border-royale-green bg-royale-green"
-                  : "border-sad-blue bg-sad-blue"
-              } border-1 h-3 w-3 cursor-pointer select-none rounded-full border-2 transition duration-200 ease-in-out hover:border-2 hover:border-royale-green hover:bg-sky-blue`}
-            ></span>
-          ))}
-        </div>
-        <Button
-          name="next"
-          variant="circular"
-          content="بعدی"
-          onClick={(e) => handleChangeBtn(e, currentSection)}
-        ></Button>
+        <StepNavigator
+          currentStep={currentStep}
+          setCurrentStep={setCurrentStep}
+          setFormHeight={setFormHeight}
+          setSectionTitle={setSectionTitle}
+        ></StepNavigator>
       </footer>
     </section>
   );
