@@ -3,6 +3,8 @@ import React, { useEffect, useState, useReducer } from "react";
 import GoBackBtn from "../components/GoBackBtn";
 import IconSelectorList from "../components/iconSelectorLIst";
 
+import MenuItem from "../menu/components/MenuItem";
+
 const ACTIONS = {
   ADD_ITEM: "addItem",
   ADD_ICON: "addIcon",
@@ -24,10 +26,6 @@ export default function Pricing() {
   const [items, setItems] = useState([]);
   const [item, dispatch] = useReducer(reducer, { icon: "", name: "" });
 
-  // useEffect(() => {
-  //   console.log(items);
-  // });
-
   const handleSubmit = (e) => {
     e.preventDefault();
     setItems([...items, item]);
@@ -36,47 +34,19 @@ export default function Pricing() {
 
   return (
     <>
-      <GoBackBtn></GoBackBtn>
-      {/* form */}
-      <br />
-      <br />
-      <br />
-
-      <form
-        onSubmit={handleSubmit}
-        className="flex justify-between bg-red-600 p-4"
-      >
-        <input
-          type="text"
-          name="section-name"
-          value={item.name}
-          onChange={(e) => {
-            dispatch({
-              type: ACTIONS.ADD_NAME,
-              payload: e.target.value,
-            });
-          }}
-          placeholder="بنویس اینجا"
-        />
-        <button type="button" className="bg-blue-400 p-2">
-          آیکون
-        </button>
-        <IconSelectorList
-          action={(selectedIcon) => {
-            dispatch({
-              type: ACTIONS.ADD_ICON,
-              payload: selectedIcon.pk,
-            });
-          }}
-        ></IconSelectorList>
-        <button type="submit" className="bg-blue-400 p-2">
-          ثبت
-        </button>
-      </form>
-      {item.name}
-      {item.icon}
-      {/* items list  */}
-      <section></section>
+      <div className="flex flex-col gap-2 p-2 sm:gap-4 sm:p-4">
+        <GoBackBtn></GoBackBtn>
+        <br />
+        <br />
+        <MenuItem
+          price="۱۸۳۰۰۰"
+          body="پپرونی،ففل دلمه،سس سالسا،چیلی،قارچ"
+          title="پیتزای پپرونی"
+        ></MenuItem>
+        <MenuItem></MenuItem>
+        <MenuItem></MenuItem>
+        <MenuItem></MenuItem>
+      </div>
     </>
   );
 }
