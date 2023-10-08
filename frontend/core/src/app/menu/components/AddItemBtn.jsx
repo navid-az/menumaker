@@ -1,4 +1,3 @@
-import GoBackBtn from "@/app/components/GoBackBtn";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
@@ -66,7 +65,7 @@ export default function AddItemBtn({
         </section>
       ) : (
         <button
-          className={`flex h-full w-full flex-none items-center ${borderRadius} gap-2 bg-${secondaryColor} justify-between px-2 sm:gap-4 sm:px-3`}
+          className={`flex h-full w-full flex-none items-center ${borderRadius} gap-2 bg-${secondaryColor} justify-center px-4 sm:gap-4`}
           onClick={() => setValue((prevValue) => prevValue + 1)}
         >
           <p className=" flex-initial text-xs font-semibold sm:text-base">

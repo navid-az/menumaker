@@ -1,53 +1,51 @@
 "use client";
-import React, { useEffect, useState, useReducer } from "react";
+import React, {
+  useEffect,
+  useState,
+  useReducer,
+  useContext,
+  createContext,
+  useRef,
+} from "react";
 import GoBackBtn from "../components/GoBackBtn";
-import IconSelectorList from "../components/iconSelectorLIst";
-
 import MenuItem from "../menu/components/MenuItem";
+import ItemsCategory from "../menu/components/ItemsCategory";
 
-const ACTIONS = {
-  ADD_ITEM: "addItem",
-  ADD_ICON: "addIcon",
-  ADD_NAME: "add_name",
-};
-
-const reducer = (item, action) => {
-  switch (action.type) {
-    case ACTIONS.ADD_ICON:
-      return { ...item, icon: action.payload };
-    case ACTIONS.ADD_NAME:
-      return { ...item, name: action.payload };
-    default:
-      item;
-  }
-};
+export const colors = createContext(null);
 
 export default function Pricing() {
-  const [items, setItems] = useState([]);
-  const [item, dispatch] = useReducer(reducer, { icon: "", name: "" });
+  const [scrolled, setScrolled] = useState(0);
+  let type = "vertical";
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setItems([...items, item]);
-    alert("submited");
-  };
-
+  const menuColors = { primary: "royale-green", secondary: "sky-blue" };
   return (
-    <>
-      <div className="flex flex-col gap-2 p-2 sm:gap-4 sm:p-4">
-        <GoBackBtn></GoBackBtn>
+    <div className="relative">
+      <colors.Provider value={menuColors}>
+        {/* <GoBackBtn></GoBackBtn>
         <br />
+        <br></br> */}
+        <ItemsCategory></ItemsCategory>
+        <div
+          className={`w-full gap-2 px-2 pt-12 sm:gap-4 sm:px-4 ${
+            type == "vertical" ? "grid sm:grid-cols-2" : "flex flex-col"
+          }`}
+        >
+          {/* <GoBackBtn></GoBackBtn>
         <br />
-        <MenuItem
-          price="۱۸۳۰۰۰"
-          body="پپرونی،ففل دلمه،سس سالسا،چیلی،قارچ"
-          title="پیتزای پپرونی"
-        ></MenuItem>
-        <MenuItem></MenuItem>
-        <MenuItem></MenuItem>
-        <MenuItem></MenuItem>
-      </div>
-    </>
+        <br /> */}
+          <MenuItem
+            price="۱۸۳۰۰۰"
+            body="پپرونی،ففل دلمه،سس سالسا،چیلی،قارچ"
+            title="پیتزای پپرونی"
+            type={type}
+          ></MenuItem>
+          <MenuItem></MenuItem>
+          <MenuItem></MenuItem>
+          <MenuItem></MenuItem>
+        </div>
+      </colors.Provider>
+      {scrolled}
+    </div>
   );
 }
 
