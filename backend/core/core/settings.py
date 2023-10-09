@@ -40,9 +40,11 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "accounts",
     "pickers",
+    'menu',
     # 3rd party packages
     "rest_framework",
     "corsheaders",
+    "colorfield",
 ]
 
 MIDDLEWARE = [

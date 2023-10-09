@@ -26,8 +26,9 @@ class User(AbstractBaseUser):
     @property
     def is_staff(self):
         return self.is_admin
-
-
+    
+    def __str__(self):
+        return f'{self.phone_number or self.email}'
 class OtpCode(models.Model):
     phone_number = models.CharField(max_length=11, unique=True, null=True, blank=True)
     email = models.EmailField(max_length=255, unique=True, null=True, blank=True)
