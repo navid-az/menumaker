@@ -15,24 +15,21 @@ export const colors = createContext(null);
 
 export default function Pricing() {
   const [scrolled, setScrolled] = useState(0);
+
+  useEffect(() => {}, []);
   let type = "vertical";
 
   const menuColors = { primary: "royale-green", secondary: "sky-blue" };
   return (
     <div className="relative">
       <colors.Provider value={menuColors}>
-        {/* <GoBackBtn></GoBackBtn>
-        <br />
-        <br></br> */}
+        <GoBackBtn absolute={false}></GoBackBtn>
         <ItemsCategory></ItemsCategory>
         <div
           className={`w-full gap-2 px-2 pt-12 sm:gap-4 sm:px-4 ${
             type == "vertical" ? "grid sm:grid-cols-2" : "flex flex-col"
           }`}
         >
-          {/* <GoBackBtn></GoBackBtn>
-        <br />
-        <br /> */}
           <MenuItem
             price="۱۸۳۰۰۰"
             body="پپرونی،ففل دلمه،سس سالسا،چیلی،قارچ"

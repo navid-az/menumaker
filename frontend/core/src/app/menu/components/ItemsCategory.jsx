@@ -1,15 +1,16 @@
-export default function ItemsCategory({ scrolled }) {
+export default function ItemsCategory() {
+  const categories = [
+    { name: "پیتزا", is_active: true },
+    { name: "برگر", is_active: true },
+    { name: "نوشیدنی گرم", is_active: true },
+    { name: "نوشیدنی سرد", is_active: false },
+  ];
   return (
-    <div className="hide-scrollbar avoid-stretch fixed z-20 w-full gap-1 overflow-x-auto bg-white p-2 py-2 sm:px-4">
-      <CategoryBtn name="پیتزا"></CategoryBtn>
-      <CategoryBtn name="برگر"></CategoryBtn>
-      <CategoryBtn name="نوشیدنی سرد"></CategoryBtn>
-      <CategoryBtn name="نوشیدنی گرم"></CategoryBtn>
-      <CategoryBtn name="پاستا"></CategoryBtn>
-      <CategoryBtn name="پاستا"></CategoryBtn>
-      <CategoryBtn name="پاستا"></CategoryBtn>
-      <CategoryBtn name="پاستا"></CategoryBtn>
-      <CategoryBtn name="پاستا"></CategoryBtn>
+    <div className="hide-scrollbar avoid-stretch fixed z-20 flex w-full justify-end gap-1 overflow-x-auto bg-white p-2 py-2 sm:px-4">
+      {categories.map(
+        (category) =>
+          category.is_active && <CategoryBtn name={category.name}></CategoryBtn>
+      )}
     </div>
   );
 }

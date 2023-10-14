@@ -12,8 +12,7 @@ class IconGroup(models.Model):
 
 
 class Icon(models.Model):
-    group = models.ForeignKey(IconGroup,
-                               on_delete=models.CASCADE, related_name="icons")
+    group = models.ForeignKey(IconGroup, on_delete=models.CASCADE, related_name="icons")
     name = models.CharField(max_length=50)
     image = models.FileField(
         upload_to="iconPicker/icons/",

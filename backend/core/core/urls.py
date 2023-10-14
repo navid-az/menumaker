@@ -3,12 +3,13 @@ from django.urls import path, include
 from django.conf import settings  # new
 from django.conf.urls.static import static  # new
 
-app_name = "pickers"
+# app_name = "pickers"
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("accounts.urls", namespace="accounts")),
-    path("pickers/", include("pickers.urls", namespace="pickers")),
+    path("pickers/", include("pickers.urls", namespace="pickers")), 
+    path("menu/", include("menu.urls", namespace="menu")), 
 ]
 
 if settings.DEBUG:
