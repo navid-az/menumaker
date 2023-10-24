@@ -17,7 +17,7 @@ class Menu(models.Model):
         return self.name
 
 class ItemCategory(models.Model):
-    menu = models.ForeignKey(Menu, on_delete=models.CASCADE, related_name='item_categories')
+    menu = models.ForeignKey(Menu, on_delete=models.CASCADE, related_name='categories')
     name = models.CharField(max_length=20, blank=True, null=True)
     icon = models.ForeignKey(Icon, on_delete=models.DO_NOTHING, blank=True, null=True, related_name='item_categories')
     text_color = ColorField()
@@ -29,7 +29,7 @@ class ItemCategory(models.Model):
         return f'menu: {self.menu} - items category: {self.name} - {self.menu.pk}'
     
 class Item(models.Model):
-    category = models.ForeignKey(ItemCategory, on_delete=models.CASCADE)
+    category = models.ForeignKey(ItemCategory, on_delete=models.CASCADE, related_name='items')
     menu = models.ForeignKey(Menu, on_delete=models.CASCADE, related_name='items')
     name = models.CharField(max_length=110)
     description = models.TextField(max_length=300, blank=True, null=True)
