@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { useContext } from "react";
-import { colors } from "@/app/pricing/page";
+import { colors } from "../page";
 
 export default function Tag({ name, iconSrc = "", justIcon = false }) {
   const color = useContext(colors);

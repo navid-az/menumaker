@@ -14,6 +14,7 @@ function Navbar() {
         <Link href="/">درباره ما</Link>
         <Link href="/pricing">تعرفه ها</Link>
         <Link href="/builder">مشاهده دمو</Link>
+        <Link href="/venhan/menu">صفحه منو</Link>
         <Link href="/">
           <Image
             src="/images/menumaker-logo.svg"

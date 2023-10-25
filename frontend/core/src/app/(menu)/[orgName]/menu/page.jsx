@@ -1,20 +1,13 @@
 "use client";
 
-import React, {
-  useEffect,
-  useState,
-  useReducer,
-  useContext,
-  createContext,
-  useRef,
-} from "react";
-import GoBackBtn from "../components/GoBackBtn";
-import MenuItem from "../(menu)/[orgName]/menu/components/MenuItem";
-import ItemsCategory from "../(menu)/[orgName]/menu/components/ItemsCategory";
+import React, { useState, createContext } from "react";
+import GoBackBtn from "@/app/components/GoBackBtn";
+import MenuItem from "./components/MenuItem";
+import ItemsCategory from "./components/ItemsCategory";
 
 export const colors = createContext(null);
 
-export default function Pricing() {
+export default function MenuPage({ params }) {
   const [scrolled, setScrolled] = useState(0);
 
   let type = "vertical";
@@ -22,15 +15,16 @@ export default function Pricing() {
   const menuColors = { primary: "royale-green", secondary: "sky-blue" };
   return (
     <div className="relative">
+      <div>this is {params.orgName} menu page!</div>
       <colors.Provider value={menuColors}>
         <GoBackBtn absolute={false}></GoBackBtn>
-        {/* <ItemsCategory></ItemsCategory> */}
+        <ItemsCategory></ItemsCategory>
         <div
           className={`w-full gap-2 px-2 pt-12 sm:gap-4 sm:px-4 ${
             type == "vertical" ? "grid sm:grid-cols-2" : "flex flex-col"
           }`}
         >
-          {/* <MenuItem
+          <MenuItem
             price="۱۸۳۰۰۰"
             body="پپرونی،ففل دلمه،سس سالسا،چیلی،قارچ"
             title="پیتزای پپرونی"
@@ -38,7 +32,7 @@ export default function Pricing() {
           ></MenuItem>
           <MenuItem></MenuItem>
           <MenuItem></MenuItem>
-          <MenuItem></MenuItem> */}
+          <MenuItem></MenuItem>
         </div>
       </colors.Provider>
       {scrolled}
