@@ -5,10 +5,32 @@ import GoBackBtn from "@/app/components/GoBackBtn";
 import MenuItem from "./components/MenuItem";
 import ItemsCategory from "./components/ItemsCategory";
 
+// react query
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+
 export const colors = createContext(null);
 
 export default function MenuPage({ params }) {
-  const [scrolled, setScrolled] = useState(0);
+  const { isLoading, isError, data, error } = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      const { data } = await axios.get(
+        `http://127.0.0.1:8000/menu/single/${params.orgName}`
+      );
+      return data;
+    },
+  });
+
+  if (isLoading) {
+    return <span>Loading...</span>;
+  }
+
+  if (isError) {
+    return <span>Error: {error.message}</span>;
+  }
+
+  // const [scrolled, setScrolled] = useState(0);
 
   let type = "vertical";
 
@@ -18,24 +40,24 @@ export default function MenuPage({ params }) {
       <div>this is {params.orgName} menu page!</div>
       <colors.Provider value={menuColors}>
         <GoBackBtn absolute={false}></GoBackBtn>
-        <ItemsCategory></ItemsCategory>
+        <ItemsCategory params={params}></ItemsCategory>
         <div
           className={`w-full gap-2 px-2 pt-12 sm:gap-4 sm:px-4 ${
             type == "vertical" ? "grid sm:grid-cols-2" : "flex flex-col"
           }`}
         >
-          <MenuItem
-            price="۱۸۳۰۰۰"
-            body="پپرونی،ففل دلمه،سس سالسا،چیلی،قارچ"
-            title="پیتزای پپرونی"
-            type={type}
-          ></MenuItem>
-          <MenuItem></MenuItem>
-          <MenuItem></MenuItem>
-          <MenuItem></MenuItem>
+          {data["categories"].map((category) =>
+            category["items"].map((item) => (
+              <MenuItem
+                price={item.price}
+                body={item.description}
+                title={item.name}
+                type={type}
+              ></MenuItem>
+            ))
+          )}
         </div>
       </colors.Provider>
-      {scrolled}
     </div>
   );
 }

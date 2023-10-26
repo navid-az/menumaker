@@ -5,6 +5,7 @@
   "python.formatting.provider": "none",
   "python.analysis.typeCheckingMode": "basic",
   "conventionalCommits.scopes": [
-    "api"
+    "api",
+    "frontend"
   ]
 }
