@@ -1,5 +1,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { useContext } from "react";
+import { dataIsLoadingContext } from "./MenuItem";
 
 export default function AddItemBtn({
   primaryColor,
@@ -8,6 +10,7 @@ export default function AddItemBtn({
 }) {
   const [borderRadius, setBorderRadius] = useState("");
   const [value, setValue] = useState(0);
+  const isLoading = useContext(dataIsLoadingContext);
 
   useEffect(() => {
     if (type == "circle") {

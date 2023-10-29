@@ -51,6 +51,18 @@ scrollbar-width: none;  /* Firefox */
 -ms-overflow-style: none;  /* IE and Edge */
 }
 
-.avoid-stretch{
+/* .avoid-stretch{
   display: -webkit-box;
+} */
+
+
+/* random test  (should be deleted) */
+.bro{
+  background: #a3b8c2;
+  background: #f0f3f5;
+  background: #0F2C30;
+  background: #94d9e2;
+  
+  background: #a3bfc3;
+  background: #dee3e3;
 }

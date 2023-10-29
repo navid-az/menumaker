@@ -1,6 +1,12 @@
 import Image from "next/image";
+import Skeleton from "react-loading-skeleton";
 
-export default function PriceTag({ price, priceUnit, secondaryColor }) {
+export default function PriceTag({
+  price,
+  priceUnit,
+  secondaryColor,
+  isLoading,
+}) {
   return (
     <span
       className={`flex w-max items-center gap-2 ${
@@ -8,7 +14,9 @@ export default function PriceTag({ price, priceUnit, secondaryColor }) {
       }`}
     >
       <div className={`text-${secondaryColor}`}>
-        {priceUnit == "simple" ? (
+        {isLoading ? (
+          <Skeleton width={60} height="100%" />
+        ) : priceUnit == "simple" ? (
           <p
             className={`text-${secondaryColor} text-sm font-semibold sm:text-xl`}
           >
