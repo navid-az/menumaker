@@ -17,11 +17,11 @@ export default function MenuPage({ params }) {
     <SkeletonTheme baseColor="#a3bfc3" highlightColor="#dee3e3">
       <div className="relative">
         <colors.Provider value={menuColors}>
-          <GoBackBtn absolute={false}></GoBackBtn>
+          {/* <GoBackBtn absolute={false}></GoBackBtn> */}
           <ItemsCategory params={params}></ItemsCategory>
           <div
-            className={`w-full gap-2 px-2 pt-12 sm:gap-4 sm:px-4 ${
-              type == "vertical" ? "grid sm:grid-cols-2" : "flex flex-col"
+            className={`w-full px-2 pt-12 sm:gap-4 sm:px-4 ${
+              type == "vertical" ? "" : "flex flex-col"
             }`}
           >
             <MenuItemsWrapper params={params}></MenuItemsWrapper>

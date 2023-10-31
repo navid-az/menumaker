@@ -25,7 +25,8 @@ export default function ItemsCategory({ params }) {
       {!isLoading ? (
         data["categories"].map(
           (category) =>
-            category.is_active && (
+            category.is_active &&
+            category["items"].length > 0 && (
               <CategoryBtn key={category.id} name={category.name}></CategoryBtn>
             )
         )
