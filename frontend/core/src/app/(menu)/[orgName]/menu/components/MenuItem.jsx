@@ -12,7 +12,7 @@ import ItemsCategoryTitle from "./ItemsCategoryTitle";
 
 export const dataIsLoadingContext = createContext(null);
 
-export default function MenuItemsWrapper({ params }) {
+export default function MenuItemsWrapper({ params, type }) {
   const { isLoading, isError, data, error } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
@@ -29,36 +29,46 @@ export default function MenuItemsWrapper({ params }) {
 
   return (
     <dataIsLoadingContext.Provider value={isLoading}>
-      {!isLoading ? (
-        data["categories"].map(
-          (category) =>
-            category["items"].length > 0 && (
-              <section className="relative">
-                {category["items"].length > 0 && (
-                  <ItemsCategoryTitle categoryName={category.name} />
-                )}
-                <div className="flex flex-col gap-2">
-                  {category["items"].map((item) => (
-                    <MenuItem
-                      isLoading={isLoading}
-                      key={item.id}
-                      price={item.price}
-                      body={item.description}
-                      title={item.name}
-                      // type={type}
-                    ></MenuItem>
-                  ))}
+      <div
+        className={`relative w-full p-2 sm:gap-4 sm:px-4 ${
+          type == "vertical" ? "" : "flex flex-col"
+        }`}
+      >
+        {!isLoading ? (
+          data["categories"].map(
+            (category) =>
+              category["items"].length > 0 && (
+                <div className="relative">
+                  {category["items"].length > 0 && (
+                    <ItemsCategoryTitle
+                      id={category.id}
+                      categoryName={category.name}
+                      parentType={type}
+                    />
+                  )}
+                  <div className="flex flex-col gap-2">
+                    {category["items"].map((item) => (
+                      <MenuItem
+                        isLoading={isLoading}
+                        key={item.id}
+                        price={item.price}
+                        body={item.description}
+                        title={item.name}
+                        // type={type}
+                      ></MenuItem>
+                    ))}
+                  </div>
                 </div>
-              </section>
-            )
-        )
-      ) : (
-        <div className="flex flex-col gap-2">
-          {Array.from({ length: 10 }, () => (
-            <MenuItem isLoading={isLoading} />
-          ))}
-        </div>
-      )}
+              )
+          )
+        ) : (
+          <div className="flex flex-col gap-2">
+            {Array.from({ length: 10 }, () => (
+              <MenuItem isLoading={isLoading} />
+            ))}
+          </div>
+        )}
+      </div>
     </dataIsLoadingContext.Provider>
   );
 }

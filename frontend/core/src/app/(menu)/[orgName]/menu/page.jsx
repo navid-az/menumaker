@@ -10,24 +10,22 @@ import { SkeletonTheme } from "react-loading-skeleton";
 export const colors = createContext(null);
 
 export default function MenuPage({ params }) {
-  let type = "vertical";
+  let type = "fsdaf";
 
   const menuColors = { primary: "royale-green", secondary: "sky-blue" };
   return (
     <SkeletonTheme baseColor="#a3bfc3" highlightColor="#dee3e3">
-      <div className="relative">
-        <colors.Provider value={menuColors}>
+      <colors.Provider value={menuColors}>
+        <div
+          className={`relative flex bg-soft-blue ${
+            type == "vertical" ? "flex-row" : "flex-col"
+          }`}
+        >
           {/* <GoBackBtn absolute={false}></GoBackBtn> */}
-          <ItemsCategory params={params}></ItemsCategory>
-          <div
-            className={`w-full px-2 pt-12 sm:gap-4 sm:px-4 ${
-              type == "vertical" ? "" : "flex flex-col"
-            }`}
-          >
-            <MenuItemsWrapper params={params}></MenuItemsWrapper>
-          </div>
-        </colors.Provider>
-      </div>
+          <ItemsCategory type={type} params={params}></ItemsCategory>
+          <MenuItemsWrapper params={params} type={type}></MenuItemsWrapper>
+        </div>
+      </colors.Provider>
     </SkeletonTheme>
   );
 }

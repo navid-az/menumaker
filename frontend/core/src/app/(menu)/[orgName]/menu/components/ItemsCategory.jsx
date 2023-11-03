@@ -5,7 +5,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
-export default function ItemsCategory({ params }) {
+export default function ItemsCategory({ params, type }) {
   const { isLoading, isError, data, error } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
@@ -21,35 +21,68 @@ export default function ItemsCategory({ params }) {
   }
 
   return (
-    <div className="hide-scrollbar avoid-stretch fixed z-20 flex w-full gap-1 overflow-auto bg-soft-blue p-2 py-2 sm:px-4">
+    <div
+      className={`hide-scrollbar avoid-stretch sticky top-0 z-20 flex overflow-y-auto bg-royale-green p-2 sm:px-4 ${
+        type == "vertical"
+          ? "h-screen w-2/12 flex-col flex-wrap gap-4"
+          : "w-full flex-row gap-1"
+      }`}
+    >
       {!isLoading ? (
         data["categories"].map(
           (category) =>
             category.is_active &&
             category["items"].length > 0 && (
-              <CategoryBtn key={category.id} name={category.name}></CategoryBtn>
+              <CategoryBtn
+                id={category.id}
+                key={category.id}
+                name={category.name}
+                parentType={type}
+              ></CategoryBtn>
             )
         )
       ) : (
         <Skeleton
-          width={70}
-          height="32px"
-          containerClassName="flex-1 flex gap-1"
+          width={type == "vertical" ? "100%" : 70}
+          height={type == "vertical" ? "" : 32}
+          containerClassName={` flex ${
+            type == "vertical" ? "flex-col" : "flex-row flex-1 gap-1"
+          }`}
           count={10}
-          className="!rounded-full opacity-70"
+          className={`relative !rounded-full  ${
+            type == "vertical" ? "pt-[100%]" : ""
+          } opacity-70`}
         />
       )}
     </div>
   );
 }
-function CategoryBtn({ name }) {
+function CategoryBtn({ name, parentType, id }) {
+  const moveToCat = () => {
+    const categoryTitle = document.getElementById(`category-title-${id}`);
+    const verticalCategoriesNavHeight = 48;
+
+    window.scroll({
+      top:
+        window.scrollY +
+        categoryTitle.getBoundingClientRect().top -
+        (parentType != "vertical" && verticalCategoriesNavHeight),
+      behavior: "smooth",
+    });
+  };
+
   return (
-    <div className="h-full w-max rounded-full bg-royale-green px-4 py-1 text-center text-sky-blue">
-      <p className=" inline-block">{name}</p>
-    </div>
+    <button
+      onClick={moveToCat}
+      type="button"
+      id={`category-${id}`}
+      className={`flex items-center justify-center rounded-full bg-sky-blue text-center text-royale-green ${
+        parentType == "vertical"
+          ? "aspect-square h-auto w-full"
+          : "h-full w-max px-4 py-1"
+      }`}
+    >
+      <p className="inline-block">{name}</p>
+    </button>
   );
 }
-
-// const wait = (duration) => {
-//   return new Promise((resolve) => setTimeout(resolve, duration));
-// };

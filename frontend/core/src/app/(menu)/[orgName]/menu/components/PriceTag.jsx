@@ -9,7 +9,7 @@ export default function PriceTag({
 }) {
   return (
     <span
-      className={`flex w-max items-center gap-2 ${
+      className={`flex w-max items-center gap-1 ${
         priceUnit == "engLetter" && "flex-row-reverse"
       }`}
     >
