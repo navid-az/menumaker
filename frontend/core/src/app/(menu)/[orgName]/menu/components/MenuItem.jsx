@@ -1,14 +1,17 @@
+import { createContext, useState } from "react";
 import Image from "next/image";
+
+//components
 import AddItemBtn from "./AddItemBtn";
 import PriceTag from "./PriceTag";
 import Tag from "./Tag";
-import { createContext, useContext } from "react";
+import ItemsCategoryTitle from "./ItemsCategoryTitle";
+import ItemsDescriptionTab from "./ItemsDescriptionTab";
 
 // react query
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import Skeleton from "react-loading-skeleton";
-import ItemsCategoryTitle from "./ItemsCategoryTitle";
 
 export const dataIsLoadingContext = createContext(null);
 
@@ -26,6 +29,26 @@ export default function MenuItemsWrapper({ params, type }) {
   if (isError) {
     return <span>Error: {error.message}</span>;
   }
+
+  const [activeItemData, setActiveItemData] = useState({
+    id: null,
+    title: null,
+    body: null,
+    count: 0,
+  });
+
+  const [isActive, setIsActive] = useState(false);
+
+  const activeItem = (id, title, body, price, priceUnit) => {
+    setIsActive((prev) => !prev);
+    setActiveItemData({
+      id: id,
+      title: title,
+      body: body,
+      price: price,
+      priceUnit: priceUnit,
+    });
+  };
 
   return (
     <dataIsLoadingContext.Provider value={isLoading}>
@@ -48,14 +71,19 @@ export default function MenuItemsWrapper({ params, type }) {
                   )}
                   <div className="flex flex-col gap-2">
                     {category["items"].map((item) => (
-                      <MenuItem
-                        isLoading={isLoading}
-                        key={item.id}
-                        price={item.price}
-                        body={item.description}
-                        title={item.name}
-                        // type={type}
-                      ></MenuItem>
+                      <>
+                        <div className="bg-red-600">{isActive}</div>
+                        <MenuItem
+                          isLoading={isLoading}
+                          key={item.id}
+                          id={item.id}
+                          title={item.name}
+                          body={item.description}
+                          price={item.price}
+                          onClick={activeItem}
+                          // type={type}
+                        ></MenuItem>
+                      </>
                     ))}
                   </div>
                 </div>
@@ -69,11 +97,17 @@ export default function MenuItemsWrapper({ params, type }) {
           </div>
         )}
       </div>
+      <ItemsDescriptionTab
+        activeItemData={activeItemData}
+        isActive={isActive}
+        action={() => setIsActive((prev) => !prev)}
+      />
     </dataIsLoadingContext.Provider>
   );
 }
 
 function MenuItem({
+  id,
   title,
   body,
   type = "horizontal", //horizontal - vertical
@@ -86,9 +120,15 @@ function MenuItem({
   vegan = false,
   specialItem = false,
   isLoading,
+  onClick = null,
 }) {
+  const openDescriptionTab = (e) => {
+    e.stopPropagation();
+    onClick(id, title, body, price, priceUnit);
+  };
   return (
     <div
+      onClick={openDescriptionTab}
       className={`flex min-h-[8rem] justify-between gap-2 rounded-lg bg-${primaryColor} relative select-none p-2 sm:gap-3 sm:p-3 ${
         type == "vertical"
           ? "h-auto flex-1 flex-col-reverse flex-wrap sm:h-auto"

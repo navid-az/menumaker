@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, createContext } from "react";
+import React, { createContext } from "react";
 import GoBackBtn from "@/app/components/GoBackBtn";
 import MenuItemsWrapper from "./components/MenuItem";
 import ItemsCategory from "./components/ItemsCategory";
@@ -22,8 +22,8 @@ export default function MenuPage({ params }) {
           }`}
         >
           {/* <GoBackBtn absolute={false}></GoBackBtn> */}
-          <ItemsCategory type={type} params={params}></ItemsCategory>
-          <MenuItemsWrapper params={params} type={type}></MenuItemsWrapper>
+          <ItemsCategory type={type} params={params} />
+          <MenuItemsWrapper params={params} type={type} />
         </div>
       </colors.Provider>
     </SkeletonTheme>

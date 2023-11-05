@@ -1,6 +1,6 @@
 export default function ItemsCategoryTitle({
   categoryName,
-  sticky = false,
+  sticky = true,
   parentType,
   id,
 }) {

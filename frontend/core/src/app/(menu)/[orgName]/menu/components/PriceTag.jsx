@@ -4,7 +4,7 @@ import Skeleton from "react-loading-skeleton";
 export default function PriceTag({
   price,
   priceUnit,
-  secondaryColor,
+  secondaryColor = "#FFFF",
   isLoading,
 }) {
   return (
