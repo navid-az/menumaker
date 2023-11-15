@@ -57,6 +57,7 @@ export default function ItemsCategory({ params, type }) {
     </div>
   );
 }
+
 function CategoryBtn({ name, parentType, id }) {
   const moveToCat = () => {
     const categoryTitle = document.getElementById(`category-title-${id}`);

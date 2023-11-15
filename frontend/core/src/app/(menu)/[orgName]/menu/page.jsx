@@ -6,6 +6,7 @@ import MenuItemsWrapper from "./components/MenuItem";
 import ItemsCategory from "./components/ItemsCategory";
 
 import { SkeletonTheme } from "react-loading-skeleton";
+import Link from "next/link";
 
 export const colors = createContext(null);
 
@@ -22,6 +23,7 @@ export default function MenuPage({ params }) {
           }`}
         >
           {/* <GoBackBtn absolute={false}></GoBackBtn> */}
+          <Link href={`/${params.orgName}/orders`}>Orders</Link>
           <ItemsCategory type={type} params={params} />
           <MenuItemsWrapper params={params} type={type} />
         </div>

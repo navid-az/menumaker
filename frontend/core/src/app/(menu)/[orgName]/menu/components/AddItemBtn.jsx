@@ -1,16 +1,17 @@
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
-import { useContext } from "react";
-import { dataIsLoadingContext } from "./MenuItem";
+import { useEffect, useState } from "react";
+import { useItems, useItemsDispatch } from "./ItemsContext";
 
 export default function AddItemBtn({
   primaryColor,
   secondaryColor,
   type = "square",
+  itemId,
 }) {
-  const [borderRadius, setBorderRadius] = useState("");
-  const [value, setValue] = useState(0);
-  const isLoading = useContext(dataIsLoadingContext);
+  const [borderRadius, setBorderRadius] = useState("rounded-md");
+  const { items, getItemQuantity } = useItems();
+  const dispatch = useItemsDispatch();
+  const itemQuantity = getItemQuantity(itemId);
 
   useEffect(() => {
     if (type == "circle") {
@@ -20,56 +21,66 @@ export default function AddItemBtn({
     }
   }, []);
 
-  const handleValue = (btnName) => {
-    if (btnName === "increment") {
-      setValue((prevValue) => prevValue + 1);
-    } else {
-      setValue((prevValue) => prevValue - 1);
-    }
-  };
-
   return (
     <div className={`flex h-full w-20 sm:w-28 ${borderRadius}`}>
-      {value > 0 ? (
+      {itemQuantity > 0 ? (
         <section
           className={`flex h-full w-full items-center ${borderRadius} bg-${secondaryColor} justify-between p-[2px] sm:p-1`}
         >
-          {value > 1 ? (
-            <ValueChangerBtn
-              borderRadius={borderRadius}
-              primaryColor={primaryColor}
-              secondaryColor={secondaryColor}
-              name="decrement"
-              iconSrc={"/images/menu-items/svg/minus.svg"}
-              action={(name) => handleValue(name)}
-            ></ValueChangerBtn>
-          ) : (
-            <ValueChangerBtn
-              borderRadius={borderRadius}
-              primaryColor={primaryColor}
-              secondaryColor={secondaryColor}
-              name="decrement"
-              iconSrc={"/images/menu-items/svg/trash.svg"}
-              action={(name) => handleValue(name)}
-            ></ValueChangerBtn>
-          )}
-
-          <span className="mt-[3px] flex-initial">
-            <p className={`sm:text-xl text-${primaryColor}`}>{value}</p>
-          </span>
           <ValueChangerBtn
             borderRadius={borderRadius}
             primaryColor={primaryColor}
             secondaryColor={secondaryColor}
-            name="increment"
+            name="decrease"
+            iconSrc={
+              itemQuantity > 1
+                ? "/images/menu-items/svg/minus.svg"
+                : "/images/menu-items/svg/trash.svg"
+            }
+            action={() => {
+              itemQuantity > 1
+                ? dispatch({
+                    type: "decreased",
+                    id: itemId,
+                    count: itemQuantity,
+                  })
+                : dispatch({
+                    type: "removed",
+                    id: itemId,
+                  });
+            }}
+          ></ValueChangerBtn>
+
+          <span className="mt-[3px] flex-initial">
+            <p className={`sm:text-xl text-${primaryColor}`}>{itemQuantity}</p>
+          </span>
+
+          <ValueChangerBtn
+            borderRadius={borderRadius}
+            primaryColor={primaryColor}
+            secondaryColor={secondaryColor}
+            name="increase"
             iconSrc={"/images/menu-items/svg/plus.svg"}
-            action={(name) => handleValue(name)}
+            action={() => {
+              dispatch({
+                type: "increased",
+                id: itemId,
+                count: itemQuantity,
+              });
+            }}
           ></ValueChangerBtn>
         </section>
       ) : (
         <button
           className={`flex h-full w-full flex-none items-center ${borderRadius} gap-2 bg-${secondaryColor} justify-center px-4 sm:gap-4`}
-          onClick={() => setValue((prevValue) => prevValue + 1)}
+          onClick={(e) => {
+            e.stopPropagation();
+            dispatch({
+              type: "added",
+              id: itemId,
+              count: 1,
+            });
+          }}
         >
           <p className=" flex-initial text-xs font-semibold sm:text-base">
             افزودن
@@ -96,17 +107,14 @@ const ValueChangerBtn = ({
   secondaryColor,
   borderRadius,
 }) => {
-  const valueBtn = useRef(null);
-  useEffect(() => {
-    let height = valueBtn.current.offsetHeight + "px";
-    valueBtn.current.style.width = height;
-  }, []);
   return (
     <button
-      ref={valueBtn}
       name={name}
-      onClick={() => action(name)}
-      className={`relative h-full w-8 rounded-[4px] ${borderRadius} bg-${primaryColor}`}
+      onClick={(e) => {
+        action();
+        e.stopPropagation();
+      }}
+      className={`relative aspect-square h-full rounded-[4px] ${borderRadius} bg-${primaryColor}`}
     >
       <Image
         style={{

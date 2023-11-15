@@ -19,16 +19,12 @@ export default function ItemsDescriptionTab({
   useEffect(() => {
     if (isActive) {
       tl.to(darkGg.current, { display: "flex" })
-        .to(darkGg.current, { opacity: 1 })
-        .to(
-          itemDescriptionTab.current,
-          {
-            y: 20,
-            ease: "elastic.out(0.8,0.9)",
-            duration: 0.7,
-          },
-          ">"
-        );
+        .to(darkGg.current, { opacity: 1, duration: 0.3 })
+        .to(itemDescriptionTab.current, {
+          y: 20,
+          ease: "elastic.out(0.8,0.9)",
+          duration: 0.7,
+        });
     }
   }, [isActive]);
 
@@ -75,7 +71,7 @@ export default function ItemsDescriptionTab({
             priceUnit={"simple"}
             isLoading={false}
           />
-          <AddItemBtn />
+          <AddItemBtn itemId={activeItemData["id"]} />
         </footer>
       </section>
     </div>

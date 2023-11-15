@@ -61,29 +61,24 @@ export default function MenuItemsWrapper({ params, type }) {
           data["categories"].map(
             (category) =>
               category["items"].length > 0 && (
-                <div className="relative">
-                  {category["items"].length > 0 && (
-                    <ItemsCategoryTitle
-                      id={category.id}
-                      categoryName={category.name}
-                      parentType={type}
-                    />
-                  )}
+                <div key={category.id} className="relative">
+                  <ItemsCategoryTitle
+                    id={category.id}
+                    categoryName={category.name}
+                    parentType={type}
+                  />
                   <div className="flex flex-col gap-2">
                     {category["items"].map((item) => (
-                      <>
-                        <div className="bg-red-600">{isActive}</div>
-                        <MenuItem
-                          isLoading={isLoading}
-                          key={item.id}
-                          id={item.id}
-                          title={item.name}
-                          body={item.description}
-                          price={item.price}
-                          onClick={activeItem}
-                          // type={type}
-                        ></MenuItem>
-                      </>
+                      <MenuItem
+                        isLoading={isLoading}
+                        key={item.id}
+                        id={item.id}
+                        title={item.name}
+                        body={item.description}
+                        price={item.price}
+                        onClick={activeItem}
+                        // type={type}
+                      ></MenuItem>
                     ))}
                   </div>
                 </div>
@@ -126,6 +121,7 @@ function MenuItem({
     e.stopPropagation();
     onClick(id, title, body, price, priceUnit);
   };
+
   return (
     <div
       onClick={openDescriptionTab}
@@ -174,6 +170,7 @@ function MenuItem({
             <AddItemBtn
               primaryColor={primaryColor}
               secondaryColor={secondaryColor}
+              itemId={id}
             ></AddItemBtn>
           )}
         </footer>
