@@ -125,7 +125,7 @@ export const NameGiverInput = ({
           ref={inputRef}
           type="text"
           name={name}
-          className="h-full w-full rounded-lg bg-sad-blue p-1 text-end text-sm placeholder:text-royale-green-dark focus:outline-0"
+          className="h-full w-full rounded-lg bg-sad-blue p-1 text-end text-sm placeholder:text-royal-green-dark focus:outline-0"
           placeholder={placeholder}
           value={item.name}
           onChange={(e) => {
@@ -139,7 +139,7 @@ export const NameGiverInput = ({
       {/* items list */}
       {formData[name].length != 0 && (
         <section className="flex flex-col gap-2 rounded-md bg-sad-blue p-2">
-          {/* <h3 className="w-full text-right font-semibold text-royale-green">
+          {/* <h3 className="w-full text-right font-semibold text-royal-green">
             لیست بخش ها
           </h3> */}
           {formData[name].map((item) => (
@@ -187,7 +187,7 @@ export const NameGiverInput = ({
 //     <div className="flex w-full rounded-lg border-2 border-sad-blue bg-white p-[12px] transition-colors duration-300 ease-in-out">
 //       {/* <Image src="/images/envelope.svg" width={20} height={20}></Image> */}
 //       <input
-//         className="h-full w-full text-sm font-normal text-royale-green outline-none autofill:bg-inherit"
+//         className="h-full w-full text-sm font-normal text-royal-green outline-none autofill:bg-inherit"
 //         type={type}
 //         value={value}
 //         onChange={setValue}
@@ -216,13 +216,13 @@ export const NameGiverInput = ({
 //       <div className="flex h-11 w-full items-end gap-2 rounded-lg bg-sad-blue p-2 text-end text-xs">
 //         <button
 //           onClick={(e) => action(e)}
-//           className="flex h-full w-auto flex-grow items-center justify-center rounded-md bg-royale-green text-center font-bold text-sky-blue"
+//           className="flex h-full w-auto flex-grow items-center justify-center rounded-md bg-royal-green text-center font-bold text-sky-blue"
 //         >
 //           ثبت
 //         </button>
 //         <input
 //           name="link-input"
-//           className="h-full w-3/5 flex-grow bg-sad-blue text-end placeholder:text-royale-green-dark focus:outline-0"
+//           className="h-full w-3/5 flex-grow bg-sad-blue text-end placeholder:text-royal-green-dark focus:outline-0"
 //           placeholder="لینک را در اینجا کپی کنید"
 //           type="text"
 //           value={value}
@@ -285,7 +285,7 @@ const Input = ({
 
         <input
           name="link-input"
-          className="h-full w-auto grow rounded-lg bg-sad-blue p-1 text-end text-sm placeholder:text-royale-green-dark focus:outline-0"
+          className="h-full w-auto grow rounded-lg bg-sad-blue p-1 text-end text-sm placeholder:text-royal-green-dark focus:outline-0"
           placeholder={placeholder}
           type="text"
           value={inputValue}
@@ -323,7 +323,7 @@ const Input = ({
 //         ref={refs.setReference}
 //         {...getReferenceProps()}
 //         onClick={action}
-//         className="flex h-full w-full grow-0 items-center justify-center rounded-md bg-royale-green text-center text-sm font-bold text-sky-blue transition-all active:scale-90"
+//         className="flex h-full w-full grow-0 items-center justify-center rounded-md bg-royal-green text-center text-sm font-bold text-sky-blue transition-all active:scale-90"
 //       >
 //         {name}
 //       </button>
@@ -334,7 +334,7 @@ const Input = ({
 //           ref={refs.setFloating}
 //           {...getFloatingProps()}
 //           style={{ ...styles, ...floatingStyles }}
-//           className="rounded-md bg-royale-green-dark p-2 text-xs font-normal text-soft-blue opacity-90"
+//           className="rounded-md bg-royal-green-dark p-2 text-xs font-normal text-soft-blue opacity-90"
 //         >
 //           {toolTip}
 //         </div>

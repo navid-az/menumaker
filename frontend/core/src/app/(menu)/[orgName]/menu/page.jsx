@@ -13,7 +13,7 @@ export const colors = createContext(null);
 export default function MenuPage({ params }) {
   let type = "fsdaf";
 
-  const menuColors = { primary: "royale-green", secondary: "sky-blue" };
+  const menuColors = { primary: "royal-green", secondary: "sky-blue" };
   return (
     <SkeletonTheme baseColor="#a3bfc3" highlightColor="#dee3e3">
       <colors.Provider value={menuColors}>
@@ -22,8 +22,23 @@ export default function MenuPage({ params }) {
             type == "vertical" ? "flex-row" : "flex-col"
           }`}
         >
-          {/* <GoBackBtn absolute={false}></GoBackBtn> */}
-          <Link href={`/${params.orgName}/orders`}>Orders</Link>
+          <header className="bg-royal-green">
+            <GoBackBtn
+              link={`/${params.orgName}/orders`}
+              absolute={false}
+              text="سفارشات"
+              secondary_color="royal-green"
+              primary_color="sky-blue"
+            ></GoBackBtn>
+          </header>
+          <header className="bg-royal-green">
+            <GoBackBtn
+              absolute={false}
+              text="صفحه اصلی"
+              secondary_color="royal-green"
+              primary_color="sky-blue"
+            ></GoBackBtn>
+          </header>
           <ItemsCategory type={type} params={params} />
           <MenuItemsWrapper params={params} type={type} />
         </div>
@@ -31,37 +46,3 @@ export default function MenuPage({ params }) {
     </SkeletonTheme>
   );
 }
-
-// <div className="apple bg-yellow-500">
-//   <div>this is just a test</div>
-//   <section className="banana gap-4 p-2">
-//     <div className="w-full gap-2 bg-red-300 p-4 text-green-200">
-//       <div className="bg-yellow-500">salamss</div>
-//       <div className="bg-yellow-500">salamss</div>
-//     </div>
-//     <div className="w-full gap-2 bg-red-400 p-4 text-green-200">
-//       <div className="bg-yellow-500">salam</div>
-//       <div className="bg-yellow-500">salam</div>
-//       <div className="bg-yellow-500">salam</div>
-//     </div>
-//   </section>
-//   <section className="banana gap-4 p-2">
-//     <div className=" w-full gap-2 bg-red-900 p-4 text-green-200">
-//       <div className="bg-yellow-500">salamss</div>
-//       <div className="bg-yellow-500">salamsss</div>
-//       <div className="bg-yellow-500">salamss</div>
-//       <div className="bg-yellow-500">salamss</div>
-//       <div className="bg-yellow-500">salamss</div>
-//     </div>
-//     <div className="w-full gap-2 bg-red-800 p-4 text-green-200">
-//       <div className="bg-yellow-500">salam</div>
-//       <div className="bg-yellow-500">salam</div>
-//       <div className="bg-yellow-500">salam</div>
-//     </div>
-//     <div className="w-full gap-2 bg-red-600 p-4 text-green-200">
-//       <div className="bg-yellow-500">salam</div>
-//       <div className="bg-yellow-500">salam</div>
-//       <div className="bg-yellow-500">salam</div>
-//     </div>
-//   </section>
-// </div>

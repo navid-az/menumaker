@@ -25,7 +25,7 @@ export default function Button({
               : variant == "square"
               ? "rounded-md"
               : ""
-          }  bg-royale-green px-5 py-2 text-sm font-bold text-sky-blue transition-all duration-200 ease-in-out hover:gap-4 active:scale-90 ${style}`}
+          }  bg-royal-green px-5 py-2 text-sm font-bold text-sky-blue transition-all duration-200 ease-in-out hover:gap-4 active:scale-90 ${style}`}
         >
           {content}
           {iconSrc ? (
@@ -37,7 +37,7 @@ export default function Button({
       </TooltipTrigger>
       {toolTip ? (
         <TooltipContent>
-          <div className="rounded-md bg-royale-green-dark p-2 text-center text-xs font-normal text-soft-blue opacity-90">
+          <div className="rounded-md bg-royal-green-dark p-2 text-center text-xs font-normal text-soft-blue opacity-90">
             {toolTip}
           </div>
         </TooltipContent>

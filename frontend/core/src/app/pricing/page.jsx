@@ -19,7 +19,7 @@ export default function Pricing() {
 
   let type = "vertical";
 
-  const menuColors = { primary: "royale-green", secondary: "sky-blue" };
+  const menuColors = { primary: "royal-green", secondary: "sky-blue" };
   return (
     <div className="relative">
       <colors.Provider value={menuColors}>

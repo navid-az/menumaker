@@ -60,7 +60,7 @@ export function FormTab({
       id={`form-tab-${id}`}
       className={`${
         btn_type == "radio" && radioBtnInfo.group_name
-      } duration-2000 flex w-96 cursor-pointer select-none flex-col items-end justify-between gap-2 rounded-lg border-[3px] border-sad-blue bg-soft-blue p-3 text-royale-green transition-all ease-in-out`}
+      } duration-2000 flex w-96 cursor-pointer select-none flex-col items-end justify-between gap-2 rounded-lg border-[3px] border-sad-blue bg-soft-blue p-3 text-royal-green transition-all ease-in-out`}
     >
       <div className="flex w-full items-center justify-between">
         {/* tab button type  */}
@@ -184,7 +184,7 @@ export default function Form() {
       <header>
         <h1
           id="section-title"
-          className="translate-x-[200px] text-end text-3xl font-black text-royale-green opacity-0"
+          className="translate-x-[200px] text-end text-3xl font-black text-royal-green opacity-0"
         >
           {sectionTitle}
         </h1>

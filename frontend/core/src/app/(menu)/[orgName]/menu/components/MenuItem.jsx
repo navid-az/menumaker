@@ -108,7 +108,7 @@ function MenuItem({
   type = "horizontal", //horizontal - vertical
   price,
   priceUnit = "simple", //simple - compact - engLetter
-  primaryColor = "royale-green",
+  primaryColor = "royal-green",
   secondaryColor = "sky-blue",
   available = true,
   hot = false,

@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function LoginBanner() {
   return (
-    <div className="relative hidden h-screen items-center justify-center bg-royale-green md:flex md:w-6/12 xl:w-7/12 ">
+    <div className="relative hidden h-screen items-center justify-center bg-royal-green md:flex md:w-6/12 xl:w-7/12 ">
       <GoBackBtn></GoBackBtn>
       <Image
         src="/images/key.svg"

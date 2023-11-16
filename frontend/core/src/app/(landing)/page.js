@@ -22,14 +22,14 @@ export default function Home() {
       ></Image>
       <div className="container m-auto px-14">
         <div className=" mt-[15rem] flex flex-col items-end gap-2 py-20">
-          <h1 className="rtl h-auto text-right text-5xl font-bold leading-normal text-royale-green">
+          <h1 className="rtl h-auto text-right text-5xl font-bold leading-normal text-royal-green">
             منو کسب و کار خود را تنها با <br />! چند کلیک ایجاد کنید
           </h1>
           <span className="h-2 w-48 rounded-md bg-sky-blue"></span>
         </div>
       </div>
       {/* green section */}
-      <section className="flex w-full flex-col items-center justify-center bg-royale-green">
+      <section className="flex w-full flex-col items-center justify-center bg-royal-green">
         <div className="container -mt-80 flex items-end justify-between px-14">
           <Image
             src="/images/iphone-14-prototype.svg"
@@ -44,7 +44,7 @@ export default function Home() {
               رستوران و کافی شاپ ها
             </h2>
             <Link
-              className="flex gap-2 rounded-lg bg-sky-blue px-4 py-2 text-lg font-medium text-royale-green"
+              className="flex gap-2 rounded-lg bg-sky-blue px-4 py-2 text-lg font-medium text-royal-green"
               href="/"
             >
               <Image
@@ -83,7 +83,7 @@ export default function Home() {
           />
         </section>
       </section>
-      <div className="mt-20 flex w-full flex-col items-center gap-4 text-center text-royale-green">
+      <div className="mt-20 flex w-full flex-col items-center gap-4 text-center text-royal-green">
         <h2 className="text-5xl font-bold">!ساخت منو تنها در ۴ مرحله</h2>
         <p className="text-lg font-normal">
           برای راه اندازی و استفاده از منو هوشمند تنها کافیست ۴ مرحله ساده را طی

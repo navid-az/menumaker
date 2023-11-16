@@ -58,7 +58,7 @@ export default function IconSelectorList({ name, action }) {
   return (
     <div
       id="icon-selector-list"
-      className=" m-2 flex max-h-max w-80 select-none flex-col gap-4 rounded-lg bg-royale-green p-3 transition-all ease-in-out"
+      className=" m-2 flex max-h-max w-80 select-none flex-col gap-4 rounded-lg bg-royal-green p-3 transition-all ease-in-out"
     >
       <header className="flex flex-col items-end gap-2">
         <div className="flex w-full justify-between">

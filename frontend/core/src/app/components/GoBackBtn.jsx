@@ -1,26 +1,24 @@
 import Link from "next/link";
-import Image from "next/image";
+import { ArrowLeft } from "./svgs";
 
 export default function GoBackBtn({
-  color = "text-sky-blue",
-  bgc = "bg-royale-green",
+  primary_color = "royal-green",
+  secondary_color = "sky-blue",
   link = "/",
   absolute = true,
+  text = "",
 }) {
   return (
     <Link
       className={`${
         absolute ? "absolute" : ""
-      } left-4 top-4 flex w-max select-none items-center justify-between gap-1 rounded-full active:scale-90 ${bgc} ${color} px-3 py-2 text-sm font-normal transition-all duration-200 ease-in-out hover:gap-4`}
+      } m-2 flex h-8 w-max select-none items-center justify-between gap-1 rounded-full active:scale-90 sm:left-4 sm:top-4 sm:m-4 bg-${primary_color} text-${secondary_color} ${
+        text ? "px-3 py-1" : "p-3"
+      } text-sm font-normal transition-all duration-200 ease-in-out hover:gap-4`}
       href={link}
     >
-      <Image
-        src="/images/arrow-left.svg"
-        width={20}
-        height={20}
-        alt="go back"
-      ></Image>
-      <p>بازگشت</p>
+      <ArrowLeft className={`stroke-[${secondary_color}] text-xl`} />
+      {text && <p className=" font-semibold">{text}</p>}
     </Link>
   );
 }

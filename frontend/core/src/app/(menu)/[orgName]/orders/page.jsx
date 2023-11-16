@@ -1,5 +1,6 @@
 "use client";
 
+import GoBackBtn from "@/app/components/GoBackBtn";
 import { useItems } from "../menu/components/ItemsContext";
 import Link from "next/link";
 
@@ -8,7 +9,8 @@ export default function Orders({ params }) {
   console.log(items);
   return (
     <>
-      <Link href={`/${params.orgName}/menu`}>Menu</Link>
+      <GoBackBtn link={`/${params.orgName}/menu`} />
+      {/* <Link href={`/${params.orgName}/menu`}>Menu</Link> */}
       {items.map((item) => (
         <div className="flex gap-2" key={item.id}>
           <div>{item.id}</div>

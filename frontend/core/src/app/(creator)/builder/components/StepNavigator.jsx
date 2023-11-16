@@ -181,9 +181,9 @@ export default function StepNavigator({
             onClick={() => handleDotBtn(i + 1)}
             className={`${
               currentStepNum == i + 1
-                ? "border-royale-green bg-royale-green"
+                ? "border-royal-green bg-royal-green"
                 : "border-sad-blue bg-sad-blue"
-            } border-1 h-3 w-3 cursor-pointer select-none rounded-full border-2 transition duration-200 ease-in-out hover:border-2 hover:border-royale-green hover:bg-sky-blue`}
+            } border-1 h-3 w-3 cursor-pointer select-none rounded-full border-2 transition duration-200 ease-in-out hover:border-2 hover:border-royal-green hover:bg-sky-blue`}
           ></span>
         ))}
       </div>

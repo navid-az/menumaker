@@ -42,7 +42,7 @@ export default function ItemsDescriptionTab({
       <section
         onClick={(e) => e.stopPropagation()}
         ref={itemDescriptionTab}
-        className="absolute bottom-0 grid h-auto w-full translate-y-full flex-col gap-2 rounded-t-2xl bg-royale-green p-2 pb-7 text-sky-blue"
+        className="absolute bottom-0 grid h-auto w-full translate-y-full flex-col gap-2 rounded-t-2xl bg-royal-green p-2 pb-7 text-sky-blue"
       >
         <div className="absolute -top-3 h-1 w-2/12 justify-self-center rounded-full bg-sky-blue"></div>
         <section

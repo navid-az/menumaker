@@ -11,9 +11,9 @@ module.exports = {
         vazir: ["var(--font-vazir)"],
       },
       colors: {
-        "royale-green": "#0F2C30",
-        "royale-green-dark": "#0D2528",
-        "royale-green-light": "#0F2C3099",
+        "royal-green": "#0F2C30",
+        "royal-green-dark": "#0D2528",
+        "royal-green-light": "#0F2C3099",
         "sky-blue": "#94D9E2",
         "soft-blue": "#EDFDFF",
         "sad-blue": "#C5E5E9",

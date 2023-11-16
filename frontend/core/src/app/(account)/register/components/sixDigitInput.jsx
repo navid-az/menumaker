@@ -26,7 +26,7 @@ function DigitInput({ userCredential, isPhoneNumber }) {
       onChange={handleValue}
       type="text"
       maxLength="1"
-      className="h-16 w-1/3 rounded-lg border-2 border-sad-blue bg-white p-2 text-center outline-none transition-all duration-300 ease-in-out autofill:bg-inherit focus:scale-110 focus:border-royale-green"
+      className="h-16 w-1/3 rounded-lg border-2 border-sad-blue bg-white p-2 text-center outline-none transition-all duration-300 ease-in-out autofill:bg-inherit focus:scale-110 focus:border-royal-green"
     />
   );
 }

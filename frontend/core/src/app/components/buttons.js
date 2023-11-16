@@ -20,7 +20,7 @@ export function RadioBtn({ id, name, value, action }) {
   return (
     <>
       <input
-        className="m-0 grid h-7 w-7 cursor-pointer appearance-none place-content-center rounded-full border-2 border-solid border-royale-green content-none before:h-5 before:w-5 before:scale-0 before:rounded-full before:bg-royale-green before:transition-transform before:duration-200 before:ease-in-out checked:before:scale-100"
+        className="m-0 grid h-7 w-7 cursor-pointer appearance-none place-content-center rounded-full border-2 border-solid border-royal-green content-none before:h-5 before:w-5 before:scale-0 before:rounded-full before:bg-royal-green before:transition-transform before:duration-200 before:ease-in-out checked:before:scale-100"
         type="radio"
         id={id}
         name={name}
@@ -55,13 +55,13 @@ export function ToggleBtn({ id, action }) {
     <>
       <input className="hidden" type="checkbox" id={id} />
       <label
-        className="relative flex h-7 w-14 cursor-pointer items-center rounded-full border-2 border-royale-green bg-none transition-all duration-200 ease-in-out "
+        className="relative flex h-7 w-14 cursor-pointer items-center rounded-full border-2 border-royal-green bg-none transition-all duration-200 ease-in-out "
         htmlFor={id}
         onClick={handleToggle}
       >
         <div
           id={id}
-          className="absolute left-[3px] h-5 w-5 rounded-full bg-royale-green transition-all duration-200 content-none"
+          className="absolute left-[3px] h-5 w-5 rounded-full bg-royal-green transition-all duration-200 content-none"
         ></div>
       </label>
     </>

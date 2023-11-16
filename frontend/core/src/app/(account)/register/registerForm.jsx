@@ -37,7 +37,7 @@ export default function LoginForm() {
         ></SixDigitInput>
       </div>
       <button
-        className="rounded-lg border-2 bg-royale-green/80 px-[12px] py-4 text-lg font-semibold text-sky-blue transition-all duration-300 ease-out hover:scale-105 hover:bg-royale-green"
+        className="rounded-lg border-2 bg-royal-green/80 px-[12px] py-4 text-lg font-semibold text-sky-blue transition-all duration-300 ease-out hover:scale-105 hover:bg-royal-green"
         type="submit"
       >
         ارسال کد یک بار مصرف

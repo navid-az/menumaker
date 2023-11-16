@@ -22,7 +22,7 @@ export default function ItemsCategory({ params, type }) {
 
   return (
     <div
-      className={`hide-scrollbar avoid-stretch sticky top-0 z-20 flex overflow-y-auto bg-royale-green p-2 sm:px-4 ${
+      className={`hide-scrollbar avoid-stretch sticky top-0 z-20 flex overflow-y-auto bg-royal-green p-2 transition-all sm:px-4 ${
         type == "vertical"
           ? "h-screen w-2/12 flex-col flex-wrap gap-4"
           : "w-full flex-row gap-1"
@@ -77,7 +77,7 @@ function CategoryBtn({ name, parentType, id }) {
       onClick={moveToCat}
       type="button"
       id={`category-${id}`}
-      className={`flex items-center justify-center rounded-full bg-sky-blue text-center text-royale-green ${
+      className={`flex items-center justify-center rounded-full bg-sky-blue text-center text-royal-green ${
         parentType == "vertical"
           ? "aspect-square h-auto w-full"
           : "h-full w-max px-4 py-1"
