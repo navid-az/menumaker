@@ -1,6 +1,8 @@
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useItems, useItemsDispatch } from "./ItemsContext";
+
+//svg
+import { Minus, Plus, ArrowLeft, Trash } from "@/app/components/svgs";
 
 export default function AddItemBtn({
   primaryColor,
@@ -32,17 +34,13 @@ export default function AddItemBtn({
             primaryColor={primaryColor}
             secondaryColor={secondaryColor}
             name="decrease"
-            iconSrc={
-              itemQuantity > 1
-                ? "/images/menu-items/svg/minus.svg"
-                : "/images/menu-items/svg/trash.svg"
-            }
+            iconSrc={itemQuantity > 1 ? "minus" : "trash"}
             action={() => {
               itemQuantity > 1
                 ? dispatch({
                     type: "decreased",
                     id: itemId,
-                    count: itemQuantity,
+                    quantity: itemQuantity,
                   })
                 : dispatch({
                     type: "removed",
@@ -60,12 +58,12 @@ export default function AddItemBtn({
             primaryColor={primaryColor}
             secondaryColor={secondaryColor}
             name="increase"
-            iconSrc={"/images/menu-items/svg/plus.svg"}
+            iconSrc={"plus"}
             action={() => {
               dispatch({
                 type: "increased",
                 id: itemId,
-                count: itemQuantity,
+                quantity: itemQuantity,
               });
             }}
           ></ValueChangerBtn>
@@ -78,7 +76,7 @@ export default function AddItemBtn({
             dispatch({
               type: "added",
               id: itemId,
-              count: 1,
+              quantity: 1,
             });
           }}
         >
@@ -86,12 +84,7 @@ export default function AddItemBtn({
             افزودن
           </p>
           <div className="relative h-4 w-4 flex-none justify-center sm:h-6 sm:w-6">
-            <Image
-              src={"/images/menu-items/svg/plus.svg"}
-              alt="افزودن"
-              style={{ objectFit: "cover" }}
-              fill={true}
-            ></Image>
+            <Plus className={`stroke-${primaryColor} h-full w-full`} />
           </div>
         </button>
       )}
@@ -116,15 +109,13 @@ const ValueChangerBtn = ({
       }}
       className={`relative aspect-square h-full rounded-[4px] ${borderRadius} bg-${primaryColor}`}
     >
-      <Image
-        style={{
-          filter:
-            "invert(87%) sepia(20%) saturate(653%) hue-rotate(144deg) brightness(92%) contrast(91%)",
-        }}
-        fill={true}
-        src={iconSrc}
-        alt={name}
-      ></Image>
+      {iconSrc == "minus" ? (
+        <Minus className={`stroke-${secondaryColor} h-full w-full`} />
+      ) : iconSrc == "trash" ? (
+        <Trash className={`stroke-${secondaryColor} h-full w-full`} />
+      ) : (
+        <Plus className={`stroke-${secondaryColor} h-full w-full`} />
+      )}
     </button>
   );
 };

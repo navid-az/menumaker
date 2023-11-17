@@ -1,5 +1,10 @@
 import Image from "next/image";
+
+//components
 import Skeleton from "react-loading-skeleton";
+
+//utilities
+import { formatCurrency } from "../../utilities/formatCurrency";
 
 export default function PriceTag({
   price,
@@ -47,7 +52,7 @@ export default function PriceTag({
       <p
         className={`text-${secondaryColor} text-base font-semibold sm:text-xl`}
       >
-        {price}
+        {formatCurrency(price)}
       </p>
     </span>
   );

@@ -7,7 +7,7 @@ export function ItemsProvider({ children }) {
   const [items, dispatch] = useReducer(itemsReducer, []);
 
   const getItemQuantity = (id) => {
-    return items.find((item) => item.id === id)?.count || 0;
+    return items.find((item) => item.id === id)?.quantity || 0;
   };
 
   return (
@@ -28,12 +28,12 @@ const ACTIONS = {
 function itemsReducer(items, action) {
   switch (action.type) {
     case ACTIONS.ADDED: {
-      return [...items, { id: action.id, count: 1 }];
+      return [...items, { id: action.id, quantity: 1 }];
     }
     case ACTIONS.INCREASED: {
       return items.map((item) => {
         if (item.id === action.id) {
-          return { ...item, count: item.count++ };
+          return { ...item, quantity: item.quantity++ };
         } else {
           return item;
         }
@@ -42,7 +42,7 @@ function itemsReducer(items, action) {
     case ACTIONS.DECREASED: {
       return items.map((item) => {
         if (item.id === action.id) {
-          return { ...item, count: item.count-- };
+          return { ...item, quantity: item.quantity-- };
         } else {
           return item;
         }
