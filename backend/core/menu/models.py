@@ -5,12 +5,15 @@ from pickers.models import Icon
 User = settings.AUTH_USER_MODEL
 
 class Menu(models.Model):
+    PRICE_UNITS= [('simp', 'simple'), ('comp', 'compact'), ('engL', 'engLetter'), ('perL', 'perLetter') ]
+
     name = models.CharField(max_length=250)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     primary_color = ColorField()
     secondary_color = ColorField()
     tertiary_color = ColorField()
     bg_color = ColorField()
+    price_unit = models.CharField(max_length=9 ,choices=PRICE_UNITS, default='simp')
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
@@ -39,7 +42,7 @@ class Item(models.Model):
     is_active = models.BooleanField(default=True)
 
     def __str__(self) -> str:
-        return f'{self.name} - {self.price}'
+        return f'{self.name} - {self.price} - {self.menu}'
 
 class Tag(models.Model):
    name = models.CharField(max_length=10)
