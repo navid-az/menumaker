@@ -7,7 +7,7 @@ export default function ItemsCategoryTitle({
   return (
     <>
       <div
-        className={`${sticky && "sticky"} ${
+        className={`${sticky && "sticky z-40"} ${
           parentType == "vertical" ? "top-0" : "top-12"
         } z-10 bg-white py-2 text-lg font-semibold`}
       >

@@ -13,6 +13,8 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import PriceTag from "../menu/components/PriceTag";
 
+import { ArrowLeft } from "@/app/components/svgs";
+
 export default function Orders({ params }) {
   const { items, getItemQuantity } = useItems();
 
@@ -29,14 +31,16 @@ export default function Orders({ params }) {
   return (
     <div className="container mx-auto flex h-screen flex-col gap-8 p-4">
       <header className="flex items-center justify-between transition-all">
-        <GoBackBtn absolute={false} link={`/${params.orgName}/menu`} />
+        <GoBackBtn absolute={false} link={`/${params.orgName}/menu`}>
+          <ArrowLeft className={`stroke-sky-blue text-xl`} />
+        </GoBackBtn>
         <h1 className=" text-lg font-bold">لیست سفارشات</h1>
       </header>
       <section className="flex flex-col gap-4">
         {items.map((item) => (
           <OrderedItem key={item.id} params={params} {...item} />
         ))}
-        {items.length > 0 && (
+        {items.length > 0 && !isLoading && (
           <>
             <hr className="border-sky-blue/75" />
             <div className="flex justify-between">

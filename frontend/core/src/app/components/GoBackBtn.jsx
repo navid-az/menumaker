@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ArrowLeft } from "./svgs";
 
 export default function GoBackBtn({
   primary_color = "royal-green",
@@ -7,6 +6,7 @@ export default function GoBackBtn({
   link = "/",
   absolute = true,
   text = "",
+  children,
 }) {
   return (
     <Link
@@ -17,8 +17,12 @@ export default function GoBackBtn({
       } text-sm font-normal transition-all duration-200 ease-in-out hover:gap-4`}
       href={link}
     >
-      <ArrowLeft className={`stroke-[${secondary_color}] text-xl`} />
-      {text && <p className=" font-semibold">{text}</p>}
+      {children}
     </Link>
   );
+}
+
+{
+  /* <ArrowLeft className={`stroke-[${secondary_color}] text-xl`} />
+{text && <p className=" font-semibold">{text}</p>} */
 }

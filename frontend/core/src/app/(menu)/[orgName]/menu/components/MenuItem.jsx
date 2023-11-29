@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useRef, useState } from "react";
 import Image from "next/image";
 
 //components
@@ -7,6 +7,8 @@ import PriceTag from "./PriceTag";
 import Tag from "./Tag";
 import ItemsCategoryTitle from "./ItemsCategoryTitle";
 import ItemsDescriptionTab from "./ItemsDescriptionTab";
+
+import { useRippleAnimation } from "../../hooks/useRippleAnimation";
 
 // react query
 import { useQuery } from "@tanstack/react-query";
@@ -105,7 +107,7 @@ function MenuItem({
   id,
   title,
   body,
-  type = "horizontal", //horizontal - vertical
+  type = "vertical", //horizontal - vertical
   price,
   priceUnit = "simple", //simple - compact - engLetter
   primaryColor = "royal-green",
@@ -121,11 +123,12 @@ function MenuItem({
     e.stopPropagation();
     onClick(id, title, body, price, priceUnit);
   };
-
+  const buttonRef = useRef();
+  useRippleAnimation(buttonRef, { size: 800, duration: 1500 });
   return (
     <div
       onClick={openDescriptionTab}
-      className={`flex min-h-[8rem] justify-between gap-2 rounded-lg bg-${primaryColor} relative select-none p-2 sm:gap-3 sm:p-3 ${
+      className={`relative flex min-h-[8rem] justify-between gap-2 rounded-lg bg-${primaryColor} relative select-none p-2 sm:gap-3 sm:p-3 ${
         type == "vertical"
           ? "h-auto flex-1 flex-col-reverse flex-wrap sm:h-auto"
           : "h-auto w-full sm:h-48"
@@ -155,7 +158,7 @@ function MenuItem({
             )}
           </p>
         </header>
-        <footer className="flex h-7 w-full items-center justify-between sm:h-10">
+        <footer className="relative flex h-7 w-full items-center justify-between xss:h-8 sm:h-10">
           <PriceTag
             price={price}
             priceUnit={priceUnit}
@@ -163,20 +166,22 @@ function MenuItem({
             isLoading={isLoading}
           ></PriceTag>
           {isLoading ? (
-            <div className="h-full w-4/12">
+            <div className="h-full w-4/12 sm:w-2/12">
               <Skeleton containerClassName="flex h-full" />
             </div>
           ) : (
-            <AddItemBtn
-              primaryColor={primaryColor}
-              secondaryColor={secondaryColor}
-              itemId={id}
-            ></AddItemBtn>
+            <div className="absolute right-0 z-20 h-full w-max">
+              <AddItemBtn
+                primaryColor={primaryColor}
+                secondaryColor={secondaryColor}
+                itemId={id}
+              ></AddItemBtn>
+            </div>
           )}
         </footer>
       </section>
       <section
-        className={`relative w-5/12 rounded-lg  ${
+        className={`relative w-5/12 rounded-lg transition-all xss:h-44  ${
           type == "vertical" ? "h-40 w-full" : "w-5/12"
         }`}
       >
@@ -190,6 +195,12 @@ function MenuItem({
           ></Image>
         ) || <Skeleton />}
       </section>
+
+      {/* for test (only for ripple click animation) */}
+      <div
+        ref={buttonRef}
+        className=" absolute bottom-0 right-0 h-full w-full bg-none"
+      ></div>
     </div>
   );
 }

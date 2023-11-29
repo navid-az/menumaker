@@ -3,6 +3,7 @@ import { useItems, useItemsDispatch } from "./ItemsContext";
 
 //svg
 import { Minus, Plus, ArrowLeft, Trash } from "@/app/components/svgs";
+import Button from "@/app/components/Button";
 
 export default function AddItemBtn({
   primaryColor,
@@ -24,7 +25,10 @@ export default function AddItemBtn({
   }, []);
 
   return (
-    <div className={`flex h-full w-20 sm:w-28 ${borderRadius}`}>
+    <div
+      onClick={(e) => e.stopPropagation()}
+      className={`flex h-full w-20 transition-all xss:w-24 ${borderRadius}`}
+    >
       {itemQuantity > 0 ? (
         <section
           className={`flex h-full w-full items-center ${borderRadius} bg-${secondaryColor} justify-between p-[2px] sm:p-1`}
@@ -50,7 +54,7 @@ export default function AddItemBtn({
           ></ValueChangerBtn>
 
           <span className="mt-[3px] flex-initial">
-            <p className={`sm:text-xl text-${primaryColor}`}>{itemQuantity}</p>
+            <p className={`xs:text-xl text-${primaryColor}`}>{itemQuantity}</p>
           </span>
 
           <ValueChangerBtn
@@ -69,8 +73,30 @@ export default function AddItemBtn({
           ></ValueChangerBtn>
         </section>
       ) : (
+        // <Button
+        //   variant="square"
+        //   primaryColor={primaryColor}
+        //   secondaryColor={secondaryColor}
+        //   onClick={(e) => {
+        //     e.stopPropagation();
+        //     dispatch({
+        //       type: "added",
+        //       id: itemId,
+        //       quantity: 1,
+        //     });
+        //   }}
+        // >
+        //   <p className=" xs:text flex-initial pt-[0.5px] text-xs font-semibold xss:text-sm">
+        //     افزودن
+        //   </p>
+        //   <div className="aspect-square h-full">
+        //     <Plus
+        //       className={`stroke-${primaryColor} h-full w-full stroke-[1.1] xss:stroke-[1.3]`}
+        //     />
+        //   </div>
+        // </Button>
         <button
-          className={`flex h-full w-full flex-none items-center ${borderRadius} gap-2 bg-${secondaryColor} justify-center px-4 sm:gap-4`}
+          className={`flex h-full w-full flex-none items-center ${borderRadius} gap-2 bg-${secondaryColor} justify-center px-2 py-1 sm:gap-4`}
           onClick={(e) => {
             e.stopPropagation();
             dispatch({
@@ -80,11 +106,13 @@ export default function AddItemBtn({
             });
           }}
         >
-          <p className=" flex-initial text-xs font-semibold sm:text-base">
+          <p className=" xs:text flex-initial pt-[0.5px] text-xs font-semibold xss:text-sm">
             افزودن
           </p>
-          <div className="relative h-4 w-4 flex-none justify-center sm:h-6 sm:w-6">
-            <Plus className={`stroke-${primaryColor} h-full w-full`} />
+          <div className="aspect-square h-full">
+            <Plus
+              className={`stroke-${primaryColor} h-full w-full stroke-[1.1] xss:stroke-[1.3]`}
+            />
           </div>
         </button>
       )}
@@ -110,11 +138,11 @@ const ValueChangerBtn = ({
       className={`relative aspect-square h-full rounded-[4px] ${borderRadius} bg-${primaryColor}`}
     >
       {iconSrc == "minus" ? (
-        <Minus className={`stroke-${secondaryColor} h-full w-full`} />
+        <Minus className={`text-${secondaryColor} h-full w-full`} />
       ) : iconSrc == "trash" ? (
-        <Trash className={`stroke-${secondaryColor} h-full w-full`} />
+        <Trash className={`text-${secondaryColor} h-full w-full`} />
       ) : (
-        <Plus className={`stroke-${secondaryColor} h-full w-full`} />
+        <Plus className={`text-${secondaryColor} h-full w-full`} />
       )}
     </button>
   );

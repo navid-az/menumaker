@@ -55,14 +55,74 @@ scrollbar-width: none;  /* Firefox */
   display: -webkit-box;
 } */
 
+/* .ripple{
+  height: 400px;
+  width: 400px;
+  background: #fff;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  transform: translate(-50%,-50%);
+  opacity: 0.5;
+  animation: blink 0.5s linear infinite;
+}
 
-/* random test  (should be deleted) */
-.bro{
-  background: #a3b8c2;
-  background: #f0f3f5;
-  background: #0F2C30;
-  background: #94d9e2;
-  
-  background: #a3bfc3;
-  background: #dee3e3;
+@keyframes blink {
+0%{
+  height: 0px;
+  width: 0px;
+  opacity: 0.5;
+}
+100%{
+  height:1000px;
+  width: 1000px; 
+  opacity: 0;
+}
+} */
+
+
+/* ripple animation effect */
+.effect-container{
+  overflow: hidden;
+
+  --effect-name :ripple;
+  --effect-duration :800ms;
+  --effect-top :0;
+  --effect-left :0;
+  --effect-height :100px;
+  --effect-width :100px;
+  --effect-color :white;
+}
+
+.effect-container::before{
+  content: '';
+  position: absolute;
+  opacity: 0.5;
+  top: var(--effect-top);
+  left: var(--effect-left);
+  width: var(--effect-width);
+  height: var(--effect-height);
+  background-color: var(--effect-color);
+  border-radius: 50%;
+  transform: scale(0);
+}
+
+.effect-container.active::before{
+  border-radius: 50%;
+  animation: var(--effect-name) var(--effect-duration) linear forwards;
+}
+
+@keyframes ripple {
+  from{
+    transform: scale(0);
+  }
+  to{
+    transform: scale(6);
+    opacity: 0;
+  }
+}
+
+
+.nigga{
+  position: absolute;
 }

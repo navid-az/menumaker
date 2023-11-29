@@ -5,6 +5,12 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
+import { useRef } from "react";
+import { useRippleAnimation } from "../../hooks/useRippleAnimation";
+import { useTactileAnimation } from "../../hooks/useTactileAnimation";
+
+import Button from "@/app/components/Button";
+
 export default function ItemsCategory({ params, type }) {
   const { isLoading, isError, data, error } = useQuery({
     queryKey: ["categories"],
@@ -22,7 +28,7 @@ export default function ItemsCategory({ params, type }) {
 
   return (
     <div
-      className={`hide-scrollbar avoid-stretch sticky top-0 z-20 flex overflow-y-auto bg-royal-green p-2 transition-all sm:px-4 ${
+      className={`hide-scrollbar avoid-stretch sticky top-0 z-50 flex overflow-y-auto bg-royal-green p-2 transition-all sm:px-4 ${
         type == "vertical"
           ? "h-screen w-2/12 flex-col flex-wrap gap-4"
           : "w-full flex-row gap-1"
@@ -58,7 +64,7 @@ export default function ItemsCategory({ params, type }) {
   );
 }
 
-function CategoryBtn({ name, parentType, id }) {
+function CategoryBtn({ name, parentType, id, children }) {
   const moveToCat = () => {
     const categoryTitle = document.getElementById(`category-title-${id}`);
     const verticalCategoriesNavHeight = 48;
@@ -71,19 +77,32 @@ function CategoryBtn({ name, parentType, id }) {
       behavior: "smooth",
     });
   };
-
+  const buttonRef = useRef();
+  useRippleAnimation(buttonRef, { size: 50 });
   return (
+    // <Button
+    //   id={`category-${id}`}
+    //   ref={buttonRef}
+    //   onClick={moveToCat}
+    //   primaryColor="royal-green"
+    //   secondaryColor="sky-blue"
+    //   variant="circular"
+    // >
+    //   <p className="inline-block">{name}</p>
+    // </Button>
     <button
+      ref={buttonRef}
       onClick={moveToCat}
       type="button"
       id={`category-${id}`}
-      className={`flex items-center justify-center rounded-full bg-sky-blue text-center text-royal-green ${
+      className={`relative flex items-center justify-center rounded-full bg-sky-blue text-center text-royal-green ${
         parentType == "vertical"
           ? "aspect-square h-auto w-full"
           : "h-full w-max px-4 py-1"
       }`}
     >
       <p className="inline-block">{name}</p>
+      {children}
     </button>
   );
 }

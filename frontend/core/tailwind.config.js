@@ -1,4 +1,6 @@
 /** @type {import('tailwindcss').Config} */
+const defaultTheme = require("tailwindcss/defaultTheme");
+
 module.exports = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -23,6 +25,12 @@ module.exports = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+    },
+    screens: {
+      xss: "320px",
+      xs: "375px",
+      x: "425px",
+      ...defaultTheme.screens,
     },
   },
   plugins: [require("tailwind-scrollbar")({ nocompatible: true })],

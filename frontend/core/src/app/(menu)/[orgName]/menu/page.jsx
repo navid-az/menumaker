@@ -7,6 +7,7 @@ import ItemsCategory from "./components/ItemsCategory";
 
 import { SkeletonTheme } from "react-loading-skeleton";
 import Link from "next/link";
+import { ArrowLeft } from "@/app/components/svgs";
 
 export const colors = createContext(null);
 
@@ -22,25 +23,28 @@ export default function MenuPage({ params }) {
             type == "vertical" ? "flex-row" : "flex-col"
           }`}
         >
-          <header className="bg-royal-green">
+          <header className="flex gap-1 bg-royal-green p-2">
             <GoBackBtn
               link={`/${params.orgName}/orders`}
               absolute={false}
               text="سفارشات"
               secondary_color="royal-green"
               primary_color="sky-blue"
-            ></GoBackBtn>
-          </header>
-          <header className="bg-royal-green">
+            >
+              {/* <ArrowLeft className={`stroke-red-600 text-xl`} /> */}
+              <p className=" font-semibold">سفارشات</p>
+            </GoBackBtn>
             <GoBackBtn
               absolute={false}
               text="صفحه اصلی"
               secondary_color="royal-green"
               primary_color="sky-blue"
-            ></GoBackBtn>
+            >
+              <p className=" font-semibold">صفحه اصلی</p>
+            </GoBackBtn>
           </header>
           <ItemsCategory type={type} params={params} />
-          <MenuItemsWrapper params={params} type={type} />
+          <MenuItemsWrapper type={type} params={params} />
         </div>
       </colors.Provider>
     </SkeletonTheme>

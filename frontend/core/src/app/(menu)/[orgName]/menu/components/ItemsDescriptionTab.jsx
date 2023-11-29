@@ -36,7 +36,7 @@ export default function ItemsDescriptionTab({
   return (
     <div
       ref={darkGg}
-      className="fixed z-50 hidden h-screen w-screen bg-black/60 opacity-0"
+      className="fixed z-50 hidden h-screen w-screen bg-black/40 opacity-0"
       onClick={closeTab}
     >
       <section
