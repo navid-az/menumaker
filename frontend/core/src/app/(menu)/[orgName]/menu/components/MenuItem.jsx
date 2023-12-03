@@ -55,7 +55,7 @@ export default function MenuItemsWrapper({ params, type }) {
   return (
     <dataIsLoadingContext.Provider value={isLoading}>
       <div
-        className={`relative w-full p-2 sm:gap-4 sm:px-4 ${
+        className={`relative p-2 sm:container sm:gap-4 ${
           type == "vertical" ? "" : "flex flex-col"
         }`}
       >
@@ -69,7 +69,7 @@ export default function MenuItemsWrapper({ params, type }) {
                     categoryName={category.name}
                     parentType={type}
                   />
-                  <div className="flex flex-col gap-2">
+                  <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
                     {category["items"].map((item) => (
                       <MenuItem
                         isLoading={isLoading}
@@ -158,7 +158,7 @@ function MenuItem({
             )}
           </p>
         </header>
-        <footer className="relative flex h-7 w-full items-center justify-between xss:h-8 sm:h-10">
+        <footer className="relative flex h-max w-full items-center justify-between">
           <PriceTag
             price={price}
             priceUnit={priceUnit}
@@ -170,18 +170,16 @@ function MenuItem({
               <Skeleton containerClassName="flex h-full" />
             </div>
           ) : (
-            <div className="absolute right-0 z-20 h-full w-max">
-              <AddItemBtn
-                primaryColor={primaryColor}
-                secondaryColor={secondaryColor}
-                itemId={id}
-              ></AddItemBtn>
-            </div>
+            <AddItemBtn
+              primaryColor={primaryColor}
+              secondaryColor={secondaryColor}
+              itemId={id}
+            ></AddItemBtn>
           )}
         </footer>
       </section>
       <section
-        className={`relative w-5/12 rounded-lg transition-all xss:h-44  ${
+        className={`relative w-5/12 rounded-lg transition-all xss:h-48 xs:h-56  ${
           type == "vertical" ? "h-40 w-full" : "w-5/12"
         }`}
       >

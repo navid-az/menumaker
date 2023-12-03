@@ -1,13 +1,17 @@
 "use client";
 
 import React, { createContext } from "react";
-import GoBackBtn from "@/app/components/GoBackBtn";
+import Link from "next/link";
+
+//components
 import MenuItemsWrapper from "./components/MenuItem";
 import ItemsCategory from "./components/ItemsCategory";
-
+import SearchBar from "./components/SearchBar";
+import { Button } from "@/components/ui/button";
 import { SkeletonTheme } from "react-loading-skeleton";
-import Link from "next/link";
-import { ArrowLeft } from "@/app/components/svgs";
+
+//SVGs
+import { Bell } from "@/app/components/svgs";
 
 export const colors = createContext(null);
 
@@ -18,30 +22,34 @@ export default function MenuPage({ params }) {
   return (
     <SkeletonTheme baseColor="#a3bfc3" highlightColor="#dee3e3">
       <colors.Provider value={menuColors}>
-        <div
-          className={`relative flex bg-soft-blue ${
-            type == "vertical" ? "flex-row" : "flex-col"
-          }`}
-        >
-          <header className="flex gap-1 bg-royal-green p-2">
-            <GoBackBtn
-              link={`/${params.orgName}/orders`}
-              absolute={false}
-              text="سفارشات"
-              secondary_color="royal-green"
-              primary_color="sky-blue"
-            >
-              {/* <ArrowLeft className={`stroke-red-600 text-xl`} /> */}
-              <p className=" font-semibold">سفارشات</p>
-            </GoBackBtn>
-            <GoBackBtn
-              absolute={false}
-              text="صفحه اصلی"
-              secondary_color="royal-green"
-              primary_color="sky-blue"
-            >
-              <p className=" font-semibold">صفحه اصلی</p>
-            </GoBackBtn>
+        <div className={`flex ${type == "vertical" ? "flex-row" : "flex-col"}`}>
+          <header className="flex w-full flex-col gap-2 bg-royal-green p-2 pb-0 sm:px-4">
+            <section className="flex gap-1">
+              <Button
+                size="sm"
+                className=" rounded-full bg-teal-200 text-royal-green"
+                asChild
+              >
+                <Link href={`/${params.orgName}/orders`}>سفارشات</Link>
+              </Button>
+              <Button
+                size="sm"
+                className=" rounded-full bg-teal-200 text-royal-green"
+                asChild
+              >
+                <Link href="/">صفحه اصلی</Link>
+              </Button>
+            </section>
+            <section className="flex w-full flex-wrap gap-2">
+              <Button
+                size="sm"
+                className=" rounded-full bg-red-300 text-red-950"
+              >
+                گارسون
+                <Bell className="ml-2 h-4 w-4" />
+              </Button>
+              <SearchBar></SearchBar>
+            </section>
           </header>
           <ItemsCategory type={type} params={params} />
           <MenuItemsWrapper type={type} params={params} />

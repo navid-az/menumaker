@@ -1,4 +1,5 @@
 import "./globals.css";
+import { cn } from "@/lib/utils";
 
 import localFont from "next/font/local";
 
@@ -16,8 +17,13 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${vazir.variable}`}>
-      <body className="overflow-x-hidden bg-soft-blue font-vazir font-medium">
+    <html lang="en">
+      <body
+        className={cn(
+          "bg-soft-blue font-vazir overflow-x-hidden font-medium",
+          vazir.variable
+        )}
+      >
         {children}
       </body>
     </html>

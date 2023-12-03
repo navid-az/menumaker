@@ -8,8 +8,9 @@ import axios from "axios";
 import { useRef } from "react";
 import { useRippleAnimation } from "../../hooks/useRippleAnimation";
 import { useTactileAnimation } from "../../hooks/useTactileAnimation";
+import { Button } from "@/components/ui/button";
 
-import Button from "@/app/components/Button";
+// import Button from "@/app/components/Button";
 
 export default function ItemsCategory({ params, type }) {
   const { isLoading, isError, data, error } = useQuery({
@@ -31,7 +32,7 @@ export default function ItemsCategory({ params, type }) {
       className={`hide-scrollbar avoid-stretch sticky top-0 z-50 flex overflow-y-auto bg-royal-green p-2 transition-all sm:px-4 ${
         type == "vertical"
           ? "h-screen w-2/12 flex-col flex-wrap gap-4"
-          : "w-full flex-row gap-1"
+          : "w-screen flex-row gap-1"
       }`}
     >
       {!isLoading ? (
@@ -78,31 +79,21 @@ function CategoryBtn({ name, parentType, id, children }) {
     });
   };
   const buttonRef = useRef();
-  useRippleAnimation(buttonRef, { size: 50 });
+  useRippleAnimation(buttonRef, {
+    size: 50,
+    duration: 400,
+  });
+  useTactileAnimation(buttonRef, {});
+
   return (
-    // <Button
-    //   id={`category-${id}`}
-    //   ref={buttonRef}
-    //   onClick={moveToCat}
-    //   primaryColor="royal-green"
-    //   secondaryColor="sky-blue"
-    //   variant="circular"
-    // >
-    //   <p className="inline-block">{name}</p>
-    // </Button>
-    <button
-      ref={buttonRef}
-      onClick={moveToCat}
-      type="button"
+    <Button
       id={`category-${id}`}
-      className={`relative flex items-center justify-center rounded-full bg-sky-blue text-center text-royal-green ${
-        parentType == "vertical"
-          ? "aspect-square h-auto w-full"
-          : "h-full w-max px-4 py-1"
-      }`}
+      onClick={moveToCat}
+      size="sm"
+      className=" relative h-8 flex-none rounded-full bg-sky-blue px-4 text-royal-green"
+      ref={buttonRef}
     >
-      <p className="inline-block">{name}</p>
-      {children}
-    </button>
+      {name}
+    </Button>
   );
 }
