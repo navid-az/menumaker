@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext } from "react";
+import React, { createContext, useRef, useState } from "react";
 import Link from "next/link";
 
 //components
@@ -19,6 +19,8 @@ export default function MenuPage({ params }) {
   let type = "fsdaf";
 
   const menuColors = { primary: "royal-green", secondary: "sky-blue" };
+  const [searchedValue, setSearchedValue] = useState("");
+
   return (
     <SkeletonTheme baseColor="#a3bfc3" highlightColor="#dee3e3">
       <colors.Provider value={menuColors}>
@@ -48,11 +50,14 @@ export default function MenuPage({ params }) {
                 گارسون
                 <Bell className="ml-2 h-4 w-4" />
               </Button>
-              <SearchBar></SearchBar>
+              <SearchBar
+                value={searchedValue}
+                setValue={setSearchedValue}
+              ></SearchBar>
             </section>
           </header>
           <ItemsCategory type={type} params={params} />
-          <MenuItemsWrapper type={type} params={params} />
+          <MenuItemsWrapper type={type} searchedValue={searchedValue} params={params} />
         </div>
       </colors.Provider>
     </SkeletonTheme>

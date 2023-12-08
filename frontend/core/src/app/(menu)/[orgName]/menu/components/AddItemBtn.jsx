@@ -1,9 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useItems, useItemsDispatch } from "./ItemsContext";
 
-//svg
-import { Minus, Plus, ArrowLeft, Trash } from "@/app/components/svgs";
-import Button from "@/app/components/Button";
+//SVGs
+import { Minus, Plus, Trash } from "@/app/components/svgs";
+
+//components
+import { Button } from "@/components/ui/button";
+
+//animation
+import { useTactileAnimation } from "../../hooks/useTactileAnimation";
 
 export default function AddItemBtn({
   primaryColor,
@@ -26,19 +31,17 @@ export default function AddItemBtn({
 
   return (
     <div
-      onClick={(e) => e.stopPropagation()}
-      className={`flex h-full w-20 transition-all xss:w-24 ${borderRadius}`}
+      onClick={(e) => {
+        e.stopPropagation(e);
+      }}
+      className={`relative z-30 flex w-24 transition-all ${borderRadius}`}
     >
       {itemQuantity > 0 ? (
         <section
-          className={`flex h-full w-full items-center ${borderRadius} bg-${secondaryColor} justify-between p-[2px] sm:p-1`}
+          className={`flex h-9 w-full items-center ${borderRadius} bg-${secondaryColor} justify-between gap-2 p-[3px]`}
         >
           <ValueChangerBtn
-            borderRadius={borderRadius}
-            primaryColor={primaryColor}
-            secondaryColor={secondaryColor}
             name="decrease"
-            iconSrc={itemQuantity > 1 ? "minus" : "trash"}
             action={() => {
               itemQuantity > 1
                 ? dispatch({
@@ -51,18 +54,16 @@ export default function AddItemBtn({
                     id: itemId,
                   });
             }}
+            iconSrc={itemQuantity != 1 ? "minus" : "trash"}
+            secondaryColor={secondaryColor}
           ></ValueChangerBtn>
 
-          <span className="mt-[3px] flex-initial">
+          <span className="mt-1 flex-initial text-lg">
             <p className={`xs:text-xl text-${primaryColor}`}>{itemQuantity}</p>
           </span>
 
           <ValueChangerBtn
-            borderRadius={borderRadius}
-            primaryColor={primaryColor}
-            secondaryColor={secondaryColor}
             name="increase"
-            iconSrc={"plus"}
             action={() => {
               dispatch({
                 type: "increased",
@@ -70,35 +71,15 @@ export default function AddItemBtn({
                 quantity: itemQuantity,
               });
             }}
+            iconSrc="plus"
+            secondaryColor={secondaryColor}
           ></ValueChangerBtn>
         </section>
       ) : (
-        // <Button
-        //   variant="square"
-        //   primaryColor={primaryColor}
-        //   secondaryColor={secondaryColor}
-        //   onClick={(e) => {
-        //     e.stopPropagation();
-        //     dispatch({
-        //       type: "added",
-        //       id: itemId,
-        //       quantity: 1,
-        //     });
-        //   }}
-        // >
-        //   <p className=" xs:text flex-initial pt-[0.5px] text-xs font-semibold xss:text-sm">
-        //     افزودن
-        //   </p>
-        //   <div className="aspect-square h-full">
-        //     <Plus
-        //       className={`stroke-${primaryColor} h-full w-full stroke-[1.1] xss:stroke-[1.3]`}
-        //     />
-        //   </div>
-        // </Button>
-        <button
-          className={`flex h-full w-full flex-none items-center ${borderRadius} gap-2 bg-${secondaryColor} justify-center px-2 py-1 sm:gap-4`}
-          onClick={(e) => {
-            e.stopPropagation();
+        <Button
+          size="sm"
+          className="w-full bg-sky-blue text-royal-green"
+          onClick={() => {
             dispatch({
               type: "added",
               id: itemId,
@@ -106,44 +87,31 @@ export default function AddItemBtn({
             });
           }}
         >
-          <p className=" xs:text flex-initial pt-[0.5px] text-xs font-semibold xss:text-sm">
-            افزودن
-          </p>
-          <div className="aspect-square h-full">
-            <Plus
-              className={`stroke-${primaryColor} h-full w-full stroke-[1.1] xss:stroke-[1.3]`}
-            />
-          </div>
-        </button>
+          افزودن <Plus className="ml-2 h-4 w-4" />
+        </Button>
       )}
     </div>
   );
 }
 
-const ValueChangerBtn = ({
-  name,
-  iconSrc,
-  action,
-  primaryColor,
-  secondaryColor,
-  borderRadius,
-}) => {
+const ValueChangerBtn = ({ name, iconSrc, action, secondaryColor }) => {
+  const btnRef = useRef();
+  useTactileAnimation(btnRef, { duration: 0.15 });
   return (
-    <button
+    <Button
+      ref={btnRef}
       name={name}
-      onClick={(e) => {
-        action();
-        e.stopPropagation();
-      }}
-      className={`relative aspect-square h-full rounded-[4px] ${borderRadius} bg-${primaryColor}`}
+      onClick={action}
+      size="sm"
+      className="h-full w-[30px] p-1"
     >
       {iconSrc == "minus" ? (
-        <Minus className={`text-${secondaryColor} h-full w-full`} />
+        <Minus className={`text-${secondaryColor} h-6 w-6`} />
       ) : iconSrc == "trash" ? (
-        <Trash className={`text-${secondaryColor} h-full w-full`} />
+        <Trash className={`text-${secondaryColor} h-6 w-6`} />
       ) : (
-        <Plus className={`text-${secondaryColor} h-full w-full`} />
+        <Plus className={`text-${secondaryColor} h-6 w-6`} />
       )}
-    </button>
+    </Button>
   );
 };

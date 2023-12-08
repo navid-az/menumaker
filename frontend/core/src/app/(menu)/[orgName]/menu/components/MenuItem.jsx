@@ -17,7 +17,7 @@ import Skeleton from "react-loading-skeleton";
 
 export const dataIsLoadingContext = createContext(null);
 
-export default function MenuItemsWrapper({ params, type }) {
+export default function MenuItemsWrapper({ params, type, searchedValue }) {
   const { isLoading, isError, data, error } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
@@ -70,18 +70,31 @@ export default function MenuItemsWrapper({ params, type }) {
                     parentType={type}
                   />
                   <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                    {category["items"].map((item) => (
-                      <MenuItem
-                        isLoading={isLoading}
-                        key={item.id}
-                        id={item.id}
-                        title={item.name}
-                        body={item.description}
-                        price={item.price}
-                        onClick={activeItem}
-                        // type={type}
-                      ></MenuItem>
-                    ))}
+                    {searchedValue === ""
+                      ? category["items"].map((item) => (
+                          <MenuItem
+                            isLoading={isLoading}
+                            key={item.id}
+                            id={item.id}
+                            title={item.name}
+                            body={item.description}
+                            price={item.price}
+                            onClick={activeItem}
+                          ></MenuItem>
+                        ))
+                      : category["items"]
+                          .filter((item) => item.name.includes(searchedValue))
+                          .map((item) => (
+                            <MenuItem
+                              isLoading={isLoading}
+                              key={item.id}
+                              id={item.id}
+                              title={item.name}
+                              body={item.description}
+                              price={item.price}
+                              onClick={activeItem}
+                            ></MenuItem>
+                          ))}
                   </div>
                 </div>
               )
