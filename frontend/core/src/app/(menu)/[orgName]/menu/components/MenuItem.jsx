@@ -192,8 +192,10 @@ function MenuItem({
         </footer>
       </section>
       <section
-        className={`relative w-5/12 rounded-lg transition-all xss:h-48 xs:h-56  ${
-          type == "vertical" ? "h-40 w-full" : "w-5/12"
+        className={`relative w-5/12 rounded-lg transition-all   ${
+          type == "vertical"
+            ? "h-40 w-full xss:h-48 xs:h-56"
+            : "w-5/12 sm:h-full"
         }`}
       >
         {(

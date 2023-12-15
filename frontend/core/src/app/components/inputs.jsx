@@ -2,9 +2,19 @@
 
 import { useState, useRef, useReducer, useEffect, useContext } from "react";
 import { FormDataContext } from "../(creator)/builder/components/builderForm";
-import { Popover, PopoverTrigger, PopoverContent } from "./PopOver";
+// import { Popover, PopoverTrigger, PopoverContent } from "./PopOver";
+
+// components
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import IconSelectorList from "./IconSelectorLIst";
-import Button from "./Button";
+import { Button } from "@/components/ui/button";
+
+//SVGs
+import { Trash, Edit } from "@/app/components/svgs";
 
 const ACTIONS = {
   ADD_ITEM: "addItem",
@@ -80,34 +90,33 @@ export const NameGiverInput = ({
     <div className="flex h-max w-full flex-col gap-2">
       <form
         onSubmit={handleSubmit}
-        className="flex h-max w-full flex-row items-center justify-between gap-2 rounded-lg bg-sad-blue p-2"
+        className="flex h-max w-full flex-row items-center justify-between gap-2 rounded-lg bg-sad-blue p-1 sm:p-2"
       >
         <section className="flex gap-2">
           {editMode == true ? (
             <Button
-              type="button"
-              content="ویرایش"
-              variant="square"
-              style="!h-full"
               onClick={editing}
-            ></Button>
+              className="text-xs sm:text-sm"
+              type="button"
+              size="sm"
+            >
+              ویرایش
+            </Button>
           ) : (
-            <Button
-              type="submit"
-              content="ثبت"
-              variant="square"
-              style="!h-full"
-            ></Button>
+            <Button className="px-4 text-xs sm:text-sm" size="sm">
+              ثبت
+            </Button>
           )}
 
           <Popover>
             <PopoverTrigger>
               <Button
-                variant="square"
-                content="آیکون"
-                style="!h-full"
-                toolTip="انتخاب یک آیکون برای بخش مورد نظر"
-              ></Button>
+                className="px-4 text-xs sm:text-sm"
+                size="sm"
+                type="button"
+              >
+                آیکون
+              </Button>
             </PopoverTrigger>
             <PopoverContent className="Popover">
               <IconSelectorList
@@ -125,7 +134,7 @@ export const NameGiverInput = ({
           ref={inputRef}
           type="text"
           name={name}
-          className="h-full w-full rounded-lg bg-sad-blue p-1 text-end text-sm placeholder:text-royal-green-dark focus:outline-0"
+          className="h-full w-full rounded-lg bg-sad-blue p-1 text-end text-xs placeholder:text-royal-green-dark focus:outline-0 sm:text-sm"
           placeholder={placeholder}
           value={item.name}
           onChange={(e) => {
@@ -134,11 +143,12 @@ export const NameGiverInput = ({
               payload: e.target.value,
             });
           }}
+          onClick={(e) => e.target.select()}
         />
       </form>
       {/* items list */}
       {formData[name].length != 0 && (
-        <section className="flex flex-col gap-2 rounded-md bg-sad-blue p-2">
+        <section className="flex flex-col gap-2 rounded-md bg-sad-blue p-1 sm:p-2">
           {/* <h3 className="w-full text-right font-semibold text-royal-green">
             لیست بخش ها
           </h3> */}
@@ -148,24 +158,26 @@ export const NameGiverInput = ({
               className="flex items-center justify-between p-1"
             >
               <section className="flex gap-2">
-                <p>{item.icon}</p>
-                <p>{item.name}</p>
+                <p className="text-sm sm:text-base">{item.icon}</p>
+                <p className="text-sm sm:text-base">{item.name}</p>
               </section>
               <div className="flex gap-2">
                 <Button
-                  variant="square"
-                  style={"!bg-inherit !p-2"}
-                  iconSrc="/images/form-icons/edit.svg"
+                  className="h-8 w-8 bg-transparent text-royal-green"
+                  size="icon"
                   name="edit"
                   onClick={() => editItem(item.name, item.id)}
-                ></Button>
+                >
+                  <Edit className="h-5 w-5" />
+                </Button>
                 <Button
-                  variant="square"
-                  style={"!bg-inherit !p-2"}
-                  iconSrc="/images/form-icons/trash.svg"
+                  className="h-8 w-8 bg-transparent text-royal-green"
+                  size="icon"
                   name="delete"
                   onClick={() => deleteItem(item.id)}
-                ></Button>
+                >
+                  <Trash className="h-7 w-7" />
+                </Button>
               </div>
             </div>
           ))}
@@ -274,26 +286,24 @@ const Input = ({
   };
 
   return (
-    <>
-      <div
-        ref={inputWrapper}
-        onClick={inputFocus}
-        className="flex h-full w-full flex-initial items-end rounded-lg border-2 border-sad-blue bg-sad-blue text-end text-xs transition-all"
-      >
-        {/* other btns  */}
-        {children}
+    <div
+      ref={inputWrapper}
+      onClick={inputFocus}
+      className="flex h-full w-full flex-initial items-end rounded-lg border-2 border-sad-blue bg-sad-blue text-end text-xs transition-all"
+    >
+      {/* other btns  */}
+      {children}
 
-        <input
-          name="link-input"
-          className="h-full w-auto grow rounded-lg bg-sad-blue p-1 text-end text-sm placeholder:text-royal-green-dark focus:outline-0"
-          placeholder={placeholder}
-          type="text"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          // id={`input-${id}`}
-        />
-      </div>
-    </>
+      <input
+        name="link-input"
+        className="h-full w-auto grow rounded-lg bg-sad-blue p-1 text-end text-sm placeholder:text-royal-green-dark focus:outline-0"
+        placeholder={placeholder}
+        type="text"
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+        // id={`input-${id}`}
+      />
+    </div>
   );
 };
 

@@ -22,9 +22,9 @@ class Menu(models.Model):
 class Table(models.Model):
     menu = models.ForeignKey(Menu, on_delete=models.CASCADE, related_name='tables')
     name = models.CharField(max_length=100, default='میز ۱')
-    place = models.CharField(max_length=150, default='')
-    exp_date = models.DateTimeField(auto_now_add=True)
-    created = models.DateTimeField(auto_now_add=True)
+    place = models.CharField(max_length=150, default='yes')
+    exp_date = models.DateTimeField(auto_now_add=True,blank=True, null=True)
+    created = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):

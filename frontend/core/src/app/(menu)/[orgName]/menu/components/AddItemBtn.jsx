@@ -102,8 +102,8 @@ const ValueChangerBtn = ({ name, iconSrc, action, secondaryColor }) => {
       ref={btnRef}
       name={name}
       onClick={action}
-      size="sm"
-      className="h-full w-[30px] p-1"
+      size="icon"
+      className="h-full w-[30px]"
     >
       {iconSrc == "minus" ? (
         <Minus className={`text-${secondaryColor} h-6 w-6`} />

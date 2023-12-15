@@ -1,6 +1,8 @@
-import Button from "@/app/components/Button";
+// import Button from "@/app/components/Button";
 import { useEffect, useState } from "react";
 import gsap from "gsap";
+
+import { Button } from "@/components/ui/button";
 
 export default function StepNavigator({
   setFormHeight,
@@ -171,10 +173,12 @@ export default function StepNavigator({
     <>
       <Button
         name="prev"
-        variant="circular"
-        content="قبلی"
         onClick={(e) => handleChangeBtn(e, currentSection)}
-      ></Button>
+        className="rounded-full bg-royal-green px-4 py-1 text-xs text-sky-blue sm:text-sm"
+        size="sm"
+      >
+        قبلی
+      </Button>
       <div className="flex w-min items-center justify-between gap-1 rounded-full bg-soft-blue p-2">
         {[...Array(stepCount)].map((e, i) => (
           <span
@@ -189,10 +193,12 @@ export default function StepNavigator({
       </div>
       <Button
         name="next"
-        variant="circular"
-        content="بعدی"
         onClick={(e) => handleChangeBtn(e, currentSection)}
-      ></Button>
+        className="rounded-full bg-royal-green px-4 py-1 text-xs text-sky-blue sm:text-sm"
+        size="sm"
+      >
+        بعدی
+      </Button>
     </>
   );
 }

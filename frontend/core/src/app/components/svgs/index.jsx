@@ -5,3 +5,4 @@ export { default as Trash } from "./trash.svg";
 export { default as Bell } from "./bell.svg";
 export { default as Search } from "./search.svg";
 export { default as Cross } from "./cross.svg";
+export { default as Edit } from "./edit.svg";

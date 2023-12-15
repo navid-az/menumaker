@@ -5,6 +5,8 @@ import { NameGiverInput } from "@/app/components/inputs";
 import { ToggleBtn, RadioBtn } from "@/app/components/buttons";
 import Image from "next/image";
 import StepNavigator from "./StepNavigator";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 export const HeightContext = createContext(null);
 export const FormDataContext = createContext(null);
@@ -23,6 +25,10 @@ export function FormTab({
   const radioBtnInfo = useContext(RadioGroupContext);
   const childrenSection = useRef(null);
   let formTab = document.getElementById(`form-tab-${id}`);
+
+  const [yes, setYes] = useState(false);
+  const switchRef = useRef();
+  const formTabRef = useRef();
 
   // handles both toggle and radio buttons
   const handleBtn = (btnType, btnStatus) => {
@@ -50,6 +56,14 @@ export function FormTab({
     }
   };
 
+  const handleSwitch = () => {
+    if (switchRef.current.dataset.state === "checked") {
+      formTabRef.current.style.borderColor = "#C5E5E9";
+    } else {
+      formTabRef.current.style.borderColor = "#0F2C30";
+    }
+  };
+
   return (
     <li
       onClick={
@@ -57,18 +71,23 @@ export function FormTab({
           ? (btnStatus) => handleBtn(btn_type, btnStatus)
           : undefined
       }
+      ref={formTabRef}
       id={`form-tab-${id}`}
       className={`${
         btn_type == "radio" && radioBtnInfo.group_name
-      } duration-2000 flex w-96 cursor-pointer select-none flex-col items-end justify-between gap-2 rounded-lg border-[3px] border-sad-blue bg-soft-blue p-3 text-royal-green transition-all ease-in-out`}
+      } duration-2000 flex w-full cursor-pointer select-none flex-col items-end justify-between gap-2 rounded-lg border-[3px] border-sad-blue bg-soft-blue p-2 text-royal-green transition-all ease-in-out sm:p-3`}
     >
-      <div className="flex w-full items-center justify-between">
+      <Label
+        htmlFor={`toggle-btn-${id}`}
+        className="flex w-full items-center justify-between"
+      >
         {/* tab button type  */}
         {btn_type == "toggle" ? (
-          <ToggleBtn
+          <Switch
+            onClick={handleSwitch}
+            ref={switchRef}
             id={`toggle-btn-${id}`}
-            action={(btnStatus) => handleBtn(btn_type, btnStatus)}
-          ></ToggleBtn>
+          ></Switch>
         ) : btn_type == "radio" ? (
           <RadioBtn
             name={radioBtnInfo["group_name"]}
@@ -80,18 +99,22 @@ export function FormTab({
           ""
         )}
         <div className="flex items-center justify-between gap-2">
-          <h3 className="text-2xl font-bold">{title}</h3>
+          <h3 className="text-lg font-bold sm:text-2xl">{title}</h3>
           {icon_src && (
-            <Image
-              src={icon_src}
-              width={30}
-              height={30}
-              alt="section icon"
-            ></Image>
+            <div className="relative aspect-square w-6 sm:w-7">
+              <Image
+                src={icon_src}
+                // width={20}
+                // height={20}
+                fill={true}
+                alt="section icon"
+              ></Image>
+            </div>
           )}
         </div>
-      </div>
-      <p className="text-end font-normal">{description}</p>
+      </Label>
+
+      <p className="text-end text-sm font-normal sm:text-base">{description}</p>
       <section
         className={`hidden w-full ${!children && "absolute"}`}
         ref={childrenSection}
@@ -106,7 +129,8 @@ export function FormSection({ children, id }) {
   return (
     <section
       id={`form-section-${id}`}
-      className={"relative transition duration-200 ease-in-out"}
+      // relative
+      className={"absolute w-full transition duration-200 ease-in-out"}
     >
       {children}
     </section>
@@ -119,7 +143,7 @@ export function FormStep({ children }) {
   return (
     <ul
       className={
-        "pointer-events-none absolute flex translate-x-[200px] flex-col justify-between gap-7 opacity-0 transition duration-200 ease-in-out"
+        "pointer-events-none absolute flex w-full translate-x-[200px] flex-col justify-between gap-4 opacity-0 transition duration-200 ease-in-out sm:gap-7"
       }
     >
       {children}
@@ -180,11 +204,12 @@ export default function Form() {
   // };
 
   return (
-    <section className="flex w-96 flex-col justify-center gap-7 transition-all duration-300 ease-in-out">
-      <header>
+    // w-96
+    <section className="container flex w-screen flex-col justify-center gap-4 p-2 transition-all duration-300 ease-in-out xs:px-4 x:px-12 sm:gap-7">
+      <header className="w-full">
         <h1
           id="section-title"
-          className="translate-x-[200px] text-end text-3xl font-black text-royal-green opacity-0"
+          className="translate-x-[200px] text-end text-xl font-black text-royal-green opacity-0 sm:text-3xl"
         >
           {sectionTitle}
         </h1>
@@ -192,7 +217,7 @@ export default function Form() {
       <FormDataContext.Provider value={formData}>
         <div
           id="form-wrapper"
-          className={`flex w-full transition-all duration-300 ease-in-out`}
+          className={`relative flex h-full w-full transition-all duration-300 ease-in-out`}
         >
           <HeightContext.Provider value={changeFormHeight}>
             <FormSection id={1}>
