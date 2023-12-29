@@ -4,10 +4,10 @@ const defaultTheme = require("tailwindcss/defaultTheme");
 module.exports = {
   darkMode: ["class"],
   content: [
-    "./pages/**/*.{js,jsx}",
-    "./components/**/*.{js,jsx}",
-    "./app/**/*.{js,jsx}",
-    "./src/**/*.{js,jsx}",
+    "./pages/**/*.{ts,tsx,js,jsx}",
+    "./components/**/*.{ts,tsx,js,jsx}",
+    "./app/**/*.{ts,tsx,js,jsx}",
+    "./src/**/*.{ts,tsx,js,jsx}",
   ],
   theme: {
     container: {
@@ -37,8 +37,6 @@ module.exports = {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
-          // DEFAULT: "#0F2C30",
-          // foreground: "#94D9E2",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -94,6 +92,7 @@ module.exports = {
   },
   plugins: [require("tailwindcss-animate")],
 };
+
 /////
 
 // module.exports = {
