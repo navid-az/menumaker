@@ -23,7 +23,9 @@
  
     /* --muted: 210 40% 96.1%; */
     --muted:188 51% 9%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* --muted-foreground: 215.4 16.3% 46.9%; */
+    --muted-foreground: 187 17% 50%;
+
 
  
     --accent: 210 40% 96.1%;
@@ -174,4 +176,16 @@ scrollbar-width: none;  /* Firefox */
 
 .nigga{
   position: absolute;
+}
+
+.scale-pro {
+  -webkit-font-smoothing: subpixel-antialiased;
+  will-change: transform;  
+}
+.scale-pro:hover {	
+  -webkit-transform: scale(1.1) translate3d( 0, 0, 0) perspective(1px);
+     -moz-transform: scale(1.1) translate3d( 0, 0, 0) perspective(1px);
+       -o-transform: scale(1.1) translate3d( 0, 0, 0) perspective(1px);
+      -ms-transform: scale(1.1) translate3d( 0, 0, 0) perspective(1px);
+          transform: scale(1.1) translate3d( 0, 0, 0) perspective(1px);
 }

@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
-  isFocused: boolean;
+  isFocused?: boolean;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
