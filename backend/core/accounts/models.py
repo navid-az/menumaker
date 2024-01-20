@@ -1,13 +1,17 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
 from .managers import UserManager
+from rest_framework_simplejwt.models import TokenUser
+from django.utils.functional import cached_property
 
 
 # change the default user model
 class User(AbstractBaseUser):
     phone_number = models.CharField(max_length=11, unique=True, null=True, blank=True)
     email = models.EmailField(max_length=255, unique=True, null=True, blank=True)
-    full_name = models.CharField(max_length=100)
+    full_name = models.CharField(max_length=100, null=True, blank=True)
+    first_name = models.CharField(max_length=100, null=True, blank=True)
+    last_name = models.CharField(max_length=100, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
 
@@ -26,9 +30,11 @@ class User(AbstractBaseUser):
     @property
     def is_staff(self):
         return self.is_admin
-    
+
     def __str__(self):
-        return f'{self.phone_number or self.email}'
+        return f"{self.phone_number or self.email}"
+
+
 class OtpCode(models.Model):
     phone_number = models.CharField(max_length=11, unique=True, null=True, blank=True)
     email = models.EmailField(max_length=255, unique=True, null=True, blank=True)
@@ -39,3 +45,14 @@ class OtpCode(models.Model):
         return (
             f"code: {self.password} ---> num: {self.phone_number}   email: {self.email}"
         )
+
+
+# class CustomTokenUser(TokenUser):
+#     """
+#     Extend TokenUser and adds custom attributes to be pulled from TokenUser.
+#     This class should be specified in Django settings SIMPLE_JWT.TOKEN_USER_CLASS
+#     """
+
+#     @cached_property
+#     def otp(self):
+#         return self.token.password

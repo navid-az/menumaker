@@ -1,49 +1,79 @@
+import email
+from math import e
 import random
-from django.contrib.auth import authenticate, login
+from urllib import request, response
+from django.contrib.auth import authenticate, login, get_user_model
+
+# from rest_framework_simplejwt.authentication import JWTAuthentication
+
+# , get_user_model
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
-from .models import OtpCode, User
 
 # rest dependencies
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import SendOptCodeSerializer, CodeSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework import status
+
+from .serializers import (
+    CustomTokenObtainPairSerializer,
+    validateCredentialSerializer,
+    CodeSerializer,
+    tokenValidateSerializer,
+    CheckUserCredentialSerializer,
+)
+from .models import OtpCode, User
 
 
 # Create your views here.
-class OtpCodeView(APIView):
+class validateCredentialView(APIView):
     # shows all the otp code stored in db
     def get(self, request):
         codes = OtpCode.objects.all()
-        srz_data = SendOptCodeSerializer(instance=codes, many=True)
+        srz_data = validateCredentialSerializer(instance=codes, many=True)
         return Response(data=srz_data.data)
 
     def post(self, request):
-        srz_data = SendOptCodeSerializer(data=request.data)
+        srz_data = validateCredentialSerializer(data=request.data)
         if srz_data.is_valid():
             phone_number = srz_data.data["phone_number"]
             email = srz_data.data["email"]
 
-            # create new otp code with the given email/phone_number
-            new_code = random.randint(100000, 999999)
             if phone_number:
-                OtpCode.objects.create(
-                    phone_number=phone_number,
-                    password=new_code,
-                )
-                return Response(
-                    f"The code has been sent to you phone number {srz_data.data}"
-                )
+                # create new otp code with the given phone_number
+                otp_code = OtpCode.objects.filter(phone_number=phone_number)
+                user = User.objects.filter(phone_number=phone_number)
+                new_code = random.randint(100000, 999999)
+                if otp_code.exists():
+                    OtpCode.objects.get(phone_number=phone_number).delete()
+                    OtpCode.objects.create(phone_number=phone_number, password=new_code)
+                    return Response(
+                        f"last otp code has been deleted, new otp code has been generated and sended to '{phone_number}'",
+                        status.HTTP_201_CREATED,
+                    )
+                else:
+                    OtpCode.objects.create(phone_number=phone_number, password=new_code)
+                    return Response(
+                        f"user with '{phone_number}' phone number {user.exists()}, new opt code has been generated and sended to '{phone_number}'",
+                        status.HTTP_201_CREATED,
+                    )
             elif email:
-                OtpCode.objects.create(
-                    email=email,
-                    password=new_code,
-                )
-                return Response(f"The code has been sent to you email {srz_data.data}")
-            return Response("unsupported data")
-        return Response(srz_data.errors)
+                user = User.objects.filter(email=email)
+
+                if user.exists():
+                    return Response(
+                        f"user with '{email}' email exists, user should provide password"
+                    )
+                else:
+                    return Response(
+                        f"user with '{email}' email doesn't exist, user should create new password"
+                    )
+            return Response("unsupported credential")
+        print(srz_data.errors)
+        return Response(srz_data.errors, status.HTTP_400_BAD_REQUEST)
 
 
 # validating the received code
@@ -52,7 +82,6 @@ class ValidateOtpCodeView(APIView):
         srz_code = CodeSerializer(data=request.data)
 
         if srz_code.is_valid():
-            # srz_code_email = srz_code.validated_data["email"]
             srz_code_email = srz_code.data["email"]
             srz_code_phone_number = srz_code.data["phone_number"]
             srz_code_code = srz_code.data["password"]
@@ -104,8 +133,58 @@ class ValidateOtpCodeView(APIView):
         return Response(srz_code.errors)
 
 
-class TestView(APIView):
+class CustomTokenObtainPairView(APIView):
+    def post(self, request):
+        ser_data = CustomTokenObtainPairSerializer(data=request.data)
+        if ser_data.is_valid():
+            phone_number = ser_data.data["phone_number"]
+            email = ser_data.data["email"]
+            ser_otp = ser_data.data["otp"]
+            password = ser_data.data["password"]
+
+            if phone_number:  # phone_number auth
+                otp = OtpCode.objects.get(phone_number=phone_number)
+
+                if ser_otp == otp.password:
+                    user = User.objects.filter(phone_number=phone_number).first()
+                    if user is not None:
+                        refresh = RefreshToken.for_user(user)
+                    else:
+                        new_user = User.objects.create_user(
+                            phone_number=phone_number,
+                            email=email,
+                            password="123456",
+                            full_name="",
+                        )
+                        refresh = RefreshToken.for_user(new_user)
+                    otp.delete()
+                    return Response(
+                        {
+                            "refresh": str(refresh),
+                            "access": str(refresh.access_token),
+                        }
+                    )
+                return Response(
+                    "the given otp is not correct", status.HTTP_400_BAD_REQUEST
+                )
+            else:  # email auth
+                user, created = get_user_model().objects.get_or_create(
+                    email=email, password=password
+                )
+                refresh = RefreshToken.for_user(user)
+                return Response(
+                    {
+                        "refresh": str(refresh),
+                        "access": str(refresh.access_token),
+                    }
+                )
+        return Response(ser_data.errors, status.HTTP_400_BAD_REQUEST)
+
+
+class tokenValidateView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        return Response("message:hello this is your mom and u can access this part")
+    def get(self, request, id):
+        user = get_user_model().objects.get(pk=id)
+        ser_data = tokenValidateSerializer(instance=user)
+        return Response(data=ser_data.data)
