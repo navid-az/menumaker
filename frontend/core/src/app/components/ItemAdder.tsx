@@ -181,6 +181,7 @@ export default function ItemAdder({
                   className="px-4 text-xs sm:text-sm"
                   size="sm"
                   type="button"
+                  asChild
                 >
                   آیکون
                 </Button>

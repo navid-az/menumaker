@@ -1,18 +1,24 @@
 "use client";
-
-import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
-import { BarChart, Radar, Settings, User } from "./components/svg";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
+
+//components
+import { Button } from "@/components/ui/button";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { useMediaQuery } from "../hooks/useMediaQuery";
+
+//SVGs
+import { BarChart, Radar, Settings, User } from "./components/svg";
 import { Menu, User2 } from "lucide-react";
+
+//hooks
+import { usePathname } from "next/navigation";
+import { useMediaQuery } from "../hooks/useMediaQuery";
+import MyVenuesTab from "./components/MyVenuesTab";
 
 export default function DashboardLayout({
   children,
@@ -30,27 +36,27 @@ export default function DashboardLayout({
         direction="horizontal"
         className="flex flex-1"
       >
-        {md && (
-          <>
-            <ResizablePanel
-              onCollapse={() => {
-                setIsCollapsed(true);
-              }}
-              collapsible
-              collapsedSize={lg ? 6 : md ? 9.5 : 20}
-              minSize={lg ? 19 : md ? 25 : 16}
-              maxSize={lg ? 23 : md ? 30 : 25}
-              defaultSize={lg ? 20 : md ? 28 : 20}
-              onExpand={() => {
-                setIsCollapsed(false);
-              }}
-            >
-              <DashboardNavbar isCollapsed={isCollapsed}></DashboardNavbar>
-            </ResizablePanel>
-            <ResizableHandle withHandle></ResizableHandle>
-          </>
-        )}
-        <ResizablePanel defaultSize={lg ? 80 : md ? 72 : 80}>
+        <ResizablePanel
+          onCollapse={() => {
+            setIsCollapsed(true);
+          }}
+          collapsible
+          collapsedSize={lg ? 6 : md ? 9.5 : 20}
+          minSize={lg ? 19 : md ? 25 : 16}
+          maxSize={lg ? 23 : md ? 30 : 25}
+          defaultSize={lg ? 20 : md ? 28 : 20}
+          onExpand={() => {
+            setIsCollapsed(false);
+          }}
+        >
+          <DashboardNavbar isCollapsed={isCollapsed}></DashboardNavbar>
+        </ResizablePanel>
+        <ResizableHandle withHandle></ResizableHandle>
+
+        <ResizablePanel
+          className="relative h-full rounded-tr-3xl bg-soft-blue"
+          defaultSize={lg ? 80 : md ? 72 : 80}
+        >
           {children}
         </ResizablePanel>
       </ResizablePanelGroup>
@@ -78,7 +84,8 @@ function DashboardHeader() {
 
 function DashboardNavbar({ isCollapsed }: { isCollapsed: boolean }) {
   return (
-    <section className="flex h-full w-full flex-col items-end gap-4 bg-primary px-2 py-8 text-soft-blue">
+    <section className="flex h-full w-full flex-col items-end gap-4 bg-primary px-2 pb-8 text-soft-blue">
+      <MyVenuesTab name="ونهان" position="صاحب محموعه"></MyVenuesTab>
       <DashboardNavbarBtn
         text="وضعیت مجموعه"
         isCollapsed={isCollapsed}
@@ -93,7 +100,7 @@ function DashboardNavbar({ isCollapsed }: { isCollapsed: boolean }) {
       >
         <Radar className={`${!isCollapsed && "ml-3"} h-6 w-6`}></Radar>
       </DashboardNavbarBtn>
-      <DashboardNavbarBtn text="کارمندان مجموعه" isCollapsed={isCollapsed}>
+      <DashboardNavbarBtn text="پرسنل" isCollapsed={isCollapsed}>
         <User className={`${!isCollapsed && "ml-3"} h-6 w-6`}></User>
       </DashboardNavbarBtn>
       <DashboardNavbarBtn text="تنظیمات" isCollapsed={isCollapsed}>

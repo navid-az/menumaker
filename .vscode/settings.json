@@ -1,8 +1,15 @@
 {
-  "python.analysis.typeCheckingMode": "basic",
+  "python.poetryPath": ".\\.venv\\Scripts\\python.exe",
+  // "python.analysis.typeCheckingMode": "basic",
   "conventionalCommits.scopes": [
     "api",
-    "frontend"
+    "frontend",
+    "api/frontend"
   ],
-  "python.analysis.autoImportCompletions": true
+  "python.analysis.autoImportCompletions": true,
+  "editor.formatOnSave": true,
+  "pylint.args": [
+    "load-plugins=pylint_django"
+  ],
+  "python.analysis.typeCheckingMode": "off",
 }

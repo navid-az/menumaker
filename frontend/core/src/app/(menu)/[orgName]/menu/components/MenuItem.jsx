@@ -7,13 +7,12 @@ import PriceTag from "./PriceTag";
 import Tag from "./Tag";
 import ItemsCategoryTitle from "./ItemsCategoryTitle";
 import ItemsDescriptionTab from "./ItemsDescriptionTab";
-
 import { useRippleAnimation } from "../../hooks/useRippleAnimation";
 
 // react query
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import Skeleton from "react-loading-skeleton";
+import axios from "axios";
 
 export const dataIsLoadingContext = createContext(null);
 

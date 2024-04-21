@@ -1,7 +1,4 @@
-import email
-from math import e
 import random
-from urllib import request, response
 from django.contrib.auth import authenticate, login, get_user_model
 
 # from rest_framework_simplejwt.authentication import JWTAuthentication

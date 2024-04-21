@@ -15,6 +15,7 @@
  
     /* --primary: 222.2 47.4% 11.2%; */
     --primary: 187 52% 12%;
+    
     /* --primary-foreground: 210 40% 98%; */
     --primary-foreground: 187 57% 73%;
  
@@ -178,6 +179,7 @@ scrollbar-width: none;  /* Firefox */
   position: absolute;
 }
 
+/* fiexes scaling animation  */
 .scale-pro {
   -webkit-font-smoothing: subpixel-antialiased;
   will-change: transform;  

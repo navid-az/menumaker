@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     "accounts",
     "pickers",
     "menu",
+    # "dashboard",
+
     # 3rd party packages
     "rest_framework",
     "corsheaders",
@@ -155,7 +157,7 @@ REST_FRAMEWORK = {
 
 # simple JWT
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=2),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=2),
     # "TOKEN_OBTAIN_SERIALIZER": "accounts.serializers.MyTokenObtainPairSerializer",
 }
