@@ -2,9 +2,9 @@ import React, { useEffect, useReducer, useRef, useState } from "react";
 import * as z from "zod";
 
 // SVGs
-import { Plus } from "./svgs";
-import { Trash } from "./svgs";
-import { Edit } from "./svgs";
+import { Plus } from "../../app/components/svgs";
+import { Trash } from "../../app/components/svgs";
+import { Edit } from "../../app/components/svgs";
 
 //components
 import { Button } from "@/components/ui/button";

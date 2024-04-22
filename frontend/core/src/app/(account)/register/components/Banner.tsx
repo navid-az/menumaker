@@ -4,7 +4,7 @@ export default function LoginBanner() {
   return (
     <div className="hidden h-screen items-center justify-center bg-royal-green lg:flex lg:w-6/12 xl:w-7/12">
       <Image
-        src="/images/key.svg"
+        src="/svgs/key.svg"
         width={100}
         height={100}
         alt="key image"

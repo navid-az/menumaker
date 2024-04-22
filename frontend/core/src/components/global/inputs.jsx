@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useReducer, useEffect, useContext } from "react";
-import { FormDataContext } from "../(creator)/builder/components/builderForm";
+import { FormDataContext } from "../../app/(creator)/builder/components/builderForm";
 // import { Popover, PopoverTrigger, PopoverContent } from "./PopOver";
 
 // components
@@ -10,7 +10,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import IconSelectorList from "./IconSelectorLIst";
+import IconSelectorList from "./selector";
 import { Button } from "@/components/ui/button";
 
 //SVGs
@@ -90,7 +90,7 @@ export const NameGiverInput = ({
     <div className="flex h-max w-full flex-col gap-2">
       <form
         onSubmit={handleSubmit}
-        className="flex h-max w-full flex-row items-center justify-between gap-2 rounded-lg bg-sad-blue p-1 sm:p-2"
+        className="flex h-max w-full flex-row items-center justify-between gap-2 rounded-lg bg-sad-blue p-2"
       >
         <section className="flex gap-2">
           {editMode == true ? (
