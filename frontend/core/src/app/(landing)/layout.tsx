@@ -1,10 +1,15 @@
+import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import UserProfile from "@/components/global/UserProfile";
-import React from "react";
+import { UserProfile } from "@/components/global/UserProfile";
 import { Button } from "@/components/ui/button";
+import { verifyToken } from "../actions";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
-function Navbar() {
+async function Navbar() {
+  const isAuthenticated = await verifyToken();
+
   return (
     <nav className="container mx-auto flex w-full items-center justify-between pt-7 text-xl text-royal-green">
       <Link href="/">
@@ -22,10 +27,17 @@ function Navbar() {
 
       <Link href="/">درباره ما</Link>
 
-      <Button size="lg" className="text-lg" asChild>
-        <Link href="/register">ثبت نام</Link>
-      </Button>
-      {/* <UserProfile></UserProfile> */}
+      <div className="flex gap-2">
+        <Suspense fallback={<Skeleton className="h-10 w-10" />}>
+          {isAuthenticated ? (
+            <UserProfile></UserProfile>
+          ) : (
+            <Button className="text-lg" asChild>
+              <Link href="/register">ورود | ثبت نام</Link>
+            </Button>
+          )}
+        </Suspense>
+      </div>
     </nav>
   );
 }

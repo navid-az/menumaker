@@ -1,8 +1,15 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import jwtDecoder from "@/lib/jwtDecoder";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+type DecodedJwtType = {
+  token_type: "access" | "refresh";
+  exp: number;
+  iat: number;
+  jti: string;
+  user_id: number;
+};
 
 export async function createCookie(
   name: string,
@@ -40,13 +47,49 @@ export async function createItem(data: ItemType) {
   return items;
 }
 
-export async function getUserData() {
-  const accessToken = cookies().get("access");
-  if (!accessToken) {
-    return null;
-  }
+// // get user data
+// export async function getUserData() {
+//   const accessToken = cookies().get("access");
+//   if (!accessToken) {
+//     return null;
+//   }
 
-  const userObj = jwtDecoder(accessToken.value);
-  fetch("");
-  return userObj;
+//   const userObj = jwtDecoder(accessToken.value);
+//   if (!userObj) {
+//     return null;
+//   }
+
+//   const res = await fetch(
+//     `http://127.0.0.1:8000/accounts/token/validate/${userObj.user_id}`
+//   );
+
+//   if (!res.ok) {
+//     throw new Error("Failed to fetch data");
+//   }
+//   return res.json();
+// }
+
+//logOut user
+export async function logOut() {
+  cookies().delete("access");
+  cookies().delete("refresh");
+  verifyToken();
+}
+
+//verify access token
+export async function verifyToken() {
+  const accessToken = cookies().get("access");
+
+  const res = await fetch("http://127.0.0.1:8000/accounts/token/verify", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ token: accessToken?.value }),
+  });
+  if (res.ok) {
+    return true;
+  } else {
+    return false;
+  }
 }
