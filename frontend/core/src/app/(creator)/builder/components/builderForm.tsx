@@ -7,10 +7,12 @@ import Image from "next/image";
 //components
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { ToggleBtn, RadioBtn } from "@/app/components/buttons";
+// import { ToggleBtn, RadioBtn } from "@/components/global/buttons";
 import StepNavigator from "./StepNavigator";
-import { NameGiverInput } from "@/app/components/inputs";
+import { NameGiverInput } from "@/components/global/inputs";
+import ItemAdder from "@/components/global/ItemAdder";
 import FormTab from "./FormTab";
+import Selector from "@/components/global/selector";
 
 export const HeightContext = createContext<Function | null>(null);
 export const FormDataContext = createContext<object | null>(null);
@@ -239,7 +241,7 @@ export default function Form() {
       <header className="w-full">
         <h1
           id="section-title"
-          className="translate-x-[200px] text-end text-xl font-black text-royal-green opacity-0 sm:text-3xl"
+          className="translate-x-[200px] text-xl font-black text-royal-green opacity-0 sm:text-3xl"
         >
           {sectionTitle}
         </h1>
@@ -264,12 +266,10 @@ export default function Form() {
                   button={{ type: "radioBtn", value: "niga" }}
                   // value="single"
                 >
-                  <NameGiverInput
-                    setFormData={setFormData}
-                    name="single_menu_sections"
-                    secondary_btn={{ name: "آیکون", toolTip: "prop2" }}
+                  <ItemAdder
                     placeholder="نام بخش را در اینجا بنویسید"
-                  ></NameGiverInput>
+                    name="icon"
+                  ></ItemAdder>
                 </FormTab>
                 <FormTab
                   title="چند بخشی"
@@ -279,12 +279,10 @@ export default function Form() {
                   button={{ type: "radioBtn", value: "niga" }}
                   // value="couple"
                 >
-                  <NameGiverInput
-                    setFormData={setFormData}
-                    name="couple_menu_sections"
-                    secondary_btn={{ name: "آیکون", toolTip: "prop2" }}
+                  <ItemAdder
                     placeholder="نام بخش را در اینجا بنویسید"
-                  ></NameGiverInput>
+                    name="icon"
+                  ></ItemAdder>
                 </FormTab>
                 <FormTab
                   title="بدون صفحه اصلی"
@@ -396,14 +394,12 @@ export default function Form() {
         </div>
       </FormDataContext.Provider>
 
-      <footer className="flex w-full items-center justify-between">
-        <StepNavigator
-          currentStep={currentStep}
-          setCurrentStep={setCurrentStep}
-          setFormHeight={setFormHeight}
-          setSectionTitle={setSectionTitle}
-        ></StepNavigator>
-      </footer>
+      <StepNavigator
+        currentStep={currentStep}
+        setCurrentStep={setCurrentStep}
+        setFormHeight={setFormHeight}
+        setSectionTitle={setSectionTitle}
+      ></StepNavigator>
     </section>
   );
 }

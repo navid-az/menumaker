@@ -1,15 +1,22 @@
 // import Button from "@/app/components/Button";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import gsap from "gsap";
 
 import { Button } from "@/components/ui/button";
+
+type StepNavigatorType = {
+  setFormHeight: React.ReactNode;
+  setSectionTitle: React.ReactNode;
+  setCurrentStep: React.ReactNode;
+  currentStep: React.ReactNode;
+};
 
 export default function StepNavigator({
   setFormHeight,
   setSectionTitle,
   setCurrentStep,
   currentStep,
-}) {
+}: StepNavigatorType) {
   const [sectionCount, setSectionCount] = useState(1);
   const [currentSection, setCurrentSection] = useState(1);
   const [stepCount, setStepCount] = useState(1);
@@ -144,7 +151,8 @@ export default function StepNavigator({
     }
   };
 
-  const handleDotBtn = (btnId) => {
+  //handles navigation when small dots are clicked
+  const handleDotBtn = (btnId: number) => {
     let difference = Math.abs(btnId - currentStepNum);
 
     if (currentStepNum > btnId) {
@@ -170,27 +178,7 @@ export default function StepNavigator({
   };
 
   return (
-    <>
-      <Button
-        name="prev"
-        onClick={(e) => handleChangeBtn(e, currentSection)}
-        className="rounded-full bg-royal-green px-4 py-1 text-xs text-sky-blue sm:text-sm"
-        size="sm"
-      >
-        قبلی
-      </Button>
-      <div className="flex w-min items-center justify-between gap-1 rounded-full bg-soft-blue p-2">
-        {[...Array(stepCount)].map((e, i) => (
-          <span
-            onClick={() => handleDotBtn(i + 1)}
-            className={`${
-              currentStepNum == i + 1
-                ? "border-royal-green bg-royal-green"
-                : "border-sad-blue bg-sad-blue"
-            } border-1 h-3 w-3 cursor-pointer select-none rounded-full border-2 transition duration-200 ease-in-out hover:border-2 hover:border-royal-green hover:bg-sky-blue`}
-          ></span>
-        ))}
-      </div>
+    <footer className="flex w-full items-center justify-between">
       <Button
         name="next"
         onClick={(e) => handleChangeBtn(e, currentSection)}
@@ -199,6 +187,26 @@ export default function StepNavigator({
       >
         بعدی
       </Button>
-    </>
+      <div className="flex w-min flex-row-reverse items-center justify-between gap-1 rounded-full bg-soft-blue p-2">
+        {[...Array(stepCount)].map((e, i) => (
+          <span
+            onClick={() => handleDotBtn(i + 1)}
+            className={`${
+              currentStepNum == i + 1
+                ? "border-royal-green bg-royal-green"
+                : "border-sad-blue bg-sad-blue"
+            } border-1 h-3 w-3 cursor-pointer select-none  rounded-full border-2 transition duration-200 ease-in-out hover:border-2 hover:border-royal-green hover:bg-sky-blue`}
+          ></span>
+        ))}
+      </div>
+      <Button
+        name="prev"
+        onClick={(e) => handleChangeBtn(e, currentSection)}
+        className="rounded-full bg-royal-green px-4 py-1 text-xs text-sky-blue sm:text-sm"
+        size="sm"
+      >
+        قبلی
+      </Button>
+    </footer>
   );
 }
