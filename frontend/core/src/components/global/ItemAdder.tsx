@@ -2,9 +2,9 @@ import React, { useEffect, useReducer, useRef, useState } from "react";
 import * as z from "zod";
 
 // SVGs
-import { Plus } from "../../app/components/svgs";
-import { Trash } from "../../app/components/svgs";
-import { Edit } from "../../app/components/svgs";
+import { Edit } from "@/app/components/svgs";
+import { Trash } from "@/app/components/svgs";
+import { Plus } from "@/app/components/svgs";
 
 //components
 import { Button } from "@/components/ui/button";
@@ -131,7 +131,6 @@ export default function ItemAdder({
       icon: icon,
     });
   };
-
   const handleDeleteItem = (itemId: string) => {
     resetInputs();
 
@@ -153,7 +152,39 @@ export default function ItemAdder({
     <div className="flex h-max w-full flex-col gap-2">
       <section className="flex flex-col items-end gap-2">
         <div className="flex h-max w-full flex-row items-center justify-between gap-2 rounded-lg bg-sad-blue p-2">
-          <section className="flex gap-2">
+          <Input
+            ref={inputRef}
+            type="text"
+            name={name}
+            placeholder={placeholder}
+            value={text}
+            className="h-9 border-0 bg-sad-blue text-right"
+            isFocused
+            onChange={(e) => {
+              setText(e.target.value);
+              setInputError("");
+            }}
+          ></Input>
+          <section className="flex gap-2 ">
+            {/* icon selector popover */}
+            <Popover>
+              <PopoverTrigger>
+                <Button
+                  className="px-4 text-xs sm:text-sm"
+                  size="sm"
+                  type="button"
+                >
+                  آیکون
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="border-0 bg-primary p-0">
+                <Selector
+                  action={(selectedIcon: object) => {
+                    setIcon(selectedIcon.pk);
+                  }}
+                ></Selector>
+              </PopoverContent>
+            </Popover>
             {editMode == true ? (
               <Button
                 type="button"
@@ -168,46 +199,13 @@ export default function ItemAdder({
                 disabled={!text && true}
                 type="button"
                 size="icon"
-                className="h-9 w-9 transition-opacity"
+                className="h-9 w-9 transition-opacity duration-500"
                 onClick={handleAddItem}
               >
                 <Plus className="h-5 w-5 sm:h-6 sm:w-6" />
               </Button>
             )}
-
-            <Popover>
-              <PopoverTrigger>
-                <Button
-                  className="px-4 text-xs sm:text-sm"
-                  size="sm"
-                  type="button"
-                  asChild
-                >
-                  آیکون
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="border-0 bg-primary p-0">
-                <Selector
-                  action={(selectedIcon: object) => {
-                    setIcon(selectedIcon.pk);
-                  }}
-                ></Selector>
-              </PopoverContent>
-            </Popover>
           </section>
-          <Input
-            ref={inputRef}
-            type="text"
-            name={name}
-            placeholder={placeholder}
-            value={text}
-            className="h-9 border-0 bg-sad-blue text-right"
-            isFocused
-            onChange={(e) => {
-              setText(e.target.value);
-              setInputError("");
-            }}
-          ></Input>
         </div>
         {inputError && <p className="text-xs text-red-400">{inputError}</p>}
       </section>

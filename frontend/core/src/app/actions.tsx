@@ -47,28 +47,6 @@ export async function createItem(data: ItemType) {
   return items;
 }
 
-// // get user data
-// export async function getUserData() {
-//   const accessToken = cookies().get("access");
-//   if (!accessToken) {
-//     return null;
-//   }
-
-//   const userObj = jwtDecoder(accessToken.value);
-//   if (!userObj) {
-//     return null;
-//   }
-
-//   const res = await fetch(
-//     `http://127.0.0.1:8000/accounts/token/validate/${userObj.user_id}`
-//   );
-
-//   if (!res.ok) {
-//     throw new Error("Failed to fetch data");
-//   }
-//   return res.json();
-// }
-
 //logOut user
 export async function logOut() {
   cookies().delete("access");
@@ -80,7 +58,7 @@ export async function logOut() {
 export async function verifyToken() {
   const accessToken = cookies().get("access");
 
-  const res = await fetch("http://127.0.0.1:8000/accounts/token/verify", {
+  const res = await fetch("http://127.0.0.1:8000/accounts/token/verify/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

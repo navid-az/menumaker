@@ -5,5 +5,5 @@ export const metadata = {
 };
 
 export default function MenuBuilder() {
-  return <Form title={"صفحه اصلی"}></Form>;
+  return <Form></Form>;
 }
