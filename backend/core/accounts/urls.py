@@ -3,7 +3,8 @@ from .views import (
     validateCredentialView,
     ValidateOtpCodeView,
     CustomTokenObtainPairView,
-    getUserDataView
+    getUserDataView,
+    getUserPlacesView
 )
 
 # JWT dependencies
@@ -21,6 +22,8 @@ urlpatterns = [
     path("validate-code", ValidateOtpCodeView.as_view(), name="validate otp code"),
     path("user/<int:id>",
          getUserDataView.as_view(), name="user-data"),
+    path('user/<int:id>/places', getUserPlacesView.as_view(), name='user-places'),
+
     # JWT paths
     path("token/", CustomTokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),

@@ -17,7 +17,8 @@ class Menu(models.Model):
 
     menu_id = models.CharField(max_length=100, unique=True, default='venhan')
     name = models.CharField(max_length=250)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+    owner = models.ForeignKey(
+        User, on_delete=models.CASCADE, default=1, related_name='owned_places')
     primary_color = ColorField()
     secondary_color = ColorField()
     tertiary_color = ColorField()
@@ -25,6 +26,7 @@ class Menu(models.Model):
     price_unit = models.CharField(
         max_length=9, choices=PRICE_UNITS, default="simp")
     is_active = models.BooleanField(default=True)
+    personnel = models.ManyToManyField(User, related_name='places')
 
     def __str__(self):
         return self.menu_id

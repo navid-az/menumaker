@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
 from .models import OtpCode, User
+from menu.models import Menu
 
 
 class validateCredentialSerializer(serializers.Serializer):
@@ -71,3 +73,9 @@ class getUserDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["pk", "phone_number", "email"]
+
+
+class getUserPlacesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Menu
+        fields = '__all__'

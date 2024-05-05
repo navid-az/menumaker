@@ -17,6 +17,7 @@ from .serializers import (
     validateCredentialSerializer,
     CodeSerializer,
     getUserDataSerializer,
+    getUserPlacesSerializer
 )
 from .models import OtpCode, User
 
@@ -167,7 +168,7 @@ class CustomTokenObtainPairView(APIView):
                 return Response(
                     "the given otp is not correct", status.HTTP_400_BAD_REQUEST
                 )
-            else: # email auth (~~~NEED ATTENTION~~~)
+            else:  # email auth (~~~NEED ATTENTION~~~)
                 user, created = get_user_model().objects.get_or_create(
                     email=email, password=password
                 )
@@ -188,4 +189,14 @@ class getUserDataView(APIView):
     def get(self, request, id):
         user = get_user_model().objects.get(pk=id)
         ser_data = getUserDataSerializer(instance=user)
+        return Response(data=ser_data.data)
+
+
+class getUserPlacesView(APIView):
+    def get(self, request, id):
+        user = get_user_model().objects.get(pk=id)
+        owned_places = user.owned_places.all()
+        places = user.places.all()
+        all_places = owned_places.union(places)
+        ser_data = getUserPlacesSerializer(instance=all_places, many=True)
         return Response(data=ser_data.data)
