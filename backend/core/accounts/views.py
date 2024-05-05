@@ -1,26 +1,22 @@
 import random
 from django.contrib.auth import authenticate, login, get_user_model
 
-# from rest_framework_simplejwt.authentication import JWTAuthentication
-
-# , get_user_model
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 
 # rest dependencies
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.views import TokenObtainPairView
+# from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
+# from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from .serializers import (
     CustomTokenObtainPairSerializer,
     validateCredentialSerializer,
     CodeSerializer,
-    tokenValidateSerializer,
-    CheckUserCredentialSerializer,
+    getUserDataSerializer,
 )
 from .models import OtpCode, User
 
@@ -28,10 +24,10 @@ from .models import OtpCode, User
 # Create your views here.
 class validateCredentialView(APIView):
     # shows all the otp code stored in db
-    def get(self, request):
-        codes = OtpCode.objects.all()
-        srz_data = validateCredentialSerializer(instance=codes, many=True)
-        return Response(data=srz_data.data)
+    # def get(self, request):
+    #     codes = OtpCode.objects.all()
+    #     srz_data = validateCredentialSerializer(instance=codes, many=True)
+    #     return Response(data=srz_data.data)
 
     def post(self, request):
         srz_data = validateCredentialSerializer(data=request.data)
@@ -46,13 +42,15 @@ class validateCredentialView(APIView):
                 new_code = random.randint(100000, 999999)
                 if otp_code.exists():
                     OtpCode.objects.get(phone_number=phone_number).delete()
-                    OtpCode.objects.create(phone_number=phone_number, password=new_code)
+                    OtpCode.objects.create(
+                        phone_number=phone_number, password=new_code)
                     return Response(
                         f"last otp code has been deleted, new otp code has been generated and sended to '{phone_number}'",
                         status.HTTP_201_CREATED,
                     )
                 else:
-                    OtpCode.objects.create(phone_number=phone_number, password=new_code)
+                    OtpCode.objects.create(
+                        phone_number=phone_number, password=new_code)
                     return Response(
                         f"user with '{phone_number}' phone number {user.exists()}, new opt code has been generated and sended to '{phone_number}'",
                         status.HTTP_201_CREATED,
@@ -92,7 +90,8 @@ class ValidateOtpCodeView(APIView):
                 # change user's pass to the new otp code
                 old_user = get_object_or_404(
                     User,
-                    Q(phone_number=srz_code_phone_number) | Q(email=srz_code_email),
+                    Q(phone_number=srz_code_phone_number) | Q(
+                        email=srz_code_email),
                 )
                 old_user.set_password(str(srz_code_code))
                 old_user.save()
@@ -105,7 +104,8 @@ class ValidateOtpCodeView(APIView):
                     login(request, user)
                     refresh = RefreshToken.for_user(old_user)
                     OtpCode.objects.get(
-                        Q(email=srz_code_email) | Q(phone_number=srz_code_phone_number),
+                        Q(email=srz_code_email) | Q(
+                            phone_number=srz_code_phone_number),
                         password=srz_code_code,
                     ).delete()
                     return Response(
@@ -120,7 +120,8 @@ class ValidateOtpCodeView(APIView):
                     )
                     refresh = RefreshToken.for_user(new_user)
                     OtpCode.objects.get(
-                        Q(email=srz_code_email) | Q(phone_number=srz_code_phone_number),
+                        Q(email=srz_code_email) | Q(
+                            phone_number=srz_code_phone_number),
                         password=srz_code_code,
                     ).delete()
                     return Response(
@@ -130,6 +131,7 @@ class ValidateOtpCodeView(APIView):
         return Response(srz_code.errors)
 
 
+# jwt token generator
 class CustomTokenObtainPairView(APIView):
     def post(self, request):
         ser_data = CustomTokenObtainPairSerializer(data=request.data)
@@ -143,7 +145,8 @@ class CustomTokenObtainPairView(APIView):
                 otp = OtpCode.objects.get(phone_number=phone_number)
 
                 if ser_otp == otp.password:
-                    user = User.objects.filter(phone_number=phone_number).first()
+                    user = User.objects.filter(
+                        phone_number=phone_number).first()
                     if user is not None:
                         refresh = RefreshToken.for_user(user)
                     else:
@@ -164,7 +167,7 @@ class CustomTokenObtainPairView(APIView):
                 return Response(
                     "the given otp is not correct", status.HTTP_400_BAD_REQUEST
                 )
-            else:  # email auth
+            else: # email auth (~~~NEED ATTENTION~~~)
                 user, created = get_user_model().objects.get_or_create(
                     email=email, password=password
                 )
@@ -178,10 +181,11 @@ class CustomTokenObtainPairView(APIView):
         return Response(ser_data.errors, status.HTTP_400_BAD_REQUEST)
 
 
-class tokenValidateView(APIView):
-    permission_classes = [IsAuthenticated]
+# gets user data
+class getUserDataView(APIView):
+    # permission_classes = [IsAuthenticated]
 
     def get(self, request, id):
         user = get_user_model().objects.get(pk=id)
-        ser_data = tokenValidateSerializer(instance=user)
+        ser_data = getUserDataSerializer(instance=user)
         return Response(data=ser_data.data)
