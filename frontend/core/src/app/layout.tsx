@@ -5,7 +5,7 @@ import localFont from "next/font/local";
 import React from "react";
 import { Toaster } from "@/components/ui/sonner";
 
-// Font files can be colocated inside of `app`
+// Font files can be collocated inside of `app`
 const vazir = localFont({
   src: "/fonts/Vazirmatn-RD[wght].woff2",
   display: "swap",

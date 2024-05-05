@@ -21,7 +21,7 @@ import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import React, { useEffect, useState } from "react";
 import { Switch } from "@/components/ui/switch";
-import ItemAdder from "../components/ItemAdder";
+import ItemAdder from "../../components/global/ItemAdder";
 
 const formSchema = z.object({
   main_page_type: z.enum(["single", "multiple", "none"]),
@@ -130,6 +130,7 @@ function BuilderForm() {
           render={({ field }) => (
             <FormControl>
               <RadioGroup
+                dir="rtl"
                 onValueChange={field.onChange}
                 defaultValue={field.value}
                 value={field.value}

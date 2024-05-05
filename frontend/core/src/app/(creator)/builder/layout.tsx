@@ -1,6 +1,11 @@
+import React from "react";
 import Image from "next/image";
 
-export default function MenuBuilderLayout({ children }) {
+export default function MenuBuilderLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <section className="overflow-hidden bg-white">
       {/* form and prototype  */}
