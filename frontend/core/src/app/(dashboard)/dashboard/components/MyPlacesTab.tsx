@@ -61,14 +61,14 @@ export default function MyPlacesTab({ position, places }: MyPlacesTabType) {
   return (
     <div
       ref={tab}
-      className={`transition-height flex w-full select-none flex-col gap-2 overflow-hidden rounded-xl rounded-tl-3xl border-4 border-sad-blue bg-soft-blue p-2 text-primary  duration-300 ease-in-out`}
+      className={`transition-height flex w-full select-none flex-col overflow-hidden rounded-xl rounded-tl-3xl border-4 border-sad-blue bg-soft-blue p-2 text-primary  duration-300 ease-in-out`}
     >
       <Button
         onClick={handleTab}
         className="flex h-auto cursor-pointer flex-col justify-between gap-2 bg-inherit p-0 text-primary"
       >
         <section className="flex w-full items-center justify-between gap-2">
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             <Building className="h-6 w-6"></Building>
             <p className=" text-xl">مجموعه {currentPlace || places[0].name}</p>
           </div>
@@ -89,7 +89,7 @@ export default function MyPlacesTab({ position, places }: MyPlacesTabType) {
       {places.length > 1 ? (
         <AnimateHeight duration={300} height={isOpen ? "auto" : 0}>
           <section
-            className={`flex w-full flex-col gap-1 rounded-lg border border-primary/30 bg-sad-blue p-1`}
+            className={`mt-2 flex w-full flex-col gap-1 rounded-lg border border-primary/30 bg-sad-blue p-1`}
           >
             {places.map((place) => (
               <Button
