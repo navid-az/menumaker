@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 
 //components
-import AnimateHeight, { Height } from "react-animate-height";
+import AnimateHeight from "react-animate-height";
 import { Button } from "@/components/ui/button";
 
 //functions
@@ -50,8 +50,8 @@ export default function MyPlacesTab({ position, places }: MyPlacesTabType) {
     }
   };
 
-  const handleClick = (menu_id: string) => {
-    setCurrentPlace(menu_id);
+  const handleClick = (name: string, menu_id: string) => {
+    setCurrentPlace(name);
     router.push(`/dashboard/${menu_id}/insights`);
     setTimeout(() => {
       setIsOpen(!isOpen);
@@ -70,9 +70,7 @@ export default function MyPlacesTab({ position, places }: MyPlacesTabType) {
         <section className="flex w-full items-center justify-between gap-2">
           <div className="flex gap-2">
             <Building className="h-6 w-6"></Building>
-            <p className=" text-xl">
-              مجموعه {currentPlace || places[0].menu_id}
-            </p>
+            <p className=" text-xl">مجموعه {currentPlace || places[0].name}</p>
           </div>
           <ArrowLeft
             className={` transition-all ${
@@ -95,9 +93,9 @@ export default function MyPlacesTab({ position, places }: MyPlacesTabType) {
           >
             {places.map((place) => (
               <Button
-                onClick={() => handleClick(place.menu_id)}
+                onClick={() => handleClick(place.name, place.menu_id)}
                 className={`${
-                  (currentPlace || places[0].menu_id) === place.menu_id
+                  (currentPlace || places[0].name) === place.name
                     ? "hidden"
                     : "flex"
                 } scale-pro justify-start gap-2 border border-sad-blue bg-sad-blue px-2 py-3 text-base font-normal text-primary transition-all duration-300 hover:scale-105 hover:border-primary hover:bg-white`}

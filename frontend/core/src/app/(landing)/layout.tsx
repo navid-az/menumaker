@@ -18,14 +18,6 @@ async function Navbar() {
 
   return (
     <nav className="container mx-auto flex w-full items-center justify-between pt-7 text-xl text-royal-green">
-      {/* {places.map((place, index) => (
-        <>
-          <div>
-            {index + 1}
-            {place.menu_id}
-          </div>
-        </>
-      ))} */}
       <Link href="/">
         <Image
           src="/images/menumaker-logo.svg"
@@ -38,11 +30,9 @@ async function Navbar() {
       <Link href="/builder">مشاهده دمو</Link>
       <Link href="/1/menu">صفحه منو</Link>
       {isAuthenticated ? (
-        <Link href={`/${places[0].menu_id}/dashboard/liveManagement`}>
-          داشبورد
-        </Link>
+        <Link href={`/dashboard/${places[0].menu_id}/insights`}>داشبورد</Link>
       ) : (
-        <Link href={`/venhan/dashboard/liveManagement`}>داشبورد</Link>
+        <Link href={`/register`}>داشبورد</Link>
       )}
 
       <Link href="/">درباره ما</Link>
