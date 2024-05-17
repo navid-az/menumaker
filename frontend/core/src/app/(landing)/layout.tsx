@@ -6,12 +6,26 @@ import { Button } from "@/components/ui/button";
 import { verifyToken } from "../actions";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getUserData } from "@/lib/getUserData";
+import { getUserPlaces } from "@/lib/getUserPlaces";
 
 async function Navbar() {
   const isAuthenticated = await verifyToken();
+  if (isAuthenticated) {
+    const { pk } = await getUserData();
+    var places = await getUserPlaces(pk);
+  }
 
   return (
     <nav className="container mx-auto flex w-full items-center justify-between pt-7 text-xl text-royal-green">
+      {/* {places.map((place, index) => (
+        <>
+          <div>
+            {index + 1}
+            {place.menu_id}
+          </div>
+        </>
+      ))} */}
       <Link href="/">
         <Image
           src="/images/menumaker-logo.svg"
@@ -23,7 +37,13 @@ async function Navbar() {
       <Link href="/pricing">تعرفه ها</Link>
       <Link href="/builder">مشاهده دمو</Link>
       <Link href="/1/menu">صفحه منو</Link>
-      <Link href="/dashboard/liveManagement">داشبورد</Link>
+      {isAuthenticated ? (
+        <Link href={`/${places[0].menu_id}/dashboard/liveManagement`}>
+          داشبورد
+        </Link>
+      ) : (
+        <Link href={`/venhan/dashboard/liveManagement`}>داشبورد</Link>
+      )}
 
       <Link href="/">درباره ما</Link>
 

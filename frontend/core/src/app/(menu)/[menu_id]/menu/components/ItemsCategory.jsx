@@ -17,7 +17,7 @@ export default function ItemsCategory({ params, type }) {
     queryKey: ["categories"],
     queryFn: async () => {
       const { data } = await axios.get(
-        `http://127.0.0.1:8000/menu/single/${params.orgName}`
+        `http://127.0.0.1:8000/menu/single/${params.menu_id}`
       );
       return data;
     },

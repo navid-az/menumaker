@@ -52,6 +52,7 @@ export async function logOut() {
   cookies().delete("access");
   cookies().delete("refresh");
   verifyToken();
+  redirect("/");
 }
 
 //verify access token

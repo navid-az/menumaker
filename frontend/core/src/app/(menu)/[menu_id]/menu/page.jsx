@@ -32,7 +32,7 @@ export default function MenuPage({ params }) {
                 className=" rounded-full bg-teal-200 text-royal-green"
                 asChild
               >
-                <Link href={`/${params.orgName}/orders`}>سفارشات</Link>
+                <Link href={`/${params.menu_id}/orders`}>سفارشات</Link>
               </Button>
               <Button
                 size="sm"
@@ -57,7 +57,11 @@ export default function MenuPage({ params }) {
             </section>
           </header>
           <ItemsCategory type={type} params={params} />
-          <MenuItemsWrapper type={type} searchedValue={searchedValue} params={params} />
+          <MenuItemsWrapper
+            type={type}
+            searchedValue={searchedValue}
+            params={params}
+          />
         </div>
       </colors.Provider>
     </SkeletonTheme>

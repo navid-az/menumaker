@@ -18,7 +18,7 @@ import {
   Radar,
   Settings,
   User,
-} from "@/app/dashboard/components/svg";
+} from "@/app/(dashboard)/dashboard/components/svg";
 
 export async function UserProfile() {
   const user = await getUserData();

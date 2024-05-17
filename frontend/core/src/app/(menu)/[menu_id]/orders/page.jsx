@@ -24,7 +24,7 @@ export default function Orders({ params }) {
     queryKey: ["items"],
     queryFn: async () => {
       const { data } = await axios.get(
-        `http://127.0.0.1:8000/menu/single/items/${params.orgName}`
+        `http://127.0.0.1:8000/menu/single/items/${params.menu_id}`
       );
       return data;
     },
@@ -34,7 +34,7 @@ export default function Orders({ params }) {
     <div className="container mx-auto flex h-screen flex-col gap-8 p-4">
       <header className="flex items-center justify-between transition-all">
         <Button size="icon" className=" rounded-full bg-royal-green" asChild>
-          <Link href={`/${params.orgName}/menu`}>
+          <Link href={`/${params.menu_id}/menu`}>
             <ArrowLeft className={`stroke-sky-blue text-xl`} />
           </Link>
         </Button>

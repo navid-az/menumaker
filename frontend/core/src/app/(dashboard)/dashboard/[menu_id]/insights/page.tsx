@@ -1,20 +1,25 @@
-import ToolBar from "../components/ToolBar";
+//SVGs
+import { Plus } from "@/app/components/svgs";
+
+//components
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsContent, TabsTrigger } from "@/components/ui/tabs";
-import { Plus } from "@/app/components/svgs";
-import { Items, columns } from "../items/columns";
-import { DataTable } from "../items/data-table";
-import { revalidatePath } from "next/cache";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { CreateItemForm } from "../components/CreateItemForm";
+import { Items, columns } from "../../items/columns";
+import { DataTable } from "../../items/data-table";
+import ToolBar from "../../components/ToolBar";
+import { CreateItemForm } from "../../components/CreateItemForm";
 
-async function getData(): Promise<Items[]> {
-  const data = await fetch("http://127.0.0.1:8000/menu/venhan/items/", {
+//server function
+import { revalidatePath } from "next/cache";
+
+async function getData(menu_id: string): Promise<Items[]> {
+  const data = await fetch(`http://127.0.0.1:8000/menu/${menu_id}/items/`, {
     next: { revalidate: 5 },
   });
   if (!data.ok) {
@@ -23,12 +28,16 @@ async function getData(): Promise<Items[]> {
   revalidatePath("/dashboard/insights");
   return data.json();
 }
-export default async function Insights() {
-  const data = await getData();
+export default async function Insights({
+  params,
+}: {
+  params: { menu_id: string };
+}) {
+  const data = await getData(params.menu_id);
 
   return (
     <Tabs className="h-full" dir="rtl" defaultValue="items">
-      <div className="h-full flex-1 overflow-y-auto bg-soft-blue  p-4">
+      <div className="h-full flex-1 overflow-y-auto bg-soft-blue p-4">
         <ToolBar>
           <TabsList className="h-max gap-2 rounded-full border-2 border-primary bg-soft-blue p-1">
             <TabsTrigger className="rounded-full" value="items">

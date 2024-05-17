@@ -11,7 +11,7 @@ export default function OrderedItem({ id, quantity, params }) {
     queryKey: ["items"],
     queryFn: async () => {
       const { data } = await axios.get(
-        `http://127.0.0.1:8000/menu/single/items/${params.orgName}`
+        `http://127.0.0.1:8000/menu/single/items/${params.menu_id}`
       );
       return data;
     },
