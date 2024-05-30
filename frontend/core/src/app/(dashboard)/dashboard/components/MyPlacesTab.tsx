@@ -57,7 +57,7 @@ export default function MyPlacesTab({ position, places }: MyPlacesTabType) {
   };
 
   return (
-    <div className="w-full px-2">
+    <div className="w-full px-1">
       <div
         ref={tab}
         className={`transition-height flex min-h-[84px] w-full select-none flex-col overflow-hidden rounded-xl rounded-tl-3xl border-4 border-sad-blue bg-soft-blue p-2 text-primary duration-300 ease-in-out`}
