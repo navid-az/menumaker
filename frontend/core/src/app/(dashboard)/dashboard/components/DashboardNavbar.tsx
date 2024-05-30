@@ -4,7 +4,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 //SVGs
-import { BarChart, Radar, Settings, User } from "./svg";
+import { BarChart, Radar, ScrollText, Settings, User } from "./svg";
 
 //hooks
 import { usePathname } from "next/navigation";
@@ -42,7 +42,7 @@ export default function DashboardNavbar({ places }: { places: PlacesType }) {
       }}
     >
       <section className="flex h-full w-full flex-col items-end gap-4 bg-primary px-2 pb-8 text-soft-blue">
-        <MyPlacesTab places={places} position="صاحب محموعه"></MyPlacesTab>
+        <MyPlacesTab places={places} position="صاحب مجموعه"></MyPlacesTab>
         <DashboardNavbarBtn
           text="وضعیت مجموعه"
           isCollapsed={isCollapsed}
@@ -56,6 +56,15 @@ export default function DashboardNavbar({ places }: { places: PlacesType }) {
           path={`/dashboard/${params.menu_id}/liveManagement`}
         >
           <Radar className={`${!isCollapsed && "ml-3"} h-6 w-6`}></Radar>
+        </DashboardNavbarBtn>
+        <DashboardNavbarBtn
+          text="آیتم و دسته بندی ها"
+          isCollapsed={isCollapsed}
+          path={`/dashboard/${params.menu_id}/items`}
+        >
+          <ScrollText
+            className={`${!isCollapsed && "ml-3"} h-6 w-6`}
+          ></ScrollText>
         </DashboardNavbarBtn>
         <DashboardNavbarBtn text="پرسنل" isCollapsed={isCollapsed}>
           <User className={`${!isCollapsed && "ml-3"} h-6 w-6`}></User>

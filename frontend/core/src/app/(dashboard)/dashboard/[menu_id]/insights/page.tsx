@@ -37,7 +37,7 @@ export default async function Insights({
 
   return (
     <Tabs className="h-full" dir="rtl" defaultValue="items">
-      <div className="h-full flex-1 overflow-y-auto bg-soft-blue p-4">
+      <div className="h-full flex-1 overflow-y-auto p-4">
         <ToolBar>
           <TabsList className="h-max gap-2 rounded-full border-2 border-primary bg-soft-blue p-1">
             <TabsTrigger className="rounded-full" value="items">
