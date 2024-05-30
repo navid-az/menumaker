@@ -41,7 +41,7 @@ export default function DashboardNavbar({ places }: { places: PlacesType }) {
         setIsCollapsed(false);
       }}
     >
-      <section className="flex h-full w-full flex-col items-end gap-4 bg-primary px-2 pb-8 text-soft-blue">
+      <section className="flex w-full flex-col items-end gap-4 bg-primary px-2 text-soft-blue">
         <MyPlacesTab places={places} position="صاحب مجموعه"></MyPlacesTab>
         <DashboardNavbarBtn
           text="وضعیت مجموعه"
