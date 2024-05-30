@@ -67,53 +67,51 @@ export default function MyPlacesTab({
   };
 
   return (
-    <div className="w-full px-1">
-      <div
-        ref={tab}
-        className={`transition-height flex ${
-          isCollapsed
-            ? "h-auto rounded-xl"
-            : "min-h-[84px] rounded-xl rounded-tl-3xl"
-        } w-full select-none flex-col overflow-hidden border-4 border-sad-blue bg-soft-blue p-2 text-primary duration-300 ease-in-out`}
+    <div
+      ref={tab}
+      className={`transition-height flex ${
+        isCollapsed
+          ? "h-auto rounded-xl"
+          : "min-h-[84px] rounded-xl rounded-tl-3xl"
+      } w-full select-none flex-col overflow-hidden border-4 border-sad-blue bg-soft-blue text-primary duration-300 ease-in-out`}
+    >
+      <Button
+        onClick={handleTab}
+        className="flex h-full cursor-pointer flex-col justify-between gap-2 bg-inherit p-2 text-primary"
       >
-        <Button
-          onClick={handleTab}
-          className="flex h-full cursor-pointer flex-col justify-between gap-2 bg-inherit p-0 text-primary"
+        <section
+          className={`flex w-full items-center gap-2 ${
+            isCollapsed ? "justify-center py-2" : "justify-between"
+          }`}
         >
-          <section
-            className={`flex w-full items-center gap-2 ${
-              isCollapsed ? "justify-center py-2" : "justify-between"
-            }`}
-          >
-            <div className="flex items-center gap-2">
-              <Building className="h-6 w-6"></Building>
-              <p className={`text-xl ${isCollapsed ? "hidden" : "flex"}`}>
-                مجموعه {currentPlace || places[0].name}
-              </p>
-            </div>
-            <ArrowLeft
-              className={` transition-all ${isCollapsed ? "hidden" : "flex"} ${
-                !isOpen ? "rotate-0" : "-rotate-90"
-              } ${places.length <= 1 ? "hidden" : "flex"}`}
-            ></ArrowLeft>
-          </section>
-          <span
-            className={`${
-              isCollapsed ? "hidden" : "flex"
-            } flex w-full items-center gap-2`}
-          >
-            <p>سمت شما</p>
-            <p className=" w-max rounded-full bg-yellow-400 px-3 py-1 text-xs text-yellow-900">
-              {position}
+          <div className="flex items-center gap-2">
+            <Building className="h-6 w-6"></Building>
+            <p className={`text-xl ${isCollapsed ? "hidden" : "flex"}`}>
+              مجموعه {currentPlace || places[0].name}
             </p>
-          </span>
-        </Button>
-        {/* places list */}
-        {places.length > 1 ? (
-          <AnimateHeight duration={300} height={isOpen ? "auto" : 0}>
-            <section
-              className={`mt-2 flex w-full flex-col gap-1 rounded-lg border border-primary/30 bg-sad-blue p-1`}
-            >
+          </div>
+          <ArrowLeft
+            className={` transition-all ${isCollapsed ? "hidden" : "flex"} ${
+              !isOpen ? "rotate-0" : "-rotate-90"
+            } ${places.length <= 1 ? "hidden" : "flex"}`}
+          ></ArrowLeft>
+        </section>
+        <span
+          className={`${
+            isCollapsed ? "hidden" : "flex"
+          } flex w-full items-center gap-2`}
+        >
+          <p>سمت شما</p>
+          <p className=" w-max rounded-full bg-yellow-400 px-3 py-1 text-xs text-yellow-900">
+            {position}
+          </p>
+        </span>
+      </Button>
+      {/* places list */}
+      {places.length > 1 ? (
+        <AnimateHeight duration={300} height={isOpen ? "auto" : 0}>
+          <section className="p-2">
+            <div className="flex w-full flex-col gap-1 rounded-lg border border-primary/30 bg-sad-blue ">
               {places.map((place) => (
                 <Button
                   onClick={() => handleClick(place.name, place.menu_id)}
@@ -127,12 +125,12 @@ export default function MyPlacesTab({
                   {place.name}
                 </Button>
               ))}
-            </section>
-          </AnimateHeight>
-        ) : (
-          ""
-        )}
-      </div>
+            </div>
+          </section>
+        </AnimateHeight>
+      ) : (
+        ""
+      )}
     </div>
   );
 }
