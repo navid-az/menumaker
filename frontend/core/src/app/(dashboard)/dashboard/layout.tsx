@@ -5,7 +5,7 @@ import {
 } from "@/components/ui/resizable";
 // import { DashboardHeader } from "./dashboard/components/DashboardHeader";
 import { DashboardHeader } from "./components/DashboardHeader";
-import DashboardNavbar from "./components/DashboardNavbar";
+import DashboardNavbar from "./components/DashboardSidebar";
 import DashboardPanel from "./components/DashboardPanel";
 // import DashboardNavbar from "./dashboard/components/DashboardNavbar";
 // import DashboardPanel from "./dashboard/components/DashboardPanel";
