@@ -22,10 +22,17 @@ import { PlacesType } from "../layout";
 type MyPlacesTabType = {
   position: string;
   places: PlacesType;
+  isCollapsed: boolean;
+  collapsePanel: () => void;
   //   venueType: "restaurant" | "cafe" | "buffet" | "food truck";
 };
 
-export default function MyPlacesTab({ position, places }: MyPlacesTabType) {
+export default function MyPlacesTab({
+  position,
+  places,
+  isCollapsed,
+  collapsePanel,
+}: MyPlacesTabType) {
   const router = useRouter();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -46,6 +53,9 @@ export default function MyPlacesTab({ position, places }: MyPlacesTabType) {
 
   const handleTab = () => {
     if (places.length > 1) {
+      if (isCollapsed) {
+        collapsePanel();
+      }
       setIsOpen(!isOpen);
     }
   };
@@ -60,26 +70,38 @@ export default function MyPlacesTab({ position, places }: MyPlacesTabType) {
     <div className="w-full px-1">
       <div
         ref={tab}
-        className={`transition-height flex min-h-[84px] w-full select-none flex-col overflow-hidden rounded-xl rounded-tl-3xl border-4 border-sad-blue bg-soft-blue p-2 text-primary duration-300 ease-in-out`}
+        className={`transition-height flex ${
+          isCollapsed
+            ? "h-auto rounded-xl"
+            : "min-h-[84px] rounded-xl rounded-tl-3xl"
+        } w-full select-none flex-col overflow-hidden border-4 border-sad-blue bg-soft-blue p-2 text-primary duration-300 ease-in-out`}
       >
         <Button
           onClick={handleTab}
-          className="flex h-auto cursor-pointer flex-col justify-between gap-2 bg-inherit p-0 text-primary"
+          className="flex h-full cursor-pointer flex-col justify-between gap-2 bg-inherit p-0 text-primary"
         >
-          <section className="flex w-full items-center justify-between gap-2">
+          <section
+            className={`flex w-full items-center gap-2 ${
+              isCollapsed ? "justify-center py-2" : "justify-between"
+            }`}
+          >
             <div className="flex items-center gap-2">
               <Building className="h-6 w-6"></Building>
-              <p className=" text-xl">
+              <p className={`text-xl ${isCollapsed ? "hidden" : "flex"}`}>
                 مجموعه {currentPlace || places[0].name}
               </p>
             </div>
             <ArrowLeft
-              className={` transition-all ${
+              className={` transition-all ${isCollapsed ? "hidden" : "flex"} ${
                 !isOpen ? "rotate-0" : "-rotate-90"
               } ${places.length <= 1 ? "hidden" : "flex"}`}
             ></ArrowLeft>
           </section>
-          <span className="flex w-full items-center gap-2">
+          <span
+            className={`${
+              isCollapsed ? "hidden" : "flex"
+            } flex w-full items-center gap-2`}
+          >
             <p>سمت شما</p>
             <p className=" w-max rounded-full bg-yellow-400 px-3 py-1 text-xs text-yellow-900">
               {position}

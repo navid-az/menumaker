@@ -9,12 +9,13 @@ import { BarChart, Radar, ScrollText, Settings, User } from "./svg";
 //hooks
 import { usePathname } from "next/navigation";
 import { useMediaQuery } from "@/app/hooks/useMediaQuery";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useParams } from "next/navigation";
 
 //components
 import { Button } from "@/components/ui/button";
 import { ResizablePanel } from "@/components/ui/resizable";
+import { ImperativePanelHandle } from "react-resizable-panels";
 import MyPlacesTab from "./MyPlacesTab";
 
 //types
@@ -26,9 +27,18 @@ export default function DashboardNavbar({ places }: { places: PlacesType }) {
   const md = useMediaQuery("(min-width: 768px)");
   const lg = useMediaQuery("(min-width: 1024px)");
   const params = useParams<{ menu_id: string }>();
+  const resizablePanel = useRef<ImperativePanelHandle>(null);
+
+  const collapsePanel = () => {
+    const panel = resizablePanel.current;
+    if (panel) {
+      panel.expand();
+    }
+  };
 
   return (
     <ResizablePanel
+      ref={resizablePanel}
       onCollapse={() => {
         setIsCollapsed(true);
       }}
@@ -42,7 +52,12 @@ export default function DashboardNavbar({ places }: { places: PlacesType }) {
       }}
     >
       <section className="flex w-full flex-col items-end gap-4 bg-primary px-2 text-soft-blue">
-        <MyPlacesTab places={places} position="صاحب مجموعه"></MyPlacesTab>
+        <MyPlacesTab
+          places={places}
+          position="صاحب مجموعه"
+          isCollapsed={isCollapsed}
+          collapsePanel={collapsePanel}
+        ></MyPlacesTab>
         <DashboardNavbarBtn
           text="وضعیت مجموعه"
           isCollapsed={isCollapsed}
