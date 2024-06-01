@@ -12,4 +12,5 @@
     "load-plugins=pylint_django"
   ],
   "python.analysis.typeCheckingMode": "off",
+  "cSpell.language": "en,fa",
 }
