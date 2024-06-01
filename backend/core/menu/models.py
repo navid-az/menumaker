@@ -31,7 +31,7 @@ class Menu(models.Model):
     personnel = models.ManyToManyField(User, related_name='places', blank=True)
 
     def __str__(self):
-        return self.menu_id
+        return self.slug
 
 
 class Table(models.Model):

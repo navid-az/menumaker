@@ -4,6 +4,8 @@ from .models import Menu, Item, ItemCategory
 
 
 class ItemSerializer(serializers.ModelSerializer):
+    menu = serializers.StringRelatedField(read_only=True)
+
     class Meta:
         model = Item
         fields = '__all__'
