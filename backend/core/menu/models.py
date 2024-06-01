@@ -3,6 +3,7 @@ from django.db import models
 from colorfield.fields import ColorField
 from django.conf import settings
 from pickers.models import Icon
+from django.utils.text import slugify
 
 User = settings.AUTH_USER_MODEL
 
@@ -14,9 +15,10 @@ class Menu(models.Model):
         ("engL", "engLetter"),
         ("perL", "perLetter"),
     ]
-
-    menu_id = models.CharField(max_length=100, unique=True, default='venhan')
-    name = models.CharField(max_length=250)
+    menu_id = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100)
+    name_en = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100, unique=True, null=True, blank=True)
     owner = models.ForeignKey(
         User, on_delete=models.CASCADE, default=1, related_name='owned_places')
     primary_color = ColorField()
@@ -26,7 +28,7 @@ class Menu(models.Model):
     price_unit = models.CharField(
         max_length=9, choices=PRICE_UNITS, default="simp")
     is_active = models.BooleanField(default=True)
-    personnel = models.ManyToManyField(User, related_name='places')
+    personnel = models.ManyToManyField(User, related_name='places', blank=True)
 
     def __str__(self):
         return self.menu_id
