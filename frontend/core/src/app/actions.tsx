@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import jwtDecoder from "@/lib/jwtDecoder";
 import { cookies } from "next/headers";
-import { revalidatePath } from "next/cache";
+import { revalidateTag } from "next/cache";
 type DecodedJwtType = {
   token_type: "access" | "refresh";
   exp: number;
@@ -81,7 +81,6 @@ export async function updateItem(
   data: object
 ) {
   const accessToken = cookies().get("access");
-  console.log(menuSlug, itemId, data, "$$$$$$$$$$$$$$$44");
 
   const res = await fetch(
     `http://127.0.0.1:8000/menu/${menuSlug}/items/${itemId}/update/`,
@@ -96,7 +95,7 @@ export async function updateItem(
   );
   if (!res.ok) {
   }
-
-  revalidatePath(`/dashboard/${menuSlug}/items`);
+  revalidateTag("items");
+  // revalidatePath(`/dashboard/${menuSlug}/items`);
   return res.ok;
 }
