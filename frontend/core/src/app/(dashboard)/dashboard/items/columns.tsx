@@ -5,6 +5,9 @@ import { Switch } from "@/components/ui/switch";
 import { ColumnDef } from "@tanstack/react-table";
 import Image from "next/image";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+//SVGs
+import { ArrowUpDown } from "lucide-react";
 
 //types
 import { CellContext } from "@tanstack/react-table";
@@ -13,6 +16,7 @@ export type Items = {
   id: number;
   image: string;
   name: string;
+  category: string;
   menu: string; //slug
   price: number;
   is_available: boolean;
@@ -42,7 +46,7 @@ export const columns: ColumnDef<Items>[] = [
         <Image
           className="rounded-md"
           fill
-          alt="nigga"
+          alt={props.row.getValue("name")}
           src={`http://127.0.0.1:8000/${props.row.getValue("image")}`}
         ></Image>
       </div>
@@ -51,7 +55,13 @@ export const columns: ColumnDef<Items>[] = [
   {
     accessorKey: "name",
     header: "نام",
+    sortingFn: "alphanumeric",
   },
+  {
+    accessorKey: "category",
+    header: "گروه",
+  },
+
   {
     accessorKey: "price",
     header: "قیمت",

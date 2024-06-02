@@ -1,10 +1,10 @@
-from dataclasses import fields
 from rest_framework import serializers
 from .models import Menu, Item, ItemCategory
 
 
 class ItemSerializer(serializers.ModelSerializer):
     menu = serializers.StringRelatedField(read_only=True)
+    category = serializers.SlugRelatedField(slug_field='name', read_only=True)
 
     class Meta:
         model = Item
