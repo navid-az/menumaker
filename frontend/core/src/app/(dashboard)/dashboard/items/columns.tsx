@@ -21,6 +21,16 @@ export const columns: ColumnDef<Items>[] = [
   {
     accessorKey: "image",
     header: "تصویر",
+    cell: (props) => (
+      <div className="relative h-12 w-12 rounded-md">
+        <Image
+          className="rounded-md"
+          fill
+          alt="nigga"
+          src={`http://127.0.0.1:8000/${props.row.getValue("image")}`}
+        ></Image>
+      </div>
+    ),
   },
   {
     accessorKey: "name",
