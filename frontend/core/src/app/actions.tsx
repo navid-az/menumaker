@@ -75,11 +75,16 @@ export async function verifyToken() {
 }
 
 //~~~~dashboard table mutation-related actions~~~
-export async function updateItem(menuId: string, itemId: number, data: object) {
+export async function updateItem(
+  menuSlug: string,
+  itemId: number,
+  data: object
+) {
   const accessToken = cookies().get("access");
+  console.log(menuSlug, itemId, data, "$$$$$$$$$$$$$$$44");
 
   const res = await fetch(
-    `http://127.0.0.1:8000/menu/${menuId}/items/${itemId}/update`,
+    `http://127.0.0.1:8000/menu/${menuSlug}/items/${itemId}/update/`,
     {
       method: "PUT",
       headers: {
@@ -92,6 +97,6 @@ export async function updateItem(menuId: string, itemId: number, data: object) {
   if (!res.ok) {
   }
 
-  revalidatePath(`/dashboard/${menuId}/items`);
+  revalidatePath(`/dashboard/${menuSlug}/items`);
   return res.ok;
 }

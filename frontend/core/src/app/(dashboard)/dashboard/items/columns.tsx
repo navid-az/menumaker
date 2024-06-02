@@ -3,11 +3,13 @@
 import { updateItem } from "@/app/actions";
 import { Switch } from "@/components/ui/switch";
 import { ColumnDef } from "@tanstack/react-table";
+import Image from "next/image";
 
 export type Items = {
   id: number;
   image: string;
   name: string;
+  menu: string; //slug
   price: number;
   is_available: boolean;
   is_active: boolean;
@@ -35,7 +37,7 @@ export const columns: ColumnDef<Items>[] = [
       <Switch
         checked={props.cell.getValue() as boolean}
         onCheckedChange={(checked: boolean) =>
-          updateItem("venhan", props.row.original.id, {
+          updateItem(props.row.original.menu, props.row.original.id, {
             is_available: checked,
           })
         }
@@ -50,7 +52,7 @@ export const columns: ColumnDef<Items>[] = [
       <Switch
         checked={props.cell.getValue() as boolean}
         onCheckedChange={(checked: boolean) =>
-          updateItem("venhan", props.row.original.id, {
+          updateItem(props.row.original.menu, props.row.original.id, {
             is_active: checked,
           })
         }

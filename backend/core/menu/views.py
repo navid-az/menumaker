@@ -30,13 +30,11 @@ class SingleMenuItemsView(APIView):
         srz_data = ItemSerializer(instance=items, many=True)
         return Response(srz_data.data)
 
-# new views
-
 
 class MenuItemsView(APIView):
 
-    def get(self, request, menu_id):
-        menu = Menu.objects.get(menu_id=menu_id)
+    def get(self, request, slug):
+        menu = Menu.objects.get(slug=slug)
         if menu is not None:
             items = menu.items.all()
             ser_data = ItemSerializer(instance=items, many=True)
@@ -47,10 +45,10 @@ class MenuItemsView(APIView):
 class CreateItemView(APIView):
     permission_classes = [IsAuthenticated, IsOwner]
 
-    def post(self, request, menu_id):
+    def post(self, request, slug):
         ser_data = ItemSerializer(data=request.data)
         if ser_data.is_valid():
-            menu = Menu.objects.get(menu_id=menu_id)
+            menu = Menu.objects.get(slug=slug)
             self.check_object_permissions(request, menu)
             ser_data.validated_data['menu'] = menu
             ser_data.save()
@@ -61,13 +59,13 @@ class CreateItemView(APIView):
 class UpdateItemView(APIView):
     permission_classes = [IsAuthenticated, IsOwner]
 
-    def put(self, request, menu_id, item_id):
+    def put(self, request, slug, item_id):
         item = Item.objects.get(pk=item_id)
         ser_data = ItemSerializer(
             instance=item, data=request.data, partial=True)
 
         if ser_data.is_valid():
-            menu = Menu.objects.get(menu_id=menu_id)
+            menu = Menu.objects.get(slug=slug)
             self.check_object_permissions(request, menu)
             ser_data.save()
             return Response(ser_data.data)
@@ -77,8 +75,8 @@ class UpdateItemView(APIView):
 class DeleteItemView(APIView):
     permission_classes = [IsAuthenticated, IsOwner]
 
-    def delete(self, request, menu_id, item_id):
-        menu = Menu.objects.get(menu_id=menu_id)
+    def delete(self, request, slug, item_id):
+        menu = Menu.objects.get(slug=slug)
         self.check_object_permissions(request, menu)
 
         item = Item.objects.get(pk=item_id)

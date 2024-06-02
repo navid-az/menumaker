@@ -10,12 +10,12 @@ urlpatterns = [
          SingleMenuItemsView.as_view(), name='menu-items'),
 
     # new endpoints
-    path('<str:menu_id>/items/', MenuItemsView.as_view(), name='menu-items'),
-    path('<str:menu_id>/items/create',
+    path('<str:slug>/items/', MenuItemsView.as_view(), name='menu-items'),
+    path('<str:slug>/items/create/',
          CreateItemView.as_view(), name='create-item'),
-    path('<str:menu_id>/items/<int:item_id>/update',
+    path('<str:slug>/items/<int:item_id>/update/',
          UpdateItemView.as_view(), name='update-item'),
-    path('<str:menu_id>/items/<int:item_id>/delete',
+    path('<str:slug>/items/<int:item_id>/delete/',
          DeleteItemView.as_view(), name='delete-item'),
 
 ]
