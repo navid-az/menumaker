@@ -14,7 +14,7 @@ import { Building } from "./svg";
 import { ArrowLeft } from "lucide-react";
 
 //hooks
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useCurrentPlaceStore } from "@/lib/stores";
 
 //types
@@ -34,16 +34,25 @@ export default function MyPlacesTab({
   collapsePanel,
 }: MyPlacesTabType) {
   const router = useRouter();
+  const tab = useRef(null);
 
   const [isOpen, setIsOpen] = useState(false);
-  // const [currentMenu, setCurrentMenu] = useState(places[0].menu_id);
+  const [prevPath, setPrevPath] = useState("insights");
   const currentPlace = useCurrentPlaceStore((state) => state.currentPlace);
   const setCurrentPlace = useCurrentPlaceStore(
     (state) => state.updateCurrentPlace
   );
-  const tab = useRef(null);
 
   const outsideClick = closeTabOnOutsideClick(tab);
+  const pathname = usePathname();
+
+  //will open the same dashboard section depending on pathname
+  useEffect(() => {
+    const prevPath = pathname.split("/").pop();
+    if (prevPath) {
+      setPrevPath(prevPath);
+    }
+  }, [pathname]);
 
   useEffect(() => {
     if (outsideClick) {
@@ -62,7 +71,7 @@ export default function MyPlacesTab({
 
   const handleClick = (name: string, menu_id: string) => {
     setCurrentPlace(name);
-    router.push(`/dashboard/${menu_id}/insights`);
+    router.push(`/dashboard/${menu_id}/${prevPath}`);
     setIsOpen(!isOpen);
   };
 
