@@ -64,7 +64,18 @@ export const columns: ColumnDef<Items>[] = [
 
   {
     accessorKey: "price",
-    header: "قیمت",
+    header: ({ column }) => {
+      return (
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+          قیمت
+        </Button>
+      );
+    },
   },
   {
     accessorKey: "is_available",

@@ -4,6 +4,7 @@ import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
+  getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -29,8 +30,17 @@ export function DataTable<TData, TValue>({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    initialState: {
+      sorting: [
+        {
+          id: "name",
+          desc: false,
+        },
+      ],
+    },
   });
-
+  console.log("sorting state", table.getState().sorting);
   return (
     <div className="w-full rounded-md border">
       <Table>
