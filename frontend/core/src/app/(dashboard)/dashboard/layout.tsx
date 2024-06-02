@@ -3,12 +3,9 @@ import {
   ResizablePanelGroup,
   ResizableHandle,
 } from "@/components/ui/resizable";
-// import { DashboardHeader } from "./dashboard/components/DashboardHeader";
 import { DashboardHeader } from "./components/DashboardHeader";
 import DashboardNavbar from "./components/DashboardSidebar";
 import DashboardPanel from "./components/DashboardPanel";
-// import DashboardNavbar from "./dashboard/components/DashboardNavbar";
-// import DashboardPanel from "./dashboard/components/DashboardPanel";
 import { getUserData } from "@/lib/getUserData";
 import { getUserPlaces } from "@/lib/getUserPlaces";
 
@@ -16,6 +13,7 @@ import { getUserPlaces } from "@/lib/getUserPlaces";
 export type PlacesType = {
   id: number;
   menu_id: string;
+  slug: string;
   name: string;
   primary_color: string;
   secondary_color: string;
@@ -49,7 +47,6 @@ export default async function DashboardLayout({
 }) {
   const user = await getUserData();
   const places: PlacesType = await getUserPlaces(user.pk);
-  // const data: PlacesType = await getMenuData(params.menu_id);
   return (
     <div className="flex h-screen flex-col bg-primary">
       <DashboardHeader menu_id={params.menu_id}></DashboardHeader>

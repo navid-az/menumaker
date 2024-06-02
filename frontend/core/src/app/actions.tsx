@@ -96,3 +96,22 @@ export async function updateItem(
   revalidateTag("items");
   return res.ok;
 }
+
+export async function deleteItem(menuSlug: string, itemId: number) {
+  const accessToken = cookies().get("access");
+
+  const res = await fetch(
+    `http://127.0.0.1:8000/menu/${menuSlug}/items/${itemId}/delete/`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    }
+  );
+  if (!res.ok) {
+    return new Error("wtf is this shit bro?");
+  }
+  revalidateTag("items");
+}

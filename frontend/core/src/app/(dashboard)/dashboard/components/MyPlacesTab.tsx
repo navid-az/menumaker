@@ -69,9 +69,9 @@ export default function MyPlacesTab({
     }
   };
 
-  const handleClick = (name: string, menu_id: string) => {
+  const handleClick = (name: string, menuSlug: string) => {
     setCurrentPlace(name);
-    router.push(`/dashboard/${menu_id}/${prevPath}`);
+    router.push(`/dashboard/${menuSlug}/${prevPath}`);
     setIsOpen(!isOpen);
   };
 
@@ -123,7 +123,7 @@ export default function MyPlacesTab({
             <div className="flex w-full flex-col gap-1 rounded-lg border border-primary/30 bg-sad-blue ">
               {places.map((place) => (
                 <Button
-                  onClick={() => handleClick(place.name, place.menu_id)}
+                  onClick={() => handleClick(place.name, place.slug)}
                   className={`${
                     (currentPlace || places[0].name) === place.name
                       ? "hidden"
