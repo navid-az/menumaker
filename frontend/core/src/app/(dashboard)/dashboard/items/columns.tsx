@@ -4,6 +4,10 @@ import { updateItem } from "@/app/actions";
 import { Switch } from "@/components/ui/switch";
 import { ColumnDef } from "@tanstack/react-table";
 import Image from "next/image";
+import { toast } from "sonner";
+
+//types
+import { CellContext } from "@tanstack/react-table";
 
 export type Items = {
   id: number;
@@ -15,7 +19,19 @@ export type Items = {
   is_active: boolean;
 };
 
-const handleSwitch = (columnId: string) => {};
+const handleSwitch = async (
+  props: CellContext<Items, unknown>,
+  data: object
+) => {
+  const isUpdated = await updateItem(
+    props.row.original.menu,
+    props.row.original.id,
+    data
+  );
+  if (!isUpdated) {
+    toast.error("خطا در اعمال تغییرات");
+  }
+};
 
 export const columns: ColumnDef<Items>[] = [
   {
@@ -47,7 +63,7 @@ export const columns: ColumnDef<Items>[] = [
       <Switch
         checked={props.cell.getValue() as boolean}
         onCheckedChange={(checked: boolean) =>
-          updateItem(props.row.original.menu, props.row.original.id, {
+          handleSwitch(props, {
             is_available: checked,
           })
         }
@@ -60,9 +76,10 @@ export const columns: ColumnDef<Items>[] = [
     header: "فعال",
     cell: (props) => (
       <Switch
+        // isLoading
         checked={props.cell.getValue() as boolean}
         onCheckedChange={(checked: boolean) =>
-          updateItem(props.row.original.menu, props.row.original.id, {
+          handleSwitch(props, {
             is_active: checked,
           })
         }

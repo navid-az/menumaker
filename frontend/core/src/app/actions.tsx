@@ -93,9 +93,6 @@ export async function updateItem(
       body: JSON.stringify(data),
     }
   );
-  if (!res.ok) {
-  }
   revalidateTag("items");
-  // revalidatePath(`/dashboard/${menuSlug}/items`);
   return res.ok;
 }
