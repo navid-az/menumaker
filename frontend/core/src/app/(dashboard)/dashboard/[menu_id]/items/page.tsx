@@ -7,7 +7,10 @@ import { Tabs, TabsList, TabsContent, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Items, columns } from "../../items/columns";
@@ -60,17 +63,23 @@ export default async function Insights({
           <DialogTrigger asChild>
             <Button
               size="lg"
-              className="gap-2 rounded-full border-2 border-primary bg-soft-blue px-4 font-bold text-primary transition-all duration-200 hover:scale-95 hover:bg-primary hover:text-primary-foreground"
+              className="gap-2 rounded-full border-2 border-primary bg-soft-blue px-4 font-bold text-primary transition-all duration-200 hover:scale-95 hover:bg-primary hover:text-primary-foreground data-[state=open]:scale-95 data-[state=open]:bg-primary data-[state=open]:text-primary-foreground"
             >
               <Plus className="h-5 w-5"></Plus>
               <p className="ltr:mr-1 rtl:ml-1">ایجاد آیتم</p>
             </Button>
           </DialogTrigger>
           <DialogContent>
-            <DialogHeader>
-              <h3>ایجاد آیتم</h3>
+            <DialogHeader className=" items-start ">
+              <DialogTitle>ایجاد آیتم</DialogTitle>
+              <DialogDescription>
+                با انتخاب گزینه های مورد نظر آیتمی جدید به منو اضافه کنید
+              </DialogDescription>
             </DialogHeader>
             <CreateItemForm />
+            <DialogFooter>
+              <Button>ایجاد آیتم</Button>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
       </ToolBar>
