@@ -35,7 +35,7 @@ type ItemType = {
   category: number;
 };
 export async function createItem(data: ItemType) {
-  const res = await fetch("http://127.0.0.1:8000/menu/venhan/items/create", {
+  const res = await fetch("http://127.0.0.1:8000/menu/venhan/items/create/", {
     method: "POST",
     body: JSON.stringify(data),
   });
