@@ -1,22 +1,10 @@
-//SVGs
-import { Plus } from "@/app/components/svgs";
-
 //components
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsContent, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Items, columns } from "../../items/columns";
 import { DataTable } from "../../items/data-table";
 import ToolBar from "../../components/ToolBar";
 import { CreateItemForm } from "../../components/CreateItemForm";
+import FormDialog from "../../components/FormDialog";
 
 //server function
 import { revalidatePath } from "next/cache";
@@ -59,37 +47,24 @@ export default async function Insights({
             هزینه های مازاد
           </TabsTrigger>
         </TabsList>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button
-              size="lg"
-              className="gap-2 rounded-full border-2 border-primary bg-soft-blue px-4 font-bold text-primary transition-all duration-200 hover:scale-95 hover:bg-primary hover:text-primary-foreground data-[state=open]:scale-95 data-[state=open]:bg-primary data-[state=open]:text-primary-foreground"
-            >
-              <Plus className="h-5 w-5"></Plus>
-              <p className="ltr:mr-1 rtl:ml-1">ایجاد آیتم</p>
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader className=" items-start ">
-              <DialogTitle>ایجاد آیتم</DialogTitle>
-              <DialogDescription>
-                با انتخاب گزینه های مورد نظر آیتمی جدید به منو اضافه کنید
-              </DialogDescription>
-            </DialogHeader>
-            <CreateItemForm />
-            <DialogFooter>
-              <Button>ایجاد آیتم</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <FormDialog
+          title="ایجاد آیتم"
+          description="با انتخاب گزینه های مورد نظر آیتمی جدید به منو اضافه کنید"
+        >
+          <CreateItemForm></CreateItemForm>
+        </FormDialog>
       </ToolBar>
-      <TabsContent value="items" className="flex flex-col gap-4">
-        <h2 className="text-xl">آیتم ها</h2>
-        <DataTable columns={columns} data={data} />
+      <TabsContent value="items" className="mt-4">
+        <div className="flex flex-col gap-4">
+          <h2 className="text-xl">آیتم ها</h2>
+          <DataTable columns={columns} data={data} />
+        </div>
       </TabsContent>
-      <TabsContent value="item-groups" className="flex flex-col gap-4">
-        <h2 className="text-xl">دسته بندی ها</h2>
-        <DataTable columns={columns} data={data} />
+      <TabsContent value="item-groups" className="mt-4">
+        <div className="flex flex-col gap-4">
+          <h2 className="text-xl">دسته بندی ها</h2>
+          {/* <DropZone /> */}
+        </div>
       </TabsContent>
     </Tabs>
   );

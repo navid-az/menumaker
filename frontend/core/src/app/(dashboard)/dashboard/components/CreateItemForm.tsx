@@ -1,10 +1,14 @@
 "use client";
+import React, { useState } from "react";
 
+//zod validator
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+//components
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Form,
   FormControl,
@@ -14,68 +18,58 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { createItem } from "@/app/actions";
-import { Textarea } from "@/components/ui/textarea";
-import { Bot } from "lucide-react";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useState } from "react";
-import { Switch } from "@/components/ui/switch";
-import FileField from "./FileField";
+
+//hooks
+import { useForm } from "react-hook-form";
+
+//actions
+import { createItem } from "@/app/actions";
+
+//SVGs
+import { Bot, Plus } from "lucide-react";
 
 const FormSchema = z.object({
+  image: z.string().optional(),
   name: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
-  description: z.string(),
-  category: z.number(),
-  is_active: z.boolean(),
-  price: z.number(),
+  description: z.string().optional(),
+  price: z.string().optional(),
+  category: z.string({ required_error: "انتخاب دسته بندی الزامی است" }),
 });
 
 export function CreateItemForm() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-    defaultValues: {
-      name: "",
-      category: 2,
-    },
+    defaultValues: {},
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    createItem(data);
+    console.log(JSON.stringify(data, null, 2));
   }
-
-  const [showStatusBar, setShowStatusBar] = useState(true);
-  const [showActivityBar, setShowActivityBar] = useState(false);
-  const [showPanel, setShowPanel] = useState(false);
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        id="item-form"
+        className="w-full space-y-6"
+      >
         <FormField
           control={form.control}
-          name="name"
+          name="image"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>نام</FormLabel>
+              <FormLabel>تصویر</FormLabel>
               <FormControl>
-                <FileField></FileField>
+                <Input type="file" accept="image/*" {...field}></Input>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -128,7 +122,7 @@ export function CreateItemForm() {
             <FormItem>
               <FormLabel>قیمت</FormLabel>
               <FormControl>
-                <Input className=" text-left" type="number" {...field} />
+                <Input type="number" className="text-left" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -142,17 +136,19 @@ export function CreateItemForm() {
               <FormItem className="flex-1">
                 <FormLabel>گروه</FormLabel>
                 <FormControl>
-                  <Select dir="rtl">
-                    {/* ~~~~~ direction setter ~~~~~ */}
+                  {/* ~~~~~ direction setter ~~~~~ */}
+                  <Select
+                    dir="rtl"
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="گروه مورد نظر را انتخاب کنید"></SelectValue>
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectGroup>
-                        <SelectItem value="burger">cheeseburger</SelectItem>
-                        <SelectItem value="pizza">peperoni</SelectItem>
-                        <SelectItem value="pasta">alfredo</SelectItem>
-                      </SelectGroup>
+                      <SelectItem value="burger">burger</SelectItem>
+                      <SelectItem value="pizza">pizza</SelectItem>
+                      <SelectItem value="pasta">pasta</SelectItem>
                     </SelectContent>
                   </Select>
                 </FormControl>
@@ -160,52 +156,7 @@ export function CreateItemForm() {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="category"
-            render={({ field }) => (
-              <FormItem className="flex-1">
-                <FormLabel>شعب</FormLabel>
-                <FormControl>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        className="w-full justify-start px-3 hover:bg-inherit"
-                        variant="outline"
-                      >
-                        انتخاب شعب
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className=" w-[228px]">
-                      <DropdownMenuCheckboxItem
-                        checked={showStatusBar}
-                        onCheckedChange={setShowStatusBar}
-                      >
-                        Status Bar
-                      </DropdownMenuCheckboxItem>
-                      <DropdownMenuCheckboxItem
-                        checked={showActivityBar}
-                        onCheckedChange={setShowActivityBar}
-                        disabled
-                      >
-                        Activity Bar
-                      </DropdownMenuCheckboxItem>
-                      <DropdownMenuCheckboxItem
-                        checked={showPanel}
-                        onCheckedChange={setShowPanel}
-                      >
-                        Panel
-                      </DropdownMenuCheckboxItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
         </section>
-        <br />
-        {/* <Button type="submit">Submit</Button> */}
       </form>
     </Form>
   );
