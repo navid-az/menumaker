@@ -1,6 +1,7 @@
 //components
 import { Tabs, TabsList, TabsContent, TabsTrigger } from "@/components/ui/tabs";
-import { Items, columns } from "../../items/columns";
+import { Item, itemColumns } from "../../items/columns";
+import { Category, categoryColumns } from "../../categories/columns";
 import { DataTable } from "../../items/data-table";
 import ToolBar from "../../components/ToolBar";
 import { CreateItemForm } from "../../components/CreateItemForm";
@@ -9,7 +10,23 @@ import FormDialog from "../../components/FormDialog";
 //server function
 import { revalidatePath } from "next/cache";
 
-async function getData(menu_id: string): Promise<Items[]> {
+//menu categories data
+async function getMenuCategoriesData(menu_id: string): Promise<Category[]> {
+  const data = await fetch(
+    `http://127.0.0.1:8000/menu/${menu_id}/categories/`,
+    {
+      next: { tags: ["categories"] },
+    }
+  );
+  if (!data.ok) {
+    throw new Error("Failed to fetch data");
+  }
+  revalidatePath("/dashboard/insights");
+  return data.json();
+}
+
+//menu items data
+async function getMenuItemsData(menu_id: string): Promise<Item[]> {
   const data = await fetch(`http://127.0.0.1:8000/menu/${menu_id}/items/`, {
     next: { tags: ["items"] },
   });
@@ -19,12 +36,14 @@ async function getData(menu_id: string): Promise<Items[]> {
   revalidatePath("/dashboard/insights");
   return data.json();
 }
+
 export default async function Insights({
   params,
 }: {
   params: { menu_id: string };
 }) {
-  const data = await getData(params.menu_id);
+  const itemsData = await getMenuItemsData(params.menu_id);
+  const categoriesData = await getMenuCategoriesData(params.menu_id);
 
   return (
     <Tabs
@@ -57,13 +76,13 @@ export default async function Insights({
       <TabsContent value="items" className="mt-4">
         <div className="flex flex-col gap-4">
           <h2 className="text-xl">آیتم ها</h2>
-          <DataTable columns={columns} data={data} />
+          <DataTable columns={itemColumns} data={itemsData} />
         </div>
       </TabsContent>
       <TabsContent value="item-groups" className="mt-4">
         <div className="flex flex-col gap-4">
           <h2 className="text-xl">دسته بندی ها</h2>
-          {/* <DropZone /> */}
+          <DataTable columns={categoryColumns} data={categoriesData} />
         </div>
       </TabsContent>
     </Tabs>
