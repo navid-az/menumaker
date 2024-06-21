@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState } from "react";
 
 //zod validator
@@ -48,7 +49,13 @@ const FormSchema = z.object({
 export function CreateItemForm() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-    defaultValues: {},
+    defaultValues: {
+      image: "",
+      name: "",
+      description: "",
+      price: "",
+      category: "",
+    },
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
