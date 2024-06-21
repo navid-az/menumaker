@@ -29,7 +29,7 @@ import { ArrowUpDown, MoreVertical } from "lucide-react";
 import { CellContext } from "@tanstack/react-table";
 import { Trash } from "@/app/components/svgs";
 
-export type Items = {
+export type Item = {
   id: number;
   image: string;
   name: string;
@@ -41,7 +41,7 @@ export type Items = {
 };
 
 const handleSwitch = async (
-  props: CellContext<Items, unknown>,
+  props: CellContext<Item, unknown>,
   data: object
 ) => {
   const isUpdated = await updateItem(
@@ -54,12 +54,12 @@ const handleSwitch = async (
   }
 };
 
-const handleDelete = async (props: CellContext<Items, unknown>) => {
+const handleDelete = async (props: CellContext<Item, unknown>) => {
   const res = await deleteItem(props.row.original.menu, props.row.original.id);
   console.log(res, "this is res");
 };
 
-export const columns: ColumnDef<Items>[] = [
+export const itemColumns: ColumnDef<Item>[] = [
   {
     accessorKey: "image",
     header: "تصویر",
