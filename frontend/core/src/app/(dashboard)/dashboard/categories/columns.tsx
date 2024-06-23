@@ -1,7 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import { ColumnDef } from "@tanstack/react-table";
+import Image from "next/image";
+import { toast } from "sonner";
 
 //components
 import { Button } from "@/components/ui/button";
@@ -19,7 +20,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 //actions
-import { deleteCategory } from "@/app/actions";
+import { updateCategory, deleteCategory } from "@/app/actions";
 
 //SVGs
 import { ArrowUpDown, ImageIcon, MoreVertical, Trash2 } from "lucide-react";
@@ -32,6 +33,20 @@ export type Category = {
   name: string;
   icon: { name: string; image: string };
   is_active: boolean;
+};
+
+const handleSwitch = async (
+  props: CellContext<Category, unknown>,
+  data: object
+) => {
+  const isUpdated = await updateCategory(
+    props.row.original.menu,
+    props.row.original.id,
+    data
+  );
+  if (!isUpdated) {
+    toast.error("خطا در اعمال تغییرات");
+  }
 };
 
 const handleDelete = async (props: CellContext<Category, unknown>) => {
@@ -80,8 +95,12 @@ export const categoryColumns: ColumnDef<Category>[] = [
     header: "فعال",
     cell: (props) => (
       <Switch
-        // isLoading
         checked={props.cell.getValue() as boolean}
+        onCheckedChange={(checked: boolean) =>
+          handleSwitch(props, {
+            is_active: checked,
+          })
+        }
         id={props.row.id}
       ></Switch>
     ),

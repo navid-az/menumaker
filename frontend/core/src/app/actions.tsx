@@ -56,6 +56,28 @@ export async function verifyToken() {
 //~~~~dashboard table mutation-related actions~~~
 
 //CATEGORY ACTIONS
+export async function updateCategory(
+  menuSlug: string,
+  categoryId: number,
+  data: object
+) {
+  const accessToken = cookies().get("access");
+
+  const res = await fetch(
+    `http://127.0.0.1:8000/menu/${menuSlug}/categories/${categoryId}/update/`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+      body: JSON.stringify(data),
+    }
+  );
+  revalidateTag("categories");
+  return res.ok;
+}
+
 export async function deleteCategory(menuSlug: string, categoryId: number) {
   const accessToken = cookies().get("access");
 
