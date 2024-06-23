@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import MenuView, SingleMenuView, SingleMenuItemsView, MenuCategoriesView, MenuItemsView, MenuItemCreateView, MenuItemUpdateView, MenuItemDeleteView
+from .views import MenuView, SingleMenuView, SingleMenuItemsView, MenuCategoriesView, MenuCategoryDeleteView, MenuItemsView, MenuItemCreateView, MenuItemUpdateView, MenuItemDeleteView
 # , CreateCategoryView, UpdateCategoryView, DeleteCategoryView,
 app_name = 'menu'
 
@@ -12,12 +12,12 @@ urlpatterns = [
     # category endpoints
     path('<str:slug>/categories/',
          MenuCategoriesView.as_view(), name='menu-categories'),
+    path('<str:slug>/categories/<int:category_id>/delete/',
+         MenuCategoryDeleteView.as_view(), name='delete-category'),
     #     path('<str:slug>/categories/create/',
     #          CreateCategoryView.as_view(), name='create-category'),
     #     path('<str:slug>/categories/<int:item_id>/update/',
     #          UpdateCategoryView.as_view(), name='update-category'),
-    #     path('<str:slug>/categories/<int:item_id>/delete/',
-    #          DeleteCategoryView.as_view(), name='delete-category'),
 
     # item endpoints
     path('<str:slug>/items/', MenuItemsView.as_view(), name='menu-items'),

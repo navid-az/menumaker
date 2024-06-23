@@ -26,6 +26,7 @@ class MenuItemCreateUpdateSerializer(serializers.ModelSerializer):
 
 # category serializers
 class MenuCategoriesSerializer(serializers.ModelSerializer):
+    menu = serializers.StringRelatedField(read_only=True)
     items = MenuItemsSerializer(many=True, read_only=True)
     icon = IconsSerializer(read_only=True)
 

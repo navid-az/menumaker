@@ -1,4 +1,4 @@
-from .models import Item, Menu
+from .models import Item, Menu, ItemCategory
 from .serializers import MenuSerializer, MenuCategoriesSerializer, MenuItemsSerializer,  MenuItemCreateUpdateSerializer
 
 # rest dependencies
@@ -31,6 +31,7 @@ class SingleMenuItemsView(APIView):
         return Response(srz_data.data)
 
 
+# item CRUD views
 class MenuCategoriesView(APIView):
     def get(self, request, slug):
         menu = Menu.objects.get(slug=slug)
@@ -39,6 +40,21 @@ class MenuCategoriesView(APIView):
             ser_data = MenuCategoriesSerializer(instance=categories, many=True)
             return Response(ser_data.data)
         return Response('menu with this id does not exist', status.HTTP_404_NOT_FOUND)
+
+
+class MenuCategoryDeleteView(APIView):
+    permission_classes = [IsAuthenticated, IsOwner]
+
+    def delete(self, request, slug, category_id):
+        menu = Menu.objects.get(slug=slug)
+        self.check_object_permissions(request, menu)
+        if menu is not None:
+            category = ItemCategory.objects.get(pk=category_id)
+            if menu is not None:
+                category.delete()
+                return Response({"message": "The Category has been successfully deleted"}, status.HTTP_200_OK)
+            return Response({"message": "Category with the specified ID doesn't exist"}, status.HTTP_404_NOT_FOUND)
+        return Response({"message": "Menu with the specified ID doesn't exist"}, status.HTTP_404_NOT_FOUND)
 
 
 # item CRUD views
