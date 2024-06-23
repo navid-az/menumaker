@@ -23,12 +23,10 @@ import { Switch } from "@/components/ui/switch";
 import { deleteItem, updateItem } from "@/app/actions";
 
 //SVGs
-import { ArrowUpDown, MoreVertical } from "lucide-react";
+import { ArrowUpDown, MoreVertical, Trash2 } from "lucide-react";
 
 //types
 import { CellContext } from "@tanstack/react-table";
-import { Trash } from "@/app/components/svgs";
-
 export type Item = {
   id: number;
   image: string;
@@ -56,7 +54,6 @@ const handleSwitch = async (
 
 const handleDelete = async (props: CellContext<Item, unknown>) => {
   const res = await deleteItem(props.row.original.menu, props.row.original.id);
-  console.log(res, "this is res");
 };
 
 export const itemColumns: ColumnDef<Item>[] = [
@@ -147,7 +144,7 @@ export const itemColumns: ColumnDef<Item>[] = [
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button variant="ghost" size="icon">
-              <Trash className="h-7 w-7"></Trash>
+              <Trash2 className="h-5 w-5"></Trash2>
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
@@ -171,7 +168,7 @@ export const itemColumns: ColumnDef<Item>[] = [
           </AlertDialogContent>
         </AlertDialog>
         <Button variant="ghost" size="icon">
-          <MoreVertical></MoreVertical>
+          <MoreVertical className="h-5 w-5"></MoreVertical>
         </Button>
       </div>
     ),
