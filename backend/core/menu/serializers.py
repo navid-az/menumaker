@@ -35,6 +35,12 @@ class MenuCategoriesSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class MenuCategoryCreateUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ItemCategory
+        fields = '__all__'
+
+
 # menu serializers
 class MenuSerializer(serializers.ModelSerializer):
     categories = MenuCategoriesSerializer(many=True, read_only=True)

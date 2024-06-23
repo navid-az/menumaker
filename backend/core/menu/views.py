@@ -1,5 +1,5 @@
 from .models import Item, Menu, ItemCategory
-from .serializers import MenuSerializer, MenuCategoriesSerializer, MenuItemsSerializer,  MenuItemCreateUpdateSerializer
+from .serializers import MenuSerializer, MenuCategoriesSerializer, MenuCategoryCreateUpdateSerializer, MenuItemsSerializer,  MenuItemCreateUpdateSerializer
 
 # rest dependencies
 from rest_framework.views import APIView
@@ -40,6 +40,44 @@ class MenuCategoriesView(APIView):
             ser_data = MenuCategoriesSerializer(instance=categories, many=True)
             return Response(ser_data.data)
         return Response('menu with this id does not exist', status.HTTP_404_NOT_FOUND)
+
+
+class MenuCategoryCreateView(APIView):
+    permission_classes = [IsAuthenticated, IsOwner]
+
+    def post(self, request, slug):
+        ser_data = MenuCategoryCreateUpdateSerializer(data=request.data)
+        if ser_data.is_valid():
+            try:
+                menu = Menu.objects.get(slug=slug)
+            except:
+                return Response({"message": "menu with this id does not exist"}, status.HTTP_404_NOT_FOUND)
+            self.check_object_permissions(request, menu)
+            ser_data.validated_data['menu'] = menu
+            ser_data.save()
+            return Response(ser_data.data)
+        return Response(ser_data.errors, status.HTTP_400_BAD_REQUEST)
+
+
+class MenuCategoryUpdateView(APIView):
+    permission_classes = [IsAuthenticated, IsOwner]
+
+    def put(self, request, slug, category_id):
+        try:
+            category = ItemCategory.objects.get(pk=category_id)
+        except:
+            return Response({"message": "Category with the specified ID doesn't exist"}, status.HTTP_404_NOT_FOUND)
+        ser_data = MenuCategoryCreateUpdateSerializer(
+            instance=category, data=request.data, partial=True)
+        if ser_data.is_valid():
+            try:
+                menu = Menu.objects.get(slug=slug)
+            except:
+                return Response({"message": "menu with this id does not exist"}, status.HTTP_404_NOT_FOUND)
+            self.check_object_permissions(request, menu)
+            ser_data.save()
+            return Response(ser_data.data)
+        return Response(ser_data.errors, status.HTTP_400_BAD_REQUEST)
 
 
 class MenuCategoryDeleteView(APIView):
