@@ -5,6 +5,8 @@ import Image from "next/image";
 import { toast } from "sonner";
 
 //components
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,33 +18,28 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
 
 //actions
-import { deleteItem, updateItem } from "@/app/actions";
+import { updateCategory, deleteCategory } from "@/app/actions";
 
 //SVGs
-import { ArrowUpDown, MoreVertical, Trash2 } from "lucide-react";
+import { ArrowUpDown, ImageIcon, MoreVertical, Trash2 } from "lucide-react";
 
 //types
 import { CellContext } from "@tanstack/react-table";
-export type Item = {
+export type Category = {
   id: number;
-  image: string;
+  menu: string;
   name: string;
-  category: string;
-  menu: string; //slug
-  price: number;
-  is_available: boolean;
+  icon: { name: string; image: string };
   is_active: boolean;
 };
 
 const handleSwitch = async (
-  props: CellContext<Item, unknown>,
+  props: CellContext<Category, unknown>,
   data: object
 ) => {
-  const isUpdated = await updateItem(
+  const isUpdated = await updateCategory(
     props.row.original.menu,
     props.row.original.id,
     data
@@ -52,22 +49,29 @@ const handleSwitch = async (
   }
 };
 
-const handleDelete = async (props: CellContext<Item, unknown>) => {
-  const res = await deleteItem(props.row.original.menu, props.row.original.id);
+const handleDelete = async (props: CellContext<Category, unknown>) => {
+  deleteCategory(props.row.original.menu, props.row.original.id);
 };
 
-export const itemColumns: ColumnDef<Item>[] = [
+export const categoryColumns: ColumnDef<Category>[] = [
   {
-    accessorKey: "image",
-    header: "تصویر",
+    accessorKey: "icon",
+    header: "آیکون",
     cell: (props) => (
       <div className="relative h-12 w-12 rounded-md">
-        <Image
-          className="rounded-md"
-          fill
-          alt={props.row.getValue("name")}
-          src={`http://127.0.0.1:8000/${props.row.getValue("image")}`}
-        ></Image>
+        {props.row.original.icon ? (
+          <Image
+            className="rounded-md"
+            fill
+            alt={props.row.original.icon?.name}
+            src={`http://127.0.0.1:8000/${props.row.original.icon?.image}`}
+          ></Image>
+        ) : (
+          <ImageIcon
+            strokeWidth={1.5}
+            className="h-12 w-12 text-primary"
+          ></ImageIcon>
+        )}
       </div>
     ),
   },
@@ -87,46 +91,10 @@ export const itemColumns: ColumnDef<Item>[] = [
     },
   },
   {
-    accessorKey: "category",
-    header: "گروه",
-  },
-
-  {
-    accessorKey: "price",
-    header: ({ column }) => {
-      return (
-        <Button
-          size="sm"
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-          قیمت
-        </Button>
-      );
-    },
-  },
-  {
-    accessorKey: "is_available",
-    header: "موجود",
-    cell: (props) => (
-      <Switch
-        checked={props.cell.getValue() as boolean}
-        onCheckedChange={(checked: boolean) =>
-          handleSwitch(props, {
-            is_available: checked,
-          })
-        }
-        id={props.row.id}
-      ></Switch>
-    ),
-  },
-  {
     accessorKey: "is_active",
     header: "فعال",
     cell: (props) => (
       <Switch
-        // isLoading
         checked={props.cell.getValue() as boolean}
         onCheckedChange={(checked: boolean) =>
           handleSwitch(props, {
@@ -151,7 +119,7 @@ export const itemColumns: ColumnDef<Item>[] = [
             <AlertDialogHeader>
               <AlertDialogTitle>مطمعنی؟</AlertDialogTitle>
               <AlertDialogDescription>
-                آیا از حذف این آیتم({props.row.getValue("name")}) مطمعنی؟
+                آیا از حذف این دسته بندی({props.row.getValue("name")}) مطمعنی؟
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

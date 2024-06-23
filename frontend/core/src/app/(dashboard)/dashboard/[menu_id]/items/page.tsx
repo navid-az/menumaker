@@ -1,24 +1,33 @@
-//SVGs
-import { Plus } from "@/app/components/svgs";
-
 //components
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsContent, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Items, columns } from "../../items/columns";
+import { Item, itemColumns } from "../../items/columns";
+import { Category, categoryColumns } from "../../categories/columns";
 import { DataTable } from "../../items/data-table";
 import ToolBar from "../../components/ToolBar";
 import { CreateItemForm } from "../../components/CreateItemForm";
+import FormDialog from "../../components/FormDialog";
 
 //server function
 import { revalidatePath } from "next/cache";
 
-async function getData(menu_id: string): Promise<Items[]> {
+//menu categories data
+async function getMenuCategoriesData(menu_id: string): Promise<Category[]> {
+  const data = await fetch(
+    `http://127.0.0.1:8000/menu/${menu_id}/categories/`,
+    {
+      next: { tags: ["categories"] },
+    }
+  );
+  if (!data.ok) {
+    throw new Error("Failed to fetch data");
+  }
+
+  revalidatePath("/dashboard/insights");
+  return data.json();
+}
+
+//menu items data
+async function getMenuItemsData(menu_id: string): Promise<Item[]> {
   const data = await fetch(`http://127.0.0.1:8000/menu/${menu_id}/items/`, {
     next: { tags: ["items"] },
   });
@@ -28,12 +37,14 @@ async function getData(menu_id: string): Promise<Items[]> {
   revalidatePath("/dashboard/insights");
   return data.json();
 }
+
 export default async function Insights({
   params,
 }: {
   params: { menu_id: string };
 }) {
-  const data = await getData(params.menu_id);
+  const itemsData = await getMenuItemsData(params.menu_id);
+  const categoriesData = await getMenuCategoriesData(params.menu_id);
 
   return (
     <Tabs
@@ -56,31 +67,24 @@ export default async function Insights({
             هزینه های مازاد
           </TabsTrigger>
         </TabsList>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button
-              size="lg"
-              className="gap-2 rounded-full border-2 border-primary bg-soft-blue px-4 font-bold text-primary transition-all duration-200 hover:scale-95 hover:bg-primary hover:text-primary-foreground"
-            >
-              <Plus className="h-5 w-5"></Plus>
-              <p className="ltr:mr-1 rtl:ml-1">ایجاد آیتم</p>
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <h3>ایجاد آیتم</h3>
-            </DialogHeader>
-            <CreateItemForm />
-          </DialogContent>
-        </Dialog>
+        <FormDialog
+          title="ایجاد آیتم"
+          description="با انتخاب گزینه های مورد نظر آیتمی جدید به منو اضافه کنید"
+        >
+          <CreateItemForm></CreateItemForm>
+        </FormDialog>
       </ToolBar>
-      <TabsContent value="items" className="flex flex-col gap-4">
-        <h2 className="text-xl">آیتم ها</h2>
-        <DataTable columns={columns} data={data} />
+      <TabsContent value="items" className="mt-4">
+        <div className="flex flex-col gap-4">
+          <h2 className="text-xl">آیتم ها</h2>
+          <DataTable columns={itemColumns} data={itemsData} />
+        </div>
       </TabsContent>
-      <TabsContent value="item-groups" className="flex flex-col gap-4">
-        <h2 className="text-xl">دسته بندی ها</h2>
-        <DataTable columns={columns} data={data} />
+      <TabsContent value="item-groups" className="mt-4">
+        <div className="flex flex-col gap-4">
+          <h2 className="text-xl">دسته بندی ها</h2>
+          <DataTable columns={categoryColumns} data={categoriesData} />
+        </div>
       </TabsContent>
     </Tabs>
   );

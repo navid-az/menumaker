@@ -1,5 +1,5 @@
-from .models import Item, Menu
-from .serializers import MenuSerializer, ItemSerializer, MenuItemsSerializer, CreateItemSerializer
+from .models import Item, Menu, ItemCategory
+from .serializers import MenuSerializer, MenuCategoriesSerializer, MenuCategoryCreateUpdateSerializer, MenuItemsSerializer,  MenuItemCreateUpdateSerializer
 
 # rest dependencies
 from rest_framework.views import APIView
@@ -27,26 +27,90 @@ class SingleMenuItemsView(APIView):
     def get(self, request, menuId):
         menu = Menu.objects.get(pk=menuId)
         items = menu.items.all()
-        srz_data = ItemSerializer(instance=items, many=True)
+        srz_data = MenuItemsSerializer(instance=items, many=True)
         return Response(srz_data.data)
 
 
-class MenuItemsView(APIView):
-
+# item CRUD views
+class MenuCategoriesView(APIView):
     def get(self, request, slug):
         menu = Menu.objects.get(slug=slug)
         if menu is not None:
-            items = menu.items.all()
-            ser_data = ItemSerializer(instance=items, many=True)
+            categories = menu.categories.all()
+            ser_data = MenuCategoriesSerializer(instance=categories, many=True)
             return Response(ser_data.data)
         return Response('menu with this id does not exist', status.HTTP_404_NOT_FOUND)
 
 
-class CreateItemView(APIView):
+class MenuCategoryCreateView(APIView):
     permission_classes = [IsAuthenticated, IsOwner]
 
     def post(self, request, slug):
-        ser_data = ItemSerializer(data=request.data)
+        ser_data = MenuCategoryCreateUpdateSerializer(data=request.data)
+        if ser_data.is_valid():
+            try:
+                menu = Menu.objects.get(slug=slug)
+            except:
+                return Response({"message": "menu with this id does not exist"}, status.HTTP_404_NOT_FOUND)
+            self.check_object_permissions(request, menu)
+            ser_data.validated_data['menu'] = menu
+            ser_data.save()
+            return Response(ser_data.data)
+        return Response(ser_data.errors, status.HTTP_400_BAD_REQUEST)
+
+
+class MenuCategoryUpdateView(APIView):
+    permission_classes = [IsAuthenticated, IsOwner]
+
+    def put(self, request, slug, category_id):
+        try:
+            category = ItemCategory.objects.get(pk=category_id)
+        except:
+            return Response({"message": "Category with the specified ID doesn't exist"}, status.HTTP_404_NOT_FOUND)
+        ser_data = MenuCategoryCreateUpdateSerializer(
+            instance=category, data=request.data, partial=True)
+        if ser_data.is_valid():
+            try:
+                menu = Menu.objects.get(slug=slug)
+            except:
+                return Response({"message": "menu with this id does not exist"}, status.HTTP_404_NOT_FOUND)
+            self.check_object_permissions(request, menu)
+            ser_data.save()
+            return Response(ser_data.data)
+        return Response(ser_data.errors, status.HTTP_400_BAD_REQUEST)
+
+
+class MenuCategoryDeleteView(APIView):
+    permission_classes = [IsAuthenticated, IsOwner]
+
+    def delete(self, request, slug, category_id):
+        menu = Menu.objects.get(slug=slug)
+        self.check_object_permissions(request, menu)
+        if menu is not None:
+            category = ItemCategory.objects.get(pk=category_id)
+            if menu is not None:
+                category.delete()
+                return Response({"message": "The Category has been successfully deleted"}, status.HTTP_200_OK)
+            return Response({"message": "Category with the specified ID doesn't exist"}, status.HTTP_404_NOT_FOUND)
+        return Response({"message": "Menu with the specified ID doesn't exist"}, status.HTTP_404_NOT_FOUND)
+
+
+# item CRUD views
+class MenuItemsView(APIView):
+    def get(self, request, slug):
+        menu = Menu.objects.get(slug=slug)
+        if menu is not None:
+            items = menu.items.all()
+            ser_data = MenuItemsSerializer(instance=items, many=True)
+            return Response(ser_data.data)
+        return Response('menu with this id does not exist', status.HTTP_404_NOT_FOUND)
+
+
+class MenuItemCreateView(APIView):
+    permission_classes = [IsAuthenticated, IsOwner]
+
+    def post(self, request, slug):
+        ser_data = MenuItemCreateUpdateSerializer(data=request.data)
         if ser_data.is_valid():
             menu = Menu.objects.get(slug=slug)
             self.check_object_permissions(request, menu)
@@ -56,12 +120,12 @@ class CreateItemView(APIView):
         return Response(ser_data.errors, status.HTTP_400_BAD_REQUEST)
 
 
-class UpdateItemView(APIView):
+class MenuItemUpdateView(APIView):
     permission_classes = [IsAuthenticated, IsOwner]
 
     def put(self, request, slug, item_id):
         item = Item.objects.get(pk=item_id)
-        ser_data = ItemSerializer(
+        ser_data = MenuItemCreateUpdateSerializer(
             instance=item, data=request.data, partial=True)
 
         if ser_data.is_valid():
@@ -72,7 +136,7 @@ class UpdateItemView(APIView):
         return Response(ser_data.errors, status.HTTP_400_BAD_REQUEST)
 
 
-class DeleteItemView(APIView):
+class MenuItemDeleteView(APIView):
     permission_classes = [IsAuthenticated, IsOwner]
 
     def delete(self, request, slug, item_id):
@@ -82,9 +146,3 @@ class DeleteItemView(APIView):
         item = Item.objects.get(pk=item_id)
         item.delete()
         return Response({'message': 'question has been deleted'}, status.HTTP_400_BAD_REQUEST)
-
-
-# class MenuCategoriesView(APIView):
-#     def get(self, request, menu_pk):
-#         menu = Menu.objects.get(pk=menu_pk)
-#         categories = menu.categories.all()

@@ -49,7 +49,7 @@ class Table(models.Model):
 
 class ItemCategory(models.Model):
     menu = models.ForeignKey(
-        Menu, on_delete=models.CASCADE, related_name="categories")
+        Menu, on_delete=models.CASCADE, related_name="categories", null=True, blank=True)
     name = models.CharField(max_length=20, blank=True, null=True)
     icon = models.ForeignKey(
         Icon,
