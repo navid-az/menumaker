@@ -1,5 +1,11 @@
 from rest_framework import serializers
-from .models import Menu, Item, ItemCategory
+from .models import Menu, Item, ItemCategory, Icon
+
+
+class IconsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Icon
+        fields = ['name', 'image']
 
 
 # item serializers
@@ -21,6 +27,7 @@ class MenuItemCreateUpdateSerializer(serializers.ModelSerializer):
 # category serializers
 class MenuCategoriesSerializer(serializers.ModelSerializer):
     items = MenuItemsSerializer(many=True, read_only=True)
+    icon = IconsSerializer(read_only=True)
 
     class Meta:
         model = ItemCategory

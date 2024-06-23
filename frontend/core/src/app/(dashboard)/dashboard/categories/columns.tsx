@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { ColumnDef } from "@tanstack/react-table";
 
 //components
@@ -7,13 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 
 //SVGs
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, ImageIcon } from "lucide-react";
 
 //types
 export type Category = {
   id: number;
-  icon: number;
   name: string;
+  icon: { name: string; image: string };
   is_active: boolean;
 };
 
@@ -23,7 +24,19 @@ export const categoryColumns: ColumnDef<Category>[] = [
     header: "آیکون",
     cell: (props) => (
       <div className="relative h-12 w-12 rounded-md">
-        <div>{props.row.getValue("icon")}</div>
+        {props.row.original.icon ? (
+          <Image
+            className="rounded-md"
+            fill
+            alt={props.row.original.icon?.name}
+            src={`http://127.0.0.1:8000/${props.row.original.icon?.image}`}
+          ></Image>
+        ) : (
+          <ImageIcon
+            strokeWidth={1.5}
+            className="h-12 w-12 text-primary"
+          ></ImageIcon>
+        )}
       </div>
     ),
   },

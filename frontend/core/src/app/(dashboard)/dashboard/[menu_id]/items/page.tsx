@@ -21,6 +21,7 @@ async function getMenuCategoriesData(menu_id: string): Promise<Category[]> {
   if (!data.ok) {
     throw new Error("Failed to fetch data");
   }
+
   revalidatePath("/dashboard/insights");
   return data.json();
 }
