@@ -23,7 +23,7 @@ import { Switch } from "@/components/ui/switch";
 import { deleteItem, updateItem } from "@/app/actions";
 
 //SVGs
-import { ArrowUpDown, MoreVertical, Trash2 } from "lucide-react";
+import { ArrowUpDown, MoreVertical, Trash2, ImageIcon } from "lucide-react";
 
 //types
 import { CellContext } from "@tanstack/react-table";
@@ -62,12 +62,19 @@ export const itemColumns: ColumnDef<Item>[] = [
     header: "تصویر",
     cell: (props) => (
       <div className="relative h-12 w-12 rounded-md">
-        <Image
-          className="rounded-md"
-          fill
-          alt={props.row.getValue("name")}
-          src={`http://127.0.0.1:8000/${props.row.getValue("image")}`}
-        ></Image>
+        {props.row.original.image ? (
+          <Image
+            className="rounded-md"
+            fill
+            alt={props.row.getValue("name")}
+            src={`http://127.0.0.1:8000/${props.row.getValue("image")}`}
+          ></Image>
+        ) : (
+          <ImageIcon
+            strokeWidth={1.5}
+            className="h-12 w-12 text-gray-400"
+          ></ImageIcon>
+        )}
       </div>
     ),
   },
@@ -76,12 +83,13 @@ export const itemColumns: ColumnDef<Item>[] = [
     header: ({ column }) => {
       return (
         <Button
+          className="-mr-3"
           size="sm"
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          <ArrowUpDown className="ml-2 h-4 w-4" />
           نام
+          <ArrowUpDown className="mr-2 h-4 w-4" />
         </Button>
       );
     },
@@ -96,12 +104,13 @@ export const itemColumns: ColumnDef<Item>[] = [
     header: ({ column }) => {
       return (
         <Button
+          className="-mr-3"
           size="sm"
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          <ArrowUpDown className="ml-2 h-4 w-4" />
           قیمت
+          <ArrowUpDown className="mr-2 h-4 w-4" />
         </Button>
       );
     },
@@ -140,10 +149,10 @@ export const itemColumns: ColumnDef<Item>[] = [
   {
     id: "row-options",
     cell: (props) => (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center justify-end gap-2">
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button variant="ghost" size="icon">
+            <Button className="rounded-full" variant="ghost" size="icon">
               <Trash2 className="h-5 w-5"></Trash2>
             </Button>
           </AlertDialogTrigger>
@@ -167,7 +176,7 @@ export const itemColumns: ColumnDef<Item>[] = [
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-        <Button variant="ghost" size="icon">
+        <Button className="rounded-full" variant="ghost" size="icon">
           <MoreVertical className="h-5 w-5"></MoreVertical>
         </Button>
       </div>

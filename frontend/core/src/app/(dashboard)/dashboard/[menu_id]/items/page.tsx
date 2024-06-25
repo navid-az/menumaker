@@ -57,7 +57,7 @@ export default async function Insights({
           <TabsTrigger className="rounded-full" value="items">
             آیتم ها
           </TabsTrigger>
-          <TabsTrigger className="rounded-full" value="item-groups">
+          <TabsTrigger className="rounded-full" value="categories">
             دسته بندی ها
           </TabsTrigger>
           <TabsTrigger disabled className="rounded-full" value="offers">
@@ -80,7 +80,7 @@ export default async function Insights({
           <DataTable columns={itemColumns} data={itemsData} />
         </div>
       </TabsContent>
-      <TabsContent value="item-groups" className="mt-4">
+      <TabsContent value="categories" className="mt-4">
         <div className="flex flex-col gap-4">
           <h2 className="text-xl">دسته بندی ها</h2>
           <DataTable columns={categoryColumns} data={categoriesData} />

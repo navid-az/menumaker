@@ -69,7 +69,7 @@ export const categoryColumns: ColumnDef<Category>[] = [
         ) : (
           <ImageIcon
             strokeWidth={1.5}
-            className="h-12 w-12 text-primary"
+            className="h-12 w-12 text-gray-400"
           ></ImageIcon>
         )}
       </div>
@@ -80,6 +80,7 @@ export const categoryColumns: ColumnDef<Category>[] = [
     header: ({ column }) => {
       return (
         <Button
+          className="-mr-3"
           size="sm"
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
@@ -108,10 +109,10 @@ export const categoryColumns: ColumnDef<Category>[] = [
   {
     id: "row-options",
     cell: (props) => (
-      <div className="flex items-center gap-2">
+      <div className="ml-0 flex items-center justify-end gap-2">
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button variant="ghost" size="icon">
+            <Button className="rounded-full" variant="ghost" size="icon">
               <Trash2 className="h-5 w-5"></Trash2>
             </Button>
           </AlertDialogTrigger>
@@ -135,7 +136,7 @@ export const categoryColumns: ColumnDef<Category>[] = [
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-        <Button variant="ghost" size="icon">
+        <Button className="rounded-full" variant="ghost" size="icon">
           <MoreVertical className="h-5 w-5"></MoreVertical>
         </Button>
       </div>
