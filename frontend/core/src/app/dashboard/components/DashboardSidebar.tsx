@@ -19,7 +19,7 @@ import { ImperativePanelHandle } from "react-resizable-panels";
 import MyPlacesTab from "./MyPlacesTab";
 
 //types
-import { PlacesType } from "@/app/(dashboard)/dashboard/layout";
+import { PlacesType } from "@/app/dashboard/layout";
 
 export default function DashboardNavbar({ places }: { places: PlacesType }) {
   const [isCollapsed, setIsCollapsed] = useState(false);

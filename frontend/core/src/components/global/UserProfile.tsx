@@ -21,10 +21,10 @@ import {
   Power,
   Radar,
   Settings,
-} from "@/app/(dashboard)/dashboard/components/svg";
+} from "@/app/dashboard/components/svg";
 
 //types
-import type { PlacesType } from "@/app/(dashboard)/dashboard/layout";
+import type { PlacesType } from "@/app/dashboard/layout";
 import { User, User2Icon } from "lucide-react";
 
 export async function UserProfile() {
