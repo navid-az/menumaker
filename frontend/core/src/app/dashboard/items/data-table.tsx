@@ -45,7 +45,7 @@ export function DataTable<TData, TValue>({
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow className=" hover:bg-gray-200" key={headerGroup.id}>
+            <TableRow className="hover:bg-gray-200" key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
                   //text-align should change depending on rtl/ltr *************

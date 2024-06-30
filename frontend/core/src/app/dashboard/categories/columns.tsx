@@ -110,7 +110,7 @@ export const categoryColumns: ColumnDef<Category>[] = [
   {
     id: "row-options",
     cell: (props) => (
-      <div className="ml-0 flex items-center justify-end gap-2">
+      <div className="flex items-center justify-end gap-2">
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button className="rounded-full" variant="ghost" size="icon">

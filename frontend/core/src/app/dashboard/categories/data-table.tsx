@@ -46,7 +46,7 @@ export function DataTable<TData, TValue>({
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
+            <TableRow className="hover:bg-gray-200" key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
                   //text-align should change depending on rtl/ltr *************
@@ -67,14 +67,12 @@ export function DataTable<TData, TValue>({
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
+                className=" hover:bg-gray-200"
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell
-                    className="p-2 last-of-type:mt-1 last-of-type:flex last-of-type:justify-center"
-                    key={cell.id}
-                  >
+                  <TableCell className="py-2" key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
