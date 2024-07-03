@@ -32,10 +32,10 @@ export default function FormDialog({
       <DialogTrigger asChild>
         <Button
           size="lg"
-          className="scale-pro gap-2 rounded-full border-2 border-primary bg-soft-blue px-4 font-bold text-primary transition-all duration-200 hover:scale-95 hover:bg-primary hover:text-primary-foreground data-[state=open]:scale-95 data-[state=open]:bg-primary data-[state=open]:text-primary-foreground"
+          className="scale-pro rounded-full border-2 border-primary bg-soft-blue px-4 font-semibold text-primary transition-all duration-200 hover:scale-95 hover:bg-primary hover:text-primary-foreground data-[state=open]:scale-95 data-[state=open]:bg-primary data-[state=open]:text-primary-foreground"
         >
-          <Plus className="h-5 w-5"></Plus>
-          <p className="ltr:mr-1 rtl:ml-1">{title}</p>
+          <Plus className="ml-2 h-5 w-5"></Plus>
+          <p>{title}</p>
         </Button>
       </DialogTrigger>
       <DialogContent>
