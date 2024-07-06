@@ -4,7 +4,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 //SVGs
-import { BarChart, Radar, ScrollText, Settings, User, Users } from "./svg";
+import { BarChart, Radar, ScrollText, Settings, Users } from "./svg";
 
 //hooks
 import { usePathname } from "next/navigation";
@@ -60,21 +60,22 @@ export default function DashboardNavbar({ places }: { places: PlacesType }) {
         <DashboardNavbarBtn
           text="وضعیت مجموعه"
           isCollapsed={isCollapsed}
-          path={`/dashboard/${params.menu_id}/insights`}
+          basePath={`/dashboard/${params.menu_id}/insights`}
         >
           <BarChart className={`${!isCollapsed && "ml-3"} h-6 w-6`}></BarChart>
         </DashboardNavbarBtn>
         <DashboardNavbarBtn
           text="مدیریت زنده"
           isCollapsed={isCollapsed}
-          path={`/dashboard/${params.menu_id}/liveManagement`}
+          basePath={`/dashboard/${params.menu_id}/liveManagement`}
         >
           <Radar className={`${!isCollapsed && "ml-3"} h-6 w-6`}></Radar>
         </DashboardNavbarBtn>
         <DashboardNavbarBtn
           text="آیتم و دسته بندی"
           isCollapsed={isCollapsed}
-          path={`/dashboard/${params.menu_id}/items`}
+          basePath={`/dashboard/${params.menu_id}/data/items`}
+          dynamicPaths={["items", "categories", "offers", "excessCosts"]}
         >
           <ScrollText
             className={`${!isCollapsed && "ml-3"} h-6 w-6`}
@@ -93,31 +94,39 @@ export default function DashboardNavbar({ places }: { places: PlacesType }) {
 
 type DashboardNavbarBtnType = {
   text: string;
-  path?: string;
+  basePath?: string;
+  dynamicPaths?: string[];
   isCollapsed: boolean;
   children: React.ReactNode;
 };
 
 function DashboardNavbarBtn({
   text,
-  path = "/",
+  basePath = "/",
+  dynamicPaths = [],
   isCollapsed,
   children,
 }: DashboardNavbarBtnType) {
   const pathName = usePathname();
+  const parts = pathName.split("/");
+  const lastPathNamePart = parts[parts.length - 1];
 
   return (
     <Button
       asChild
       className={cn(
         `scale-pro relative h-14 w-full justify-end py-3 text-lg opacity-60 transition-all duration-300 after:absolute after:right-0 after:h-4/6 after:w-1 after:rounded-full after:bg-sky-blue/50 after:opacity-0 after:transition-all after:duration-300 hover:opacity-90 hover:after:opacity-100 md:text-sm lg:text-lg ${
-          pathName == path &&
+          (basePath == pathName || dynamicPaths.includes(lastPathNamePart)) &&
           "scale-105 pr-6 text-sad-blue !opacity-100 after:bg-sky-blue after:opacity-100"
-        } ${isCollapsed && pathName == path && "scale-125 px-4"}`
+        } ${
+          isCollapsed &&
+          (basePath == pathName || dynamicPaths.includes(lastPathNamePart)) &&
+          "scale-125 px-4"
+        }`
       )}
     >
       <Link
-        href={path}
+        href={basePath}
         className={`flex ${
           isCollapsed ? "justify-center" : "justify-between"
         } gap-4`}
