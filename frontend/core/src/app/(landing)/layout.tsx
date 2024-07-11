@@ -29,6 +29,7 @@ async function Navbar() {
       <Link href="/pricing">تعرفه ها</Link>
       <Link href="/builder">مشاهده دمو</Link>
       <Link href="/1/menu">صفحه منو</Link>
+      <Link href="/test">test</Link>
       {isAuthenticated ? (
         <Link href={`/dashboard/${places[0].menu_id}/insights`}>داشبورد</Link>
       ) : (

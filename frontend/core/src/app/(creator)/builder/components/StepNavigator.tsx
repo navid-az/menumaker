@@ -1,3 +1,5 @@
+"use client";
+
 // import Button from "@/app/components/Button";
 import React, { useEffect, useState } from "react";
 import gsap from "gsap";
