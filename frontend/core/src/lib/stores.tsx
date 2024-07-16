@@ -24,3 +24,19 @@ export const useCurrentPlaceStore = create<placeState & placeAction>((set) => ({
   updateCurrentPlace: (currentPlace: string) =>
     set(() => ({ currentPlace: currentPlace })),
 }));
+
+//BuilderTabs
+type TabsStateType = {
+  sectionCount: number;
+  activeSection: number;
+  increaseActiveSection: (activeSection: number) => void;
+  decreaseActiveSection: (activeSection: number) => void;
+};
+export const useBuilderTabs = create<TabsStateType>()((set) => ({
+  sectionCount: 5,
+  activeSection: 1,
+  increaseActiveSection: () =>
+    set((state) => ({ activeSection: state.activeSection + 1 })),
+  decreaseActiveSection: () =>
+    set((state) => ({ activeSection: state.activeSection - 1 })),
+}));
