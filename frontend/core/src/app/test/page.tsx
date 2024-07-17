@@ -18,6 +18,18 @@ export default function Page() {
       <BuilderTabsSection sectionNum={2}>
         <BuilderTabsCard></BuilderTabsCard>
         <BuilderTabsCard></BuilderTabsCard>
+        <BuilderTabsCard></BuilderTabsCard>
+        <BuilderTabsCard></BuilderTabsCard>
+        <BuilderTabsCard></BuilderTabsCard>
+      </BuilderTabsSection>
+      <BuilderTabsSection sectionNum={3}>
+        <BuilderTabsCard></BuilderTabsCard>
+      </BuilderTabsSection>
+      <BuilderTabsSection sectionNum={4}>
+        <BuilderTabsCard></BuilderTabsCard>
+        <BuilderTabsCard></BuilderTabsCard>
+        <BuilderTabsCard></BuilderTabsCard>
+        <BuilderTabsCard></BuilderTabsCard>
       </BuilderTabsSection>
     </BuilderTabs>
   );

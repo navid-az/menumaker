@@ -26,7 +26,7 @@ export default function RootLayout({
     <html lang="en" dir="rtl">
       <body
         className={cn(
-          "overflow-x-hidden bg-soft-blue font-vazir font-medium",
+          "overflow-x-hidden bg-white font-vazir font-medium",
           vazir.variable
         )}
       >

@@ -18,11 +18,14 @@ export function BuilderTabsNavigator() {
     (state) => state.decreaseActiveSection
   );
 
+  //for when next button is clicked
   const handleNext = () => {
     if (activeSection < sectionCount) {
       increaseActiveSection(activeSection);
     }
   };
+
+  //for when previous button is clicked
   const handlePrev = () => {
     if (activeSection >= 2) {
       decreaseActiveSection(activeSection);
@@ -37,7 +40,6 @@ export function BuilderTabsNavigator() {
       >
         بعدی
       </Button>
-      {/* {activeSection}-{sectionCount} */}
       <div className="flex gap-1 rounded-full bg-soft-blue p-1 rtl:flex-row-reverse">
         {Array.from({ length: sectionCount }, (_, index) => (
           <BuilderTabsNavigatorDot

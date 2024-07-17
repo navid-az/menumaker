@@ -29,12 +29,17 @@ export const useCurrentPlaceStore = create<placeState & placeAction>((set) => ({
 type TabsStateType = {
   sectionCount: number;
   activeSection: number;
+  activeSectionHeight: number;
+  changeActiveSectionHeight: (height: number) => void;
   increaseActiveSection: (activeSection: number) => void;
   decreaseActiveSection: (activeSection: number) => void;
 };
 export const useBuilderTabs = create<TabsStateType>()((set) => ({
-  sectionCount: 5,
+  sectionCount: 4,
   activeSection: 1,
+  activeSectionHeight: 0,
+  changeActiveSectionHeight: (height) =>
+    set(() => ({ activeSectionHeight: height })),
   increaseActiveSection: () =>
     set((state) => ({ activeSection: state.activeSection + 1 })),
   decreaseActiveSection: () =>
