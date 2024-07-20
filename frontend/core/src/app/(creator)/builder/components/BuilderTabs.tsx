@@ -11,19 +11,19 @@ import { BuilderTabsNavigator } from "./BuilderTabsNavigator";
 //hooks
 import { useBuilderTabs } from "@/lib/stores";
 
-export function BuilderTabs({ children }: { children: React.ReactNode }) {
-  const activeSectionHeight = useBuilderTabs(
-    (state) => state.activeSectionHeight
-  );
+//utils
+import { cn } from "@/lib/utils";
 
+export function BuilderTabs({ children }: { children: React.ReactNode }) {
   const sectionsContainerRef = useRef<HTMLDivElement>(null);
+  const activeStepHeight = useBuilderTabs((state) => state.activeStepHeight);
 
   //change the height of the tabs container depending on the height of the active section
   useEffect(() => {
     if (sectionsContainerRef.current) {
-      sectionsContainerRef.current.style.height = `${activeSectionHeight}px`;
+      sectionsContainerRef.current.style.height = `${activeStepHeight}px`;
     }
-  }, [activeSectionHeight]);
+  }, [activeStepHeight]);
 
   return (
     <section className="container flex h-screen w-screen flex-col items-center justify-center gap-4 p-2 transition-all duration-300 ease-in-out xs:px-4 x:px-12 sm:gap-7">
@@ -48,52 +48,27 @@ export function BuilderTabs({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function BuilderTabsSection({
-  sectionNum,
-  children,
-}: {
-  isActive?: boolean;
-  id?: string;
+type sectionType = {
   sectionNum: number;
   children: React.ReactNode;
-}) {
+};
+
+export function BuilderTabsSection({ sectionNum, children }: sectionType) {
   const builderSectionRef = useRef<HTMLDivElement>(null);
-  const changeActiveSectionHeight = useBuilderTabs(
-    (state) => state.changeActiveSectionHeight
+
+  const activeSection = useBuilderTabs((state) => state.activeSection);
+  const updateActiveStepCount = useBuilderTabs(
+    (state) => state.updateActiveStepCount
   );
+
+  //set step count whenever active section changes
   useEffect(() => {
-    //show the active section
     if (sectionNum == activeSection) {
       if (builderSectionRef.current) {
-        gsap.to(builderSectionRef.current, {
-          x: 0,
-          duration: 0.05,
-          opacity: 1,
-          pointerEvents: "auto",
-          delay: 0.03,
-        });
-        const height = builderSectionRef.current.offsetHeight;
-        changeActiveSectionHeight(height);
+        updateActiveStepCount(builderSectionRef.current.childElementCount);
       }
-      //hide previous section
-    } else if (sectionNum < activeSection) {
-      gsap.to(builderSectionRef.current, {
-        x: -200,
-        duration: 0.05,
-        opacity: 0,
-        pointerEvents: "none",
-      });
-      //hide next section
-    } else if (sectionNum > activeSection) {
-      gsap.to(builderSectionRef.current, {
-        x: 200,
-        duration: 0.05,
-        opacity: 0,
-        pointerEvents: "none",
-      });
     }
-  });
-  const activeSection = useBuilderTabs((state) => state.activeSection);
+  }, [activeSection]);
 
   return (
     <section
@@ -102,5 +77,79 @@ export function BuilderTabsSection({
     >
       {children}
     </section>
+  );
+}
+
+type stepType = {
+  sectionNum: number;
+  stepNum: number;
+  className?: string;
+  children: React.ReactNode;
+};
+
+export function BuilderTabsStep({
+  sectionNum,
+  stepNum,
+  className,
+  children,
+}: stepType) {
+  const stepRef = useRef<HTMLDivElement>(null);
+
+  const activeSection = useBuilderTabs((state) => state.activeSection);
+  const activeStep = useBuilderTabs((state) => state.activeStep);
+  const stepCount = useBuilderTabs((state) => state.stepCount);
+  const updateHeight = useBuilderTabs((state) => state.updateHeight);
+
+  useEffect(() => {
+    if (stepRef.current) {
+      const step = stepRef.current;
+
+      //show the active section
+      if (stepNum == activeStep && activeSection == sectionNum) {
+        gsap.to(step, {
+          x: 0,
+          duration: 0.05,
+          opacity: 1,
+          pointerEvents: "auto",
+        });
+        const height = step.offsetHeight;
+        updateHeight(height);
+        //hide previous section
+      } else if (
+        (stepNum < activeStep && sectionNum == activeSection) ||
+        (stepNum == stepCount && sectionNum < activeSection)
+      ) {
+        gsap.to(step, {
+          x: -200,
+          duration: 0.05,
+          opacity: 0,
+          pointerEvents: "none",
+        });
+        //hide next section
+      } else if (
+        (stepNum > activeStep && sectionNum == activeSection) ||
+        (stepNum == 1 && sectionNum > activeSection)
+      ) {
+        gsap.to(step, {
+          x: 200,
+          duration: 0.05,
+          opacity: 0,
+          pointerEvents: "none",
+        });
+      }
+    }
+  });
+
+  return (
+    <div
+      ref={stepRef}
+      className={cn(
+        "pointer-events-none absolute flex w-full translate-x-[200px] flex-col justify-between gap-4 opacity-0 transition duration-200 ease-in-out sm:gap-7",
+        className
+      )}
+    >
+      {/* stepNum:{stepNum} sectionNum:{sectionNum} */}
+      {children}
+    </div>
   );
 }
