@@ -83,6 +83,7 @@ export function BuilderTabsNavigator() {
         section:{activeSection}, sectionCount:{sectionCount} */}
         {Array.from({ length: stepCount }, (_, index) => (
           <BuilderTabsNavigatorDot
+            index={index}
             key={index}
             active={activeStep == index + 1}
           ></BuilderTabsNavigatorDot>
@@ -99,12 +100,24 @@ export function BuilderTabsNavigator() {
   );
 }
 
-export function BuilderTabsNavigatorDot({ active }: { active?: boolean }) {
+type BuilderTabsNavigatorDot = {
+  active?: boolean;
+  index: number;
+};
+
+function BuilderTabsNavigatorDot({ active, index }: BuilderTabsNavigatorDot) {
+  const setActiveStep = useBuilderTabs((state) => state.setActiveStep);
+
+  const handleClick = () => {
+    setActiveStep(index + 1);
+  };
+
   return (
-    <div
-      className={`scale-pro h-3 w-3 cursor-pointer rounded-full border-2 transition-all duration-300 hover:scale-110 hover:border-primary sm:h-3.5 sm:w-3.5 ${
-        active ? "border-primary bg-primary" : "border-sad-blue bg-sad-blue"
+    <button
+      onClick={handleClick}
+      className={`scale-pro h-3 w-3 cursor-pointer rounded-full transition-all duration-300 hover:bg-primary/50 sm:h-3.5 sm:w-3.5 ${
+        active ? "scale-110 !bg-primary" : "scale-90 bg-sad-blue"
       }`}
-    ></div>
+    ></button>
   );
 }

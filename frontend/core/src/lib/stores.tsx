@@ -41,6 +41,7 @@ type TabsStateType = {
   decreaseActiveStep: ActiveHandler<number>;
   updateActiveStepCount: ActiveHandler<number>;
   updateActiveStep: () => void;
+  setActiveStep: ActiveHandler<number>;
 };
 
 export const useBuilderTabs = create<TabsStateType>()((set) => ({
@@ -60,11 +61,17 @@ export const useBuilderTabs = create<TabsStateType>()((set) => ({
   decreaseActiveStep: () =>
     set((state) => ({ activeStep: state.activeStep - 1 })),
   updateActiveStepCount: (stepCount) => set(() => ({ stepCount: stepCount })),
-  //if at last step update active step to 1
-  //if at first step update active step to stepCount
+  //update active step when active section changes
   updateActiveStep: () =>
     set((state) => ({
       activeStep: state.activeStep == state.stepCount ? 1 : state.stepCount,
+    })),
+
+  //set active step to a desired number
+  setActiveStep: (stepNum) =>
+    set((state) => ({
+      activeStep:
+        stepNum <= state.stepCount && stepNum >= 1 ? stepNum : state.activeStep,
     })),
   //update the height of the tabs container according to the height of active step
   updateHeight: (height) => set(() => ({ activeStepHeight: height })),
