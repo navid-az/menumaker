@@ -38,13 +38,20 @@ export function BuilderTabsNavigator() {
     setDisabled("prevDisabled");
   }, []);
 
+  //disable buttons if it's the first/last step of the whole tabs
+  useEffect(() => {
+    if (activeStep == stepCount && activeSection == sectionCount) {
+      setDisabled("nextDisabled");
+    } else if (activeStep == 1 && activeSection == 1) {
+      setDisabled("prevDisabled");
+    } else {
+      setDisabled("");
+    }
+  }, [activeStep]);
+
   //when next button is clicked
   const handleNext = () => {
-    setDisabled("");
     if (activeStep != stepCount) {
-      if (activeStep == stepCount - 1 && activeSection == sectionCount) {
-        setDisabled("nextDisabled");
-      }
       increaseActiveStep(activeStep);
     } else if (activeStep == stepCount && activeSection != sectionCount) {
       increaseActiveSection(activeSection);
@@ -54,11 +61,7 @@ export function BuilderTabsNavigator() {
 
   //when previous button is clicked
   const handlePrev = () => {
-    setDisabled("");
     if (activeStep > 1) {
-      if (activeStep == 2 && activeSection == 1) {
-        setDisabled("prevDisabled");
-      }
       decreaseActiveStep(activeStep);
     } else if (activeStep == 1 && activeSection != 1) {
       decreaseActiveSection(activeSection);
