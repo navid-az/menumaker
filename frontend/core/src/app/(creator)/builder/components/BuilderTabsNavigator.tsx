@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 //components
 import { Button } from "@/components/ui/button";
 
 //hooks
 import { useBuilderTabs } from "@/lib/stores";
+
+type disabledStateType = "nextDisabled" | "prevDisabled" | "";
 
 export function BuilderTabsNavigator() {
   const activeSection = useBuilderTabs((state) => state.activeSection);
@@ -29,11 +31,20 @@ export function BuilderTabsNavigator() {
   //if first step change active step to stepCount
   const updateActiveStep = useBuilderTabs((state) => state.updateActiveStep);
 
-  const [disabled, setDisabled] = useState(false);
+  // next/prev disability
+  const [disabled, setDisabled] = useState<disabledStateType>("");
+  //start with prev button being disabled
+  useEffect(() => {
+    setDisabled("prevDisabled");
+  }, []);
 
   //when next button is clicked
   const handleNext = () => {
+    setDisabled("");
     if (activeStep != stepCount) {
+      if (activeStep == stepCount - 1 && activeSection == sectionCount) {
+        setDisabled("nextDisabled");
+      }
       increaseActiveStep(activeStep);
     } else if (activeStep == stepCount && activeSection != sectionCount) {
       increaseActiveSection(activeSection);
@@ -43,7 +54,11 @@ export function BuilderTabsNavigator() {
 
   //when previous button is clicked
   const handlePrev = () => {
+    setDisabled("");
     if (activeStep > 1) {
+      if (activeStep == 2 && activeSection == 1) {
+        setDisabled("prevDisabled");
+      }
       decreaseActiveStep(activeStep);
     } else if (activeStep == 1 && activeSection != 1) {
       decreaseActiveSection(activeSection);
@@ -56,16 +71,16 @@ export function BuilderTabsNavigator() {
   return (
     <>
       <Button
-        disabled={disabled}
+        disabled={disabled == "nextDisabled"}
         onClick={handleNext}
-        className={`h-9 select-none rounded-full px-5 sm:h-10 sm:px-6`}
+        className={`h-9 select-none rounded-full px-5 transition-opacity duration-300 sm:h-10 sm:px-6`}
       >
         بعدی
       </Button>
       <div className="flex gap-1 rounded-full bg-soft-blue p-1 rtl:flex-row-reverse">
-        step:{activeStep} , stepCount:{stepCount}
+        {/* step:{activeStep} , stepCount:{stepCount}
         <br />
-        section:{activeSection}, sectionCount:{sectionCount}
+        section:{activeSection}, sectionCount:{sectionCount} */}
         {Array.from({ length: stepCount }, (_, index) => (
           <BuilderTabsNavigatorDot
             key={index}
@@ -74,8 +89,9 @@ export function BuilderTabsNavigator() {
         ))}
       </div>
       <Button
+        disabled={disabled == "prevDisabled"}
         onClick={handlePrev}
-        className="h-9 select-none rounded-full px-5 sm:h-10 sm:px-6"
+        className="h-9 select-none rounded-full px-5 transition-opacity duration-300 sm:h-10 sm:px-6"
       >
         قبلی
       </Button>
