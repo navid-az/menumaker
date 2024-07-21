@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 //hooks
 import { useBuilderTabs } from "@/lib/stores";
 
+//types
 type disabledStateType = "nextDisabled" | "prevDisabled" | "";
 
 export function BuilderTabsNavigator() {
@@ -27,18 +28,19 @@ export function BuilderTabsNavigator() {
   const decreaseActiveStep = useBuilderTabs(
     (state) => state.decreaseActiveStep
   );
-  //if last step change active step to 1
-  //if first step change active step to stepCount
+  //if it's last step change active step to 1
+  //if it's first step change active step to stepCount
   const updateActiveStep = useBuilderTabs((state) => state.updateActiveStep);
 
   // next/prev disability
   const [disabled, setDisabled] = useState<disabledStateType>("");
+
   //start with prev button being disabled
   useEffect(() => {
     setDisabled("prevDisabled");
   }, []);
 
-  //disable buttons if it's the first/last step of the whole tabs
+  //disable buttons if it's the first/last step of all the steps
   useEffect(() => {
     if (activeStep == stepCount && activeSection == sectionCount) {
       setDisabled("nextDisabled");

@@ -76,3 +76,13 @@ export const useBuilderTabs = create<TabsStateType>()((set) => ({
   //update the height of the tabs container according to the height of active step
   updateHeight: (height) => set(() => ({ activeStepHeight: height })),
 }));
+
+type builderTitleType = {
+  title: string;
+  updateTitle: (title?: string) => void;
+};
+
+export const useBuilderTabsTitle = create<builderTitleType>()((set) => ({
+  title: "",
+  updateTitle: (title) => set(() => ({ title: title })),
+}));

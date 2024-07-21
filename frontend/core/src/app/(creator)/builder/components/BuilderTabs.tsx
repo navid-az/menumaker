@@ -7,15 +7,31 @@ import gsap from "gsap";
 
 //components
 import { BuilderTabsNavigator } from "./BuilderTabsNavigator";
+import BuilderTabsTitle from "./BuilderTabsTitle";
 
 //hooks
-import { useBuilderTabs } from "@/lib/stores";
+import { useBuilderTabs, useBuilderTabsTitle } from "@/lib/stores";
 
 //utils
 import { cn } from "@/lib/utils";
 
+//types
+type sectionType = {
+  sectionNum: number;
+  title: string;
+  children: React.ReactNode;
+};
+
+type stepType = {
+  sectionNum: number;
+  stepNum: number;
+  className?: string;
+  children: React.ReactNode;
+};
+
 export function BuilderTabs({ children }: { children: React.ReactNode }) {
   const sectionsContainerRef = useRef<HTMLDivElement>(null);
+
   const activeStepHeight = useBuilderTabs((state) => state.activeStepHeight);
 
   //change the height of the tabs container depending on the height of the active section
@@ -28,12 +44,7 @@ export function BuilderTabs({ children }: { children: React.ReactNode }) {
   return (
     <section className="container flex h-screen w-screen flex-col items-center justify-center gap-4 p-2 transition-all duration-300 ease-in-out xs:px-4 x:px-12 sm:gap-7">
       <header className="w-full">
-        <h1
-          id="section-title"
-          className="text-xl font-black text-royal-green sm:text-3xl"
-        >
-          صفحه اصلی
-        </h1>
+        <BuilderTabsTitle></BuilderTabsTitle>
       </header>
       <div
         ref={sectionsContainerRef}
@@ -48,12 +59,11 @@ export function BuilderTabs({ children }: { children: React.ReactNode }) {
   );
 }
 
-type sectionType = {
-  sectionNum: number;
-  children: React.ReactNode;
-};
-
-export function BuilderTabsSection({ sectionNum, children }: sectionType) {
+export function BuilderTabsSection({
+  sectionNum,
+  title,
+  children,
+}: sectionType) {
   const builderSectionRef = useRef<HTMLDivElement>(null);
 
   const activeSection = useBuilderTabs((state) => state.activeSection);
@@ -61,9 +71,13 @@ export function BuilderTabsSection({ sectionNum, children }: sectionType) {
     (state) => state.updateActiveStepCount
   );
 
+  const updateTitle = useBuilderTabsTitle((state) => state.updateTitle);
+
   //set step count whenever active section changes
   useEffect(() => {
     if (sectionNum == activeSection) {
+      updateTitle(title);
+
       if (builderSectionRef.current) {
         updateActiveStepCount(builderSectionRef.current.childElementCount);
       }
@@ -79,13 +93,6 @@ export function BuilderTabsSection({ sectionNum, children }: sectionType) {
     </section>
   );
 }
-
-type stepType = {
-  sectionNum: number;
-  stepNum: number;
-  className?: string;
-  children: React.ReactNode;
-};
 
 export function BuilderTabsStep({
   sectionNum,

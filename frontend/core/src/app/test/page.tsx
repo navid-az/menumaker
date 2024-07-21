@@ -11,7 +11,7 @@ import { BuilderTabsCard } from "../(creator)/builder/components/‌BuilderTabsC
 export default function Page() {
   return (
     <BuilderTabs>
-      <BuilderTabsSection sectionNum={1}>
+      <BuilderTabsSection title="صفحه اصلی" sectionNum={1}>
         <BuilderTabsStep sectionNum={1} stepNum={1}>
           <BuilderTabsCard>card 1</BuilderTabsCard>
           <BuilderTabsCard>card 2</BuilderTabsCard>
@@ -20,7 +20,7 @@ export default function Page() {
           <BuilderTabsCard>card 3</BuilderTabsCard>
         </BuilderTabsStep>
       </BuilderTabsSection>
-      <BuilderTabsSection sectionNum={2}>
+      <BuilderTabsSection title="صفحه منو" sectionNum={2}>
         <BuilderTabsStep sectionNum={2} stepNum={1}>
           <BuilderTabsCard>card 4</BuilderTabsCard>
           <BuilderTabsCard>card 5</BuilderTabsCard>
@@ -35,7 +35,7 @@ export default function Page() {
           <BuilderTabsCard>card 10</BuilderTabsCard>
         </BuilderTabsStep>
       </BuilderTabsSection>
-      <BuilderTabsSection sectionNum={3}>
+      <BuilderTabsSection title="صفحه سفارشات" sectionNum={3}>
         <BuilderTabsStep sectionNum={3} stepNum={1}>
           <BuilderTabsCard>card 11</BuilderTabsCard>
           <BuilderTabsCard>card 12</BuilderTabsCard>
