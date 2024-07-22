@@ -25,6 +25,7 @@ type sectionType = {
 type stepType = {
   sectionNum: number;
   stepNum: number;
+  title: string;
   className?: string;
   children: React.ReactNode;
 };
@@ -43,7 +44,7 @@ export function BuilderTabs({ children }: { children: React.ReactNode }) {
 
   return (
     <section className="container flex h-screen w-screen flex-col items-center justify-center gap-4 p-2 transition-all duration-300 ease-in-out xs:px-4 x:px-12 sm:gap-7">
-      <header className="w-full">
+      <header className="flex w-full flex-col gap-1">
         <BuilderTabsTitle></BuilderTabsTitle>
       </header>
       <div
@@ -76,6 +77,7 @@ export function BuilderTabsSection({
   //set step count whenever active section changes
   useEffect(() => {
     if (sectionNum == activeSection) {
+      //update title according to active section
       updateTitle(title);
 
       if (builderSectionRef.current) {
@@ -97,6 +99,7 @@ export function BuilderTabsSection({
 export function BuilderTabsStep({
   sectionNum,
   stepNum,
+  title,
   className,
   children,
 }: stepType) {
@@ -107,12 +110,16 @@ export function BuilderTabsStep({
   const stepCount = useBuilderTabs((state) => state.stepCount);
   const updateHeight = useBuilderTabs((state) => state.updateHeight);
 
+  const updateSubtitle = useBuilderTabsTitle((state) => state.updateSubtitle);
+
   useEffect(() => {
     if (stepRef.current) {
       const step = stepRef.current;
 
-      //show the active section
+      //show active step
       if (stepNum == activeStep && activeSection == sectionNum) {
+        //update subtitle according to active step
+        updateSubtitle(title);
         gsap.to(step, {
           x: 0,
           duration: 0.05,
@@ -121,7 +128,7 @@ export function BuilderTabsStep({
         });
         const height = step.offsetHeight;
         updateHeight(height);
-        //hide previous section
+        //hide previous step
       } else if (
         (stepNum < activeStep && sectionNum == activeSection) ||
         (stepNum == stepCount && sectionNum < activeSection)
@@ -132,7 +139,7 @@ export function BuilderTabsStep({
           opacity: 0,
           pointerEvents: "none",
         });
-        //hide next section
+        //hide next step
       } else if (
         (stepNum > activeStep && sectionNum == activeSection) ||
         (stepNum == 1 && sectionNum > activeSection)

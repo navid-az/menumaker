@@ -79,10 +79,14 @@ export const useBuilderTabs = create<TabsStateType>()((set) => ({
 
 type builderTitleType = {
   title: string;
-  updateTitle: (title?: string) => void;
+  updateTitle: (title: string) => void;
+  subtitle: string;
+  updateSubtitle: (subtitle: string) => void;
 };
 
 export const useBuilderTabsTitle = create<builderTitleType>()((set) => ({
   title: "",
   updateTitle: (title) => set(() => ({ title: title })),
+  subtitle: ".",
+  updateSubtitle: (subtitle) => set(() => ({ subtitle: subtitle })),
 }));
