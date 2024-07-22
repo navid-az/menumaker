@@ -4,16 +4,16 @@ import React, { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 
 //hooks
-import { useBuilderTabsTitle } from "@/lib/stores";
+import { useSliderTitle } from "@/lib/stores";
 
-export default function BuilderTabsTitle() {
+export default function SliderTitle() {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLHeadingElement>(null);
 
-  const sectionTitle = useBuilderTabsTitle((state) => state.title);
-  const prevSectionTitle = useBuilderTabsTitle.getState().title;
-  const stepTitle = useBuilderTabsTitle((state) => state.subtitle);
-  const prevStepTitle = useBuilderTabsTitle.getState().subtitle;
+  const sectionTitle = useSliderTitle((state) => state.title);
+  const prevSectionTitle = useSliderTitle.getState().title;
+  const stepTitle = useSliderTitle((state) => state.subtitle);
+  const prevStepTitle = useSliderTitle.getState().subtitle;
 
   const [title, setTitle] = useState(prevSectionTitle);
   const [subtitle, setSubtitle] = useState(prevStepTitle);

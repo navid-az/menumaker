@@ -2,12 +2,12 @@
 import { cn } from "@/lib/utils";
 
 //types
-type BuilderTabsCardType = {
+type SliderCardType = {
   isActive?: boolean;
   children?: React.ReactNode;
 };
 
-export function BuilderTabsCard({ isActive, children }: BuilderTabsCardType) {
+export function SliderCard({ isActive, children }: SliderCardType) {
   return (
     <li
       className={cn(

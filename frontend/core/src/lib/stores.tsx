@@ -25,7 +25,7 @@ export const useCurrentPlaceStore = create<placeState & placeAction>((set) => ({
     set(() => ({ currentPlace: currentPlace })),
 }));
 
-//~~~~BuilderTabs~~~~
+//~~~~Slider~~~~
 type ActiveHandler<T> = (value: T) => void;
 
 type TabsStateType = {
@@ -44,7 +44,7 @@ type TabsStateType = {
   setActiveStep: ActiveHandler<number>;
 };
 
-export const useBuilderTabs = create<TabsStateType>()((set) => ({
+export const useSlider = create<TabsStateType>()((set) => ({
   //sections
   activeSection: 1,
   sectionCount: 3,
@@ -84,9 +84,9 @@ type builderTitleType = {
   updateSubtitle: (subtitle: string) => void;
 };
 
-export const useBuilderTabsTitle = create<builderTitleType>()((set) => ({
+export const useSliderTitle = create<builderTitleType>()((set) => ({
   title: "",
   updateTitle: (title) => set(() => ({ title: title })),
-  subtitle: ".",
+  subtitle: "",
   updateSubtitle: (subtitle) => set(() => ({ subtitle: subtitle })),
 }));

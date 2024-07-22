@@ -6,11 +6,11 @@ import React, { useEffect, useRef } from "react";
 import gsap from "gsap";
 
 //components
-import { BuilderTabsNavigator } from "./BuilderTabsNavigator";
-import BuilderTabsTitle from "./BuilderTabsTitle";
+import { SliderNavigator } from "./SliderNavigator";
+import SliderTitle from "./SliderTitle";
 
 //hooks
-import { useBuilderTabs, useBuilderTabsTitle } from "@/lib/stores";
+import { useSlider, useSliderTitle } from "@/lib/stores";
 
 //utils
 import { cn } from "@/lib/utils";
@@ -30,10 +30,10 @@ type stepType = {
   children: React.ReactNode;
 };
 
-export function BuilderTabs({ children }: { children: React.ReactNode }) {
+export function Slider({ children }: { children: React.ReactNode }) {
   const sectionsContainerRef = useRef<HTMLDivElement>(null);
 
-  const activeStepHeight = useBuilderTabs((state) => state.activeStepHeight);
+  const activeStepHeight = useSlider((state) => state.activeStepHeight);
 
   //change the height of the tabs container depending on the height of the active section
   useEffect(() => {
@@ -45,7 +45,7 @@ export function BuilderTabs({ children }: { children: React.ReactNode }) {
   return (
     <section className="container flex h-screen w-screen flex-col items-center justify-center gap-4 p-2 transition-all duration-300 ease-in-out xs:px-4 x:px-12 sm:gap-7">
       <header className="flex w-full flex-col gap-1">
-        <BuilderTabsTitle></BuilderTabsTitle>
+        <SliderTitle></SliderTitle>
       </header>
       <div
         ref={sectionsContainerRef}
@@ -54,25 +54,21 @@ export function BuilderTabs({ children }: { children: React.ReactNode }) {
         {children}
       </div>
       <footer className="flex w-full items-center justify-between">
-        <BuilderTabsNavigator></BuilderTabsNavigator>
+        <SliderNavigator></SliderNavigator>
       </footer>
     </section>
   );
 }
 
-export function BuilderTabsSection({
-  sectionNum,
-  title,
-  children,
-}: sectionType) {
+export function SliderSection({ sectionNum, title, children }: sectionType) {
   const builderSectionRef = useRef<HTMLDivElement>(null);
 
-  const activeSection = useBuilderTabs((state) => state.activeSection);
-  const updateActiveStepCount = useBuilderTabs(
+  const activeSection = useSlider((state) => state.activeSection);
+  const updateActiveStepCount = useSlider(
     (state) => state.updateActiveStepCount
   );
 
-  const updateTitle = useBuilderTabsTitle((state) => state.updateTitle);
+  const updateTitle = useSliderTitle((state) => state.updateTitle);
 
   //set step count whenever active section changes
   useEffect(() => {
@@ -96,7 +92,7 @@ export function BuilderTabsSection({
   );
 }
 
-export function BuilderTabsStep({
+export function SliderStep({
   sectionNum,
   stepNum,
   title,
@@ -105,12 +101,12 @@ export function BuilderTabsStep({
 }: stepType) {
   const stepRef = useRef<HTMLDivElement>(null);
 
-  const activeSection = useBuilderTabs((state) => state.activeSection);
-  const activeStep = useBuilderTabs((state) => state.activeStep);
-  const stepCount = useBuilderTabs((state) => state.stepCount);
-  const updateHeight = useBuilderTabs((state) => state.updateHeight);
+  const activeSection = useSlider((state) => state.activeSection);
+  const activeStep = useSlider((state) => state.activeStep);
+  const stepCount = useSlider((state) => state.stepCount);
+  const updateHeight = useSlider((state) => state.updateHeight);
 
-  const updateSubtitle = useBuilderTabsTitle((state) => state.updateSubtitle);
+  const updateSubtitle = useSliderTitle((state) => state.updateSubtitle);
 
   useEffect(() => {
     if (stepRef.current) {

@@ -6,31 +6,27 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 //hooks
-import { useBuilderTabs } from "@/lib/stores";
+import { useSlider } from "@/lib/stores";
 
 //types
 type disabledStateType = "nextDisabled" | "prevDisabled" | "";
 
-export function BuilderTabsNavigator() {
-  const activeSection = useBuilderTabs((state) => state.activeSection);
-  const sectionCount = useBuilderTabs((state) => state.sectionCount);
-  const activeStep = useBuilderTabs((state) => state.activeStep);
-  const stepCount = useBuilderTabs((state) => state.stepCount);
-  const increaseActiveSection = useBuilderTabs(
+export function SliderNavigator() {
+  const activeSection = useSlider((state) => state.activeSection);
+  const sectionCount = useSlider((state) => state.sectionCount);
+  const activeStep = useSlider((state) => state.activeStep);
+  const stepCount = useSlider((state) => state.stepCount);
+  const increaseActiveSection = useSlider(
     (state) => state.increaseActiveSection
   );
-  const decreaseActiveSection = useBuilderTabs(
+  const decreaseActiveSection = useSlider(
     (state) => state.decreaseActiveSection
   );
-  const increaseActiveStep = useBuilderTabs(
-    (state) => state.increaseActiveStep
-  );
-  const decreaseActiveStep = useBuilderTabs(
-    (state) => state.decreaseActiveStep
-  );
+  const increaseActiveStep = useSlider((state) => state.increaseActiveStep);
+  const decreaseActiveStep = useSlider((state) => state.decreaseActiveStep);
   //if it's last step change active step to 1
   //if it's first step change active step to stepCount
-  const updateActiveStep = useBuilderTabs((state) => state.updateActiveStep);
+  const updateActiveStep = useSlider((state) => state.updateActiveStep);
 
   // next/prev disability
   const [disabled, setDisabled] = useState<disabledStateType>("");
@@ -87,11 +83,11 @@ export function BuilderTabsNavigator() {
         <br />
         section:{activeSection}, sectionCount:{sectionCount} */}
         {Array.from({ length: stepCount }, (_, index) => (
-          <BuilderTabsNavigatorDot
+          <SliderNavigatorDot
             index={index}
             key={index}
             active={activeStep == index + 1}
-          ></BuilderTabsNavigatorDot>
+          ></SliderNavigatorDot>
         ))}
       </div>
       <Button
@@ -105,13 +101,13 @@ export function BuilderTabsNavigator() {
   );
 }
 
-type BuilderTabsNavigatorDot = {
+type SliderNavigatorDot = {
   active?: boolean;
   index: number;
 };
 
-function BuilderTabsNavigatorDot({ active, index }: BuilderTabsNavigatorDot) {
-  const setActiveStep = useBuilderTabs((state) => state.setActiveStep);
+function SliderNavigatorDot({ active, index }: SliderNavigatorDot) {
+  const setActiveStep = useSlider((state) => state.setActiveStep);
 
   const handleClick = () => {
     setActiveStep(index + 1);
