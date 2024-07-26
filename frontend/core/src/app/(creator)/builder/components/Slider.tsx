@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 //libraries
 import gsap from "gsap";
@@ -116,6 +116,7 @@ export function SliderStep({
       if (stepNum == activeStep && activeSection == sectionNum) {
         //update subtitle according to active step
         updateSubtitle(title);
+
         gsap.to(step, {
           x: 0,
           duration: 0.05,
@@ -123,9 +124,24 @@ export function SliderStep({
           pointerEvents: "auto",
         });
 
-        //change slider height on step change
-        const height = step.clientHeight;
-        updateHeight(height);
+        //update slider height on active step change/active step height change
+        const updateStepContainerHeight = () => {
+          const height = step.clientHeight;
+          updateHeight(height);
+        };
+
+        // Create a ResizeObserver
+        const resizeObserver = new ResizeObserver(updateStepContainerHeight);
+
+        // Observe active step
+        if (stepRef.current) {
+          resizeObserver.observe(stepRef.current);
+        }
+
+        // Clean up the observer when the component unmounts
+        return () => {
+          resizeObserver.disconnect();
+        };
       }
       //hide previous step
       else if (
@@ -156,34 +172,14 @@ export function SliderStep({
 
   useEffect(() => {
     if (stepNum == activeStep && activeSection == sectionNum) {
-      //update slider height on active step height change
-      const updateStepContainerHeight = () => {
-        if (stepRef.current) {
-          const height = stepRef.current.clientHeight;
-          updateHeight(height);
-        }
-      };
-
-      // Create a ResizeObserver
-      const resizeObserver = new ResizeObserver(updateStepContainerHeight);
-
-      // Observe active step
-      if (stepRef.current) {
-        resizeObserver.observe(stepRef.current);
-      }
-
-      // Clean up the observer when the component unmounts
-      return () => {
-        resizeObserver.disconnect();
-      };
     }
-  }, []);
+  }, [activeStep]);
 
   return (
     <div
       ref={stepRef}
       className={cn(
-        "pointer-events-none absolute flex w-full translate-x-[200px] flex-col justify-between gap-4 opacity-0 transition duration-200 ease-in-out sm:gap-7",
+        "pointer-events-none absolute flex w-full translate-x-[200px] flex-col justify-between gap-4 opacity-0 transition duration-200 ease-in-out",
         className
       )}
     >
