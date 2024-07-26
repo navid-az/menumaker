@@ -35,7 +35,7 @@ export function Slider({ children }: { children: React.ReactNode }) {
 
   const activeStepHeight = useSlider((state) => state.activeStepHeight);
 
-  //change the height of the tabs container depending on the height of the active section
+  //update slider height according to active step(step height change/active step change)
   useEffect(() => {
     if (sectionsContainerRef.current) {
       sectionsContainerRef.current.style.height = `${activeStepHeight}px`;
@@ -70,12 +70,12 @@ export function SliderSection({ sectionNum, title, children }: sectionType) {
 
   const updateTitle = useSliderTitle((state) => state.updateTitle);
 
-  //set step count whenever active section changes
   useEffect(() => {
     if (sectionNum == activeSection) {
       //update title according to active section
       updateTitle(title);
 
+      //update step count according to active section
       if (builderSectionRef.current) {
         updateActiveStepCount(builderSectionRef.current.childElementCount);
       }
@@ -122,10 +122,13 @@ export function SliderStep({
           opacity: 1,
           pointerEvents: "auto",
         });
-        const height = step.offsetHeight;
+
+        //change slider height on step change
+        const height = step.clientHeight;
         updateHeight(height);
-        //hide previous step
-      } else if (
+      }
+      //hide previous step
+      else if (
         (stepNum < activeStep && sectionNum == activeSection) ||
         (stepNum == stepCount && sectionNum < activeSection)
       ) {
@@ -135,8 +138,9 @@ export function SliderStep({
           opacity: 0,
           pointerEvents: "none",
         });
-        //hide next step
-      } else if (
+      }
+      //hide next step
+      else if (
         (stepNum > activeStep && sectionNum == activeSection) ||
         (stepNum == 1 && sectionNum > activeSection)
       ) {
@@ -148,7 +152,32 @@ export function SliderStep({
         });
       }
     }
-  });
+  }, [activeStep]);
+
+  useEffect(() => {
+    if (stepNum == activeStep && activeSection == sectionNum) {
+      //update slider height on active step height change
+      const updateStepContainerHeight = () => {
+        if (stepRef.current) {
+          const height = stepRef.current.clientHeight;
+          updateHeight(height);
+        }
+      };
+
+      // Create a ResizeObserver
+      const resizeObserver = new ResizeObserver(updateStepContainerHeight);
+
+      // Observe active step
+      if (stepRef.current) {
+        resizeObserver.observe(stepRef.current);
+      }
+
+      // Clean up the observer when the component unmounts
+      return () => {
+        resizeObserver.disconnect();
+      };
+    }
+  }, []);
 
   return (
     <div
@@ -158,7 +187,6 @@ export function SliderStep({
         className
       )}
     >
-      {/* stepNum:{stepNum} sectionNum:{sectionNum} */}
       {children}
     </div>
   );
