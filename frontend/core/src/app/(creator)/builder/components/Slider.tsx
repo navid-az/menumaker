@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 
 //libraries
 import gsap from "gsap";
@@ -167,11 +167,6 @@ export function SliderStep({
           pointerEvents: "none",
         });
       }
-    }
-  }, [activeStep]);
-
-  useEffect(() => {
-    if (stepNum == activeStep && activeSection == sectionNum) {
     }
   }, [activeStep]);
 

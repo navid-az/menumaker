@@ -45,7 +45,7 @@ export function SliderNavigator() {
     } else {
       setDisabled("");
     }
-  }, [activeStep]);
+  }, [activeStep, sectionCount, stepCount]);
 
   //when next button is clicked
   const handleNext = () => {
@@ -79,9 +79,6 @@ export function SliderNavigator() {
         بعدی
       </Button>
       <div className="flex gap-1 rounded-full bg-soft-blue p-1 rtl:flex-row-reverse">
-        {/* step:{activeStep} , stepCount:{stepCount}
-        <br />
-        section:{activeSection}, sectionCount:{sectionCount} */}
         {Array.from({ length: stepCount }, (_, index) => (
           <SliderNavigatorDot
             index={index}

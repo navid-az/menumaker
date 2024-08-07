@@ -5,10 +5,18 @@ import gsap from "gsap";
 
 //hooks
 import { useSliderTitle } from "@/lib/stores";
+//test
+// import { useSlider } from "@/lib/stores";
 
 export default function SliderTitle() {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLHeadingElement>(null);
+
+  //test
+  // const activeSection = useSlider((state) => state.activeSection);
+  // const activeStep = useSlider((state) => state.activeStep);
+  // const stepCount = useSlider((state) => state.stepCount);
+  // const sectionCount = useSlider((state) => state.sectionCount);
 
   const sectionTitle = useSliderTitle((state) => state.title);
   const prevSectionTitle = useSliderTitle.getState().title;
@@ -60,12 +68,20 @@ export default function SliderTitle() {
 
   return (
     <>
-      <h1
-        ref={titleRef}
-        className="select-none text-xl font-black text-royal-green sm:text-3xl"
-      >
-        {title}
-      </h1>
+      <div className="flex justify-between">
+        <h1
+          ref={titleRef}
+          className="select-none text-xl font-black text-royal-green sm:text-3xl"
+        >
+          {title}
+        </h1>
+        {/* <div className="flex gap-4 text-lg">
+          <span>activeStep:{activeStep}</span>
+          <span>stepCount:{stepCount}</span>
+          <span>activeSection:{activeSection}</span>
+          <span>sectionCount:{sectionCount}</span>
+        </div> */}
+      </div>
       <h3
         ref={subtitleRef}
         className="select-none text-sm font-medium text-royal-green sm:text-base"

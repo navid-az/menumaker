@@ -37,6 +37,7 @@ type TabsStateType = {
   updateHeight: ActiveHandler<number>;
   increaseActiveSection: ActiveHandler<number>;
   decreaseActiveSection: ActiveHandler<number>;
+  updateSectionCount: ActiveHandler<number>;
   increaseActiveStep: ActiveHandler<number>;
   decreaseActiveStep: ActiveHandler<number>;
   updateActiveStepCount: ActiveHandler<number>;
@@ -47,11 +48,14 @@ type TabsStateType = {
 export const useSlider = create<TabsStateType>()((set) => ({
   //sections
   activeSection: 1,
-  sectionCount: 3,
+  sectionCount: 1,
   increaseActiveSection: () =>
     set((state) => ({ activeSection: state.activeSection + 1 })),
   decreaseActiveSection: () =>
     set((state) => ({ activeSection: state.activeSection - 1 })),
+  updateSectionCount: (sectionCount) =>
+    set(() => ({ sectionCount: sectionCount })),
+
   //steps
   activeStep: 1,
   stepCount: 1,
@@ -61,6 +65,7 @@ export const useSlider = create<TabsStateType>()((set) => ({
   decreaseActiveStep: () =>
     set((state) => ({ activeStep: state.activeStep - 1 })),
   updateActiveStepCount: (stepCount) => set(() => ({ stepCount: stepCount })),
+
   //update active step when active section changes
   updateActiveStep: () =>
     set((state) => ({
@@ -73,10 +78,12 @@ export const useSlider = create<TabsStateType>()((set) => ({
       activeStep:
         stepNum <= state.stepCount && stepNum >= 1 ? stepNum : state.activeStep,
     })),
+
   //update the height of the tabs container according to the height of active step
   updateHeight: (height) => set(() => ({ activeStepHeight: height })),
 }));
 
+//~~~~slider titles & subtitles~~~~
 type builderTitleType = {
   title: string;
   updateTitle: (title: string) => void;
