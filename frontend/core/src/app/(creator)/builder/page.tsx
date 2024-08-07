@@ -10,10 +10,10 @@ import { useForm } from "react-hook-form";
 //components
 import { Slider, SliderSection, SliderStep } from "./components/Slider";
 import {
-  SliderCard,
-  SliderCardTitle,
-  SliderCardBody,
-} from "./components/SliderCard";
+  SliderTab,
+  SliderTabTitle,
+  SliderTabBody,
+} from "./components/SliderTab";
 import {
   Form,
   FormControl,
@@ -411,24 +411,24 @@ export default function Page() {
                             {step.tabs.map((tab) => (
                               <FormItem>
                                 <FormControl>
-                                  <SliderCard
+                                  <SliderTab
                                     onClick={() =>
                                       handleValueChange(field.name)
                                     }
                                     isActive={field.value === tab.value}
                                   >
-                                    <SliderCardTitle
+                                    <SliderTabTitle
                                       title={tab.title}
                                       iconSrc={tab.iconSrc}
                                     >
                                       <RadioGroupItem
                                         value={tab.value}
                                       ></RadioGroupItem>
-                                    </SliderCardTitle>
-                                    <SliderCardBody
+                                    </SliderTabTitle>
+                                    <SliderTabBody
                                       description={tab.description}
-                                    ></SliderCardBody>
-                                  </SliderCard>
+                                    ></SliderTabBody>
+                                  </SliderTab>
                                 </FormControl>
                               </FormItem>
                             ))}
@@ -445,11 +445,11 @@ export default function Page() {
                           render={({ field }) => (
                             <FormItem>
                               <FormControl>
-                                <SliderCard
+                                <SliderTab
                                   onClick={() => handleValueChange(field.name)}
                                   isActive={field.value}
                                 >
-                                  <SliderCardTitle
+                                  <SliderTabTitle
                                     title={tab.title}
                                     iconSrc={tab.iconSrc}
                                   >
@@ -457,12 +457,12 @@ export default function Page() {
                                       checked={field.value}
                                       onCheckedChange={field.onChange}
                                     ></Switch>
-                                  </SliderCardTitle>
-                                  <SliderCardBody
+                                  </SliderTabTitle>
+                                  <SliderTabBody
                                     isOpen={field.value}
                                     description={tab.description}
-                                  ></SliderCardBody>
-                                </SliderCard>
+                                  ></SliderTabBody>
+                                </SliderTab>
                               </FormControl>
                             </FormItem>
                           )}

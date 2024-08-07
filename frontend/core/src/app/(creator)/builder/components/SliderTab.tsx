@@ -10,25 +10,25 @@ import Image from "next/image";
 import { Label } from "@/components/ui/label";
 
 //types
-type SliderCardType = {
+type SliderTabType = {
   isActive: boolean;
   onClick: () => void;
   children: React.ReactNode;
 };
 
-type SliderCardTitle = {
+type SliderTabTitle = {
   title: string;
   iconSrc: string;
   children: React.ReactNode;
 };
 
-type SliderCardBody = {
+type SliderTabBody = {
   isOpen?: boolean;
   description?: string;
   children?: React.ReactNode;
 };
 
-export function SliderCard({ isActive, onClick, children }: SliderCardType) {
+export function SliderTab({ isActive, onClick, children }: SliderTabType) {
   return (
     <Label
       onClick={onClick}
@@ -43,7 +43,7 @@ export function SliderCard({ isActive, onClick, children }: SliderCardType) {
   );
 }
 
-export function SliderCardTitle({ title, iconSrc, children }: SliderCardTitle) {
+export function SliderTabTitle({ title, iconSrc, children }: SliderTabTitle) {
   return (
     <div className="flex w-full cursor-pointer items-center justify-between">
       <div className="flex items-center justify-between gap-2">
@@ -57,11 +57,11 @@ export function SliderCardTitle({ title, iconSrc, children }: SliderCardTitle) {
   );
 }
 
-export function SliderCardBody({
+export function SliderTabBody({
   isOpen,
   description,
   children,
-}: SliderCardBody) {
+}: SliderTabBody) {
   return (
     <div className="flex flex-col gap-2">
       <p className="text-sm font-normal sm:text-base">{description}</p>
