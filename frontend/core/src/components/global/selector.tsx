@@ -1,20 +1,32 @@
 "use client";
 
-import Image from "next/image";
-import { useState, useEffect } from "react";
-import { gsap } from "gsap";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TabsContent } from "@radix-ui/react-tabs";
+import React, { useState, useEffect, useRef } from "react";
 
-type SelectorType = { action: () => void; defaultTab: "icons" | "backgrounds" };
+//components
+import Image from "next/image";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+
+//libraries
+import { gsap } from "gsap";
+
+//types
+type SelectorType = {
+  action: (selectedItem: ItemType) => void;
+  defaultTab?: "icons" | "backgrounds";
+};
+type ItemType = { pk: number; name: string; image: string };
+type ItemGroupType = { pk: number; name: string; icons: ItemType[] };
+type ItemTabType = {
+  onClick: () => void;
+  children: React.ReactNode;
+};
 
 export default function Selector({
   action,
-  defaultTab = "backgrounds",
+  defaultTab = "icons",
 }: SelectorType) {
-  const [selectedIcon, setSelectedIcon] = useState({});
-  const [groupIndex, setGroupIndex] = useState("");
-  const [iconsList, setIcons] = useState([]);
+  const [selectedItem, setSelectedItem] = useState<ItemType | undefined>();
+  const [items, setItems] = useState<ItemGroupType[]>([]);
 
   const fetchIconsData = () => {
     fetch("http://127.0.0.1:8000/pickers/icon-pickers")
@@ -22,7 +34,7 @@ export default function Selector({
         return response.json();
       })
       .then((data) => {
-        setIcons(data);
+        setItems(data);
       });
   };
 
@@ -31,41 +43,15 @@ export default function Selector({
   }, []);
 
   useEffect(() => {
-    action(selectedIcon);
-  }, [selectedIcon]);
-
-  const tilesStyle =
-    "h-20 flex cursor-pointer items-center justify-center rounded-lg bg-sad-blue transition-all ease-in-out hover:scale-95";
-
-  const handleClick = (groupIndex, goBack = false) => {
-    let groupsTab = document.getElementById("groups-tab");
-    let iconsTab = document.getElementById(`icons-tab-${groupIndex}`);
-    let goBackBtn = document.getElementById("go-back-btn");
-
-    iconsTab.style.display = "grid";
-    groupsTab.style.display = "none";
-    setGroupIndex(groupIndex);
-    gsap.set(goBackBtn, { x: 8, opacity: 0 });
-    gsap.to(goBackBtn, { x: 0, opacity: 1, duration: 0.2 });
-
-    // goes back to the groupTab
-    if (goBack == true) {
-      iconsTab.style.display = "none";
-      groupsTab.style.display = "grid";
-      gsap.set(goBackBtn, { x: 0, opacity: 1 });
-      gsap.to(goBackBtn, { x: -8, opacity: 0, duration: 0.2 });
+    if (selectedItem) {
+      action(selectedItem);
     }
-  };
-
-  // checks the input of the clicked iconTile
-  const checkInput = (icon) => {
-    setSelectedIcon(icon);
-  };
+  }, [selectedItem]);
 
   return (
     <Tabs
       defaultValue={defaultTab}
-      className="flex h-full w-full flex-col gap-3 p-3"
+      className="flex h-full w-full flex-col gap-2 p-3"
     >
       <TabsList className="flex h-max w-full gap-3 p-1.5">
         <TabsTrigger className=" h-10 flex-1" value="icons">
@@ -76,123 +62,166 @@ export default function Selector({
         </TabsTrigger>
       </TabsList>
       <TabsContent value="icons">
-        <div className="flex h-full w-full select-none flex-col gap-3 rounded-lg bg-royal-green transition-all ease-in-out">
-          <header className="flex flex-col items-end gap-2">
-            <div className="flex w-full justify-between">
-              <button
-                type="button"
-                id="go-back-btn"
-                className="opacity-0"
-                onClick={() => handleClick(groupIndex, true)}
-              >
-                <Image
-                  width={24}
-                  height={24}
-                  alt="arrow left"
-                  src={"images/arrow-left.svg"}
-                ></Image>
-              </button>
-              <h2 className="text-xl font-bold text-sky-blue">لیست آیکون ها</h2>
-            </div>
-            <p className="text-right text-sm font-light text-sad-blue">
-              آیکون مورد نظر خود را از بین گروه های زیر انتخاب کنید
-            </p>
-          </header>
-          <section className=" max-h-64 overflow-y-auto">
-            <section
-              id="groups-tab"
-              className="scrollbar-thin scrollbar-track-[#0C2123] scrollbar-thumb-sky-blue scrollbar-thumb-rounded-lg grid w-full grid-cols-3 gap-2 rounded-lg pr-2 transition-all ease-in-out"
-            >
-              {iconsList.map((group, index) => (
-                <div
-                  key={group.pk}
-                  onClick={() => handleClick(index)}
-                  className={tilesStyle}
-                >
-                  {group.name}
-                </div>
-              ))}
-            </section>
-            {iconsList.map((group, index) => (
-              <div
-                key={group.pk}
-                id={`icons-tab-${index}`}
-                className="scrollbar-thin scrollbar-track-[#0C2123] scrollbar-thumb-sky-blue scrollbar-thumb-rounded-lg hidden h-full w-full grid-cols-3 gap-2 rounded-lg pr-2 transition-all ease-in-out"
-              >
-                {group.icons.map((icon) => (
-                  <div
-                    key={icon.pk}
-                    className={tilesStyle}
-                    onClick={() => checkInput(icon)}
-                  >
-                    <p>{icon.name}</p>
-                  </div>
-                ))}
-              </div>
-            ))}
-          </section>
-        </div>
+        <Tab
+          data={items}
+          description={"آیکون مورد نظر خود را از بین گروه های زیر انتخاب کنید"}
+          title={"لیست آیکون ها"}
+          setSelectedItem={setSelectedItem}
+        ></Tab>
       </TabsContent>
       <TabsContent value="backgrounds">
-        <div className="flex h-full w-full select-none flex-col gap-3 rounded-lg bg-royal-green transition-all ease-in-out">
-          <header className="flex flex-col items-end gap-2">
-            <div className="flex w-full justify-between">
-              <button
-                type="button"
-                id="go-back-btn"
-                className="opacity-0"
-                onClick={() => handleClick(groupIndex, true)}
-              >
-                <Image
-                  width={24}
-                  height={24}
-                  alt="arrow left"
-                  src={"images/arrow-left.svg"}
-                ></Image>
-              </button>
-              <h2 className="text-xl font-bold text-sky-blue">
-                لیست پس زمینه ها
-              </h2>
-            </div>
-            <p className="text-right text-sm font-light text-sad-blue">
-              پس زمینه مورد نظر خود را از بین گروه های زیر انتخاب کنید
-            </p>
-          </header>
-          <section className=" max-h-64 overflow-y-auto">
-            <section
-              id="groups-tab"
-              className="scrollbar-thin scrollbar-track-[#0C2123] scrollbar-thumb-sky-blue scrollbar-thumb-rounded-lg grid w-full grid-cols-3 gap-2 rounded-lg pr-2 transition-all ease-in-out"
-            >
-              {iconsList.map((group, index) => (
-                <div
-                  key={group.pk}
-                  onClick={() => handleClick(index)}
-                  className={tilesStyle}
-                >
-                  {group.name}
-                </div>
-              ))}
-            </section>
-            {iconsList.map((group, index) => (
-              <div
-                key={group.pk}
-                id={`icons-tab-${index}`}
-                className="scrollbar-thin scrollbar-track-[#0C2123] scrollbar-thumb-sky-blue scrollbar-thumb-rounded-lg hidden h-full w-full grid-cols-3 gap-2 rounded-lg pr-2 transition-all ease-in-out"
-              >
-                {group.icons.map((icon) => (
-                  <div
-                    key={icon.pk}
-                    className={tilesStyle}
-                    onClick={() => checkInput(icon)}
-                  >
-                    <p>{icon.name}</p>
-                  </div>
-                ))}
-              </div>
-            ))}
-          </section>
-        </div>
+        <Tab
+          data={items}
+          description={
+            "پس زمنیه مورد نظر خود را از بین گروه های زیر انتخاب کنید"
+          }
+          title={"لیست پس زمینه ها"}
+          setSelectedItem={setSelectedItem}
+        ></Tab>
       </TabsContent>
     </Tabs>
+  );
+}
+
+type TabType = {
+  data: ItemGroupType[];
+  title: string;
+  description: string;
+  setSelectedItem: React.Dispatch<React.SetStateAction<ItemType | undefined>>;
+};
+
+function Tab({ data, title, description, setSelectedItem }: TabType) {
+  const [groupIndex, setGroupIndex] = useState(0);
+  const [groupIsOpen, setGroupIsOpen] = useState(false);
+
+  const goBackBtnRef = useRef(null);
+
+  useEffect(() => {
+    const goBackBtn = goBackBtnRef.current;
+    //animate go back button
+    if (groupIsOpen) {
+      gsap.to(goBackBtn, { x: 0, opacity: 1, duration: 0.2 });
+    } else {
+      gsap.to(goBackBtn, { x: -8, opacity: 0, duration: 0.2 });
+    }
+  }, [groupIsOpen]);
+
+  const handleClick = (groupIndex: number) => {
+    setGroupIndex(groupIndex);
+    setGroupIsOpen(true);
+  };
+
+  // checks the input of the clicked iconTile
+  const selectItem = (item: ItemType) => {
+    setGroupIsOpen(false);
+    setSelectedItem(item);
+  };
+
+  return (
+    <div className="flex h-full w-full select-none flex-col gap-3 rounded-lg transition-all ease-in-out">
+      <header className="flex flex-col items-end gap-2">
+        <div className="flex w-full justify-between">
+          {/* go back btn  */}
+          <button
+            type="button"
+            ref={goBackBtnRef}
+            id="go-back-btn"
+            className="opacity-0"
+            onClick={() => setGroupIsOpen((prev) => !prev)}
+          >
+            <Image
+              width={24}
+              height={24}
+              alt="arrow left"
+              src={"images/arrow-left.svg"}
+            ></Image>
+          </button>
+          <h2 className="text-xl font-bold text-sky-blue">{title}</h2>
+        </div>
+        <p className="text-right text-sm font-light text-sad-blue">
+          {description}
+        </p>
+      </header>
+      <section className=" max-h-64 overflow-y-auto">
+        <section
+          id="groups-tab"
+          className="scrollbar-thin scrollbar-track-[#0C2123] scrollbar-thumb-sky-blue scrollbar-thumb-rounded-lg grid w-full grid-cols-3 gap-2 rounded-lg pr-2 transition-all ease-in-out"
+        >
+          {/* show groups/items  */}
+          {groupIsOpen
+            ? data[groupIndex].icons.map((icon) => (
+                <ItemTab key={icon.pk} onClick={() => selectItem(icon)}>
+                  <div className="relative h-12 w-12 rounded-md">
+                    <Image
+                      className="rounded-md"
+                      fill
+                      alt={icon.name}
+                      src={`http://127.0.0.1:8000/${icon.image}`}
+                    ></Image>
+                  </div>
+                </ItemTab>
+              ))
+            : data.map((itemGroup, itemGroupIndex) => (
+                <ItemTab
+                  key={itemGroup.pk}
+                  onClick={() => handleClick(itemGroupIndex)}
+                >
+                  <GroupImage itemGroup={itemGroup}></GroupImage>
+                </ItemTab>
+              ))}
+        </section>
+      </section>
+    </div>
+  );
+}
+
+function ItemTab({ onClick, children }: ItemTabType) {
+  return (
+    <div
+      onClick={onClick}
+      className="flex h-20 cursor-pointer items-center justify-center rounded-lg bg-sad-blue transition-transform duration-300 ease-in-out hover:scale-95"
+    >
+      {children}
+    </div>
+  );
+}
+
+//item's group image
+function GroupImage({ itemGroup }: { itemGroup: ItemGroupType }) {
+  const icons = itemGroup.icons.slice(0, 3);
+
+  return (
+    <div className="group relative flex h-full w-full items-center justify-center">
+      {icons[1] && (
+        <div className="absolute left-0.5 h-10 w-10 scale-75 transform rounded-md opacity-70 transition-all duration-300 group-hover:-translate-x-1 group-hover:translate-y-1 group-hover:-rotate-6 group-hover:scale-90">
+          <Image
+            className="rounded-md"
+            fill
+            alt={icons[1].name}
+            src={`http://127.0.0.1:8000/${icons[1].image}`}
+          />
+        </div>
+      )}
+      {icons[0] && (
+        <div className="absolute z-10 h-12 w-12 rounded-md transition-all duration-300 group-hover:scale-95">
+          <Image
+            className="rounded-md"
+            fill
+            alt={icons[0].name}
+            src={`http://127.0.0.1:8000/${icons[0].image}`}
+          />
+        </div>
+      )}
+      {icons[2] && (
+        <div className="absolute right-0.5 h-10 w-10 scale-75 transform rounded-md opacity-70 transition-all duration-300 group-hover:translate-x-1 group-hover:translate-y-1 group-hover:rotate-6 group-hover:scale-90">
+          <Image
+            className="rounded-md"
+            fill
+            alt={icons[2].name}
+            src={`http://127.0.0.1:8000/${icons[2].image}`}
+          />
+        </div>
+      )}
+    </div>
   );
 }
