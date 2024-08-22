@@ -11,11 +11,15 @@ import { gsap } from "gsap";
 
 //types
 type SelectorType = {
-  action: (selectedItem: ItemType) => void;
+  action: (selectedItem: SelectorItemType) => void;
   defaultTab?: "icons" | "backgrounds";
 };
-type ItemType = { pk: number; name: string; image: string };
-type ItemGroupType = { pk: number; name: string; icons: ItemType[] };
+export type SelectorItemType = { pk: number; name: string; image: string };
+export type SelectorItemGroupType = {
+  pk: number;
+  name: string;
+  icons: SelectorItemType[];
+};
 type ItemTabType = {
   onClick: () => void;
   children: React.ReactNode;
@@ -25,8 +29,10 @@ export default function Selector({
   action,
   defaultTab = "icons",
 }: SelectorType) {
-  const [selectedItem, setSelectedItem] = useState<ItemType | undefined>();
-  const [items, setItems] = useState<ItemGroupType[]>([]);
+  const [selectedItem, setSelectedItem] = useState<
+    SelectorItemType | undefined
+  >();
+  const [items, setItems] = useState<SelectorItemGroupType[]>([]);
 
   const fetchIconsData = () => {
     fetch("http://127.0.0.1:8000/pickers/icon-pickers")
@@ -84,10 +90,12 @@ export default function Selector({
 }
 
 type TabType = {
-  data: ItemGroupType[];
+  data: SelectorItemGroupType[];
   title: string;
   description: string;
-  setSelectedItem: React.Dispatch<React.SetStateAction<ItemType | undefined>>;
+  setSelectedItem: React.Dispatch<
+    React.SetStateAction<SelectorItemType | undefined>
+  >;
 };
 
 function Tab({ data, title, description, setSelectedItem }: TabType) {
@@ -112,7 +120,7 @@ function Tab({ data, title, description, setSelectedItem }: TabType) {
   };
 
   // checks the input of the clicked iconTile
-  const selectItem = (item: ItemType) => {
+  const selectItem = (item: SelectorItemType) => {
     setGroupIsOpen(false);
     setSelectedItem(item);
   };
@@ -187,7 +195,7 @@ function ItemTab({ onClick, children }: ItemTabType) {
 }
 
 //item's group image
-function GroupImage({ itemGroup }: { itemGroup: ItemGroupType }) {
+function GroupImage({ itemGroup }: { itemGroup: SelectorItemGroupType }) {
   const icons = itemGroup.icons.slice(0, 3);
 
   return (

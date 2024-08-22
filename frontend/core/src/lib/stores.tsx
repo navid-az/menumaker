@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import { PlatformTypes } from "./identifyPlatform";
+import { ItemType } from "@/components/global/ItemAdder";
 
 type State = {
   phoneNumber: string;
@@ -96,4 +98,26 @@ export const useSliderTitle = create<builderTitleType>()((set) => ({
   updateTitle: (title) => set(() => ({ title: title })),
   subtitle: "",
   updateSubtitle: (subtitle) => set(() => ({ subtitle: subtitle })),
+}));
+
+//~~~~ItemAdder ActionButton~~~~
+type ActionButtonType = {
+  id: number | string;
+  icon: string;
+  name: string;
+  resetValue: () => void;
+  setValue: (item: ItemType) => void;
+};
+export const useActionButton = create<ActionButtonType>((set) => ({
+  id: 0,
+  icon: "",
+  name: "",
+  resetValue: () =>
+    set(() => ({
+      id: 0,
+      icon: "",
+      name: "",
+    })),
+  setValue: (item) =>
+    set(() => ({ id: item.id, icon: item.icon, name: item.name })),
 }));
