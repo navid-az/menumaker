@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 //components
 import { Button } from "@/components/ui/button";
 
 //hooks
 import { useSlider } from "@/lib/stores";
+import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
 
 //types
 type disabledStateType = "nextDisabled" | "prevDisabled" | "";
@@ -69,14 +70,22 @@ export function SliderNavigator() {
     }
   };
 
+  //next/prev buttons animation
+  const nextBtnRef = useRef(null);
+  useTactileAnimation(nextBtnRef, {});
+
+  const prevBtnRef = useRef(null);
+  useTactileAnimation(prevBtnRef, {});
+
   return (
-    <>
+    <div className=" flex w-full items-center justify-between rtl:flex-row-reverse">
       <Button
-        disabled={disabled == "nextDisabled"}
-        onClick={handleNext}
-        className={`h-9 select-none rounded-full px-5 transition-opacity duration-300 sm:h-10 sm:px-6`}
+        ref={prevBtnRef}
+        disabled={disabled == "prevDisabled"}
+        onClick={handlePrev}
+        className="h-9 select-none rounded-full px-5 transition-opacity duration-300 sm:h-10 sm:px-6"
       >
-        بعدی
+        قبلی
       </Button>
       <div className="flex gap-1 rounded-full bg-soft-blue p-1 rtl:flex-row-reverse">
         {Array.from({ length: stepCount }, (_, index) => (
@@ -88,13 +97,14 @@ export function SliderNavigator() {
         ))}
       </div>
       <Button
-        disabled={disabled == "prevDisabled"}
-        onClick={handlePrev}
-        className="h-9 select-none rounded-full px-5 transition-opacity duration-300 sm:h-10 sm:px-6"
+        ref={nextBtnRef}
+        disabled={disabled == "nextDisabled"}
+        onClick={handleNext}
+        className={`h-9 select-none rounded-full px-5 transition-opacity duration-300 sm:h-10 sm:px-6`}
       >
-        قبلی
+        بعدی
       </Button>
-    </>
+    </div>
   );
 }
 
