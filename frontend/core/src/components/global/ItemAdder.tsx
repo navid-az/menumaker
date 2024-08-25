@@ -1,39 +1,48 @@
-import React, { useEffect, useReducer, useRef, useState } from "react";
-import * as z from "zod";
+"use client";
 
-// SVGs
-import { Edit } from "@/app/components/svgs";
-import { Trash } from "@/app/components/svgs";
-import { Plus } from "@/app/components/svgs";
+import React, { useEffect, useReducer, useRef, useState } from "react";
 
 //components
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import Selector from "./selector";
+import { SelectorAction } from "./itemAdderButtons/ActionButton";
+import { LinkAction } from "./itemAdderButtons/LinkAction";
 
+//libraries
+import * as z from "zod";
+
+//hooks
+import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
+import { useActionButton } from "@/lib/stores";
+
+//functions
+import isRTL from "@/lib/isRtl";
+
+// SVGs
+import { Trash } from "@/app/components/svgs";
+import { Plus } from "@/app/components/svgs";
+import { Edit3, ImageOff } from "lucide-react";
+
+//types
+export type ItemType = { id: string; name?: string; icon?: string };
+type ItemsType = ItemType[];
+type ReducerActionType = ItemType & { type: ItemAdderActions };
+type ItemAdderType = {
+  placeholder: string;
+  limit?: number;
+  name?: string;
+  initValue?: ItemsType;
+};
+
+//reducer actions
 enum ItemAdderActions {
   ADD_ITEM,
   DELETE_ITEM,
   EDIT_ITEM,
 }
 
-//types
-type ReducerAction = {
-  type: ItemAdderActions;
-  id: string;
-  name?: string;
-  icon?: string;
-};
-
-type ItemType = { id: string; name?: string; icon?: string };
-type ItemsType = ItemType[];
-
-const reducer = (items: ItemsType, action: ReducerAction) => {
+const reducer = (items: ItemsType, action: ReducerActionType) => {
   switch (action.type) {
     case ItemAdderActions.ADD_ITEM:
       return [
@@ -64,43 +73,72 @@ const reducer = (items: ItemsType, action: ReducerAction) => {
 };
 let nextItemId = 0;
 
-type ItemAdderType = {
-  placeholder: string;
-  name: string;
-  initValue?: ItemsType;
-};
-
 const itemAdderInputSchema = z.string().max(50).nullable();
 
 export default function ItemAdder({
   placeholder,
-  //   valueCount = 2,
+  limit = 3,
   name = "",
   initValue = [],
 }: ItemAdderType) {
   const [items, dispatch] = useReducer(reducer, []);
+
+  const [isDisabled, setIsDisabled] = useState(false);
   const [editMode, setEditMode] = useState(false);
+
   const [currentItem, setCurrentItem] = useState("");
-  const [text, setText] = useState<string | undefined>("");
-  const [icon, setIcon] = useState<string | undefined>("");
+  const [text, setText] = useState("");
+
+  const actionIcon = useActionButton((state) => state.icon);
+  const setValue = useActionButton((state) => state.setValue);
+  const resetValue = useActionButton((state) => state.resetValue);
+
+  const [direction, setDirection] = useState<"ltr" | "rtl">("rtl");
   const [inputError, setInputError] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
 
+  const selectorActionRef = useRef<HTMLButtonElement>(null);
+  const linkActionRef = useRef<HTMLButtonElement>(null);
+  const textInputRef = useRef<HTMLInputElement>(null);
+  const addEditItemBtnRef = useRef<HTMLButtonElement>(null);
+
+  //enable/disable add button according to input values
   useEffect(() => {
-    inputRef.current?.focus();
-  }, [editMode]);
+    if (!editMode) {
+      if (!actionIcon && !text) {
+        setIsDisabled(true);
+      } else if (items.length >= limit) {
+        setInputError(`حداکثر میتوان ${limit} آیتم ایجاد کرد`);
+      } else {
+        setIsDisabled(false);
+      }
+    } else {
+      if (textInputRef.current?.value) {
+        textInputRef.current?.focus();
+      }
+      setIsDisabled(false);
+    }
+  });
 
+  //buttons animation
+  useTactileAnimation(selectorActionRef, {});
+  useTactileAnimation(linkActionRef, {});
+  useTactileAnimation(addEditItemBtnRef, {});
+
+  //reset actionButton and text input value
   const resetInputs = () => {
     setCurrentItem("");
     setText("");
-    setIcon("");
+    resetValue();
     setEditMode(false);
   };
 
+  //set input values to the item which is being edited
   const setInputs = (item: ItemType) => {
     setCurrentItem(item.id);
-    setText(item.name);
-    setIcon(item.icon);
+    if (item.name) {
+      setText(item.name);
+    }
+    setValue(item);
     setEditMode(true);
   };
 
@@ -108,16 +146,14 @@ export default function ItemAdder({
     const isValid = itemAdderInputSchema.parse(text);
     resetInputs();
 
-    if (isValid || icon) {
+    if (isValid || actionIcon) {
       dispatch({
         type: ItemAdderActions.ADD_ITEM,
         id: (nextItemId++).toString(),
         name: text,
-        icon: icon,
+        icon: actionIcon,
       });
       setInputError("");
-    } else {
-      setInputError("هر بخش حداقل یک آیکون یا اسم نیاز دادر");
     }
   };
 
@@ -128,9 +164,10 @@ export default function ItemAdder({
       type: ItemAdderActions.EDIT_ITEM,
       id: currentItem,
       name: text,
-      icon: icon,
+      icon: actionIcon,
     });
   };
+
   const handleDeleteItem = (itemId: string) => {
     resetInputs();
 
@@ -138,6 +175,12 @@ export default function ItemAdder({
       type: ItemAdderActions.DELETE_ITEM,
       id: itemId,
     });
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setText(e.target.value);
+    setDirection(isRTL(text));
+    setInputError("");
   };
 
   const editing = (item: ItemType) => {
@@ -150,74 +193,50 @@ export default function ItemAdder({
 
   return (
     <div className="flex h-max w-full flex-col gap-2">
-      <section className="flex flex-col items-end gap-2">
+      <section className="flex flex-col gap-2">
         <div className="flex h-max w-full flex-row items-center justify-between gap-2 rounded-lg bg-sad-blue p-2">
           <Input
-            ref={inputRef}
+            ref={textInputRef}
             type="text"
             name={name}
             placeholder={placeholder}
             value={text}
-            className="h-9 border-0 bg-sad-blue text-right"
+            dir={`${direction === "rtl" ? "rtl" : "ltr"}`}
+            className={`h-9 border-0 bg-sad-blue focus-visible:ring-primary/50`}
             isFocused
-            onChange={(e) => {
-              setText(e.target.value);
-              setInputError("");
-            }}
+            onChange={handleInputChange}
           ></Input>
-          <section className="flex gap-2 ">
-            {/* icon selector popover */}
-            <Popover>
-              <PopoverTrigger>
-                <Button
-                  className="px-4 text-xs sm:text-sm"
-                  size="sm"
-                  type="button"
-                >
-                  آیکون
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="border-0 bg-primary p-0">
-                <Selector
-                  action={(selectedIcon: object) => {
-                    setIcon(selectedIcon.pk);
-                  }}
-                ></Selector>
-              </PopoverContent>
-            </Popover>
-            {editMode == true ? (
-              <Button
-                type="button"
-                size="sm"
-                className="text-xs sm:text-sm"
-                onClick={handleEditItem}
-              >
-                ویرایش
-              </Button>
-            ) : (
-              <Button
-                disabled={!text && true}
-                type="button"
-                size="icon"
-                className="h-9 w-9 transition-opacity duration-500"
-                onClick={handleAddItem}
-              >
+          <section className="flex gap-2">
+            {/* ~~~~action buttons~~~~ */}
+            <SelectorAction ref={selectorActionRef}></SelectorAction>
+            <LinkAction ref={linkActionRef} text={text}></LinkAction>
+            {/* ~~~~action buttons~~~~  */}
+            <Button
+              ref={addEditItemBtnRef}
+              disabled={isDisabled}
+              type="button"
+              size="icon"
+              className={`${
+                editMode ? "w-16" : "w-9"
+              } h-9 transition-all duration-300`}
+              onClick={editMode ? handleEditItem : handleAddItem}
+            >
+              {editMode ? (
+                <p>ویرایش</p>
+              ) : (
                 <Plus className="h-5 w-5 sm:h-6 sm:w-6" />
-              </Button>
-            )}
+              )}
+            </Button>
           </section>
         </div>
         {inputError && <p className="text-xs text-red-400">{inputError}</p>}
       </section>
-
       {/* items list */}
       {items.length != 0 && (
         <section className="flex flex-col gap-2 rounded-md bg-sad-blue p-1 sm:p-2">
-          {/* <h3 className="w-full text-right font-semibold text-royal-green">
-            لیست بخش ها
-          </h3> */}
           {items.map((item) => (
             <ListItem
+              key={item.id}
               item={item}
               handleEdit={() => editing(item)}
               handleDelete={() => handleDeleteItem(item.id)}
@@ -239,20 +258,40 @@ type ListItemType = {
 
 function ListItem({ item, handleEdit, handleDelete, isActive }: ListItemType) {
   return (
-    <div key={item.id} className="flex items-center justify-between p-1">
-      <section className="flex gap-2">
-        <p className="text-sm sm:text-base">{item.icon}</p>
+    <div
+      key={item.id}
+      className="flex cursor-default items-center justify-between p-1"
+    >
+      <section className="flex !items-center gap-2">
+        <div className="relative h-8 w-8 rounded-md">
+          {item.icon ? (
+            <Image
+              className="rounded-md"
+              fill
+              alt={item.name!}
+              src={`http://127.0.0.1:8000/${item.icon}`}
+            ></Image>
+          ) : (
+            <ImageOff
+              className="text-primary"
+              strokeWidth="1.5px"
+              width={32}
+              height={32}
+            ></ImageOff>
+          )}
+        </div>
         <p className="text-sm sm:text-base">{item.name}</p>
       </section>
+      {/* items edit & delete buttons  */}
       <div className="flex gap-2">
         <Button
           size="icon"
-          className={`h-8 w-8 text-royal-green ${
-            isActive ? "bg-primary" : "bg-transparent"
+          className={`h-8 w-8 text-royal-green transition-transform duration-300 hover:scale-125 ${
+            isActive ? "bg-primary hover:scale-95" : "bg-inherit"
           }`}
           onClick={() => handleEdit()}
         >
-          <Edit
+          <Edit3
             className={`h-5 w-5 ${
               isActive ? "stroke-primary-foreground" : "bg-transparent"
             }`}
@@ -260,7 +299,7 @@ function ListItem({ item, handleEdit, handleDelete, isActive }: ListItemType) {
         </Button>
         <Button
           size="icon"
-          className="h-8 w-8 bg-transparent text-royal-green"
+          className="h-8 w-8 bg-transparent text-royal-green transition-transform duration-300 hover:scale-125"
           onClick={() => handleDelete()}
         >
           <Trash className="h-7 w-7" />

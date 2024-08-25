@@ -28,6 +28,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 //hooks
 import { useSlider } from "@/lib/stores";
+import ItemAdder from "@/components/global/ItemAdder";
 
 //zod schema
 const formSchema = z.object({
@@ -388,9 +389,14 @@ export default function Page() {
       >
         <Slider>
           {validSections.map((section, sectionIndex) => (
-            <SliderSection sectionNum={sectionIndex + 1} title={section.title}>
+            <SliderSection
+              key={sectionIndex}
+              sectionNum={sectionIndex + 1}
+              title={section.title}
+            >
               {section.steps.map((step, stepIndex) => (
                 <SliderStep
+                  key={stepIndex}
                   sectionNum={sectionIndex + 1}
                   stepNum={stepIndex + 1}
                   title={step.title}
@@ -408,8 +414,8 @@ export default function Page() {
                             value={field.value}
                             className="flex flex-col gap-4"
                           >
-                            {step.tabs.map((tab) => (
-                              <FormItem>
+                            {step.tabs.map((tab, tabIndex) => (
+                              <FormItem key={tabIndex}>
                                 <FormControl>
                                   <SliderTab
                                     onClick={() =>
@@ -419,6 +425,7 @@ export default function Page() {
                                   >
                                     <SliderTabTitle
                                       title={tab.title}
+                                      description={tab.description}
                                       iconSrc={tab.iconSrc}
                                     >
                                       <RadioGroupItem
@@ -426,8 +433,10 @@ export default function Page() {
                                       ></RadioGroupItem>
                                     </SliderTabTitle>
                                     <SliderTabBody
-                                      description={tab.description}
-                                    ></SliderTabBody>
+                                      isOpen={field.value === tab.value}
+                                    >
+                                      <ItemAdder placeholder="نام بخش"></ItemAdder>
+                                    </SliderTabBody>
                                   </SliderTab>
                                 </FormControl>
                               </FormItem>
@@ -438,8 +447,9 @@ export default function Page() {
                     />
                   ) : (
                     <>
-                      {step.tabs.map((tab) => (
+                      {step.tabs.map((tab, tabIndex) => (
                         <FormField
+                          key={tabIndex}
                           control={form.control}
                           name={tab.name}
                           render={({ field }) => (
@@ -447,10 +457,11 @@ export default function Page() {
                               <FormControl>
                                 <SliderTab
                                   onClick={() => handleValueChange(field.name)}
-                                  isActive={field.value}
+                                  isActive={field.value as boolean}
                                 >
                                   <SliderTabTitle
                                     title={tab.title}
+                                    description={tab.description}
                                     iconSrc={tab.iconSrc}
                                   >
                                     <Switch
@@ -458,10 +469,9 @@ export default function Page() {
                                       onCheckedChange={field.onChange}
                                     ></Switch>
                                   </SliderTabTitle>
-                                  <SliderTabBody
-                                    isOpen={field.value}
-                                    description={tab.description}
-                                  ></SliderTabBody>
+                                  <SliderTabBody isOpen={field.value}>
+                                    <ItemAdder placeholder="نام بخش"></ItemAdder>
+                                  </SliderTabBody>
                                 </SliderTab>
                               </FormControl>
                             </FormItem>
