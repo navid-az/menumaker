@@ -23,6 +23,7 @@ export const SelectorAction = forwardRef<HTMLButtonElement>(
     const setValue = useActionButton((state) => state.setValue);
     const resetValue = useActionButton((state) => state.resetValue);
     const icon = useActionButton((state) => state.icon);
+    const iconName = useActionButton((state) => state.name);
 
     const handleSelector = (icon: SelectorItemType) => {
       const item = {
@@ -59,7 +60,7 @@ export const SelectorAction = forwardRef<HTMLButtonElement>(
                   <Image
                     className="rounded-md"
                     fill
-                    alt={"fklahsdf"}
+                    alt={iconName}
                     src={`http://127.0.0.1:8000/${icon}`}
                   ></Image>
                 </div>
