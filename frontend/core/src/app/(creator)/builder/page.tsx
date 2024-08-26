@@ -28,7 +28,9 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 //hooks
 import { useSlider } from "@/lib/stores";
-import ItemAdder from "@/components/global/ItemAdder";
+
+//data
+import { getSliderData } from "./builderFormData";
 
 //zod schema
 const formSchema = z.object({
@@ -54,37 +56,8 @@ const formSchema = z.object({
 
 //types
 export type formSchemaType = z.infer<typeof formSchema>;
-type keyOfFormSchemaType = keyof formSchemaType;
-
-export type stepTabBase = {
-  title: string;
-  description: string;
-  iconSrc: string;
-  isRadio?: boolean;
-};
-type stepTabType = stepTabBase &
-  (
-    | { isRadio: true; value: string; name: keyOfFormSchemaType }
-    | { isRadio?: false; value?: string; name?: keyOfFormSchemaType }
-  );
-
-export type sliderStepBase = {
-  title: string;
-  isRadioGroup?: boolean;
-  tabs: stepTabType[];
-  condition: () => boolean;
-};
-type sliderStepType = sliderStepBase &
-  (
-    | { isRadioGroup: true; name: keyOfFormSchemaType }
-    | { isRadioGroup?: false; name?: keyOfFormSchemaType }
-  );
-
-export type sliderDataType = {
-  title: string;
-  steps: sliderStepType[];
-  condition: () => boolean;
-};
+export type keyOfFormSchemaType = keyof formSchemaType;
+import { sliderDataType } from "./builderFormData";
 
 export default function Page() {
   const form = useForm<formSchemaType>({
@@ -97,233 +70,7 @@ export default function Page() {
     },
   });
 
-  const sliderData: sliderDataType[] = [
-    {
-      title: "صفحه اصلی",
-      condition: () => true,
-      steps: [
-        {
-          title: "نوع قالب صفحه اصلی منو",
-          isRadioGroup: true,
-          name: "main_page_type",
-          condition: () => true,
-          tabs: [
-            {
-              title: "ساده",
-              description: "یک دکمه اصلی برای ورود به صفحه منو",
-              value: "single",
-              iconSrc: "/images/form-icons/single.svg",
-            },
-            {
-              title: "مینیمال",
-              description: "دارای بخش های جداگانه مانند منو کافه و منو رستوران",
-              value: "couple",
-              iconSrc: "/images/form-icons/couple.svg",
-            },
-            {
-              title: "مستطیلی",
-              description:
-                "مشتری بلافاصله پس از اسکن QR کد وارد صفحه آیتم ها میشود",
-              value: "none",
-              iconSrc: "/images/form-icons/none.svg",
-            },
-          ],
-        },
-        {
-          title: "تعداد بخش های منو خود را مشخص کنید",
-          isRadioGroup: true,
-          name: "main_page_type",
-          condition: () => true,
-          tabs: [
-            {
-              title: "تک بخشی",
-              description: "یک دکمه اصلی برای ورود به صفحه منو",
-              value: "single",
-              iconSrc: "/images/form-icons/single.svg",
-            },
-            {
-              title: "چند بخشی",
-              description: "دارای بخش های جداگانه مانند منو کافه و منو رستوران",
-              value: "couple",
-              iconSrc: "/images/form-icons/couple.svg",
-            },
-            {
-              title: "بدون صفحه اصلی",
-              description:
-                "مشتری بلافاصله پس از اسکن QR کد وارد صفحه آیتم ها میشود",
-              value: "none",
-              iconSrc: "/images/form-icons/none.svg",
-            },
-          ],
-        },
-        {
-          title: "ویژگی های مورد نظر خود را انتخاب کنید",
-          condition: () => true,
-          tabs: [
-            {
-              name: "link_is_active",
-              title: "لینک ها",
-              description: "لینک های تلگرام و اینستاگرام و ...",
-              iconSrc: "/images/form-icons/link.svg",
-            },
-            {
-              name: "phone_number_is_active",
-              title: "شماره تماس",
-              description: "لینک های تلگرام و اینستاگرام و ...",
-              iconSrc: "/images/form-icons/phone.svg",
-            },
-            {
-              name: "location_is_active",
-              title: "موقعیت مکانی",
-              description: "لینک های تلگرام و اینستاگرام و ...",
-              iconSrc: "/images/form-icons/pin.svg",
-            },
-          ],
-        },
-        {
-          title: "ویژگی های مورد نظر خود را انتخاب کنید",
-          condition: () => form.watch("link_is_active"),
-          tabs: [
-            {
-              name: "link_is_active",
-              title: "لینک ها",
-              description: "لینک های تلگرام و اینستاگرام و ...",
-              iconSrc: "/images/form-icons/link.svg",
-            },
-            {
-              name: "phone_number_is_active",
-              title: "شماره تماس",
-              description: "لینک های تلگرام و اینستاگرام و ...",
-              iconSrc: "/images/form-icons/link.svg",
-            },
-            {
-              name: "location_is_active",
-              title: "موقعیت مکانی",
-              description: "لینک های تلگرام و اینستاگرام و ...",
-              iconSrc: "/images/form-icons/pin.svg",
-            },
-          ],
-        },
-      ],
-    },
-    {
-      title: "صفحه آیتم ها",
-      condition: () => form.watch("phone_number_is_active"),
-      steps: [
-        {
-          title: "نوع قالب مورد نظر خود را انتخاب کنید",
-          isRadioGroup: true,
-          name: "item_page_type",
-          condition: () => true,
-          tabs: [
-            {
-              title: "افقی",
-              description: "لیست آیتم ها به صورت افقی نمایش داده میشود",
-              iconSrc: "/images/form-icons/horizenal-menu-icon.svg",
-              value: "horizontal",
-            },
-            {
-              title: "عمودی",
-              description: "لیست آیتم ها به صورت عمودی نمایش داده میشود",
-              iconSrc: "/images/form-icons/vertical-menu-icon.svg",
-              value: "vertical",
-            },
-          ],
-        },
-        {
-          title: "نوع نمایش دسته بندی آیتم ها را انتخاب کنید",
-          isRadioGroup: true,
-          name: "categories_display_type",
-          condition: () => true,
-          tabs: [
-            {
-              title: "اسلایدی",
-              description: "مدل پیش فرز نمایش آیتم ها",
-              iconSrc: "/images/form-icons/horizenal-menu-icon.svg",
-              value: "slider",
-            },
-            {
-              title: "چرخشی",
-              description: "آیتم ها به صورت یک نیم دایره نمایش داده میشوند",
-              iconSrc: "/images/form-icons/vertical-menu-icon.svg",
-              value: "circular",
-            },
-          ],
-        },
-        {
-          title: "ویژگی های مورد نظر خود را انتخاب کنید",
-          condition: () => true,
-          tabs: [
-            {
-              name: "link_is_active",
-              title: "درخواست گارسون",
-              description:
-                "دکمه ای که به مشتری این امکان را میدهد که گارسون را صدا بزند",
-              iconSrc: "/images/form-icons/ring.svg",
-            },
-            {
-              name: "phone_number_is_active",
-              title: "شماره تماس",
-              description: "لینک های تلگرام و اینستاگرام و ...",
-              iconSrc: "/images/form-icons/link-2.svg",
-            },
-            {
-              name: "location_is_active",
-              title: "موقعیت مکانی",
-              description: "لینک های تلگرام و اینستاگرام و ...",
-              iconSrc: "/images/form-icons/pin.svg",
-            },
-          ],
-        },
-      ],
-    },
-    {
-      title: "شخصی سازی",
-      condition: () => true,
-      steps: [
-        {
-          title: "رنگبندی مورد نظر خود را انتخاب کنید",
-          isRadioGroup: true,
-          name: "item_page_type",
-          condition: () => true,
-          tabs: [
-            {
-              title: "افقی",
-              description: "لیست آیتم ها به صورت افقی نمایش داده میشود",
-              iconSrc: "/images/form-icons/horizenal-menu-icon.svg",
-              value: "horizontal",
-            },
-            {
-              title: "عمودی",
-              description: "لیست آیتم ها به صورت عمودی نمایش داده میشود",
-              iconSrc: "/images/form-icons/vertical-menu-icon.svg",
-              value: "vertical",
-            },
-          ],
-        },
-        {
-          title: "انیمیشن های مورد نظر خود را انتخاب کنید",
-          isRadioGroup: true,
-          name: "item_page_type",
-          condition: () => true,
-          tabs: [
-            {
-              title: "دکمه ها",
-              description: "انیمیشن برای تمامی دکمه های منو",
-              iconSrc: "/images/form-icons/horizenal-menu-icon.svg",
-              value: "horizontal",
-            },
-            {
-              title: "آیتم ها",
-              description: "انیمیشن برای کارت آیتم",
-              iconSrc: "/images/form-icons/vertical-menu-icon.svg",
-              value: "vertical",
-            },
-          ],
-        },
-      ],
-    },
-  ];
+  const sliderData = getSliderData(form);
 
   const [validSections, setValidSections] = useState<sliderDataType[]>([]);
   const [activeConditionalInput, setActiveConditionalInput] =
@@ -432,11 +179,13 @@ export default function Page() {
                                         value={tab.value}
                                       ></RadioGroupItem>
                                     </SliderTabTitle>
-                                    <SliderTabBody
-                                      isOpen={field.value === tab.value}
-                                    >
-                                      <ItemAdder placeholder="نام بخش"></ItemAdder>
-                                    </SliderTabBody>
+                                    {tab.action && (
+                                      <SliderTabBody
+                                        isOpen={field.value === tab.value}
+                                      >
+                                        {tab.action}
+                                      </SliderTabBody>
+                                    )}
                                   </SliderTab>
                                 </FormControl>
                               </FormItem>
@@ -465,13 +214,17 @@ export default function Page() {
                                     iconSrc={tab.iconSrc}
                                   >
                                     <Switch
-                                      checked={field.value}
+                                      checked={field.value as boolean}
                                       onCheckedChange={field.onChange}
                                     ></Switch>
                                   </SliderTabTitle>
-                                  <SliderTabBody isOpen={field.value}>
-                                    <ItemAdder placeholder="نام بخش"></ItemAdder>
-                                  </SliderTabBody>
+                                  {tab.action && (
+                                    <SliderTabBody
+                                      isOpen={field.value as boolean}
+                                    >
+                                      {tab.action}
+                                    </SliderTabBody>
+                                  )}
                                 </SliderTab>
                               </FormControl>
                             </FormItem>
