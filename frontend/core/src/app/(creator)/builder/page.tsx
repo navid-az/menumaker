@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 //libraries
 import * as z from "zod";
@@ -35,23 +35,26 @@ import { getSliderData } from "./builderFormData";
 //zod schema
 const formSchema = z.object({
   main_page_type: z.enum(["single", "couple", "none"]),
-  // menu_section_count: z.number().nonnegative().lt(4),
-  menu_sections: z.array(
-    z.object({
-      id: z.string(),
-      icon: z.string(),
-      name: z.string(),
-    })
-  ),
-  item_page_type: z.enum(["horizontal", "vertical"]),
   link_is_active: z.boolean().default(false),
-  // link: z.string().array(),
   phone_number_is_active: z.boolean().default(false),
-  // phone_number: z.string().array(),
   location_is_active: z.boolean().default(false),
+  item_page_type: z.enum(["horizontal", "vertical"]),
+  // item_page_categories_type: z.enum(["simple", "animated"]),
+  categories_display_type: z.enum(["slider", "circular"]),
+  waiter_request_is_active: z.boolean().default(false),
+  search_item_is_active: z.boolean().default(false),
+  // menu_section_count: z.number().nonnegative().lt(4),
+  // menu_sections: z.array(
+  //   z.object({
+  //     id: z.string(),
+  //     icon: z.string(),
+  //     name: z.string(),
+  //   })
+  // ),
+  // link: z.string().array(),
+  // phone_number: z.string().array(),
   // location: z.string().array(),
   // item_page_type: z.enum(["horizontal", "vertical"]),
-  categories_display_type: z.enum(["slider", "circular"]),
 });
 
 //types
@@ -62,12 +65,7 @@ import { sliderDataType } from "./builderFormData";
 export default function Page() {
   const form = useForm<formSchemaType>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      phone_number_is_active: false,
-      location_is_active: false,
-      menu_sections: [],
-      link_is_active: false,
-    },
+    // defaultValues: {},
   });
 
   const sliderData = getSliderData(form);
@@ -82,10 +80,12 @@ export default function Page() {
     (state) => state.updateActiveStepCount
   );
 
+  const formRef = useRef<HTMLFormElement>(null);
+
   //all conditions used for conditional inputs
   const conditions: keyOfFormSchemaType[] = [
     "phone_number_is_active",
-    "link_is_active",
+    // "link_is_active",
   ];
 
   const handleValueChange = (name: keyOfFormSchemaType) => {
@@ -123,15 +123,38 @@ export default function Page() {
     updateActiveStepCount(updatedValidSections[activeSection - 1].steps.length);
   }, [!activeConditionalInput ? "" : form.watch(activeConditionalInput)]);
 
-  function onSubmit(values: formSchemaType) {
-    values["menu_sections"] = [{ id: "5", name: "sss", icon: "sss" }];
-    console.log(values);
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log("submitted");
   }
+
+  const onInvalid = () => {
+    console.log("invalid");
+
+    // Check and set default values for radio groups if not selected
+    if (!form.getValues("main_page_type")) {
+      form.setValue("main_page_type", "couple");
+    }
+    if (!form.getValues("categories_display_type")) {
+      form.setValue("categories_display_type", "circular");
+    }
+    if (!form.getValues("item_page_type")) {
+      form.setValue("item_page_type", "horizontal");
+    }
+
+    // Programmatically submit the form after setting default values
+    if (formRef.current) {
+      formRef.current.dispatchEvent(
+        new Event("submit", { cancelable: true, bubbles: true })
+      );
+    }
+  };
 
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        name="builder-form"
+        ref={formRef}
+        onSubmit={form.handleSubmit(onSubmit, onInvalid)}
         className="h-screen w-screen"
       >
         <Slider>
