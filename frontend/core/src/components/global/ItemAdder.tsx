@@ -286,6 +286,7 @@ function ListItem({ item, handleEdit, handleDelete, isActive }: ListItemType) {
       <div className="flex gap-2">
         <Button
           size="icon"
+          type="button"
           className={`h-8 w-8 text-royal-green transition-transform duration-300 hover:scale-125 ${
             isActive ? "bg-primary hover:scale-95" : "bg-inherit"
           }`}
@@ -299,6 +300,7 @@ function ListItem({ item, handleEdit, handleDelete, isActive }: ListItemType) {
         </Button>
         <Button
           size="icon"
+          type="button"
           className="h-8 w-8 bg-transparent text-royal-green transition-transform duration-300 hover:scale-125"
           onClick={() => handleDelete()}
         >
