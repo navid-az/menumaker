@@ -11,6 +11,7 @@ import { LinkAction } from "./itemAdderButtons/LinkAction";
 
 //libraries
 import * as z from "zod";
+import { useFormContext } from "react-hook-form";
 
 //hooks
 import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
@@ -83,6 +84,9 @@ export default function ItemAdder({
 }: ItemAdderType) {
   const [items, dispatch] = useReducer(reducer, []);
 
+  //get access to parent's form methods/data
+  const form = useFormContext();
+
   const [isDisabled, setIsDisabled] = useState(false);
   const [editMode, setEditMode] = useState(false);
 
@@ -119,6 +123,11 @@ export default function ItemAdder({
     }
   });
 
+  //add ItemAdders data to the parent form
+  useEffect(() => {
+    form.setValue(name, items);
+  }, [items]);
+
   //buttons animation
   useTactileAnimation(selectorActionRef, {});
   useTactileAnimation(linkActionRef, {});
@@ -143,10 +152,11 @@ export default function ItemAdder({
   };
 
   const handleAddItem = () => {
-    const isValid = itemAdderInputSchema.parse(text);
     resetInputs();
+    const textIsValid = itemAdderInputSchema.parse(text);
 
-    if (isValid || actionIcon) {
+    //should at least have an icon/text
+    if (textIsValid || actionIcon) {
       dispatch({
         type: ItemAdderActions.ADD_ITEM,
         id: (nextItemId++).toString(),
@@ -198,7 +208,7 @@ export default function ItemAdder({
           <Input
             ref={textInputRef}
             type="text"
-            name={name}
+            name={name + "-text-input"}
             placeholder={placeholder}
             value={text}
             dir={`${direction === "rtl" ? "rtl" : "ltr"}`}

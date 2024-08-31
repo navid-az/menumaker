@@ -33,39 +33,36 @@ import { useSlider } from "@/lib/stores";
 import { getSliderData } from "./builderFormData";
 
 //zod schema
+const itemSchema = z.object({
+  id: z.string(),
+  name: z.string().optional(),
+  icon: z.string().optional(),
+});
+const itemArraySchema = z.array(itemSchema);
 const formSchema = z.object({
   main_page_type: z.enum(["single", "couple", "none"]),
+  menu_sections: itemArraySchema,
   link_is_active: z.boolean().default(false),
+  links: itemArraySchema,
   phone_number_is_active: z.boolean().default(false),
+  phone_numbers: itemArraySchema,
   location_is_active: z.boolean().default(false),
   item_page_type: z.enum(["horizontal", "vertical"]),
-  // item_page_categories_type: z.enum(["simple", "animated"]),
   categories_display_type: z.enum(["slider", "circular"]),
   waiter_request_is_active: z.boolean().default(false),
   search_item_is_active: z.boolean().default(false),
-  // menu_section_count: z.number().nonnegative().lt(4),
-  // menu_sections: z.array(
-  //   z.object({
-  //     id: z.string(),
-  //     icon: z.string(),
-  //     name: z.string(),
-  //   })
-  // ),
-  // link: z.string().array(),
-  // phone_number: z.string().array(),
-  // location: z.string().array(),
-  // item_page_type: z.enum(["horizontal", "vertical"]),
 });
 
 //types
 export type formSchemaType = z.infer<typeof formSchema>;
 export type keyOfFormSchemaType = keyof formSchemaType;
 import { sliderDataType } from "./builderFormData";
+import { ItemType } from "@/components/global/ItemAdder";
 
 export default function Page() {
   const form = useForm<formSchemaType>({
     resolver: zodResolver(formSchema),
-    // defaultValues: {},
+    defaultValues: { links: [], menu_sections: [], phone_numbers: [] },
   });
 
   const sliderData = getSliderData(form);
@@ -83,10 +80,7 @@ export default function Page() {
   const formRef = useRef<HTMLFormElement>(null);
 
   //all conditions used for conditional inputs
-  const conditions: keyOfFormSchemaType[] = [
-    "phone_number_is_active",
-    // "link_is_active",
-  ];
+  const conditions: keyOfFormSchemaType[] = ["phone_number_is_active"];
 
   const handleValueChange = (name: keyOfFormSchemaType) => {
     if (conditions.includes(name)) {
@@ -124,11 +118,12 @@ export default function Page() {
   }, [!activeConditionalInput ? "" : form.watch(activeConditionalInput)]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log("submitted");
+    console.log(values);
+    alert("valid");
   }
 
   const onInvalid = () => {
-    console.log("invalid");
+    alert("invalid");
 
     // Check and set default values for radio groups if not selected
     if (!form.getValues("main_page_type")) {
@@ -142,10 +137,12 @@ export default function Page() {
     }
 
     // Programmatically submit the form after setting default values
-    if (formRef.current) {
-      formRef.current.dispatchEvent(
-        new Event("submit", { cancelable: true, bubbles: true })
-      );
+    if (form.formState.isValid) {
+      if (formRef.current) {
+        formRef.current.dispatchEvent(
+          new Event("submit", { cancelable: true, bubbles: true })
+        );
+      }
     }
   };
 
