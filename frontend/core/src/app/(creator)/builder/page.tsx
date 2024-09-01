@@ -137,12 +137,10 @@ export default function Page() {
     }
 
     // Programmatically submit the form after setting default values
-    if (form.formState.isValid) {
-      if (formRef.current) {
-        formRef.current.dispatchEvent(
-          new Event("submit", { cancelable: true, bubbles: true })
-        );
-      }
+    if (formRef.current) {
+      formRef.current.dispatchEvent(
+        new Event("submit", { cancelable: true, bubbles: true })
+      );
     }
   };
 

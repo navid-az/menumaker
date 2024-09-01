@@ -7,10 +7,18 @@ export default function MenuBuilderLayout({
   children: React.ReactNode;
 }) {
   return (
-    <section className="overflow-hidden bg-white">
-      {/* form and prototype  */}
-      {/* px-40 container mx-auto */}
-      <div className=" flex h-screen justify-between ">{children}</div>
+    <section className="container m-auto flex items-center justify-center overflow-hidden sm:justify-between">
+      <div className="flex h-screen w-screen justify-center sm:w-7/12 lg:w-6/12">
+        {children}
+      </div>
+      <div className="hidden w-5/12 justify-end px-12 sm:flex lg:w-6/12">
+        <Image
+          src="/svgs/iphone.svg"
+          width={280}
+          height={570}
+          alt="menu prototype"
+        ></Image>
+      </div>
     </section>
   );
 }
