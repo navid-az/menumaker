@@ -43,7 +43,7 @@ export function Slider({ children }: { children: React.ReactNode }) {
   }, [activeStepHeight]);
 
   return (
-    <section className="container flex h-screen w-screen flex-col items-center justify-center gap-4 p-2 transition-all duration-300 ease-in-out xs:px-4 x:px-12 sm:gap-7">
+    <section className="container flex h-screen w-full flex-col items-center justify-center gap-4 p-2 transition-all duration-300 ease-in-out xs:px-4 sm:gap-7">
       <header className="flex w-full flex-col gap-1">
         <SliderTitle></SliderTitle>
       </header>
