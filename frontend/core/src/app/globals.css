@@ -179,15 +179,8 @@ scrollbar-width: none;  /* Firefox */
   position: absolute;
 }
 
-/* fiexes scaling animation  */
+/* fixes scaling animation  */
 .scale-pro {
   -webkit-font-smoothing: subpixel-antialiased;
   will-change: transform;  
 }
-/* .scale-pro:hover {	
-  -webkit-transform: scale(1.1) translate3d( 0, 0, 0) perspective(1px);
-     -moz-transform: scale(1.1) translate3d( 0, 0, 0) perspective(1px);
-       -o-transform: scale(1.1) translate3d( 0, 0, 0) perspective(1px);
-      -ms-transform: scale(1.1) translate3d( 0, 0, 0) perspective(1px);
-          transform: scale(1.1) translate3d( 0, 0, 0) perspective(1px);
-} */
