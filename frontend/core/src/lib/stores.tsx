@@ -121,3 +121,14 @@ export const useActionButton = create<ActionButtonType>((set) => ({
   setValue: (item) =>
     set(() => ({ id: item.id, icon: item.icon, name: item.name })),
 }));
+
+//~~~~ItemAdder ActionButton~~~~
+type CategoryBtn = {
+  activeCategory: string;
+  updateActiveCategory: (id: string) => void;
+};
+
+export const useCategoryBtn = create<CategoryBtn>()((set) => ({
+  activeCategory: "",
+  updateActiveCategory: (id) => set(() => ({ activeCategory: id })),
+}));
