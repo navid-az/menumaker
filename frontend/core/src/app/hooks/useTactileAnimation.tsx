@@ -26,12 +26,12 @@ export const useTactileAnimation: UseTactileAnimationType = (
 
   useEffect(() => {
     if (element.current) {
-      element.current.addEventListener("mouseup", triggerAnimation);
+      element.current.addEventListener("mousedown", triggerAnimation);
 
       const cleanupRef = element.current;
 
       return () => {
-        cleanupRef.removeEventListener("mouseup", triggerAnimation);
+        cleanupRef.removeEventListener("mousedown", triggerAnimation);
       };
     }
   }, [triggerAnimation]);
