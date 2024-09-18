@@ -247,7 +247,9 @@ function CategoryBtn({
   };
 
   //animate buttons according to animationType array(if it's not provided no animation will be executed)
-  useConditionalAnimation(buttonRef, animationType);
+  if (animationType) {
+    useConditionalAnimation(buttonRef, ["ripple", "tactile"]);
+  }
 
   return (
     <Button

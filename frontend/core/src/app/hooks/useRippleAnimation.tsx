@@ -1,8 +1,14 @@
 import React, { useEffect } from "react";
 
+//types
+export type RippleAnimationConfig = {
+  size?: number;
+  color?: string;
+  duration?: number;
+};
 type UseRippleAnimationType = (
   element: React.RefObject<HTMLElement>,
-  config: { size?: number; color?: string; duration?: number }
+  config: RippleAnimationConfig
 ) => void;
 
 export const useRippleAnimation: UseRippleAnimationType = (element, config) => {

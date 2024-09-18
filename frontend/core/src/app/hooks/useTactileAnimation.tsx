@@ -1,15 +1,20 @@
 import { useEffect, useCallback } from "react";
+
+//libraries
 import gsap from "gsap";
 
+//types
+export type TactileAnimationConfig = { duration?: number; scale?: number };
 type UseTactileAnimationType = (
   element: React.RefObject<HTMLElement>,
-  config: { duration?: number; scale?: number }
+  config: TactileAnimationConfig
 ) => () => void;
 
 export const useTactileAnimation: UseTactileAnimationType = (
   element,
   config
 ) => {
+  //default config
   const { duration = 0.2, scale = 0.9 } = config;
 
   const triggerAnimation = useCallback(() => {
