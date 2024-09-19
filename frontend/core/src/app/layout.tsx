@@ -30,8 +30,10 @@ export default function RootLayout({
           vazir.variable
         )}
       >
-        {children}
-        <Toaster duration={4000} />
+        <main data-vaul-drawer-wrapper>
+          {children}
+          <Toaster duration={4000} />
+        </main>
       </body>
     </html>
   );
