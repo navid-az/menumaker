@@ -45,6 +45,7 @@ type ItemType = {
 type CategoryType = {
   id: number;
   name: string;
+  icon: { name: string; image: string };
   is_active: boolean;
   items: ItemType[];
 };
@@ -82,7 +83,7 @@ export default function ItemsCategory({
 
   return (
     <div
-      className={`hide-scrollbar avoid-stretch ${
+      className={`hide-scrollbar avoid-stretch backdrop-blur-lg ${
         isSticky && "sticky"
       } top-0 z-50 flex overflow-y-auto ${
         hasBackGround && "bg-primary"
@@ -104,7 +105,7 @@ export default function ItemsCategory({
                   name={category.name}
                   parentType={type}
                   animationType={allowAnimation ? ["tactile", "ripple"] : []}
-                  icon="http://localhost:8000/media/iconPicker/icons/stake-colored-outline.svg"
+                  icon={category.icon.image}
                   style={{
                     background: categoryData.secondary_color,
                     color: categoryData.primary_color,
@@ -264,7 +265,7 @@ function CategoryBtn({
           className={`${isIconOnly ? "ml-0" : "ml-2"} ${
             !isIconOnly && size === "lg" ? "ml-4" : ""
           }`}
-          src={icon}
+          src={"http://localhost:8000" + icon}
           width={size === "lg" ? 28 : size === "sm" ? 22 : 24}
           height={size === "lg" ? 28 : size === "sm" ? 22 : 24}
           alt={name || "icon"}
