@@ -262,7 +262,7 @@ function CategoryBtn({
     >
       {icon && (
         <Image
-          className={`${isIconOnly ? "ml-0" : "ml-2"} ${
+          className={`${isIconOnly ? "ml-0" : "ltr:mr-2 rtl:ml-2"} ${
             !isIconOnly && size === "lg" ? "ml-4" : ""
           }`}
           src={"http://localhost:8000" + icon}

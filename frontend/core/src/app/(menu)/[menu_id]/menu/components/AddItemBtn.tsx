@@ -176,8 +176,8 @@ export default function AddItemBtn({
             });
           }}
         >
+          <Plus className="h-6 w-6 ltr:mr-2 rtl:ml-2" />
           <p className="text-lg">افزودن</p>
-          <Plus className="mr-2 h-6 w-6 ltr:ml-2" />
         </Button>
       )}
     </div>
