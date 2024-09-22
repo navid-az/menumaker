@@ -1,13 +1,13 @@
-import { createContext, useContext, useReducer } from "react";
+import React, { createContext, useContext, useReducer } from "react";
 
-export const ItemsContext = createContext(null);
+export const ItemsContext = createContext<contextType>({});
 export const ItemsDispatchContext = createContext(null);
 
-export function ItemsProvider({ children }) {
+export function ItemsProvider({ children }: { children: React.ReactNode }) {
   const [items, dispatch] = useReducer(itemsReducer, []);
 
-  const getItemQuantity = (id) => {
-    return items.find((item) => item.id === id)?.quantity || 0;
+  const getItemQuantity = (id: string) => {
+    return items.find((item: ItemType) => item.id === id)?.quantity || 0;
   };
 
   return (
@@ -18,14 +18,26 @@ export function ItemsProvider({ children }) {
     </ItemsContext.Provider>
   );
 }
-const ACTIONS = {
-  ADDED: "added",
-  INCREASED: "increased",
-  DECREASED: "decreased",
-  REMOVED: "removed",
-};
 
-function itemsReducer(items, action) {
+type contextType = {
+  items: ItemType[];
+  getItemQuantity: (id: string) => number;
+};
+enum ACTIONS {
+  ADDED,
+  INCREASED,
+  DECREASED,
+  REMOVED,
+}
+
+type ItemType = {
+  id: string;
+  quantity: number;
+};
+type ItemsType = ItemType[];
+type ReducerActionType = ItemType & { type: ACTIONS };
+
+const itemsReducer = (items: ItemsType, action: ReducerActionType) => {
   switch (action.type) {
     case ACTIONS.ADDED: {
       return [...items, { id: action.id, quantity: 1 }];
@@ -55,7 +67,7 @@ function itemsReducer(items, action) {
       throw Error("Unknown action: " + action.type);
     }
   }
-}
+};
 
 // custom hooks
 export function useItems() {
