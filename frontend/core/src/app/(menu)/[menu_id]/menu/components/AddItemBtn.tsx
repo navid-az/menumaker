@@ -125,6 +125,25 @@ export default function AddItemBtn({
           className={`flex h-full w-full items-center justify-between gap-2 rounded-full`}
         >
           <ValueChangerBtn
+            name="increase"
+            action={() => {
+              dispatch({
+                type: ACTIONS.INCREASED,
+                payload: { id: itemId },
+              });
+            }}
+            iconSrc="plus"
+            borderRadius={borderRadius}
+            primaryColor={primaryColor}
+            secondaryColor={secondaryColor}
+          ></ValueChangerBtn>
+
+          <span className="mt-1 flex-initial basis-4/12 text-center text-lg">
+            <p className="text-2xl" style={{ color: primaryColor }}>
+              {itemQuantity}
+            </p>
+          </span>
+          <ValueChangerBtn
             name="decrease"
             action={() => {
               itemQuantity > 1
@@ -138,24 +157,6 @@ export default function AddItemBtn({
                   });
             }}
             iconSrc={itemQuantity != 1 ? "minus" : "trash"}
-            borderRadius={borderRadius}
-            primaryColor={primaryColor}
-            secondaryColor={secondaryColor}
-          ></ValueChangerBtn>
-          <span className="mt-1 flex-initial basis-4/12 text-center text-lg">
-            <p className="text-2xl" style={{ color: primaryColor }}>
-              {itemQuantity}
-            </p>
-          </span>
-          <ValueChangerBtn
-            name="increase"
-            action={() => {
-              dispatch({
-                type: ACTIONS.INCREASED,
-                payload: { id: itemId },
-              });
-            }}
-            iconSrc="plus"
             borderRadius={borderRadius}
             primaryColor={primaryColor}
             secondaryColor={secondaryColor}
