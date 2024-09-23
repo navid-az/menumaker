@@ -32,7 +32,7 @@ type ItemsType = ItemType[];
 type ReducerActionType = { type: ACTIONS; payload: { id: string } };
 
 //component variants
-const addItemBtnVariants = cva(`relative flex transition-all`, {
+const addItemBtnVariants = cva(`flex transition-all`, {
   variants: {
     size: {
       default: "h-10 p-1",

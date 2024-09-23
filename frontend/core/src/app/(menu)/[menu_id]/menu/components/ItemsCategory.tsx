@@ -140,7 +140,7 @@ export default function ItemsCategory({
 }
 
 const buttonVariants = cva(
-  `relative flex-none select-none transition-colors duration-500`,
+  `flex-none select-none transition-colors duration-500`,
   {
     variants: {
       types: { vertical: "", horizontal: "" },
