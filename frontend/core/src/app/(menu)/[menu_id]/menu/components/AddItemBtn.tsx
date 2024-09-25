@@ -32,31 +32,34 @@ type ItemsType = ItemType[];
 type ReducerActionType = { type: ACTIONS; payload: { id: string } };
 
 //component variants
-const addItemBtnVariants = cva(`flex transition-all`, {
-  variants: {
-    size: {
-      default: "h-10 p-1",
-      sm: "h-9 rounded-md p-1",
-      lg: "h-11 rounded-md p-1.5",
+const addItemBtnVariants = cva(
+  `flex items-center justify-between transition-all`,
+  {
+    variants: {
+      size: {
+        default: "h-10 p-1",
+        sm: "h-9 rounded-md p-1",
+        lg: "h-11 rounded-md p-1.5",
+      },
+      variant: {
+        default: "",
+        minimal: "",
+        classic: "",
+      },
+      borderRadius: {
+        default: "rounded-full",
+        sm: "rounded-sm",
+        md: "rounded-md",
+        lg: "rounded-lg",
+      },
     },
-    variant: {
-      default: "",
-      minimal: "",
-      classic: "",
+    defaultVariants: {
+      size: "default",
+      variant: "default",
+      borderRadius: "default",
     },
-    borderRadius: {
-      default: "rounded-full",
-      sm: "rounded-sm",
-      md: "rounded-md",
-      lg: "rounded-lg",
-    },
-  },
-  defaultVariants: {
-    size: "default",
-    variant: "default",
-    borderRadius: "default",
-  },
-});
+  }
+);
 
 enum ACTIONS {
   ADDED,
@@ -115,15 +118,14 @@ export default function AddItemBtn({
 
   return (
     <div
+      onClick={(e) => e.stopPropagation()}
       className={cn(
         addItemBtnVariants({ variant, size, borderRadius, className })
       )}
       style={{ background: secondaryColor }}
     >
       {itemQuantity > 0 ? (
-        <section
-          className={`flex h-full w-full items-center justify-between gap-2 rounded-full`}
-        >
+        <>
           <ValueChangerBtn
             name="increase"
             action={() => {
@@ -161,7 +163,7 @@ export default function AddItemBtn({
             primaryColor={primaryColor}
             secondaryColor={secondaryColor}
           ></ValueChangerBtn>
-        </section>
+        </>
       ) : (
         <Button
           className="h-full w-full rounded-full p-0"
