@@ -41,6 +41,7 @@ export type MenuItemType = {
   price: number;
   is_available?: boolean;
   is_active?: boolean;
+  isFeatured?: boolean;
 };
 
 export function MenuItem({
@@ -51,8 +52,8 @@ export function MenuItem({
   price,
   is_active = true,
   is_available = true,
-}: // isFeatured = false,
-MenuItemType) {
+  isFeatured = false,
+}: MenuItemType) {
   const itemRef = useRef(null);
 
   //animations
@@ -64,36 +65,78 @@ MenuItemType) {
   return (
     <Drawer setBackgroundColorOnScale={false}>
       <DrawerTrigger asChild>
-        <div
-          ref={itemRef}
-          className="relative h-52 w-full xs:h-72 x:h-72 sm:h-[400px]"
-        >
-          <div className="absolute h-full w-full rounded-3xl bg-gradient-to-t from-zinc-900 to-70%"></div>
-          <Button
-            onClick={(e) => e.stopPropagation()}
-            className="absolute left-3 top-3 flex h-10 w-10 items-center justify-center rounded-3xl bg-inherit p-0 backdrop-blur-lg"
-          >
-            <Heart className="text-orange-300"></Heart>
-          </Button>
+        {is_available ? (
           <div
-            style={{ color: itemData.secondary_color }}
-            className={`absolute bottom-0 right-0 z-20 flex w-full flex-col justify-between rounded-b-3xl p-3 backdrop-blur-[1px] xss:p-4`}
+            ref={itemRef}
+            className="relative col-span-2 h-80 x:h-72 sm:h-[400px]"
           >
-            <div className="flex w-full justify-between gap-1">
-              <p className="text-xl font-bold">{name}</p>
-              <PriceTag price={price} unitDisplayType="compact"></PriceTag>
+            <div className="absolute h-full w-full rounded-3xl bg-gradient-to-t from-zinc-900 to-70%"></div>
+            <Button
+              onClick={(e) => e.stopPropagation()}
+              className="absolute left-3 top-3 flex h-10 w-10 items-center justify-center rounded-3xl bg-inherit p-0 backdrop-blur-lg"
+            >
+              <Heart className="text-orange-300"></Heart>
+            </Button>
+            <div
+              style={{ color: itemData.secondary_color }}
+              className={`absolute bottom-0 right-0 z-20 flex w-full flex-col justify-between rounded-b-3xl p-3 backdrop-blur-[1px] xss:p-4`}
+            >
+              <div className="flex w-full justify-between gap-1">
+                <p className="text-xl font-bold">{name}</p>
+                <PriceTag price={price} unitDisplayType="compact"></PriceTag>
+              </div>
+              <p className="line-clamp-1 w-10/12 text-ellipsis text-xs font-light xss:line-clamp-2 xss:w-full xss:text-sm">
+                {description}
+              </p>
             </div>
-            <p className="line-clamp-1 w-10/12 text-ellipsis text-xs font-light xss:line-clamp-2 xss:w-full xss:text-sm">
-              {description}
-            </p>
+            <Image
+              className="absolute -z-10 rounded-3xl object-cover"
+              src={`http://127.0.0.1:8000/${image}`}
+              alt={name}
+              fill
+            ></Image>
           </div>
-          <Image
-            className="absolute -z-10 rounded-3xl object-cover"
-            src={`http://127.0.0.1:8000/${image}`}
-            alt={name}
-            fill
-          ></Image>
-        </div>
+        ) : (
+          <div
+            ref={itemRef}
+            className="relative col-span-2 flex h-[300px] flex-none flex-col xss:col-span-1"
+          >
+            <div className="absolute inset-0 -z-10 rounded-2xl bg-gradient-to-t from-orange-200 from-25% to-60%"></div>
+            <div className="relative flex w-full basis-9/12 justify-end p-2">
+              <Button
+                size="icon"
+                onClick={(e) => e.stopPropagation()}
+                className="absolute z-20 h-8 w-8 rounded-full bg-inherit backdrop-blur-lg"
+              >
+                <Heart className="h-4 w-4 text-orange-300"></Heart>
+              </Button>
+              <Image
+                className="absolute -z-20 rounded-t-2xl object-cover"
+                src={`http://127.0.0.1:8000/${image}`}
+                alt={name}
+                fill
+              ></Image>
+            </div>
+            <div
+              style={{ color: itemData.primary_color }}
+              className={`absolute bottom-0 flex w-full flex-none shrink-0 basis-5/12 flex-col justify-between gap-3 rounded-b-3xl p-2`}
+            >
+              <div className="space-y-0.5">
+                <p className="text-lg font-semibold">{name}</p>
+                <p className="line-clamp-1 w-10/12 text-ellipsis text-xs font-light xss:w-full xss:text-sm">
+                  {description}
+                </p>
+              </div>
+              <AddItemBtn
+                onClick={(e) => e.stopPropagation()}
+                size="sm"
+                itemId={id.toString()}
+                primaryColor={itemData.secondary_color}
+                secondaryColor={itemData.primary_color}
+              ></AddItemBtn>
+            </div>
+          </div>
+        )}
       </DrawerTrigger>
       <DrawerContent className="rounded-t-3xl border-0 pt-1.5">
         {/* drawer handle */}

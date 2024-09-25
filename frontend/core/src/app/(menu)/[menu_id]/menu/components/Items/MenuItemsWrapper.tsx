@@ -28,7 +28,7 @@ export default function MenuItemsWrapper() {
   }
 
   return (
-    <div className="flex flex-col gap-4 p-2">
+    <div className="grid w-full grid-cols-2 justify-between gap-2 px-2 xss:gap-3 xss:px-3">
       {!isLoading ? (
         <>
           {data.map((item: MenuItemType) => (
@@ -37,6 +37,7 @@ export default function MenuItemsWrapper() {
               id={item.id}
               name={item.name}
               description={item.description}
+              is_available={item.is_available}
               price={item.price}
               image={item.image}
             ></MenuItem>
