@@ -1,12 +1,12 @@
 "use client";
 
-import React, { createContext, useRef, useState } from "react";
+import React, { createContext, useState } from "react";
 import Link from "next/link";
 
 //components
 import MenuItemsWrapper from "./components/MenuItem";
 import ItemsCategory from "./components/ItemsCategory";
-import SearchBar from "./components/SearchBar";
+// import SearchBar from "./components/SearchBar";
 import { Button } from "@/components/ui/button";
 import { SkeletonTheme } from "react-loading-skeleton";
 
@@ -50,10 +50,10 @@ export default function MenuPage({ params }) {
                 گارسون
                 <Bell className="ml-2 h-4 w-4" />
               </Button>
-              <SearchBar
+              {/* <SearchBar
                 value={searchedValue}
                 setValue={setSearchedValue}
-              ></SearchBar>
+              ></SearchBar> */}
             </section>
           </header>
           <ItemsCategory type={type} params={params} />
