@@ -48,13 +48,13 @@ export default function MenuItemsWrapper() {
         data.map(
           (category) =>
             category["items"].length > 0 && (
-              <div key={category.id}>
+              <div key={category.id} id={`category-title-${category.id}`}>
                 <ItemsCategoryTitle
                   id={category.id}
+                  categoryIcon={category.icon.image}
                   categoryName={category.name}
-                  parentType="sticky"
                 />
-                <div className="grid w-full grid-cols-2 justify-between gap-2 p-2">
+                <div className="relative grid w-full grid-cols-2 justify-between gap-2 p-2">
                   {category["items"].map((item) => (
                     <MenuItem
                       key={item.id}

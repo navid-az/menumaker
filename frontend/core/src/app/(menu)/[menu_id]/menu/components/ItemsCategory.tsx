@@ -234,7 +234,8 @@ function CategoryBtn({
     }
 
     const categoryTitle = document.getElementById(`category-title-${id}`);
-    const verticalCategoriesNavHeight = 48;
+
+    const verticalCategoriesNavHeight = 56;
 
     if (categoryTitle) {
       window.scroll({
