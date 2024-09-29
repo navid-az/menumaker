@@ -2,7 +2,6 @@ import Image from "next/image";
 
 //types
 type ItemsCategoryTitleType = {
-  id: number;
   categoryName?: string;
   categoryIcon?: string;
   sticky?: boolean;
@@ -11,7 +10,6 @@ type ItemsCategoryTitleType = {
 };
 
 const ItemsCategoryTitle = ({
-  id,
   categoryName,
   categoryIcon,
   sticky = false,
@@ -23,7 +21,7 @@ const ItemsCategoryTitle = ({
       <span
         className={`${sticky && "sticky top-14 z-30"} ${
           parentType == "vertical" ? " top-0" : "top-12"
-        } flex items-center justify-start gap-2 p-2`}
+        } mb-2 flex items-center justify-start gap-2 p-2 transition-all`}
       >
         {direction != "right" && (
           <span className="h-1 flex-1 rounded-full bg-gradient-to-r from-orange-300 from-30%"></span>

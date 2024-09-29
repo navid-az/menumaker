@@ -43,18 +43,17 @@ export default function MenuItemsWrapper() {
   }
 
   return (
-    <div className="flex w-full flex-col">
+    <div className="flex w-full flex-col gap-2 px-2">
       {!isLoading ? (
         data.map(
           (category) =>
             category["items"].length > 0 && (
               <div key={category.id} id={`category-title-${category.id}`}>
                 <ItemsCategoryTitle
-                  id={category.id}
                   categoryIcon={category.icon.image}
                   categoryName={category.name}
                 />
-                <div className="relative grid w-full grid-cols-2 justify-between gap-2 p-2">
+                <div className="relative grid w-full grid-cols-2 justify-between gap-2">
                   {category["items"].map((item) => (
                     <MenuItem
                       key={item.id}
