@@ -7,6 +7,8 @@ type ItemsCategoryTitleType = {
   sticky?: boolean;
   direction?: "center" | "right" | "left";
   parentType?: "vertical" | "horizontal";
+  lineType?: "straight" | "curly" | "doted";
+  lineGradient?: boolean;
 };
 
 const ItemsCategoryTitle = ({
@@ -15,15 +17,30 @@ const ItemsCategoryTitle = ({
   sticky = false,
   direction = "center",
   parentType = "vertical",
+  lineType = "straight",
+  lineGradient = true,
 }: ItemsCategoryTitleType) => {
+  direction != "right" || lineType != "curly";
+  const showLines = (lineDirection: "right" | "left") => {
+    if (lineType) {
+      if (lineDirection != direction) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  };
   if (categoryIcon || categoryName) {
     return (
       <span
         className={`${sticky && "sticky top-14 z-30"} ${
           parentType == "vertical" ? " top-0" : "top-12"
-        } mb-2 flex items-center justify-start gap-2 p-2 transition-all`}
+        } mb-2 flex items-center gap-2 p-2 transition-all`}
+        style={{ justifyContent: direction }}
       >
-        {direction != "right" && (
+        {showLines("right") && (
           <span className="h-1 flex-1 rounded-full bg-gradient-to-r from-orange-300 from-30%"></span>
         )}
         {categoryIcon && (
@@ -40,7 +57,7 @@ const ItemsCategoryTitle = ({
             {categoryName}
           </p>
         )}
-        {direction != "left" && (
+        {showLines("left") && (
           <span className="h-1 flex-1 rotate-180 rounded-full bg-gradient-to-r from-orange-300 from-30%"></span>
         )}
       </span>
