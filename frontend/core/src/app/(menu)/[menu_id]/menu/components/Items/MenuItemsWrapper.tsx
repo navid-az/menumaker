@@ -7,6 +7,10 @@ import ItemsCategoryTitle from "../ItemsCategoryTitle";
 //libraries
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { InView } from "react-intersection-observer";
+
+//hooks
+import { useCategoryBtn } from "@/lib/stores";
 
 //types
 import { MenuItemType } from "./MenuItem";
@@ -42,31 +46,55 @@ export default function MenuItemsWrapper() {
     return <span>Error: {errorMessage}</span>;
   }
 
+  const setActiveCategory = useCategoryBtn(
+    (state) => state.updateActiveCategory
+  );
+
+  const setInView = (inView: boolean, entry: IntersectionObserverEntry) => {
+    if (inView) {
+      setActiveCategory(entry.target.getAttribute("id") as string);
+    }
+  };
+
   return (
-    <div className="flex w-full flex-col gap-2 px-2">
+    <div className="flex w-full flex-col gap-2 px-2 pb-2">
       {!isLoading ? (
         data.map(
           (category) =>
             category["items"].length > 0 && (
-              <div key={category.id} id={`category-title-${category.id}`}>
-                <ItemsCategoryTitle
-                  categoryIcon={category.icon.image}
-                  categoryName={category.name}
-                />
-                <div className="relative grid w-full grid-cols-2 justify-between gap-2">
-                  {category["items"].map((item) => (
-                    <MenuItem
-                      key={item.id}
-                      id={item.id}
-                      name={item.name}
-                      description={item.description}
-                      is_available={item.is_available}
-                      price={item.price}
-                      image={item.image}
-                    ></MenuItem>
-                  ))}
-                </div>
-              </div>
+              <InView
+                onChange={setInView}
+                rootMargin="-400px"
+                key={category.id}
+              >
+                {({ ref }) => {
+                  return (
+                    <section
+                      ref={ref}
+                      key={category.id}
+                      id={category.id.toString()}
+                    >
+                      <ItemsCategoryTitle
+                        categoryIcon={category.icon.image}
+                        categoryName={category.name}
+                      />
+                      <div className="relative grid w-full grid-cols-2 justify-between gap-2">
+                        {category["items"].map((item) => (
+                          <MenuItem
+                            key={item.id}
+                            id={item.id}
+                            name={item.name}
+                            description={item.description}
+                            is_available={item.is_available}
+                            price={item.price}
+                            image={item.image}
+                          ></MenuItem>
+                        ))}
+                      </div>
+                    </section>
+                  );
+                }}
+              </InView>
             )
         )
       ) : (
@@ -81,19 +109,3 @@ export default function MenuItemsWrapper() {
     </div>
   );
 }
-
-/* {!isLoading ? (
-        <>
-          {data.map((item: MenuItemType) => (
-            <MenuItem
-              key={item.id}
-              id={item.id}
-              name={item.name}
-              description={item.description}
-              is_available={item.is_available}
-              price={item.price}
-              image={item.image}
-            ></MenuItem>
-          ))}
-        </>
-      )  */
