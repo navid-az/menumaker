@@ -28,6 +28,8 @@ const categoryData = {
 //hooks
 import { useCategoryBtn } from "@/lib/stores";
 import useConditionalAnimation from "@/app/hooks/useConditionalAnimation";
+import { useTactileAnimation } from "@/app/hooks/useTactileAnimation"; //animation hook
+import { useRippleAnimation } from "@/app/hooks/useRippleAnimation"; //animation hook
 
 //types
 import type { AnimationVariant } from "@/app/hooks/useConditionalAnimation";
@@ -210,6 +212,9 @@ function CategoryBtn({
     }
   }, [name, icon]);
 
+  const triggerTactileAnimation = useTactileAnimation(buttonRef, {});
+  const triggerRippleAnimation = useRippleAnimation(buttonRef, {});
+
   //style active CategoryBtn
   useEffect(() => {
     if (buttonRef.current) {
@@ -219,6 +224,9 @@ function CategoryBtn({
           30
         );
         buttonRef.current.style.border = `2px solid ${categoryData.primary_color}`;
+        //programmatically trigger animations
+        triggerTactileAnimation();
+        triggerRippleAnimation();
       } else {
         buttonRef.current.style.border = `2px solid transparent`;
         buttonRef.current.style.background = categoryData.secondary_color;
@@ -231,20 +239,19 @@ function CategoryBtn({
   const moveToCat = () => {
     if (id) {
       setActiveCategory(id);
-    }
 
-    const categoryTitle = document.getElementById(`category-title-${id}`);
+      const categoryTitle = document.getElementById(id);
+      const verticalCategoriesNavHeight = 56;
 
-    const verticalCategoriesNavHeight = 56;
-
-    if (categoryTitle) {
-      window.scroll({
-        top:
-          window.scrollY +
-          categoryTitle.getBoundingClientRect().top -
-          (parentType != "vertical" ? verticalCategoriesNavHeight : 0),
-        behavior: "smooth",
-      });
+      if (categoryTitle) {
+        window.scroll({
+          top:
+            window.scrollY +
+            categoryTitle.getBoundingClientRect().top -
+            (parentType != "vertical" ? verticalCategoriesNavHeight : 0),
+          behavior: "smooth",
+        });
+      }
     }
   };
 
