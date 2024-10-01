@@ -1,22 +1,28 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 
 //types
 export type RippleAnimationConfig = {
   size?: number;
   color?: string;
   duration?: number;
+  simulation?: boolean;
 };
 type UseRippleAnimationType = (
   element: React.RefObject<HTMLElement>,
   config: RippleAnimationConfig
-) => void;
+) => (e: MouseEvent) => void;
 
 export const useRippleAnimation: UseRippleAnimationType = (element, config) => {
   //default config
-  const { size = 100, color = "#FFF", duration = 800 } = config;
+  const {
+    size = 100,
+    color = "#FFF",
+    duration = 800,
+    simulation = false,
+  } = config;
 
-  useEffect(() => {
-    const onClick = (e: MouseEvent) => {
+  const triggerAnimation = useCallback(
+    (e: MouseEvent) => {
       if (element.current) {
         element.current.classList.remove("active");
 
@@ -25,31 +31,52 @@ export const useRippleAnimation: UseRippleAnimationType = (element, config) => {
         const sizeOffset = size / 2.02;
 
         style.setProperty("--effect-duration", `${duration}ms`);
-        style.setProperty(
-          "--effect-top",
-          `${e.clientY - rect.top - sizeOffset}px`
-        );
-        style.setProperty(
-          "--effect-left",
-          `${e.clientX - rect.left - sizeOffset}px`
-        );
+        if (!simulation) {
+          style.setProperty(
+            "--effect-top",
+            `${e.clientY - rect.top - sizeOffset}px`
+          );
+          style.setProperty(
+            "--effect-left",
+            `${e.clientX - rect.left - sizeOffset}px`
+          );
+        } else {
+          const rect = element.current.getBoundingClientRect();
+          const centerX = (rect.left + rect.right) / 2;
+          const centerY = (rect.top + rect.bottom) / 2;
+          setTimeout(() => {
+            style.setProperty(
+              "--effect-top",
+              `${centerY - rect.top - sizeOffset}px`
+            );
+            style.setProperty(
+              "--effect-left",
+              `${centerX - rect.left - sizeOffset}px`
+            );
+          }, 100);
+        }
         style.setProperty("--effect-height", `${size}px`);
         style.setProperty("--effect-width", `${size}px`);
         style.setProperty("--effect-color", color);
 
         element.current?.classList.add("active");
       }
-    };
+    },
+    [color, duration, element, size, simulation]
+  );
 
+  useEffect(() => {
     if (element.current) {
       element.current.classList.add("effect-container");
-      element.current.addEventListener("mousedown", onClick);
+      element.current.addEventListener("mousedown", triggerAnimation);
     }
 
     return () => {
       if (element.current) {
-        element.current.removeEventListener("mousedown", onClick);
+        element.current.removeEventListener("mousedown", triggerAnimation);
       }
     };
-  }, [color, duration, element, size]);
+  }, [triggerAnimation]);
+
+  return triggerAnimation;
 };
