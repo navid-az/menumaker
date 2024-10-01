@@ -5,24 +5,18 @@ export type RippleAnimationConfig = {
   size?: number;
   color?: string;
   duration?: number;
-  simulation?: boolean;
 };
 type UseRippleAnimationType = (
   element: React.RefObject<HTMLElement>,
   config: RippleAnimationConfig
-) => (e: MouseEvent) => void;
+) => (e?: MouseEvent) => void;
 
 export const useRippleAnimation: UseRippleAnimationType = (element, config) => {
   //default config
-  const {
-    size = 100,
-    color = "#FFF",
-    duration = 800,
-    simulation = false,
-  } = config;
+  const { size = 100, color = "#FFF", duration = 800 } = config;
 
   const triggerAnimation = useCallback(
-    (e: MouseEvent) => {
+    (e?: MouseEvent) => {
       if (element.current) {
         element.current.classList.remove("active");
 
@@ -31,7 +25,7 @@ export const useRippleAnimation: UseRippleAnimationType = (element, config) => {
         const sizeOffset = size / 2.02;
 
         style.setProperty("--effect-duration", `${duration}ms`);
-        if (!simulation) {
+        if (e) {
           style.setProperty(
             "--effect-top",
             `${e.clientY - rect.top - sizeOffset}px`
@@ -62,7 +56,7 @@ export const useRippleAnimation: UseRippleAnimationType = (element, config) => {
         element.current?.classList.add("active");
       }
     },
-    [color, duration, element, size, simulation]
+    [color, duration, element, size]
   );
 
   useEffect(() => {
