@@ -125,10 +125,17 @@ export const useActionButton = create<ActionButtonType>((set) => ({
 //~~~~ItemAdder ActionButton~~~~
 type CategoryBtn = {
   activeCategory: string;
+  shouldAutoAnimate: boolean;
+  updateShouldAutoAnimate: (value: boolean) => void;
   updateActiveCategory: (id: string) => void;
 };
 
 export const useCategoryBtn = create<CategoryBtn>()((set) => ({
   activeCategory: "",
+  shouldAutoAnimate: true,
+  updateShouldAutoAnimate: (value) =>
+    set(() => ({
+      shouldAutoAnimate: value,
+    })),
   updateActiveCategory: (id) => set(() => ({ activeCategory: id })),
 }));

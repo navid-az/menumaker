@@ -203,6 +203,10 @@ function CategoryBtn({
   const setActiveCategory = useCategoryBtn(
     (state) => state.updateActiveCategory
   );
+  const shouldAutoAnimate = useCategoryBtn((state) => state.shouldAutoAnimate);
+  const updateShouldAutoAnimate = useCategoryBtn(
+    (state) => state.updateShouldAutoAnimate
+  );
 
   useEffect(() => {
     if (!name && icon) {
@@ -225,8 +229,11 @@ function CategoryBtn({
         );
         buttonRef.current.style.border = `2px solid ${categoryData.primary_color}`;
         //programmatically trigger animations
-        triggerTactileAnimation();
-        triggerRippleAnimation();
+        if (shouldAutoAnimate) {
+          triggerTactileAnimation();
+          triggerRippleAnimation();
+        }
+        updateShouldAutoAnimate(true);
       } else {
         buttonRef.current.style.border = `2px solid transparent`;
         buttonRef.current.style.background = categoryData.secondary_color;
@@ -237,6 +244,7 @@ function CategoryBtn({
 
   //move to the related items on click
   const moveToCat = () => {
+    updateShouldAutoAnimate(false);
     if (id) {
       setActiveCategory(id);
 
