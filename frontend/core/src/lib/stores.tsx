@@ -1,5 +1,6 @@
 import { create } from "zustand";
-import { PlatformTypes } from "./identifyPlatform";
+
+//types
 import { ItemType } from "@/components/global/ItemAdder";
 
 type State = {
@@ -138,4 +139,45 @@ export const useCategoryBtn = create<CategoryBtn>()((set) => ({
       shouldAutoAnimate: value,
     })),
   updateActiveCategory: (id) => set(() => ({ activeCategory: id })),
+}));
+
+//~~~~ItemCart~~~~
+type ItemCartType = { id: number; count: number };
+type ItemCart = {
+  items: ItemCartType[];
+  incrementItemCount: (id: number) => void;
+  decrementItemCount: (id: number) => void;
+  removeItem: (id: number) => void;
+  updateItems: (id: number) => void;
+};
+export const useItemCart = create<ItemCart>()((set) => ({
+  items: [],
+  updateItems: (newItemId) => {
+    set((state) => ({
+      items: [...state.items, { id: newItemId, count: 1 }],
+    }));
+  },
+  incrementItemCount: (id) => {
+    set((state) => ({
+      items: state.items.map((cartItem) =>
+        cartItem.id === id
+          ? { ...cartItem, count: cartItem.count + 1 }
+          : cartItem
+      ),
+    }));
+  },
+  decrementItemCount: (id) => {
+    set((state) => ({
+      items: state.items.map((cartItem) =>
+        cartItem.id === id
+          ? { ...cartItem, count: cartItem.count - 1 }
+          : cartItem
+      ),
+    }));
+  },
+  removeItem: (id) => {
+    set((state) => {
+      return { items: state.items.filter((item) => item.id != id) };
+    });
+  },
 }));

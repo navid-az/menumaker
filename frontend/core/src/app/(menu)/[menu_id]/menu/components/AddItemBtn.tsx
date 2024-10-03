@@ -1,4 +1,5 @@
-import React, { useRef, useReducer } from "react";
+"use client";
+import React, { useRef, useEffect, useState } from "react";
 
 //SVGs
 import { Minus, Plus, Trash } from "@/app/components/svgs";
@@ -12,10 +13,11 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 //hooks
 import useConditionalAnimation from "@/app/hooks/useConditionalAnimation";
+import { useItemCart } from "@/lib/stores";
 
 //types
 type AddItemBtnType = {
-  itemId: string;
+  itemId: number;
   primaryColor: string;
   secondaryColor: string;
 };
@@ -23,13 +25,6 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLDivElement>,
     AddItemBtnType,
     VariantProps<typeof addItemBtnVariants> {}
-
-type ItemType = {
-  id: string;
-  quantity: number;
-};
-type ItemsType = ItemType[];
-type ReducerActionType = { type: ACTIONS; payload: { id: string } };
 
 //component variants
 const addItemBtnVariants = cva(
@@ -61,46 +56,6 @@ const addItemBtnVariants = cva(
   }
 );
 
-enum ACTIONS {
-  ADDED,
-  INCREASED,
-  DECREASED,
-  REMOVED,
-}
-
-//reducer function
-const itemsReducer = (items: ItemsType, action: ReducerActionType) => {
-  switch (action.type) {
-    case ACTIONS.ADDED: {
-      return [...items, { id: action.payload.id, quantity: 1 }];
-    }
-    case ACTIONS.INCREASED: {
-      return items.map((item) => {
-        if (item.id === action.payload.id) {
-          return { ...item, quantity: item.quantity++ };
-        } else {
-          return item;
-        }
-      });
-    }
-    case ACTIONS.DECREASED: {
-      return items.map((item) => {
-        if (item.id === action.payload.id) {
-          return { ...item, quantity: item.quantity-- };
-        } else {
-          return item;
-        }
-      });
-    }
-    case ACTIONS.REMOVED: {
-      return items.filter((item) => item.id !== action.payload.id);
-    }
-    default: {
-      throw Error("Unknown action: " + action.type);
-    }
-  }
-};
-
 export default function AddItemBtn({
   itemId,
   primaryColor,
@@ -110,11 +65,36 @@ export default function AddItemBtn({
   variant,
   className,
 }: ButtonProps) {
-  const [items, dispatch] = useReducer(itemsReducer, []);
-  const getItemQuantity = (id: string) => {
-    return items.find((item: ItemType) => item.id === id)?.quantity || 0;
+  const cartItems = useItemCart((state) => state.items);
+  const incrementItemCount = useItemCart((state) => state.incrementItemCount);
+  const decrementItemCount = useItemCart((state) => state.decrementItemCount);
+  const removeItem = useItemCart((state) => state.removeItem);
+  const addItem = useItemCart((state) => state.updateItems);
+
+  const [quantity, setQuantity] = useState(0);
+
+  useEffect(() => {
+    const item = cartItems.find((item) => item.id === itemId);
+    if (item) {
+      setQuantity(item.count);
+    } else {
+      setQuantity(0);
+    }
+  }, [cartItems]);
+
+  const handleIncrement = () => {
+    incrementItemCount(itemId);
   };
-  const itemQuantity = getItemQuantity(itemId);
+  const handleDecrement = () => {
+    if (quantity > 1) {
+      decrementItemCount(itemId);
+    } else {
+      removeItem(itemId);
+    }
+  };
+  const handleAdd = () => {
+    addItem(itemId);
+  };
 
   return (
     <div
@@ -124,16 +104,11 @@ export default function AddItemBtn({
       )}
       style={{ background: secondaryColor }}
     >
-      {itemQuantity > 0 ? (
+      {quantity > 0 ? (
         <>
           <ValueChangerBtn
             name="increase"
-            action={() => {
-              dispatch({
-                type: ACTIONS.INCREASED,
-                payload: { id: itemId },
-              });
-            }}
+            action={handleIncrement}
             iconSrc="plus"
             borderRadius={borderRadius}
             primaryColor={primaryColor}
@@ -142,23 +117,13 @@ export default function AddItemBtn({
 
           <span className="mt-1 flex-initial basis-4/12 text-center text-lg">
             <p className="text-2xl" style={{ color: primaryColor }}>
-              {itemQuantity}
+              {quantity}
             </p>
           </span>
           <ValueChangerBtn
             name="decrease"
-            action={() => {
-              itemQuantity > 1
-                ? dispatch({
-                    type: ACTIONS.DECREASED,
-                    payload: { id: itemId },
-                  })
-                : dispatch({
-                    type: ACTIONS.REMOVED,
-                    payload: { id: itemId },
-                  });
-            }}
-            iconSrc={itemQuantity != 1 ? "minus" : "trash"}
+            action={handleDecrement}
+            iconSrc={quantity != 1 ? "minus" : "trash"}
             borderRadius={borderRadius}
             primaryColor={primaryColor}
             secondaryColor={secondaryColor}
@@ -171,12 +136,7 @@ export default function AddItemBtn({
             background: secondaryColor,
             color: primaryColor,
           }}
-          onClick={() => {
-            dispatch({
-              type: ACTIONS.ADDED,
-              payload: { id: itemId },
-            });
-          }}
+          onClick={handleAdd}
         >
           <Plus className="h-6 w-6 ltr:mr-2 rtl:ml-2" />
           <p className="text-lg">افزودن</p>
