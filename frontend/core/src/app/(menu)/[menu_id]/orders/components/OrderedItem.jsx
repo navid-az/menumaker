@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 //components
-import AddItemBtn from "../../menu/components/AddItemBtn";
+import AddToCartBtn from "../../menu/components/AddToCartBtn";
 import PriceTag from "../../menu/components/PriceTag";
 
 export default function OrderedItem({ id, quantity, params }) {
@@ -36,11 +36,11 @@ export default function OrderedItem({ id, quantity, params }) {
           ></PriceTag>
         </div>
         <div className="flex h-full basis-7/12 justify-between">
-          <AddItemBtn
+          <AddToCartBtn
             primaryColor="#0F2C30"
             secondaryColor="#94D9E2"
             itemId={item.id}
-          ></AddItemBtn>
+          ></AddToCartBtn>
           <div>{item.name}</div>
         </div>
       </div>

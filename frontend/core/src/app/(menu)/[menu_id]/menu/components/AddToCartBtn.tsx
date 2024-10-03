@@ -16,18 +16,18 @@ import useConditionalAnimation from "@/app/hooks/useConditionalAnimation";
 import { useItemCart } from "@/lib/stores";
 
 //types
-type AddItemBtnType = {
+type AddToCartBtnType = {
   itemId: number;
   primaryColor: string;
   secondaryColor: string;
 };
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLDivElement>,
-    AddItemBtnType,
-    VariantProps<typeof addItemBtnVariants> {}
+    AddToCartBtnType,
+    VariantProps<typeof AddToCartBtnVariants> {}
 
 //component variants
-const addItemBtnVariants = cva(
+const AddToCartBtnVariants = cva(
   `flex items-center justify-between transition-all`,
   {
     variants: {
@@ -56,7 +56,7 @@ const addItemBtnVariants = cva(
   }
 );
 
-export default function AddItemBtn({
+export default function AddToCartBtn({
   itemId,
   primaryColor,
   secondaryColor,
@@ -100,7 +100,7 @@ export default function AddItemBtn({
     <div
       onClick={(e) => e.stopPropagation()}
       className={cn(
-        addItemBtnVariants({ variant, size, borderRadius, className })
+        AddToCartBtnVariants({ variant, size, borderRadius, className })
       )}
       style={{ background: secondaryColor }}
     >

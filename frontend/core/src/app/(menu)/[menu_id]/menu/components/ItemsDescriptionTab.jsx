@@ -2,7 +2,7 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 
-import AddItemBtn from "./AddItemBtn";
+import AddToCartBtn from "./AddToCartBtn";
 import PriceTag from "./PriceTag";
 
 import gsap from "gsap";
@@ -71,7 +71,7 @@ export default function ItemsDescriptionTab({
             priceUnit={"simple"}
             isLoading={false}
           />
-          <AddItemBtn itemId={activeItemData["id"]} />
+          <AddToCartBtn itemId={activeItemData["id"]} />
         </footer>
       </section>
     </div>

@@ -15,7 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import PriceTag from "../PriceTag";
-import AddItemBtn from "../AddItemBtn";
+import AddToCartBtn from "../AddToCartBtn";
 
 //hooks
 import useConditionalAnimation from "@/app/hooks/useConditionalAnimation";
@@ -127,13 +127,12 @@ export function MenuItem({
                   {description}
                 </p>
               </div>
-              <AddItemBtn
-                onClick={(e) => e.stopPropagation()}
+              <AddToCartBtn
                 size="sm"
-                itemId={id.toString()}
+                itemId={id}
                 primaryColor={itemData.secondary_color}
                 secondaryColor={itemData.primary_color}
-              ></AddItemBtn>
+              ></AddToCartBtn>
             </div>
           </div>
         )}
@@ -173,12 +172,12 @@ export function MenuItem({
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter>
-          <AddItemBtn
+          <AddToCartBtn
             size="lg"
-            itemId={id.toString()}
+            itemId={id}
             primaryColor={itemData.primary_color}
             secondaryColor={itemData.secondary_color}
-          ></AddItemBtn>
+          ></AddToCartBtn>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>

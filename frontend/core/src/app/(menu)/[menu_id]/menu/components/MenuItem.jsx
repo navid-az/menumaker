@@ -2,7 +2,7 @@ import { createContext, useRef, useState } from "react";
 import Image from "next/image";
 
 //components
-import AddItemBtn from "./AddItemBtn";
+import AddToCartBtn from "./AddToCartBtn";
 import PriceTag from "./PriceTag";
 import Tag from "./Tag";
 import ItemsCategoryTitle from "./ItemsCategoryTitle";
@@ -182,11 +182,11 @@ function MenuItem({
               <Skeleton containerClassName="flex h-full" />
             </div>
           ) : (
-            <AddItemBtn
+            <AddToCartBtn
               primaryColor={primaryColor}
               secondaryColor={secondaryColor}
               itemId={id}
-            ></AddItemBtn>
+            ></AddToCartBtn>
           )}
         </footer>
       </section>
