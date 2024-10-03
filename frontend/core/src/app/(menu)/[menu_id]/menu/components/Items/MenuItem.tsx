@@ -19,6 +19,7 @@ import AddToCartBtn from "../AddToCartBtn";
 
 //hooks
 import useConditionalAnimation from "@/app/hooks/useConditionalAnimation";
+import { useMenuItemDrawer } from "@/lib/stores";
 
 //SVGs
 import { Heart } from "lucide-react";
@@ -62,8 +63,14 @@ export function MenuItem({
     { animation: "tactile", config: { duration: 0.1, scale: 0.9 } },
   ]);
 
+  //change the value of drawerIsOpen global state
+  const setDrawerIsOpen = useMenuItemDrawer((state) => state.updateIsOpen);
+  const handleDrawer = () => {
+    setDrawerIsOpen();
+  };
+
   return (
-    <Drawer setBackgroundColorOnScale={false}>
+    <Drawer setBackgroundColorOnScale={false} onOpenChange={handleDrawer}>
       <DrawerTrigger asChild>
         {is_available ? (
           <div
