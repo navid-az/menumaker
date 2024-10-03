@@ -15,7 +15,7 @@ import { useCategoryBtn } from "@/lib/stores";
 //types
 import { MenuItemType } from "./MenuItem";
 import { Skeleton } from "@/components/ui/skeleton";
-type CategoriesType = {
+export type CategoriesType = {
   id: number;
   menu: string;
   items: MenuItemType[];
@@ -62,11 +62,7 @@ export default function MenuItemsWrapper() {
         data.map(
           (category) =>
             category["items"].length > 0 && (
-              <InView
-                onChange={setInView}
-                rootMargin="-400px"
-                key={category.id}
-              >
+              <InView onChange={setInView} rootMargin="-80%" key={category.id}>
                 {({ ref }) => {
                   return (
                     <section
