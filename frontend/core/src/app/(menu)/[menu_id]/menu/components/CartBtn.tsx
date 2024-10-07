@@ -97,11 +97,7 @@ function CartBtn() {
     <Button
       ref={cartBtnRef}
       asChild
-<<<<<<< HEAD
       className="!fixed bottom-[-80px] left-0 right-0 z-50 m-3 flex h-max items-center justify-between rounded-full bg-orange-300 p-1.5 shadow-2xl xs:p-2"
-=======
-      className="!fixed bottom-[-80px] left-0 right-0 z-50 m-3 flex h-16 items-center justify-between rounded-full bg-orange-300 p-1.5 shadow-2xl xs:p-2"
->>>>>>> 88eb1fa3c051b0c307bdde8f1b7e935f2056eed5
     >
       <Link href={`/venhan/orders`}>
         <div className=" flex items-center pr-2">
