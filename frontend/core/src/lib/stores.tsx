@@ -181,3 +181,17 @@ export const useItemCart = create<ItemCart>()((set) => ({
     });
   },
 }));
+
+//~~~~MenuItem/item-info-drawer~~~~
+type useMenuItemDrawerType = {
+  isOpen: boolean;
+  updateIsOpen: () => void;
+};
+export const useMenuItemDrawer = create<useMenuItemDrawerType>()((set) => ({
+  isOpen: false,
+  updateIsOpen: () => {
+    set((state) => {
+      return { isOpen: !state.isOpen };
+    });
+  },
+}));

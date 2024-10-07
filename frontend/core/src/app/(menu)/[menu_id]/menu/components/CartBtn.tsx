@@ -4,16 +4,20 @@ import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { useItemCart } from "@/lib/stores";
+import gsap from "gsap";
 
 //components
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
+//hooks
+import { useMenuItemDrawer } from "@/lib/stores";
+import useConditionalAnimation from "@/app/hooks/useConditionalAnimation";
+
 //types
 import { type CategoriesType } from "./Items/MenuItemsWrapper";
 import { type MenuItemType } from "./Items/MenuItem";
-import useConditionalAnimation from "@/app/hooks/useConditionalAnimation";
 
 function CartBtn() {
   const { isLoading, isError, data, error } = useQuery({
@@ -61,6 +65,31 @@ function CartBtn() {
     setMatchingItems(items);
   }, [isLoading, cartItems]);
 
+  const DrawerIsOpen = useMenuItemDrawer((state) => state.isOpen);
+
+  //show/hide cart button according to MenuItem Drawer & items count
+  useEffect(() => {
+    if (DrawerIsOpen) {
+      gsap.to(cartBtnRef.current, {
+        duration: 0.3,
+        y: 0,
+      });
+    } else {
+      if (cartItems.length > 0) {
+        gsap.to(cartBtnRef.current, {
+          delay: 0.5,
+          duration: 0.3,
+          y: -80,
+        });
+      } else if (cartItems.length === 0) {
+        gsap.to(cartBtnRef.current, {
+          duration: 0.3,
+          y: 0,
+        });
+      }
+    }
+  }, [cartItems, DrawerIsOpen]);
+
   //add animations
   useConditionalAnimation(cartBtnRef, ["tactile"]);
 
@@ -68,7 +97,7 @@ function CartBtn() {
     <Button
       ref={cartBtnRef}
       asChild
-      className="!fixed bottom-0 left-0 right-0 z-50 m-3 flex h-16 items-center justify-between rounded-full bg-orange-300 p-1.5 shadow-2xl xs:p-2"
+      className="!fixed bottom-[-80px] left-0 right-0 z-50 m-3 flex h-max items-center justify-between rounded-full bg-orange-300 p-1.5 shadow-2xl xs:p-2"
     >
       <Link href={`/venhan/orders`}>
         <div className=" flex items-center pr-2">
