@@ -22,7 +22,7 @@ type PriceTagType = {
 };
 
 export default function PriceTag({
-  price = 0,
+  price,
   unitDisplayType,
   size,
   removeZeroes = false,
@@ -38,7 +38,7 @@ export default function PriceTag({
     } else {
       setValidatedPrice(formatCurrency(price));
     }
-  }, []);
+  }, [removeZeroes, price]);
 
   function removeTrailingZeros(number: number) {
     // Convert the number to a string
