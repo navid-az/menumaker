@@ -1,16 +1,22 @@
 "use client";
 
+import React from "react";
+
+//tanstack query
+import { QueryClient } from "@tanstack/react-query";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { QueryClient } from "@tanstack/react-query";
-import { ItemsProvider } from "./menu/components/ItemsContext";
 
 const queryClient = new QueryClient();
 
-export default function menuLayout({ children }) {
+export default function menuLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <QueryClientProvider client={queryClient}>
-      <ItemsProvider>{children}</ItemsProvider>
+      {children}
       <ReactQueryDevtools></ReactQueryDevtools>
     </QueryClientProvider>
   );
