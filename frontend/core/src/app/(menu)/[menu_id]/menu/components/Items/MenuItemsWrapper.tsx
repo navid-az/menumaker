@@ -30,12 +30,16 @@ export type CategoriesType = {
   is_active: boolean;
 };
 
-export default function MenuItemsWrapper() {
+export default function MenuItemsWrapper({
+  params,
+}: {
+  params: { menu_id: string };
+}) {
   const { isLoading, isError, data, error } = useQuery({
-    queryKey: ["items"],
+    queryKey: ["categories"],
     queryFn: async () => {
       const { data } = await axios.get(
-        `http://127.0.0.1:8000/menu/${"venhan"}/categories`
+        `http://127.0.0.1:8000/menu/${params.menu_id}/categories`
       );
       return data as CategoriesType[];
     },

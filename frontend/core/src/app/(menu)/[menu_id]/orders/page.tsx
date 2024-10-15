@@ -20,7 +20,7 @@ import { ArrowLeft, ConciergeBell, ShoppingBag } from "lucide-react";
 import { type MenuItemType } from "../menu/components/Items/MenuItem";
 export type ValidItemType = { item: MenuItemType; count?: number };
 
-export default function Orders({ params = { menu_id: "venhan" } }) {
+export default function page({ params }: { params: { menu_id: string } }) {
   const { isLoading, isError, data, error } = useQuery({
     queryKey: ["items"],
     queryFn: async () => {
@@ -66,7 +66,7 @@ export default function Orders({ params = { menu_id: "venhan" } }) {
       <header className="flex items-center justify-between">
         <h3 className="text-lg">لیست سفارشات</h3>
         <Button size="icon" variant="ghost" asChild>
-          <Link href={`/pricing`}>
+          <Link href={`/${params.menu_id}/menu`}>
             <ArrowLeft className="h-7 w-7"></ArrowLeft>
           </Link>
         </Button>

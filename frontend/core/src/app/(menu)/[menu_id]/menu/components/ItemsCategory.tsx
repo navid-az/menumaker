@@ -52,7 +52,7 @@ type CategoryType = {
   items: ItemType[];
 };
 type ItemCategoryType = {
-  params: { menu_id: number };
+  params: { menu_id: string };
   type?: "vertical" | "horizontal";
   variant?: "minimal" | "classic";
   isSticky?: boolean;
@@ -72,7 +72,7 @@ export default function ItemsCategory({
     queryKey: ["categories"],
     queryFn: async () => {
       const { data } = await axios.get(
-        `http://127.0.0.1:8000/menu/single/${params.menu_id}`
+        `http://127.0.0.1:8000/menu/${params.menu_id}/categories`
       );
       return data;
     },
@@ -97,7 +97,7 @@ export default function ItemsCategory({
     >
       {!isLoading ? (
         <>
-          {data["categories"].map(
+          {data.map(
             (category: CategoryType) =>
               category.is_active &&
               category["items"].length > 0 && (

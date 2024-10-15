@@ -13,7 +13,7 @@ export default function MenuPage({ params }: MenuType) {
   return (
     <div className="container relative flex flex-col gap-2 p-0">
       <ItemsCategory params={params}></ItemsCategory>
-      <MenuItemsWrapper></MenuItemsWrapper>
+      <MenuItemsWrapper params={params}></MenuItemsWrapper>
       <CartBtn type="compact"></CartBtn>
     </div>
   );
