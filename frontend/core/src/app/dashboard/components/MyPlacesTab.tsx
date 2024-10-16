@@ -6,8 +6,8 @@ import React, { useState, useRef, useEffect } from "react";
 import AnimateHeight from "react-animate-height";
 import { Button } from "@/components/ui/button";
 
-//functions
-import closeTabOnOutsideClick from "@/lib/closeTabOnOutsideClick";
+//hooks
+import useClickOutside from "@/app/hooks/useClickOutside";
 
 //SVGs
 import { Building } from "./svg";
@@ -43,7 +43,7 @@ export default function MyPlacesTab({
     (state) => state.updateCurrentPlace
   );
 
-  const outsideClick = closeTabOnOutsideClick(tab);
+  const outsideClick = useClickOutside(tab);
   const pathname = usePathname();
 
   //will open the same dashboard section depending on pathname
