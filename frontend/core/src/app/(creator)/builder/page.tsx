@@ -14,15 +14,7 @@ import {
   SliderTabTitle,
   SliderTabBody,
 } from "./components/SliderTab";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormDescription,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
@@ -56,8 +48,7 @@ const formSchema = z.object({
 //types
 export type formSchemaType = z.infer<typeof formSchema>;
 export type keyOfFormSchemaType = keyof formSchemaType;
-import { sliderDataType } from "./builderFormData";
-import { ItemType } from "@/components/global/ItemAdder";
+import { type sliderDataType } from "./builderFormData";
 
 export default function Page() {
   const form = useForm<formSchemaType>({
@@ -167,6 +158,7 @@ export default function Page() {
                   title={step.title}
                 >
                   {step.isRadioGroup ? (
+                    // radio group section
                     <FormField
                       control={form.control}
                       name={step.name}
@@ -175,8 +167,8 @@ export default function Page() {
                           <RadioGroup
                             dir="rtl"
                             onValueChange={field.onChange}
-                            defaultValue={field.value}
-                            value={field.value}
+                            defaultValue={field.value as keyOfFormSchemaType}
+                            value={field.value as keyOfFormSchemaType}
                             className="flex flex-col gap-4"
                           >
                             {step.tabs.map((tab, tabIndex) => (
@@ -194,7 +186,7 @@ export default function Page() {
                                       iconSrc={tab.iconSrc}
                                     >
                                       <RadioGroupItem
-                                        value={tab.value}
+                                        value={tab.value as keyOfFormSchemaType}
                                       ></RadioGroupItem>
                                     </SliderTabTitle>
                                     {tab.action && (
@@ -213,17 +205,22 @@ export default function Page() {
                       )}
                     />
                   ) : (
+                    // switch section
                     <>
                       {step.tabs.map((tab, tabIndex) => (
                         <FormField
                           key={tabIndex}
                           control={form.control}
-                          name={tab.name}
+                          name={tab.name as keyOfFormSchemaType}
                           render={({ field }) => (
                             <FormItem>
                               <FormControl>
                                 <SliderTab
-                                  onClick={() => handleValueChange(field.name)}
+                                  onClick={() =>
+                                    handleValueChange(
+                                      field.name as keyOfFormSchemaType
+                                    )
+                                  }
                                   isActive={field.value as boolean}
                                 >
                                   <SliderTabTitle

@@ -16,8 +16,7 @@ export type stepTabBase = {
 type stepTabType = stepTabBase &
   (
     | { isRadio: true; value: string; name: keyOfFormSchemaType }
-    //changed name? to name (below)
-    | { isRadio?: false; value?: string; name: keyOfFormSchemaType }
+    | { isRadio?: false; value?: string; name?: keyOfFormSchemaType }
   );
 export type sliderStepBase = {
   title: string;
@@ -36,7 +35,9 @@ export type sliderDataType = {
   condition: () => boolean;
 };
 
-export const getSliderData = (form: UseFormReturn<formSchemaType>) => [
+export const getSliderData = (
+  form: UseFormReturn<formSchemaType>
+): sliderDataType[] => [
   {
     title: "صفحه اصلی",
     condition: () => true,
@@ -211,50 +212,51 @@ export const getSliderData = (form: UseFormReturn<formSchemaType>) => [
       },
     ],
   },
-  //   {
-  //     title: "شخصی سازی",
-  //     condition: () => true,
-  //     steps: [
-  //       {
-  //         title: "رنگبندی مورد نظر خود را انتخاب کنید",
-  //         isRadioGroup: true,
-  //         name: "item_page_type",
-  //         condition: () => true,
-  //         tabs: [
-  //           {
-  //             title: "افقی",
-  //             description: "لیست آیتم ها به صورت افقی نمایش داده میشود",
-  //             iconSrc: "/images/form-icons/horizenal-menu-icon.svg",
-  //             value: "horizontal",
-  //           },
-  //           {
-  //             title: "عمودی",
-  //             description: "لیست آیتم ها به صورت عمودی نمایش داده میشود",
-  //             iconSrc: "/images/form-icons/vertical-menu-icon.svg",
-  //             value: "vertical",
-  //           },
-  //         ],
-  //       },
-  //       {
-  //         title: "انیمیشن های مورد نظر خود را انتخاب کنید",
-  //         isRadioGroup: true,
-  //         name: "item_page_type",
-  //         condition: () => true,
-  //         tabs: [
-  //           {
-  //             title: "دکمه ها",
-  //             description: "انیمیشن برای تمامی دکمه های منو",
-  //             iconSrc: "/images/form-icons/horizenal-menu-icon.svg",
-  //             value: "horizontal",
-  //           },
-  //           {
-  //             title: "آیتم ها",
-  //             description: "انیمیشن برای کارت آیتم",
-  //             iconSrc: "/images/form-icons/vertical-menu-icon.svg",
-  //             value: "vertical",
-  //           },
-  //         ],
-  //       },
-  //     ],
-  //   },
 ];
+
+//   {
+//     title: "شخصی سازی",
+//     condition: () => true,
+//     steps: [
+//       {
+//         title: "رنگبندی مورد نظر خود را انتخاب کنید",
+//         isRadioGroup: true,
+//         name: "item_page_type",
+//         condition: () => true,
+//         tabs: [
+//           {
+//             title: "افقی",
+//             description: "لیست آیتم ها به صورت افقی نمایش داده میشود",
+//             iconSrc: "/images/form-icons/horizenal-menu-icon.svg",
+//             value: "horizontal",
+//           },
+//           {
+//             title: "عمودی",
+//             description: "لیست آیتم ها به صورت عمودی نمایش داده میشود",
+//             iconSrc: "/images/form-icons/vertical-menu-icon.svg",
+//             value: "vertical",
+//           },
+//         ],
+//       },
+//       {
+//         title: "انیمیشن های مورد نظر خود را انتخاب کنید",
+//         isRadioGroup: true,
+//         name: "item_page_type",
+//         condition: () => true,
+//         tabs: [
+//           {
+//             title: "دکمه ها",
+//             description: "انیمیشن برای تمامی دکمه های منو",
+//             iconSrc: "/images/form-icons/horizenal-menu-icon.svg",
+//             value: "horizontal",
+//           },
+//           {
+//             title: "آیتم ها",
+//             description: "انیمیشن برای کارت آیتم",
+//             iconSrc: "/images/form-icons/vertical-menu-icon.svg",
+//             value: "vertical",
+//           },
+//         ],
+//       },
+//     ],
+//   },
