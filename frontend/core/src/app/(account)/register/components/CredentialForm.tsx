@@ -1,34 +1,39 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
+//libraries
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 
+//components
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
-import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Cross } from "@/app/components/svgs";
-import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import RegisterBtn from "./RegisterBtn";
+
+//hooks
 import { usePhoneNumberStore } from "@/lib/stores";
 
+//schemas
 const FormSchema = z.object({
   credential: z.union([
     z.coerce.string().min(8, { message: "شماره همراه نا معتبر میباشد" }),
     z.string().email({ message: "ایمیل نا معتبر میباشد" }),
   ]),
+  email: z.optional(z.string().email()),
+  phone_number: z.optional(z.string()),
 });
-
 const EmailSchema = z.string().email();
 
 export function CredentialForm() {
@@ -37,7 +42,7 @@ export function CredentialForm() {
   );
   const router = useRouter();
 
-  const sendUserCredential = useMutation({
+  const postUserCredential = useMutation({
     mutationFn: (data: z.infer<typeof FormSchema>) => {
       return axios.post(
         "http://127.0.0.1:8000/accounts/validate-credential/",
@@ -65,14 +70,15 @@ export function CredentialForm() {
   function onSubmit(data: z.infer<typeof FormSchema>) {
     const isEmail = EmailSchema.safeParse(data.credential);
 
-    if (isEmail.success == true) {
+    console.log(data);
+
+    if (isEmail.success) {
       data.email = data.credential;
     } else {
       data.phone_number = data.credential;
-      delete data.credential;
-      updatePhoneNumber(data.phone_number);
+      updatePhoneNumber(data.credential);
     }
-    sendUserCredential.mutate(data);
+    postUserCredential.mutate(data);
   }
 
   return (
@@ -96,7 +102,7 @@ export function CredentialForm() {
         />
         <RegisterBtn
           text="بعدی"
-          isLoading={sendUserCredential.isLoading}
+          isLoading={postUserCredential.isLoading}
         ></RegisterBtn>
       </form>
     </Form>
