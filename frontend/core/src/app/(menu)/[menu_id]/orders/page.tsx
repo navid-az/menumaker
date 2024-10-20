@@ -20,7 +20,11 @@ import { ArrowLeft, ConciergeBell, ShoppingBag } from "lucide-react";
 import { type MenuItemType } from "../menu/components/Items/MenuItem";
 export type ValidItemType = { item: MenuItemType; count?: number };
 
-export default function page({ params }: { params: { menu_id: string } }) {
+export default function OrdersPage({
+  params,
+}: {
+  params: { menu_id: string };
+}) {
   const { isLoading, isError, data, error } = useQuery({
     queryKey: ["items"],
     queryFn: async () => {
