@@ -123,6 +123,7 @@ export default function MyPlacesTab({
             <div className="flex w-full flex-col gap-1 rounded-lg border border-primary/30 bg-sad-blue ">
               {places.map((place) => (
                 <Button
+                  key={place.id}
                   onClick={() => handleClick(place.name, place.slug)}
                   className={`${
                     (currentPlace || places[0].name) === place.name

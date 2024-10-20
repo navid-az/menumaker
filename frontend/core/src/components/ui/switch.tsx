@@ -57,4 +57,6 @@ const Switch: React.ForwardRefExoticComponent<SwitchProps> = React.forwardRef(
   }
 );
 
+Switch.displayName = "Switch";
+
 export { Switch };
