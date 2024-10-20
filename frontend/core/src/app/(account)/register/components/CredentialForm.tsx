@@ -56,7 +56,7 @@ export function CredentialForm() {
     onError: (error) => {
       toast.error("کد نامعتبر میباشد", {
         cancel: {
-          label: <Cross />,
+          label: "باشه",
         },
       });
     },
