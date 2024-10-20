@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 
 //hooks
 import { useMenuItemDrawer } from "@/lib/stores";
-import useConditionalAnimation from "@/app/hooks/useConditionalAnimation";
+// import useConditionalAnimation from "@/app/hooks/useConditionalAnimation";
 
 //types
 import { type CategoriesType } from "./Items/MenuItemsWrapper";
@@ -26,7 +26,7 @@ type CartBtnType = {
   type?: "default" | "compact";
 };
 
-function CartBtn({ type = "default" }: CartBtnType) {
+export default function CartBtn({ type = "default" }: CartBtnType) {
   const { isLoading, isError, data, error } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
@@ -109,7 +109,7 @@ function CartBtn({ type = "default" }: CartBtnType) {
   );
 
   //add animations *needs to be checked using props value*
-  useConditionalAnimation(cartBtnRef, ["tactile"]);
+  // useConditionalAnimation(cartBtnRef, ["tactile"]);
   //automatically add tactile animation (only for compact button)
   const autoTactile = useTactileAnimation(cartBtnRef, {});
 
@@ -174,5 +174,3 @@ function CartBtn({ type = "default" }: CartBtnType) {
     );
   }
 }
-
-export default CartBtn;

@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
 
 //hooks
-import useConditionalAnimation from "@/app/hooks/useConditionalAnimation";
+// import useConditionalAnimation from "@/app/hooks/useConditionalAnimation";
 import { useItemCart } from "@/lib/stores";
 
 //types
@@ -166,7 +166,7 @@ const ValueChangerBtn = ({
   className,
 }: ValueChangeBtnType) => {
   const btnRef = useRef<HTMLButtonElement>(null);
-  useConditionalAnimation(btnRef, ["ripple", "tactile"]);
+  // useConditionalAnimation(btnRef, ["ripple", "tactile"]);
   return (
     <Button
       ref={btnRef}

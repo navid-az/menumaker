@@ -18,7 +18,7 @@ import PriceTag from "../PriceTag";
 import AddToCartBtn from "../AddToCartBtn";
 
 //hooks
-import useConditionalAnimation from "@/app/hooks/useConditionalAnimation";
+// import useConditionalAnimation from "@/app/hooks/useConditionalAnimation";
 import { useMenuItemDrawer } from "@/lib/stores";
 
 //SVGs
@@ -58,10 +58,10 @@ export function MenuItem({
   const itemRef = useRef(null);
 
   //animations
-  useConditionalAnimation(itemRef, [
-    { animation: "ripple", config: { duration: 600, size: 200 } },
-    { animation: "tactile", config: { duration: 0.1, scale: 0.9 } },
-  ]);
+  // useConditionalAnimation(itemRef, [
+  //   { animation: "ripple", config: { duration: 600, size: 200 } },
+  //   { animation: "tactile", config: { duration: 0.1, scale: 0.9 } },
+  // ]);
 
   //change the value of drawerIsOpen global state
   const setDrawerIsOpen = useMenuItemDrawer((state) => state.updateIsOpen);

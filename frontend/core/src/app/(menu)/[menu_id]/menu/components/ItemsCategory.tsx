@@ -27,12 +27,19 @@ const categoryData = {
 
 //hooks
 import { useCategoryBtn } from "@/lib/stores";
-import useConditionalAnimation from "@/app/hooks/useConditionalAnimation";
+// import useConditionalAnimation from "@/app/hooks/useConditionalAnimation";
 import { useTactileAnimation } from "@/app/hooks/useTactileAnimation"; //animation hook
 import { useRippleAnimation } from "@/app/hooks/useRippleAnimation"; //animation hook
 
 //types
-import type { AnimationVariant } from "@/app/hooks/useConditionalAnimation";
+export type AnimationVariant = "ripple" | "tactile" | "pulse";
+// import { RippleAnimationConfig } from "@/app/hooks/useRippleAnimation";
+// import { TactileAnimationConfig } from "@/app/hooks/useTactileAnimation";
+// type AnimationType =
+//   | AnimationVariant
+//   | { animation: "ripple"; config?: RippleAnimationConfig }
+//   | { animation: "tactile"; config?: TactileAnimationConfig };
+// import type { AnimationVariant } from "@/app/hooks/useConditionalAnimation";
 type ItemType = {
   id: number;
   menu: string;
@@ -264,9 +271,9 @@ function CategoryBtn({
   };
 
   //animate buttons according to animationType array(if it's not provided no animation will be executed)
-  if (animationType) {
-    useConditionalAnimation(buttonRef, ["ripple", "tactile"]);
-  }
+  // if (animationType) {
+  //   useConditionalAnimation(buttonRef, ["ripple", "tactile"]);
+  // }
 
   return (
     <Button
