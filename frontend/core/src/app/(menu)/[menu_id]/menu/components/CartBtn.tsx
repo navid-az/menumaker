@@ -37,10 +37,10 @@ export default function CartBtn({ type = "default" }: CartBtnType) {
     },
   });
 
-  if (isError) {
-    const errorMessage = (error as Error).message;
-    return <span>Error: {errorMessage}</span>;
-  }
+  // if (isError) {
+  //   const errorMessage = (error as Error).message;
+  //   return <span>Error: {errorMessage}</span>;
+  // }
 
   const cartBtnRef = useRef<HTMLButtonElement>(null);
 

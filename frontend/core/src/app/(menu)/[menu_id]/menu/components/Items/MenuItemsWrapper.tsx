@@ -45,10 +45,10 @@ export default function MenuItemsWrapper({
     },
   });
 
-  if (isError) {
-    const errorMessage = (error as Error).message;
-    return <span>Error: {errorMessage}</span>;
-  }
+  // if (isError) {
+  //   const errorMessage = (error as Error).message;
+  //   return <span>Error: {errorMessage}</span>;
+  // }
 
   const setActiveCategory = useCategoryBtn(
     (state) => state.updateActiveCategory
@@ -63,7 +63,7 @@ export default function MenuItemsWrapper({
   return (
     <div className="flex w-full flex-col gap-2 px-2 pb-2">
       {!isLoading ? (
-        data.map(
+        data?.map(
           (category) =>
             category["items"].length > 0 && (
               <InView onChange={setInView} rootMargin="-80%" key={category.id}>
