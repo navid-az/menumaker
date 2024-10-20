@@ -67,14 +67,14 @@ export function OtpForm({ length = 6 }: { length: number | undefined }) {
 
       toast("خوش آمدی!", {
         cancel: {
-          label: <Cross />,
+          label: "باشه",
         },
       });
     },
     onError: () => {
       toast.error("کد نامعتبر میباشد", {
         cancel: {
-          label: <Cross />,
+          label: "باشه",
         },
       });
     },
