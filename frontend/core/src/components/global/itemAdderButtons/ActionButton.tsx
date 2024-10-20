@@ -10,10 +10,10 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from "@/components/ui/popover";
-import Selector from "@/components/global/Selector";
+import Selector from "@/components/global/itemAdderButtons/Selector";
 
 //types
-import { type SelectorItemType } from "@/components/global/Selector";
+import { type SelectorItemType } from "@/components/global/itemAdderButtons/Selector";
 
 //SVGs
 import { Plus } from "lucide-react";
