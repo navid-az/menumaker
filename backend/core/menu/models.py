@@ -1,37 +1,51 @@
-from email.policy import default
+import datetime
 from django.db import models
 from colorfield.fields import ColorField
 from django.conf import settings
 from pickers.models import Icon
 from django.utils.text import slugify
+from multiselectfield import MultiSelectField
 
 User = settings.AUTH_USER_MODEL
 
 
 class Menu(models.Model):
+    menu_id = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100)
+    name_en = models.CharField(max_length=100)
+    slug = models.SlugField(
+        max_length=100, unique=True, null=True, blank=True)
+    owner = models.ForeignKey(
+        User, on_delete=models.CASCADE, default=1, related_name='owned_places')
+    is_active = models.BooleanField(default=True)
+    personnel = models.ManyToManyField(
+        User, related_name='places', blank=True)
+
+    def __str__(self):
+        return self.slug
+
+
+# global animation for the entire menu app(home page, items page, ...)
+class MenuGlobalStyling(models.Model):
+    CLICK_ANIMATION_CHOICES = [
+        ('ripple', 'ripple effect'), ('tactile', 'tactile effect')]
     PRICE_UNITS = [
         ("simp", "simple"),
         ("comp", "compact"),
         ("engL", "engLetter"),
         ("perL", "perLetter"),
     ]
-    menu_id = models.CharField(max_length=100, unique=True)
-    name = models.CharField(max_length=100)
-    name_en = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=100, unique=True, null=True, blank=True)
-    owner = models.ForeignKey(
-        User, on_delete=models.CASCADE, default=1, related_name='owned_places')
+    menu = models.OneToOneField(Menu, on_delete=models.CASCADE,)
     primary_color = ColorField()
     secondary_color = ColorField()
     tertiary_color = ColorField()
     bg_color = ColorField()
-    price_unit = models.CharField(
+    unit_display_type = models.CharField(
         max_length=9, choices=PRICE_UNITS, default="simp")
-    is_active = models.BooleanField(default=True)
-    personnel = models.ManyToManyField(User, related_name='places', blank=True)
-
-    def __str__(self):
-        return self.slug
+    click_animation = MultiSelectField(
+        choices=CLICK_ANIMATION_CHOICES, max_choices=3)
+    updated = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
 
 
 class Table(models.Model):
