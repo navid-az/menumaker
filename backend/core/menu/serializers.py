@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Menu, Item, ItemCategory, Icon
+from .models import Menu, MenuGlobalStyling, Item, ItemCategory, Icon
 
 
 class IconsSerializer(serializers.ModelSerializer):
@@ -42,9 +42,15 @@ class MenuCategoryCreateUpdateSerializer(serializers.ModelSerializer):
 
 
 # menu serializers
-class MenuSerializer(serializers.ModelSerializer):
+class MenuListSerializer(serializers.ModelSerializer):
     categories = MenuCategoriesSerializer(many=True, read_only=True)
 
     class Meta:
         model = Menu
+        fields = '__all__'
+
+
+class MenuGlobalStylingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MenuGlobalStyling
         fields = '__all__'

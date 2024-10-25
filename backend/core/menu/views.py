@@ -1,25 +1,38 @@
-from .models import Item, Menu, ItemCategory
-from .serializers import MenuSerializer, MenuCategoriesSerializer, MenuCategoryCreateUpdateSerializer, MenuItemsSerializer,  MenuItemCreateUpdateSerializer
+from .models import Item, Menu, MenuGlobalStyling, ItemCategory
+from .serializers import MenuListSerializer, MenuGlobalStylingSerializer, MenuCategoriesSerializer, MenuCategoryCreateUpdateSerializer, MenuItemsSerializer,  MenuItemCreateUpdateSerializer
 
 # rest dependencies
+from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from permissions import IsOwner
 
 
-class MenuView(APIView):
+# get list of all menus
+class MenuListView(APIView):
     def get(self, request):
         all_menus = Menu.objects.all()
-        srz_data = MenuSerializer(instance=all_menus, many=True)
+        srz_data = MenuListSerializer(instance=all_menus, many=True)
         return Response(data=srz_data.data)
+
+
+# get all global stylings for the provided Menu
+class MenuGlobalStylingView(APIView):
+    def get(self, request, slug):
+        try:
+            menu = Menu.objects.get(slug=slug)
+            styles = MenuGlobalStyling.objects.get(menu=menu)
+            srz_data = MenuGlobalStylingSerializer(instance=styles)
+            return Response(data=srz_data.data)
+        except Menu.DoesNotExist:
+            return Response('Menu not found for the provided slug', status=status.HTTP_404_NOT_FOUND)
 
 
 class SingleMenuView(APIView):
     def get(self, request, menuId):
         menu = Menu.objects.get(pk=menuId)
-        srz_data = MenuSerializer(instance=menu)
+        srz_data = MenuListSerializer(instance=menu)
         return Response(data=srz_data.data)
 
 

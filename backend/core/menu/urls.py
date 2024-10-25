@@ -1,13 +1,15 @@
 from django.urls import path
-from .views import MenuView, SingleMenuView, SingleMenuItemsView, MenuCategoriesView, MenuCategoryCreateView, MenuCategoryUpdateView, MenuCategoryDeleteView, MenuItemsView, MenuItemCreateView, MenuItemUpdateView, MenuItemDeleteView
+from .views import MenuListView, MenuGlobalStylingView, SingleMenuView, SingleMenuItemsView, MenuCategoriesView, MenuCategoryCreateView, MenuCategoryUpdateView, MenuCategoryDeleteView, MenuItemsView, MenuItemCreateView, MenuItemUpdateView, MenuItemDeleteView
 
 app_name = 'menu'
 
 urlpatterns = [
-    path('all', MenuView.as_view(), name='menu-page'),
+    path('all', MenuListView.as_view(), name='menu-list'),
     path('single/<int:menuId>', SingleMenuView.as_view(), name='single-menu'),
     path('single/items/<int:menuId>',
          SingleMenuItemsView.as_view(), name='menu-items'),
+    path('<str:slug>/global-styling/', MenuGlobalStylingView.as_view(),
+         name='menu-global-styling'),
 
     # category endpoints
     path('<str:slug>/categories/',
