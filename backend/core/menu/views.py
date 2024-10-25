@@ -1,5 +1,6 @@
 from .models import Item, Menu, MenuGlobalStyling, ItemCategory
-from .serializers import MenuListSerializer, MenuGlobalStylingSerializer, MenuCategoriesSerializer, MenuCategoryCreateUpdateSerializer, MenuItemsSerializer,  MenuItemCreateUpdateSerializer
+from .serializers import (MenuListSerializer, MenuGlobalStylingSerializer, MenuCategoriesSerializer,
+                          MenuCategoryCreateUpdateSerializer, MenuItemsSerializer,  MenuItemCreateUpdateSerializer)
 
 # rest dependencies
 from rest_framework import status
@@ -27,21 +28,6 @@ class MenuGlobalStylingView(APIView):
             return Response(data=srz_data.data)
         except Menu.DoesNotExist:
             return Response('Menu not found for the provided slug', status=status.HTTP_404_NOT_FOUND)
-
-
-class SingleMenuView(APIView):
-    def get(self, request, menuId):
-        menu = Menu.objects.get(pk=menuId)
-        srz_data = MenuListSerializer(instance=menu)
-        return Response(data=srz_data.data)
-
-
-class SingleMenuItemsView(APIView):
-    def get(self, request, menuId):
-        menu = Menu.objects.get(pk=menuId)
-        items = menu.items.all()
-        srz_data = MenuItemsSerializer(instance=items, many=True)
-        return Response(srz_data.data)
 
 
 # item CRUD views
