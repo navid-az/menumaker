@@ -1,4 +1,4 @@
-import React from "react";
+"use client";
 
 //components
 import { MenuItem } from "./MenuItem";
