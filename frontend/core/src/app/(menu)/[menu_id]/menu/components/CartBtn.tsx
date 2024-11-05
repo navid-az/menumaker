@@ -15,18 +15,23 @@ import { Button } from "@/components/ui/button";
 
 //hooks
 import { useMenuItemDrawer } from "@/lib/stores";
+import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
 // import useConditionalAnimation from "@/app/hooks/useConditionalAnimation";
+
+//SVGs
+import { ShoppingBag } from "lucide-react";
 
 //types
 import { type CategoriesType } from "./Items/MenuItemsWrapper";
 import { type MenuItemType } from "./Items/MenuItem";
-import { ShoppingBag } from "lucide-react";
-import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
+import { type MenuGlobalStyling } from "../page";
+
 type CartBtnType = {
   type?: "default" | "compact";
+  globalStyling: MenuGlobalStyling;
 };
 
-export default function CartBtn({ type = "default" }: CartBtnType) {
+export default function CartBtn({ type, globalStyling }: CartBtnType) {
   const { isLoading, isError, data, error } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
@@ -118,11 +123,18 @@ export default function CartBtn({ type = "default" }: CartBtnType) {
       <Button
         ref={cartBtnRef}
         asChild
-        className="!fixed bottom-[-80px] left-0 right-0 z-50 m-3 flex h-max items-center justify-between rounded-full bg-orange-300 p-2 shadow-2xl xs:p-2.5"
+        className="!fixed bottom-[-80px] left-0 right-0 z-50 m-3 flex h-max items-center justify-between rounded-full p-2 shadow-2xl xs:p-2.5"
+        style={{
+          backgroundColor: globalStyling.secondary_color,
+          color: globalStyling.primary_color,
+        }}
       >
         <Link href={`/venhan/orders`}>
           <div className=" flex items-center pr-2">
-            <p className="text-lg font-medium text-orange-900 xs:text-xl xs:font-semibold">
+            <p
+              className="text-lg font-medium xs:text-xl xs:font-semibold"
+              style={{ color: globalStyling.primary_color }}
+            >
               ثبت سفارش
             </p>
           </div>
@@ -130,7 +142,8 @@ export default function CartBtn({ type = "default" }: CartBtnType) {
             {matchingItems.slice(0, 3).map((item) => (
               <div
                 key={item.item.id}
-                className="relative h-11 w-11 rounded-full border-2 border-orange-300 shadow-sm transition-all duration-300 xs:h-12 xs:w-12"
+                className="relative h-11 w-11 rounded-full border-2 shadow-sm transition-all duration-300 xs:h-12 xs:w-12"
+                style={{ borderColor: globalStyling.primary_color }}
               >
                 <Image
                   fill
@@ -138,13 +151,27 @@ export default function CartBtn({ type = "default" }: CartBtnType) {
                   alt={item.item.name}
                   className="rounded-full object-cover"
                 ></Image>
-                <div className="absolute -left-0.5 -top-0.5 z-10 h-[18px] w-[18px] rounded-full border border-orange-300 bg-orange-950 pt-0.5 text-center text-xs font-light text-orange-300 transition-all duration-300 xs:h-5 xs:w-5 xs:font-normal">
+                <div
+                  className="absolute -left-0.5 -top-0.5 z-10 h-[18px] w-[18px] rounded-full border pt-0.5 text-center text-xs font-light transition-all duration-300 xs:h-5 xs:w-5 xs:font-normal"
+                  style={{
+                    backgroundColor: globalStyling.primary_color,
+                    color: globalStyling.secondary_color,
+                    borderColor: globalStyling.secondary_color,
+                  }}
+                >
                   {item.count}
                 </div>
               </div>
             ))}
             {matchingItems.length > 3 && (
-              <div className="h-11 w-11 rounded-full border-2 border-orange-300 bg-orange-950 pt-3 text-center text-orange-200 shadow-sm transition-all duration-300 xs:h-12 xs:w-12">
+              <div
+                className="h-11 w-11 rounded-full border-2  pt-3 text-center shadow-sm transition-all duration-300 xs:h-12 xs:w-12"
+                style={{
+                  backgroundColor: globalStyling.primary_color,
+                  color: globalStyling.secondary_color,
+                  borderColor: globalStyling.secondary_color,
+                }}
+              >
                 <p>{matchingItems.length - 3}+</p>
               </div>
             )}
@@ -158,13 +185,26 @@ export default function CartBtn({ type = "default" }: CartBtnType) {
         <Button
           ref={cartBtnRef}
           asChild
-          className="relative h-14 w-14 rounded-full bg-orange-300 shadow-inner"
+          className="relative h-14 w-14 rounded-full shadow-inner"
+          style={{ backgroundColor: globalStyling.secondary_color }}
           size="icon"
         >
           <Link href={`/venhan/orders`}>
-            <ShoppingBag className="h-6 w-6 text-orange-950"></ShoppingBag>
+            <ShoppingBag
+              className="h-6 w-6"
+              style={{
+                color: globalStyling.primary_color,
+              }}
+            ></ShoppingBag>
             {totalItemCount >= 1 && (
-              <div className="absolute -left-0.5 -top-0.5 z-10 h-6 w-6 rounded-full border-2 border-orange-300 bg-orange-950 pt-1 text-center text-xs font-normal text-orange-300 transition-all duration-300">
+              <div
+                className="absolute -left-0.5 -top-0.5 z-10 h-6 w-6 rounded-full border-2 pt-1 text-center text-xs font-normal transition-all duration-300"
+                style={{
+                  backgroundColor: globalStyling.primary_color,
+                  color: globalStyling.secondary_color,
+                  borderColor: globalStyling.secondary_color,
+                }}
+              >
                 {totalItemCount}
               </div>
             )}

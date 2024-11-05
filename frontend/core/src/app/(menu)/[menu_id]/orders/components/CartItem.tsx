@@ -1,11 +1,14 @@
 //components
 import AddToCartBtn from "../../menu/components/AddToCartBtn";
 import PriceTag from "../../menu/components/PriceTag";
+import { MenuGlobalStyling } from "../../menu/page";
 
 //types
 import { type ValidItemType } from "../page";
 
-export default function CartItem({ item }: ValidItemType) {
+type CartItemType = { globalStyling: MenuGlobalStyling } & ValidItemType;
+
+export default function CartItem({ item, globalStyling }: CartItemType) {
   return (
     <div className="flex h-max w-full items-center justify-between">
       <div className="flex basis-9/12 flex-col">
@@ -19,8 +22,8 @@ export default function CartItem({ item }: ValidItemType) {
       </div>
       <AddToCartBtn
         size="sm"
-        primaryColor="#fbcfe8"
-        secondaryColor="#172554"
+        primaryColor={globalStyling.primary_color}
+        secondaryColor={globalStyling.secondary_color}
         itemId={item.id}
       ></AddToCartBtn>
     </div>

@@ -2,21 +2,28 @@
 
 import { useState, useEffect } from "react";
 
-//hooks
-import { useItemCart } from "@/lib/stores";
-
 //components
 import CartItem from "./CartItem";
 import PriceTag from "../../menu/components/PriceTag";
+
+//hooks
+import { useItemCart } from "@/lib/stores";
 
 //SVGs
 import { ShoppingBag } from "lucide-react";
 
 //types
 import { type MenuItemType } from "../../menu/components/Items/MenuItem";
+import { type MenuGlobalStyling } from "../../menu/page";
 export type ValidItemType = { item: MenuItemType; count?: number };
 
-export default function OrderList({ data }: { data: MenuItemType[] }) {
+export default function OrderList({
+  data,
+  globalStyling,
+}: {
+  data: MenuItemType[];
+  globalStyling: MenuGlobalStyling;
+}) {
   const cartItems = useItemCart((state) => state.items);
 
   const [totalPrice, setTotalPrice] = useState(0);
@@ -52,9 +59,16 @@ export default function OrderList({ data }: { data: MenuItemType[] }) {
       {cartItems.length > 0 ? (
         <>
           {validItems?.map((validItem) => (
-            <CartItem key={validItem.item.id} {...validItem} />
+            <CartItem
+              globalStyling={globalStyling}
+              key={validItem.item.id}
+              {...validItem}
+            />
           ))}
-          <div className="flex w-full items-center justify-between justify-self-center border-t-2 border-dashed border-purple-400 pt-4">
+          <div
+            className="flex w-full items-center justify-between justify-self-center border-t-2 border-dashed pt-4"
+            style={{ borderColor: globalStyling.primary_color }}
+          >
             <h2>مجموع پرداختی</h2>
             <PriceTag unitDisplayType="default" price={totalPrice} />
           </div>
@@ -62,10 +76,14 @@ export default function OrderList({ data }: { data: MenuItemType[] }) {
       ) : (
         <div className="flex h-full w-full flex-col items-center justify-center gap-4">
           <ShoppingBag
-            className="h-20 w-20 text-blue-950/40"
+            className="h-20 w-20"
             strokeWidth={1.5}
+            style={{ color: globalStyling.primary_color, opacity: "40%" }}
           ></ShoppingBag>
-          <p className="text-lg font-semibold text-blue-950/40">
+          <p
+            className="text-lg font-semibold"
+            style={{ color: globalStyling.primary_color, opacity: "40%" }}
+          >
             آیتمی در سبد شما نیست
           </p>
         </div>
