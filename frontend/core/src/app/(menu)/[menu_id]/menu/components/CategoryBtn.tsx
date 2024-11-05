@@ -20,6 +20,8 @@ type CategoryBtnType = {
   parentType?: string;
   animationType?: AnimationVariant[];
   animationOnSelect?: "border" | "background" | "border-background";
+  primary_color: string;
+  secondary_color: string;
 };
 
 //hooks
@@ -27,14 +29,6 @@ import { useCategoryBtn } from "@/lib/stores";
 import { useTactileAnimation } from "@/app/hooks/useTactileAnimation"; //animation hook
 import { useRippleAnimation } from "@/app/hooks/useRippleAnimation"; //animation hook
 
-//data instance
-const categoryData = {
-  type: "horizontal",
-  primary_color: "#431407",
-  secondary_color: "#fdba74",
-  show_background: false,
-  animation: ["ripple", "tactile"],
-};
 const buttonVariants = cva(
   `flex-none select-none transition-colors duration-500`,
   {
@@ -79,8 +73,9 @@ export default function CategoryBtn({
   animationType,
   borderRadius,
   className,
-  style,
   size,
+  primary_color,
+  secondary_color,
 }: ButtonProps) {
   const [isIconOnly, setIsIconOnly] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -110,10 +105,10 @@ export default function CategoryBtn({
     if (buttonRef.current) {
       if (activeCategory === id) {
         buttonRef.current.style.background = lightenDarkenColor(
-          categoryData.secondary_color,
+          secondary_color,
           30
         );
-        buttonRef.current.style.border = `2px solid ${categoryData.primary_color}`;
+        buttonRef.current.style.border = `2px solid ${primary_color}`;
         //programmatically trigger animations
         if (shouldAutoAnimate) {
           triggerTactileAnimation();
@@ -122,8 +117,8 @@ export default function CategoryBtn({
         updateShouldAutoAnimate(true);
       } else {
         buttonRef.current.style.border = `2px solid transparent`;
-        buttonRef.current.style.background = categoryData.secondary_color;
-        buttonRef.current.style.color = categoryData.primary_color;
+        buttonRef.current.style.background = secondary_color;
+        buttonRef.current.style.color = primary_color;
       }
     }
   }, [activeCategory]);
@@ -156,10 +151,10 @@ export default function CategoryBtn({
 
   return (
     <Button
-      style={style}
       id={`category-${id}`}
       onClick={moveToCat}
       className={cn(buttonVariants({ variant, size, borderRadius, className }))}
+      style={{ backgroundColor: secondary_color, color: primary_color }}
       ref={buttonRef}
     >
       {icon && (

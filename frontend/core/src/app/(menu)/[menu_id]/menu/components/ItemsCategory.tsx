@@ -6,15 +6,6 @@ import { cn } from "@/lib/utils";
 import CategoryBtn from "./CategoryBtn";
 import { Skeleton } from "@/components/ui/skeleton";
 
-//data(instance)
-const categoryData = {
-  type: "horizontal",
-  primary_color: "#431407",
-  secondary_color: "#fdba74",
-  show_background: false,
-  animation: ["ripple", "tactile"],
-};
-
 //types
 export type AnimationVariant = "ripple" | "tactile" | "pulse";
 type ItemType = {
@@ -57,6 +48,21 @@ export async function getCategories(menu_id: string) {
   }
 }
 
+// GET menu global stylings
+export async function getGlobalStyling(menu_id: string) {
+  try {
+    let res = await fetch(
+      `http://127.0.0.1:8000/menu/${menu_id}/global-styling/`
+    );
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+    return await res.json();
+  } catch (error) {
+    console.error("error fetching data:", error);
+  }
+}
+
 export default async function ItemsCategory({
   params,
   type = "horizontal",
@@ -65,7 +71,9 @@ export default async function ItemsCategory({
   hasBackGround = false,
   allowAnimation = true,
 }: ItemCategoryType) {
-  let categories = await getCategories(params.menu_id);
+  // await new Promise((resolve) => setTimeout(resolve, 2000));
+  const categories = await getCategories(params.menu_id);
+  const globalStyling = await getGlobalStyling(params.menu_id);
 
   return (
     <div
@@ -90,10 +98,8 @@ export default async function ItemsCategory({
               parentType={type}
               animationType={allowAnimation ? ["tactile", "ripple"] : []}
               icon={category.icon.image}
-              style={{
-                background: categoryData.secondary_color,
-                color: categoryData.primary_color,
-              }}
+              primary_color={globalStyling.primary_color}
+              secondary_color={globalStyling.secondary_color}
             ></CategoryBtn>
           )
       )}
