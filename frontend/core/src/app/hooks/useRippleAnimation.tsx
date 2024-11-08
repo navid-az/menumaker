@@ -8,10 +8,15 @@ export type RippleAnimationConfig = {
 };
 type UseRippleAnimationType = (
   element: React.RefObject<HTMLElement>,
-  config: RippleAnimationConfig
+  config?: RippleAnimationConfig,
+  animate?: boolean
 ) => (e?: MouseEvent) => void;
 
-export const useRippleAnimation: UseRippleAnimationType = (element, config) => {
+export const useRippleAnimation: UseRippleAnimationType = (
+  element,
+  config = {},
+  animate = true
+) => {
   //default config
   const { size = 100, color = "#FFF", duration = 800 } = config;
 
@@ -60,7 +65,7 @@ export const useRippleAnimation: UseRippleAnimationType = (element, config) => {
   );
 
   useEffect(() => {
-    if (element.current) {
+    if (element.current && animate) {
       element.current.classList.add("effect-container");
       element.current.addEventListener("mousedown", triggerAnimation);
     }

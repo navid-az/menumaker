@@ -7,12 +7,14 @@ import gsap from "gsap";
 export type TactileAnimationConfig = { duration?: number; scale?: number };
 type UseTactileAnimationType = (
   element: React.RefObject<HTMLElement>,
-  config: TactileAnimationConfig
+  config?: TactileAnimationConfig,
+  animate?: boolean
 ) => () => void;
 
 export const useTactileAnimation: UseTactileAnimationType = (
   element,
-  config
+  config = {},
+  animate = true
 ) => {
   //default config
   const { duration = 0.2, scale = 0.9 } = config;
@@ -30,7 +32,7 @@ export const useTactileAnimation: UseTactileAnimationType = (
   }, [element, scale, duration]);
 
   useEffect(() => {
-    if (element.current) {
+    if (element.current && animate) {
       element.current.addEventListener("mousedown", triggerAnimation);
 
       const cleanupRef = element.current;
