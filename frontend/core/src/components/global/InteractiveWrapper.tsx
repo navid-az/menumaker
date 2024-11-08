@@ -11,23 +11,16 @@ import Slot from "./Slot";
 
 //types
 import { type AsChildProps } from "./Slot";
-type AnimationConfig = {
-  duration?: number;
-  size?: number;
-  scale?: number;
-  [key: string]: any;
+//all available animations
+export type AnimationsType = {
+  ripple?: { duration?: number; size?: number; color?: string };
+  tactile?: { duration?: number; scale?: number };
 };
-
 type WrapperProps = AsChildProps<React.HtmlHTMLAttributes<HTMLElement>> & {
   style?: React.CSSProperties;
   className?: string;
   children: React.ReactNode;
-  animations?: {
-    ripple?: AnimationConfig;
-    tactile?: AnimationConfig;
-    pulse?: AnimationConfig;
-    shake?: AnimationConfig;
-  };
+  animations?: AnimationsType;
 };
 
 const InteractiveWrapper = forwardRef<HTMLElement, WrapperProps>(
@@ -42,16 +35,8 @@ const InteractiveWrapper = forwardRef<HTMLElement, WrapperProps>(
         (ref as React.MutableRefObject<HTMLElement | null>).current = node;
       }
     };
-    useRippleAnimation(
-      elementRef,
-      { duration: 600, size: 200 },
-      !!animations.ripple
-    );
-    useTactileAnimation(
-      elementRef,
-      { duration: 0.1, scale: 0.9 },
-      !!animations.ripple
-    );
+    useRippleAnimation(elementRef, animations.ripple, !!animations.ripple);
+    useTactileAnimation(elementRef, animations.tactile, !!animations.tactile);
 
     // Use the ref only if elementRef.current is not null
     useImperativeHandle(
