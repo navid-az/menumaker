@@ -1,18 +1,19 @@
 "use client";
-import React, { useRef, useEffect, useState } from "react";
+
+import React, { useEffect, useState } from "react";
 
 //SVGs
 import { Minus, Plus, Trash } from "@/app/components/svgs";
 
 //components
 import { Button } from "@/components/ui/button";
+import InteractiveWrapper from "@/components/global/InteractiveWrapper";
 
 //libraries
 import { cn } from "@/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
 
 //hooks
-// import useConditionalAnimation from "@/app/hooks/useConditionalAnimation";
 import { useItemCart } from "@/lib/stores";
 
 //types
@@ -165,38 +166,37 @@ const ValueChangerBtn = ({
   secondaryColor,
   className,
 }: ValueChangeBtnType) => {
-  const btnRef = useRef<HTMLButtonElement>(null);
-  // useConditionalAnimation(btnRef, ["ripple", "tactile"]);
   return (
-    <Button
-      ref={btnRef}
-      name={name}
-      onClick={action}
-      size="icon"
-      className={cn(
-        `h-full w-14 ${
-          borderRadius === "lg"
-            ? "rounded-lg"
-            : borderRadius === "md"
-            ? "rounded-md"
-            : borderRadius === "sm"
-            ? "rounded-sm"
-            : "rounded-full"
-        }`,
-        className
-      )}
-      style={{
-        background: primaryColor,
-        color: secondaryColor,
-      }}
-    >
-      {iconSrc == "minus" ? (
-        <Minus className="h-full w-full" />
-      ) : iconSrc == "trash" ? (
-        <Trash className="h-full w-full" />
-      ) : (
-        <Plus className="h-full w-full" />
-      )}
-    </Button>
+    <InteractiveWrapper asChild animations={{ tactile: { duration: 0.16 } }}>
+      <Button
+        name={name}
+        onClick={action}
+        size="icon"
+        className={cn(
+          `h-full w-14 ${
+            borderRadius === "lg"
+              ? "rounded-lg"
+              : borderRadius === "md"
+              ? "rounded-md"
+              : borderRadius === "sm"
+              ? "rounded-sm"
+              : "rounded-full"
+          }`,
+          className
+        )}
+        style={{
+          background: primaryColor,
+          color: secondaryColor,
+        }}
+      >
+        {iconSrc == "minus" ? (
+          <Minus className="h-full w-full" />
+        ) : iconSrc == "trash" ? (
+          <Trash className="h-full w-full" />
+        ) : (
+          <Plus className="h-full w-full" />
+        )}
+      </Button>
+    </InteractiveWrapper>
   );
 };
