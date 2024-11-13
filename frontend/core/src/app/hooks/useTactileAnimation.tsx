@@ -17,17 +17,29 @@ export const useTactileAnimation: UseTactileAnimationType = (
   animate = true
 ) => {
   //default config
-  const { duration = 0.2, scale = 0.9 } = config;
+  const { duration = 0.18, scale = 0.08 } = config;
 
   const triggerAnimation = useCallback(() => {
     if (element.current) {
       element.current.classList.add("transition-all");
       element.current.classList.add("scale-pro");
 
+      const scaleDown = 1 - scale * 1.5;
+      const scaleUp = 1 + scale;
+
       const tl = gsap.timeline();
-      tl.to(element.current, { scale: scale, duration: duration })
-        .to(element.current, { scale: 1.04, duration: duration })
-        .to(element.current, { scale: 1, duration: duration });
+      tl.to(element.current, {
+        scale: scaleDown,
+        duration: duration,
+      })
+        .to(element.current, {
+          scale: scaleUp,
+          duration: duration,
+        })
+        .to(element.current, {
+          scale: 1,
+          duration: duration,
+        });
     }
   }, [element, scale, duration]);
 
