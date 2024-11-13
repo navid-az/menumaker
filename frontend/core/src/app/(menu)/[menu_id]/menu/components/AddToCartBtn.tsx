@@ -7,20 +7,27 @@ import { Minus, Plus, Trash } from "@/app/components/svgs";
 
 //components
 import { Button } from "@/components/ui/button";
-import InteractiveWrapper from "@/components/global/InteractiveWrapper";
+import InteractiveWrapper, {
+  type AnimationVariantType,
+} from "@/components/global/InteractiveWrapper";
 
 //libraries
 import { cn } from "@/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
 
+//functions
+import mapAnimationsToConfigs from "@/lib/mapAnimationsToConfigs";
+
 //hooks
 import { useItemCart } from "@/lib/stores";
 
 //types
+import { type AnimationConfigType } from "@/components/global/InteractiveWrapper";
 type AddToCartBtnType = {
   itemId: number;
   primaryColor: string;
   secondaryColor: string;
+  animations?: AnimationVariantType[];
 };
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLDivElement>,
@@ -65,6 +72,7 @@ export default function AddToCartBtn({
   borderRadius,
   variant,
   className,
+  animations = [],
 }: ButtonProps) {
   const cartItems = useItemCart((state) => state.items);
   const incrementItemCount = useItemCart((state) => state.incrementItemCount);
@@ -114,6 +122,7 @@ export default function AddToCartBtn({
             borderRadius={borderRadius}
             primaryColor={primaryColor}
             secondaryColor={secondaryColor}
+            animations={animations}
           ></ValueChangerBtn>
 
           <span className="mt-1 flex-initial basis-4/12 text-center text-lg">
@@ -128,6 +137,7 @@ export default function AddToCartBtn({
             borderRadius={borderRadius}
             primaryColor={primaryColor}
             secondaryColor={secondaryColor}
+            animations={animations}
           ></ValueChangerBtn>
         </>
       ) : (
@@ -155,6 +165,7 @@ type ValueChangeBtnType = {
   primaryColor: string;
   secondaryColor: string;
   className?: string;
+  animations: AnimationVariantType[];
 };
 
 const ValueChangerBtn = ({
@@ -165,9 +176,21 @@ const ValueChangerBtn = ({
   primaryColor,
   secondaryColor,
   className,
+  animations = [],
 }: ValueChangeBtnType) => {
+  //component specific animation settings
+  const AddToCartBtnAnimationConfigs: AnimationConfigType = {
+    ripple: { duration: 600, size: 200 },
+    tactile: {},
+  };
+
+  const animationSettings = mapAnimationsToConfigs(
+    AddToCartBtnAnimationConfigs,
+    animations
+  );
+
   return (
-    <InteractiveWrapper asChild animations={{ tactile: { duration: 0.16 } }}>
+    <InteractiveWrapper asChild animations={animationSettings}>
       <Button
         name={name}
         onClick={action}

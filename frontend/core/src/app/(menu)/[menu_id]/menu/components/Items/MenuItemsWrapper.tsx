@@ -3,6 +3,7 @@
 //components
 import { MenuItem } from "./MenuItem";
 import ItemsCategoryTitle from "../ItemsCategoryTitle";
+import { Skeleton } from "@/components/ui/skeleton";
 
 //libraries
 import { useQuery } from "@tanstack/react-query";
@@ -13,8 +14,8 @@ import { InView } from "react-intersection-observer";
 import { useCategoryBtn } from "@/lib/stores";
 
 //types
-import { MenuItemType } from "./MenuItem";
-import { Skeleton } from "@/components/ui/skeleton";
+import { type MenuItemType } from "./MenuItem";
+import { type MenuGlobalStyling } from "../../page";
 export type CategoriesType = {
   id: number;
   menu: string;
@@ -32,8 +33,10 @@ export type CategoriesType = {
 
 export default function MenuItemsWrapper({
   params,
+  globalStyling,
 }: {
   params: { menu_id: string };
+  globalStyling: MenuGlobalStyling;
 }) {
   const { isLoading, isError, data, error } = useQuery({
     queryKey: ["categories"],
@@ -88,6 +91,7 @@ export default function MenuItemsWrapper({
                             is_available={item.is_available}
                             price={item.price}
                             image={item.image}
+                            animations={globalStyling.click_animation}
                           ></MenuItem>
                         ))}
                       </div>

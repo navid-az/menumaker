@@ -8,6 +8,7 @@ import QueryClientWrapper from "./components/QueryClientWrapper";
 import CategoryBtnSkeleton from "./components/categories/CategoryBtnSkeleton";
 
 //types
+import { type AnimationVariantType } from "@/components/global/InteractiveWrapper";
 export type MenuGlobalStyling = {
   id: number;
   primary_color: string;
@@ -15,7 +16,7 @@ export type MenuGlobalStyling = {
   tertiary_color: string;
   bg_color: string;
   unit_display_type: "comp" | "simp" | "engL" | "perL";
-  click_animation: ["tactile"];
+  click_animation: AnimationVariantType[];
   updated: string;
   created: string;
   menu: number;
@@ -51,7 +52,10 @@ export default async function Page({
         <ItemsCategory params={params}></ItemsCategory>
       </Suspense>
       <QueryClientWrapper>
-        <MenuItemsWrapper params={params}></MenuItemsWrapper>
+        <MenuItemsWrapper
+          params={params}
+          globalStyling={globalStyling}
+        ></MenuItemsWrapper>
         <CartBtn type="compact" globalStyling={globalStyling}></CartBtn>
       </QueryClientWrapper>
     </div>

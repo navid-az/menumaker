@@ -12,7 +12,9 @@ import {
   DrawerTrigger,
 } from "@/components/ui/Drawer";
 import { Button } from "@/components/ui/button";
-import InteractiveWrapper from "@/components/global/InteractiveWrapper";
+import InteractiveWrapper, {
+  type AnimationVariantType,
+} from "@/components/global/InteractiveWrapper";
 import PriceTag from "../PriceTag";
 import AddToCartBtn from "../AddToCartBtn";
 
@@ -21,6 +23,7 @@ import { useMenuItemDrawer } from "@/lib/stores";
 
 //SVGs
 import { Heart } from "lucide-react";
+import mapAnimationsToConfigs from "@/lib/mapAnimationsToConfigs";
 
 //data(instance)
 const itemData = {
@@ -29,6 +32,7 @@ const itemData = {
 };
 
 //types
+import { type AnimationConfigType } from "@/components/global/InteractiveWrapper";
 export type MenuItemType = {
   id: number;
   menu?: string;
@@ -40,6 +44,7 @@ export type MenuItemType = {
   is_available?: boolean;
   is_active?: boolean;
   isFeatured?: boolean;
+  animations?: AnimationVariantType[];
 };
 
 export function MenuItem({
@@ -51,6 +56,7 @@ export function MenuItem({
   is_active = true,
   is_available = true,
   isFeatured = false,
+  animations = [],
 }: MenuItemType) {
   //change the value of drawerIsOpen global state
   const setDrawerIsOpen = useMenuItemDrawer((state) => state.updateIsOpen);
@@ -58,17 +64,22 @@ export function MenuItem({
     setDrawerIsOpen();
   };
 
+  //component specific animation settings
+  const MenuItemAnimationConfigs: AnimationConfigType = {
+    ripple: { duration: 600, size: 200 },
+    tactile: {},
+  };
+
+  const animationConfigs = mapAnimationsToConfigs(
+    MenuItemAnimationConfigs,
+    animations
+  );
+
   return (
     <Drawer setBackgroundColorOnScale={false} onOpenChange={handleDrawer}>
       <DrawerTrigger asChild>
         {is_available ? (
-          <InteractiveWrapper
-            asChild
-            animations={{
-              ripple: { duration: 600, size: 200 },
-              tactile: { duration: 0.1, scale: 0.9 },
-            }}
-          >
+          <InteractiveWrapper asChild animations={animationConfigs}>
             <div className="relative col-span-2 h-80 x:h-72 sm:h-[400px]">
               <div className="absolute h-full w-full rounded-3xl bg-gradient-to-t from-zinc-900 to-70%"></div>
               <Button
@@ -98,13 +109,7 @@ export function MenuItem({
             </div>
           </InteractiveWrapper>
         ) : (
-          <InteractiveWrapper
-            asChild
-            animations={{
-              ripple: { duration: 600, size: 200 },
-              tactile: { duration: 0.1, scale: 0.9 },
-            }}
-          >
+          <InteractiveWrapper asChild animations={animationConfigs}>
             <div className="relative col-span-2 flex h-[300px] flex-none flex-col xss:col-span-1">
               <div className="absolute inset-0 -z-10 rounded-2xl bg-gradient-to-t from-orange-200 from-25% to-60%"></div>
               <div className="relative flex w-full basis-9/12 justify-end p-2">
@@ -137,6 +142,7 @@ export function MenuItem({
                   itemId={id}
                   primaryColor={itemData.secondary_color}
                   secondaryColor={itemData.primary_color}
+                  animations={animations}
                 ></AddToCartBtn>
               </div>
             </div>
@@ -183,6 +189,7 @@ export function MenuItem({
             itemId={id}
             primaryColor={itemData.primary_color}
             secondaryColor={itemData.secondary_color}
+            animations={animations}
           ></AddToCartBtn>
         </DrawerFooter>
       </DrawerContent>

@@ -25,6 +25,7 @@ export default function CartItem({ item, globalStyling }: CartItemType) {
         primaryColor={globalStyling.primary_color}
         secondaryColor={globalStyling.secondary_color}
         itemId={item.id}
+        animations={globalStyling.click_animation}
       ></AddToCartBtn>
     </div>
   );
