@@ -7,12 +7,14 @@ import { useRippleAnimation } from "@/app/hooks/useRippleAnimation";
 import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
 
 //components
-import Slot from "./Slot";
+import Slot, { type AsChildProps } from "./Slot";
 
 //types
-import { type AsChildProps } from "./Slot";
-//all available animations
-export type AnimationsType = {
+
+//all available animation variants
+export type AnimationVariantType = "ripple" | "tactile";
+//available animations configs
+export type AnimationConfigType = {
   ripple?: { duration?: number; size?: number; color?: string };
   tactile?: { duration?: number; scale?: number };
 };
@@ -20,7 +22,7 @@ type WrapperProps = AsChildProps<React.HtmlHTMLAttributes<HTMLElement>> & {
   style?: React.CSSProperties;
   className?: string;
   children: React.ReactNode;
-  animations?: AnimationsType;
+  animations?: AnimationConfigType;
 };
 
 const InteractiveWrapper = forwardRef<HTMLElement, WrapperProps>(
