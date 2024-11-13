@@ -12,16 +12,17 @@ import { Button } from "@/components/ui/button";
 
 //functions
 import lightenDarkenColor from "@/lib/lightenDarkenColor";
+import mapAnimationsToConfigs from "@/lib/mapAnimationsToConfigs";
 
 //types
-export type AnimationVariant = "ripple" | "tactile" | "pulse";
+import { type AnimationConfigType } from "@/components/global/InteractiveWrapper";
+import { type AnimationVariantType } from "@/components/global/InteractiveWrapper";
 type CategoryBtnType = {
   icon: string;
   parentType?: string;
-  animationType?: AnimationVariant[];
-  animationOnSelect?: "border" | "background" | "border-background";
   primary_color: string;
   secondary_color: string;
+  animations?: AnimationVariantType[];
 };
 
 //hooks
@@ -70,12 +71,12 @@ export default function CategoryBtn({
   parentType,
   id,
   variant,
-  animationType,
   borderRadius,
   className,
   size,
   primary_color,
   secondary_color,
+  animations = [],
 }: ButtonProps) {
   const [isIconOnly, setIsIconOnly] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -97,8 +98,29 @@ export default function CategoryBtn({
     }
   }, [name, icon]);
 
-  const triggerTactileAnimation = useTactileAnimation(buttonRef, {});
-  const triggerRippleAnimation = useRippleAnimation(buttonRef, {});
+  //component specific animation settings
+  const categoryBtnAnimationConfigs: AnimationConfigType = {
+    ripple: {},
+    tactile: { scale: 0.08 },
+  };
+
+  //Function to map selected animations to their configs
+  const animationConfig = mapAnimationsToConfigs(
+    categoryBtnAnimationConfigs,
+    animations
+  );
+
+  //animations on click
+  const triggerRippleAnimation = useRippleAnimation(
+    buttonRef,
+    animationConfig.ripple,
+    !!animationConfig.ripple
+  );
+  const triggerTactileAnimation = useTactileAnimation(
+    buttonRef,
+    animationConfig.tactile,
+    !!animationConfig.tactile
+  );
 
   //style active CategoryBtn
   useEffect(() => {
@@ -111,8 +133,12 @@ export default function CategoryBtn({
         buttonRef.current.style.border = `2px solid ${primary_color}`;
         //programmatically trigger animations
         if (shouldAutoAnimate) {
-          triggerTactileAnimation();
-          triggerRippleAnimation();
+          if (animationConfig.ripple) {
+            triggerRippleAnimation();
+          }
+          if (animationConfig.tactile) {
+            triggerTactileAnimation();
+          }
         }
         updateShouldAutoAnimate(true);
       } else {
@@ -143,11 +169,6 @@ export default function CategoryBtn({
       }
     }
   };
-
-  //animate buttons according to animationType array(if it's not provided no animation will be executed)
-  // if (animationType) {
-  //   useConditionalAnimation(buttonRef, ["ripple", "tactile"]);
-  // }
 
   return (
     <Button

@@ -1,32 +1,17 @@
-//libraries
-import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "@/lib/utils";
-
 //components
 import CategoryBtn from "./CategoryBtn";
-import { Skeleton } from "@/components/ui/skeleton";
 
 //types
-export type AnimationVariant = "ripple" | "tactile" | "pulse";
-type ItemType = {
-  id: number;
-  menu: string;
-  category: string;
-  name: string;
-  description: string;
-  image: string;
-  price: number;
-  is_available: boolean;
-  is_active: boolean;
-};
+import { type MenuGlobalStyling } from "../page";
+import { type MenuItemType } from "./Items/MenuItem";
 export type CategoryType = {
   id: number;
   name: string;
   icon: { name: string; image: string };
   is_active: boolean;
-  items: ItemType[];
+  items: MenuItemType[];
 };
-type ItemCategoryType = {
+type ItemsCategoryType = {
   params: { menu_id: string };
   type?: "vertical" | "horizontal";
   variant?: "minimal" | "classic";
@@ -70,10 +55,12 @@ export default async function ItemsCategory({
   isSticky = true,
   hasBackGround = false,
   allowAnimation = true,
-}: ItemCategoryType) {
+}: ItemsCategoryType) {
   // await new Promise((resolve) => setTimeout(resolve, 2000));
   const categories = await getCategories(params.menu_id);
-  const globalStyling = await getGlobalStyling(params.menu_id);
+  const globalStyling: MenuGlobalStyling = await getGlobalStyling(
+    params.menu_id
+  );
 
   return (
     <div
@@ -96,60 +83,13 @@ export default async function ItemsCategory({
               id={category.id.toString()}
               name={category.name}
               parentType={type}
-              animationType={allowAnimation ? ["tactile", "ripple"] : []}
               icon={category.icon.image}
               primary_color={globalStyling.primary_color}
               secondary_color={globalStyling.secondary_color}
+              animations={globalStyling.click_animation}
             ></CategoryBtn>
           )
       )}
     </div>
-  );
-}
-
-//loading skeleton for category buttons
-export interface CategoryBtnSkeletonType
-  extends VariantProps<typeof categoryBtnSkeletonVariants> {
-  parentType?: string;
-  size?: "default" | "sm" | "lg" | "icon";
-  animationType?: AnimationVariant[];
-  className?: string;
-}
-
-const categoryBtnSkeletonVariants = cva(
-  "w-20 bg-primary-foreground/50 border-2 border-transparent",
-  {
-    variants: {
-      borderRadius: {
-        default: "rounded-full",
-        sm: "rounded-sm",
-        md: "rounded-md",
-        lg: "rounded-lg",
-      },
-      size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-md px-3",
-        lg: "h-11 rounded-md px-8",
-        icon: "h-10 w-10",
-      },
-    },
-    defaultVariants: {
-      size: "default",
-      borderRadius: "default",
-    },
-  }
-);
-
-function CategoryBtnSkeleton({
-  borderRadius,
-  size,
-  className,
-}: CategoryBtnSkeletonType) {
-  return (
-    <Skeleton
-      className={cn(
-        categoryBtnSkeletonVariants({ borderRadius, size, className })
-      )}
-    ></Skeleton>
   );
 }
