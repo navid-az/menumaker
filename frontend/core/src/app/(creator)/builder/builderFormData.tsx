@@ -91,7 +91,7 @@ export const getSliderData = (
             name: "link_is_active",
             title: "لینک ها",
             description: "لینک های تلگرام و اینستاگرام و ...",
-            iconSrc: "/images/form-icons/link-2.svg",
+            iconSrc: "/images/form-icons/link.svg",
             action: (
               <ItemAdder
                 name="links"
@@ -160,13 +160,13 @@ export const getSliderData = (
           {
             title: "افقی",
             description: "لیست آیتم ها به صورت افقی نمایش داده میشود",
-            iconSrc: "/images/form-icons/horizenal-menu-icon.svg",
+            iconSrc: "/images/form-icons/horizontal-layout.svg",
             value: "horizontal",
           },
           {
             title: "عمودی",
             description: "لیست آیتم ها به صورت عمودی نمایش داده میشود",
-            iconSrc: "/images/form-icons/vertical-menu-icon.svg",
+            iconSrc: "/images/form-icons/vertical-layout.svg",
             value: "vertical",
           },
         ],
@@ -180,13 +180,13 @@ export const getSliderData = (
           {
             title: "اسلایدی",
             description: "مدل پیش فرز نمایش آیتم ها",
-            iconSrc: "/images/form-icons/horizenal-menu-icon.svg",
+            iconSrc: "/images/form-icons/horizontal-layout.svg",
             value: "slider",
           },
           {
             title: "چرخشی",
             description: "آیتم ها به صورت یک نیم دایره نمایش داده میشوند",
-            iconSrc: "/images/form-icons/vertical-menu-icon.svg",
+            iconSrc: "/images/form-icons/vertical-layout.svg",
             value: "circular",
           },
         ],
@@ -200,7 +200,7 @@ export const getSliderData = (
             title: "درخواست گارسون",
             description:
               "دکمه ای که به مشتری این امکان را میدهد که گارسون را صدا بزند",
-            iconSrc: "/images/form-icons/ring.svg",
+            iconSrc: "/images/form-icons/concierge-bell.svg",
           },
           {
             name: "search_item_is_active",
@@ -227,13 +227,13 @@ export const getSliderData = (
 //           {
 //             title: "افقی",
 //             description: "لیست آیتم ها به صورت افقی نمایش داده میشود",
-//             iconSrc: "/images/form-icons/horizenal-menu-icon.svg",
+//             iconSrc: "/images/form-icons/horizontal-layout.svg",
 //             value: "horizontal",
 //           },
 //           {
 //             title: "عمودی",
 //             description: "لیست آیتم ها به صورت عمودی نمایش داده میشود",
-//             iconSrc: "/images/form-icons/vertical-menu-icon.svg",
+//             iconSrc: "/images/form-icons/vertical-layout.svg",
 //             value: "vertical",
 //           },
 //         ],
@@ -247,13 +247,13 @@ export const getSliderData = (
 //           {
 //             title: "دکمه ها",
 //             description: "انیمیشن برای تمامی دکمه های منو",
-//             iconSrc: "/images/form-icons/horizenal-menu-icon.svg",
+//             iconSrc: "/images/form-icons/horizontal-layout.svg",
 //             value: "horizontal",
 //           },
 //           {
 //             title: "آیتم ها",
 //             description: "انیمیشن برای کارت آیتم",
-//             iconSrc: "/images/form-icons/vertical-menu-icon.svg",
+//             iconSrc: "/images/form-icons/vertical-layout.svg",
 //             value: "vertical",
 //           },
 //         ],
