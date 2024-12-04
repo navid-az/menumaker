@@ -24,7 +24,7 @@ function ColorPicker() {
             <div
               className="aspect-square h-full rounded-sm"
               style={{
-                backgroundColor: color,
+                backgroundColor: color ? color : "#FFFFFF",
               }}
             ></div>
           </Button>
@@ -41,7 +41,7 @@ function ColorPicker() {
               <div
                 className="absolute bottom-0 right-1 top-1 h-8 w-8 rounded-md border"
                 style={{
-                  backgroundColor: color,
+                  backgroundColor: color ? color : "#FFFFFF",
                 }}
               ></div>
               <Input
