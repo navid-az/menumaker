@@ -195,3 +195,41 @@ export const useMenuItemDrawer = create<useMenuItemDrawerType>()((set) => ({
     });
   },
 }));
+
+//~~~~ColorPalette~~~~
+type useColorPaletteType = {
+  colors: string[];
+  selectedColor: string;
+  updateSelectedColor: (color: string) => void;
+  updateColor: (color: string) => void;
+  removeColor: (Index?: number) => void;
+};
+export const useColorPalette = create<useColorPaletteType>()((set) => ({
+  colors: ["#ff7118", "#fffed5", "#f65f42"],
+  selectedColor: "#ff7118",
+  updateSelectedColor: (color) => set(() => ({ selectedColor: color })),
+  updateColor: (color) => {
+    set((state) => {
+      if (state.colors.length <= 4) {
+        return {
+          colors: [...state.colors, color],
+        };
+      }
+      return state;
+    });
+  },
+  removeColor: (index) => {
+    set((state) => {
+      if (state.colors.length >= 3) {
+        if (index !== undefined) {
+          //remove an specific color
+          return { colors: state.colors.filter((_, i) => i !== index) };
+        } else {
+          //remove last color
+          return { colors: state.colors.slice(0, -1) };
+        }
+      }
+      return state;
+    });
+  },
+}));
