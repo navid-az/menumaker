@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 //components
 import {
@@ -11,53 +11,60 @@ import { Input } from "@/components/ui/input";
 
 //libraries
 import { HexColorPicker } from "react-colorful";
+import { useColorPalette } from "@/lib/stores";
 
-function ColorPicker() {
-  const [color, setColor] = useState("#aabbcc");
+//SVGs
+import { Plus } from "lucide-react";
 
+//types
+type ColorPickerType = {
+  children: React.ReactNode;
+};
+
+function ColorPicker({ children }: ColorPickerType) {
+  const addColor = useColorPalette((state) => state.updateColor);
+  const color = useColorPalette((state) => state.selectedColor);
+  const updateSelectedColor = useColorPalette(
+    (state) => state.updateSelectedColor
+  );
   return (
-    <div className="h-max w-full rounded-md bg-sad-blue p-2">
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button size="sm" className="gap-2 py-1 pl-1">
-            پس زمینه
+    <Popover>
+      <PopoverTrigger asChild>{children}</PopoverTrigger>
+      <PopoverContent asChild>
+        <div className="flex h-full flex-col gap-4 !rounded-xl border-2 border-primary bg-soft-blue !p-4">
+          <HexColorPicker
+            className="custom-color-picker !h-44 !w-full"
+            color={color}
+            onChange={updateSelectedColor}
+          ></HexColorPicker>
+
+          <div className="relative">
             <div
-              className="aspect-square h-full rounded-sm"
+              className="absolute bottom-0 right-1 top-1 h-8 w-8 rounded-md border"
               style={{
                 backgroundColor: color ? color : "#FFFFFF",
               }}
             ></div>
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent asChild>
-          <div className="flex h-full flex-col gap-4 !rounded-xl !p-4">
-            <HexColorPicker
-              className="custom-color-picker !h-44 !w-full"
-              color={color}
-              onChange={setColor}
-            ></HexColorPicker>
-
-            <div className="relative">
-              <div
-                className="absolute bottom-0 right-1 top-1 h-8 w-8 rounded-md border"
-                style={{
-                  backgroundColor: color ? color : "#FFFFFF",
-                }}
-              ></div>
-              <Input
-                className="uppercase focus:border-transparent"
-                dir="ltr"
-                type="text"
-                defaultValue={color}
-                placeholder="#FFFFFF"
-                value={color}
-                onChange={(e) => setColor(e.target.value)}
-              />
-            </div>
+            <Input
+              className="uppercase focus:border-transparent"
+              dir="ltr"
+              type="text"
+              defaultValue={color}
+              placeholder="#FFFFFF"
+              value={color}
+              onChange={(e) => updateSelectedColor(e.target.value)}
+            />
           </div>
-        </PopoverContent>
-      </Popover>
-    </div>
+          <Button
+            className="flex gap-2 text-sad-blue"
+            onClick={() => addColor(color)}
+          >
+            افزودن رنگ
+            <Plus></Plus>
+          </Button>
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 }
 
