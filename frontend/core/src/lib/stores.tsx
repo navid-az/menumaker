@@ -203,6 +203,7 @@ type useColorPaletteType = {
   updateSelectedColor: (color: string) => void;
   updateColor: (color: string) => void;
   removeColor: (Index?: number) => void;
+  changeColorPalette: (palette: string[]) => void; //for changing the entire color palette with a new one
 };
 export const useColorPalette = create<useColorPaletteType>()((set) => ({
   colors: ["#ff7118", "#fffed5", "#f65f42"],
@@ -231,5 +232,8 @@ export const useColorPalette = create<useColorPaletteType>()((set) => ({
       }
       return state;
     });
+  },
+  changeColorPalette: (palette) => {
+    set(() => ({ colors: palette }));
   },
 }));
