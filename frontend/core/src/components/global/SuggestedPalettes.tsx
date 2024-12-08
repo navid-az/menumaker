@@ -1,20 +1,20 @@
 import React from "react";
 
 //components
-import PaletteSuggestion from "./PaletteSuggestion";
+import SuggestedPalette from "./SuggestedPalette";
 
 type PaletteSuggestionsType = {
   palettes: string[][];
 };
 
-const PaletteSuggestions = ({ palettes }: PaletteSuggestionsType) => {
+const SuggestedPalettes = ({ palettes }: PaletteSuggestionsType) => {
   return (
     <div className="grid w-full grid-cols-3 gap-2 py-[6px]">
       {palettes.map((palette) => (
-        <PaletteSuggestion colors={palette}></PaletteSuggestion>
+        <SuggestedPalette colors={palette}></SuggestedPalette>
       ))}
     </div>
   );
 };
 
-export default PaletteSuggestions;
+export default SuggestedPalettes;

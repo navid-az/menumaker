@@ -10,7 +10,7 @@ import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
 //SVGs
 import { Check } from "lucide-react";
 
-const PaletteSuggestion = ({ colors }: { colors: string[] }) => {
+const SuggestedPalette = ({ colors }: { colors: string[] }) => {
   const changePalette = useColorPalette((state) => state.changeColorPalette);
   const activePalette = useColorPalette((state) => state.colors);
 
@@ -36,4 +36,4 @@ const PaletteSuggestion = ({ colors }: { colors: string[] }) => {
   );
 };
 
-export default PaletteSuggestion;
+export default SuggestedPalette;
