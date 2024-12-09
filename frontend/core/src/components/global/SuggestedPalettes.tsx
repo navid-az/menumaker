@@ -10,8 +10,8 @@ type PaletteSuggestionsType = {
 const SuggestedPalettes = ({ palettes }: PaletteSuggestionsType) => {
   return (
     <div className="grid w-full grid-cols-3 gap-2 py-[6px]">
-      {palettes.map((palette) => (
-        <SuggestedPalette colors={palette}></SuggestedPalette>
+      {palettes.map((palette, index) => (
+        <SuggestedPalette key={index} colors={palette}></SuggestedPalette>
       ))}
     </div>
   );

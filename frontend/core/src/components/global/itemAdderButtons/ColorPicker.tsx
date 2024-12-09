@@ -49,7 +49,6 @@ function ColorPicker({ children }: ColorPickerType) {
               className="uppercase focus:border-transparent"
               dir="ltr"
               type="text"
-              defaultValue={color}
               placeholder="#FFFFFF"
               value={color}
               onChange={(e) => updateSelectedColor(e.target.value)}

@@ -33,6 +33,7 @@ const Palette = ({
     <div className="flex h-10 flex-1 flex-row-reverse rounded-full bg-white outline outline-2 outline-primary">
       {colors.map((color, index) => (
         <div
+          key={index}
           className="group flex flex-1 cursor-pointer items-center justify-center gap-4 rounded-none transition-all first:rounded-l-full last:rounded-r-full hover:basis-3/12"
           style={{
             backgroundColor: color,
