@@ -23,6 +23,11 @@ const PaletteBuilder = () => {
   useTactileAnimation(addBtnRef);
   useTactileAnimation(removeBtnRef);
 
+  const handleColorRemove = (e: React.MouseEvent) => {
+    e.preventDefault();
+    removeColor();
+  };
+
   return (
     <section className="flex w-full gap-2 py-[6px]">
       <ColorPicker>
@@ -37,7 +42,7 @@ const PaletteBuilder = () => {
       <Palette colors={colors}></Palette>
       <Button
         ref={removeBtnRef}
-        onClick={() => removeColor()}
+        onClick={handleColorRemove}
         disabled={colors.length < 3}
         className="flex w-10 grow-0 cursor-pointer items-center justify-center rounded-full bg-primary p-0 text-primary transition-opacity"
       >

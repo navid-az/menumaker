@@ -38,7 +38,7 @@ const Palette = ({
             backgroundColor: color,
           }}
         >
-          {!disableOptions && (
+          {disableOptions ? null : colors.length > 2 ? (
             <>
               <Button
                 onClick={(e) => handleDelete(e, index)}
@@ -52,6 +52,8 @@ const Palette = ({
                 ></X>
               </Button>
             </>
+          ) : (
+            ""
           )}
         </div>
       ))}
