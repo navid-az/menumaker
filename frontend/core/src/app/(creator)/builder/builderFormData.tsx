@@ -1,6 +1,6 @@
 //components
 import ItemAdder from "@/components/global/ItemAdder";
-import ColorPaletteBuilder from "@/components/global/ColorPaletteBuilder";
+import PaletteBuilder from "@/components/global/PaletteBuilder";
 import SuggestedPalettes from "@/components/global/SuggestedPalettes";
 
 //types
@@ -74,7 +74,7 @@ export const getSliderData = (
             value: "single",
             iconSrc: "/images/form-icons/pallet.svg",
             alwaysOn: true,
-            action: <ColorPaletteBuilder></ColorPaletteBuilder>,
+            action: <PaletteBuilder></PaletteBuilder>,
           },
         ],
       },

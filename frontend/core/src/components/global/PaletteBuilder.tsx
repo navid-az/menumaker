@@ -3,16 +3,16 @@ import React, { useRef } from "react";
 //components
 import { Button } from "../ui/button";
 import Palette from "./Palette";
+import ColorPicker from "./itemAdderButtons/ColorPicker";
 
 //SVGs
 import { Plus, Minus } from "lucide-react";
-import ColorPicker from "./itemAdderButtons/ColorPicker";
 
 //hooks
 import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
 import { useColorPalette } from "@/lib/stores";
 
-const ColorPaletteBuilder = () => {
+const PaletteBuilder = () => {
   const colors = useColorPalette((state) => state.colors);
   const removeColor = useColorPalette((state) => state.removeColor);
 
@@ -47,4 +47,4 @@ const ColorPaletteBuilder = () => {
   );
 };
 
-export default ColorPaletteBuilder;
+export default PaletteBuilder;

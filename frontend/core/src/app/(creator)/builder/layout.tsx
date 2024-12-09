@@ -11,7 +11,7 @@ export default function MenuBuilderLayout({
       <div className="md: lg:pr flex h-screen w-screen justify-center p-2 sm:w-7/12 sm:px-0 lg:mr-12 lg:w-6/12 xl:mr-32 xl:w-5/12">
         {children}
       </div>
-      <div className="hidden h-screen w-5/12 justify-center sm:flex lg:w-6/12">
+      <div className="hidden h-screen w-5/12 select-none justify-center sm:flex lg:w-6/12">
         <Image
           src="/svgs/iphone.svg"
           width={290}

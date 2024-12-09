@@ -206,7 +206,7 @@ type useColorPaletteType = {
   changeColorPalette: (palette: string[]) => void; //for changing the entire color palette with a new one
 };
 export const useColorPalette = create<useColorPaletteType>()((set) => ({
-  colors: ["#ff7118", "#fffed5", "#f65f42"],
+  colors: ["#ff7118", "#fffed5"],
   selectedColor: "#ff7118",
   updateSelectedColor: (color) => set(() => ({ selectedColor: color })),
   updateColor: (color) => {
