@@ -1,5 +1,7 @@
 //components
 import ItemAdder from "@/components/global/ItemAdder";
+import ColorPaletteBuilder from "@/components/global/ColorPaletteBuilder";
+import SuggestedPalettes from "@/components/global/SuggestedPalettes";
 
 //types
 import { UseFormReturn } from "react-hook-form";
@@ -12,6 +14,7 @@ export type stepTabBase = {
   iconSrc: string;
   isRadio?: boolean;
   action?: React.ReactNode;
+  alwaysOn?: boolean;
 };
 type stepTabType = stepTabBase &
   (
@@ -38,6 +41,80 @@ export type sliderDataType = {
 export const getSliderData = (
   form: UseFormReturn<formSchemaType>
 ): sliderDataType[] => [
+  {
+    title: "شخصی سازی",
+    condition: () => true,
+    steps: [
+      {
+        title: "رنگ بندی و ویژگی های ظاهری مورد نظر خود را انتخاب کنید",
+        condition: () => true,
+        tabs: [
+          {
+            name: "link_is_active",
+            title: "پالت های پیشنهادی",
+            description: "ترکیب رنگ های پیش فرز",
+            value: "couple",
+            iconSrc: "/images/form-icons/palette.svg",
+            action: (
+              <SuggestedPalettes
+                palettes={[
+                  ["#264653", "#E76F51"],
+                  ["#F94144", "#F3722C", "#F8961E", "#F9C74F", "#90BE6D"],
+                  ["#CBDFBD", "#F19C79", "#A44A3F"],
+                  ["#011627", "#FF3366", "#2EC4B6", "#F7B801", "#E71D36"],
+                  ["#A8DADC", "#457B9D", "#E63946", "#F1FAEE"],
+                ]}
+              ></SuggestedPalettes>
+            ),
+          },
+          {
+            name: "location_is_active",
+            title: "رنگبندی",
+            description: "تم رنگی و نمای ظاهری منو",
+            value: "single",
+            iconSrc: "/images/form-icons/pallet.svg",
+            alwaysOn: true,
+            action: <ColorPaletteBuilder></ColorPaletteBuilder>,
+          },
+        ],
+      },
+      {
+        title: "رنگ بندی و ویژگی های ظاهری مورد نظر خود را انتخاب کنید",
+        isRadioGroup: true,
+        name: "main_page_type",
+        condition: () => true,
+        tabs: [
+          {
+            title: "رنگبندی",
+            description: "تم رنگی و نمای ظاهری منو",
+            value: "single",
+            iconSrc: "/images/form-icons/pallet.svg",
+            action: (
+              <ItemAdder
+                name="menu_sections"
+                limit={1}
+                placeholder="نام بخش"
+              ></ItemAdder>
+            ),
+          },
+          {
+            title: "انیمیشن",
+            description: "انیمیشنی که هنگام کلیک روی اجزای منو اجرا میشود",
+            value: "couple",
+            iconSrc: "/images/form-icons/sparkles.svg",
+            action: (
+              <ItemAdder
+                name="menu_sections"
+                limit={3}
+                placeholder="نام بخش"
+              ></ItemAdder>
+            ),
+          },
+        ],
+      },
+    ],
+  },
+
   {
     title: "صفحه اصلی",
     condition: () => true,

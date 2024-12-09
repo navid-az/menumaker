@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 
 //types
 type SliderTabType = {
-  isActive: boolean;
+  isActive?: boolean;
   onClick: () => void;
   children: React.ReactNode;
 };
@@ -20,7 +20,7 @@ type SliderTabTitle = {
   title: string;
   description?: string;
   iconSrc: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 };
 
 type SliderTabBody = {
@@ -50,7 +50,11 @@ export function SliderTabTitle({
   children,
 }: SliderTabTitle) {
   return (
-    <Label className="flex w-full cursor-pointer flex-col justify-between p-2 sm:p-3">
+    <Label
+      className={`flex w-full ${
+        children ? "cursor-pointer" : "cursor-auto"
+      } flex-col justify-between p-2 sm:p-3`}
+    >
       <div className="flex justify-between">
         <div className="flex items-center justify-between gap-2">
           <div className="relative aspect-square w-6 sm:w-7">

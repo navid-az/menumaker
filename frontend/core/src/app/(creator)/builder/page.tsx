@@ -221,21 +221,29 @@ export default function Page() {
                                       field.name as keyOfFormSchemaType
                                     )
                                   }
-                                  isActive={field.value as boolean}
+                                  isActive={
+                                    (field.value as boolean) ||
+                                    (tab.alwaysOn as boolean)
+                                  }
                                 >
                                   <SliderTabTitle
                                     title={tab.title}
                                     description={tab.description}
                                     iconSrc={tab.iconSrc}
                                   >
-                                    <Switch
-                                      checked={field.value as boolean}
-                                      onCheckedChange={field.onChange}
-                                    ></Switch>
+                                    {!tab.alwaysOn && (
+                                      <Switch
+                                        checked={field.value as boolean}
+                                        onCheckedChange={field.onChange}
+                                      ></Switch>
+                                    )}
                                   </SliderTabTitle>
                                   {tab.action && (
                                     <SliderTabBody
-                                      isOpen={field.value as boolean}
+                                      isOpen={
+                                        (field.value as boolean) ||
+                                        (tab.alwaysOn as boolean)
+                                      }
                                     >
                                       {tab.action}
                                     </SliderTabBody>
