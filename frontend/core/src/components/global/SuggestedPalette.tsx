@@ -16,13 +16,13 @@ const SuggestedPalette = ({ colors }: { colors: string[] }) => {
 
   const btnRef = useRef(null);
 
-  useTactileAnimation(btnRef, { scale: 0.2 });
+  // useTactileAnimation(btnRef, { scale: 0.08 });
 
   return (
     <div
-      className={`poi relative rounded-full border-[3.5px] transition-all ${
+      className={`relative rounded-full border-[3.5px] transition-all duration-200 ${
         activePalette === colors
-          ? "pointer-events-none border-primary"
+          ? "pointer-events-none scale-95 border-primary"
           : "border-transparent"
       } `}
       ref={btnRef}

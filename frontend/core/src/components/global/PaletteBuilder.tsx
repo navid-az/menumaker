@@ -1,9 +1,12 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 
 //components
 import { Button } from "../ui/button";
 import Palette from "./Palette";
 import ColorPicker from "./itemAdderButtons/ColorPicker";
+
+//libraries
+import { useFormContext } from "react-hook-form";
 
 //SVGs
 import { Plus, Minus } from "lucide-react";
@@ -18,6 +21,7 @@ const PaletteBuilder = () => {
 
   const addBtnRef = useRef(null);
   const removeBtnRef = useRef(null);
+  const form = useFormContext();
 
   //click animations
   useTactileAnimation(addBtnRef);
@@ -27,6 +31,11 @@ const PaletteBuilder = () => {
     e.preventDefault();
     removeColor();
   };
+
+  //set colors to builderForm data
+  useEffect(() => {
+    form.setValue("color_palette", colors);
+  }, [colors]);
 
   return (
     <section className="flex w-full gap-2 py-[6px]">

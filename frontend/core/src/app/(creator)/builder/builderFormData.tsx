@@ -68,9 +68,9 @@ export const getSliderData = (
             ),
           },
           {
-            name: "location_is_active",
-            title: "رنگبندی",
-            description: "تم رنگی و نمای ظاهری منو",
+            name: "color_palette",
+            title: "رنگ بندی منو",
+            description: "پالت رنگی دلخواه خود را برای ظاهر منوی ایجاد کنید",
             value: "single",
             iconSrc: "/images/form-icons/pallet.svg",
             alwaysOn: true,
