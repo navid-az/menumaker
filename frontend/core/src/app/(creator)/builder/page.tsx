@@ -17,6 +17,7 @@ import {
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import MenuPreview from "./components/MenuPreview";
 
 //hooks
 import { useSlider } from "@/lib/stores";
@@ -138,11 +139,12 @@ export default function Page() {
 
   return (
     <Form {...form}>
+      {/* multipart form */}
       <form
         name="builder-form"
         ref={formRef}
         onSubmit={form.handleSubmit(onSubmit, onInvalid)}
-        className="h-screen w-screen"
+        className="basis-8/12 px-32"
       >
         <Slider>
           {validSections.map((section, sectionIndex) => (
@@ -263,6 +265,10 @@ export default function Page() {
           ))}
         </Slider>
       </form>
+      {/* live menu preview */}
+      <section className="relative ml-20 flex h-screen basis-4/12 items-center justify-center">
+        <MenuPreview></MenuPreview>
+      </section>
     </Form>
   );
 }
