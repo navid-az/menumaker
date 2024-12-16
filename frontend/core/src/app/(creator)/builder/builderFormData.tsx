@@ -2,6 +2,7 @@
 import ItemAdder from "@/components/global/ItemAdder";
 import PaletteBuilder from "@/components/global/PaletteBuilder";
 import SuggestedPalettes from "@/components/global/SuggestedPalettes";
+import RadiusSelector from "@/components/global/itemAdderButtons/RadiusSelector";
 
 //types
 import { UseFormReturn } from "react-hook-form";
@@ -85,17 +86,11 @@ export const getSliderData = (
         condition: () => true,
         tabs: [
           {
-            title: "رنگبندی",
-            description: "تم رنگی و نمای ظاهری منو",
+            title: "خمیدگی گوشه ها",
+            description: "میزان خمیدگی گوشه های اجزای منو",
             value: "single",
-            iconSrc: "/images/form-icons/pallet.svg",
-            action: (
-              <ItemAdder
-                name="menu_sections"
-                limit={1}
-                placeholder="نام بخش"
-              ></ItemAdder>
-            ),
+            iconSrc: "/images/form-icons/border.svg",
+            action: <RadiusSelector></RadiusSelector>,
           },
           {
             title: "انیمیشن",
