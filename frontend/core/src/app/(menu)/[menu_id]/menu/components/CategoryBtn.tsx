@@ -128,7 +128,7 @@ export default function CategoryBtn({
       if (activeCategory === id) {
         buttonRef.current.style.background = lightenDarkenColor(
           secondary_color,
-          30
+          20
         );
         buttonRef.current.style.border = `2px solid ${primary_color}`;
         //programmatically trigger animations

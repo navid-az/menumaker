@@ -48,7 +48,7 @@ const Palette = ({
               >
                 <X
                   style={{
-                    color: lightenDarkenColor(color),
+                    color: lightenDarkenColor(color, 140),
                   }}
                 ></X>
               </Button>

@@ -1,5 +1,5 @@
 //lighten/darken hex color code according to the amount
-const lightenDarkenColor = (color: string): string => {
+const lightenDarkenColor = (color: string, intensity: number): string => {
   // Ensure the input is a valid hex color
   if (!/^#?[0-9A-Fa-f]{6}$/.test(color)) {
     throw new Error("Invalid HEX color.");
@@ -21,7 +21,7 @@ const lightenDarkenColor = (color: string): string => {
   const brightness = 0.299 * r + 0.587 * g + 0.114 * b;
 
   // Adjust dynamically based on brightness
-  const amount = brightness > 128 ? -140 : 140; // Darken if bright, lighten if dark
+  const amount = brightness > 128 ? -intensity : intensity; // Darken if bright, lighten if dark
 
   // Modify RGB values
   r = Math.min(255, Math.max(0, r + amount));
