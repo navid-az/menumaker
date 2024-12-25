@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 //components
 import Image from "next/image";
@@ -11,17 +11,17 @@ import { useFormContext } from "react-hook-form";
 import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
 
 //types
-type BorderRadiusType = "full" | "lg" | "md" | "sm";
+export type GlobalBorderRadiusType = "full" | "lg" | "md" | "sm";
 type RadiusSelectorBtnType = {
-  radius: BorderRadiusType;
-  activeBtn: BorderRadiusType;
-  setActiveBtn: React.Dispatch<React.SetStateAction<BorderRadiusType>>;
+  radius: GlobalBorderRadiusType;
+  activeBtn: GlobalBorderRadiusType;
+  setActiveBtn: React.Dispatch<React.SetStateAction<GlobalBorderRadiusType>>;
 };
 
 export default function RadiusSelector() {
-  const [activeBtn, setActiveBtn] = useState<BorderRadiusType>("full");
+  const [activeBtn, setActiveBtn] = useState<GlobalBorderRadiusType>("full");
 
-  const borderRadiuses: BorderRadiusType[] = ["full", "lg", "md", "sm"];
+  const borderRadiuses: GlobalBorderRadiusType[] = ["full", "lg", "md", "sm"];
 
   return (
     <div className="flex h-max w-full justify-end gap-2 rounded-md">
@@ -45,22 +45,24 @@ function RadiusSelectorBtn({
   const { setValue } = useFormContext();
   const BtnRef = useRef(null);
 
+  //animate button
   useTactileAnimation(BtnRef);
 
-  const handleRadiusChange = (
-    e: React.MouseEvent,
-    radius: BorderRadiusType
-  ) => {
+  const handleRadiusChange = (e: React.MouseEvent) => {
     e.preventDefault();
-    setValue("global_border_radius", radius);
     setActiveBtn(radius);
   };
 
+  useEffect(() => {
+    setValue("global_border_radius", activeBtn);
+  }, [activeBtn]);
+
   return (
     <Button
+      size="icon"
       ref={BtnRef}
-      onClick={(e) => handleRadiusChange(e, radius)}
-      className={`h-[52px] w-[52px] border-2 bg-sad-blue/80 p-2 transition-all duration-300 ${
+      onClick={handleRadiusChange}
+      className={`scale-pro h-[52px] w-[52px] border-2 bg-sad-blue/80 transition-[border-color] duration-300 ${
         activeBtn === radius
           ? "border-primary hover:border-primary"
           : "border-transparent hover:border-primary/30"
