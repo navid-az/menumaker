@@ -118,8 +118,10 @@ const categoryData = [
 
 export default function MenuItemsWrapperPreview({
   colors,
+  globalBorderRadius,
 }: {
   colors: string[];
+  globalBorderRadius: "full" | "lg" | "md" | "sm";
 }) {
   const setActiveCategory = useCategoryBtn(
     (state) => state.updateActiveCategory
@@ -160,6 +162,7 @@ export default function MenuItemsWrapperPreview({
                           image={item.image}
                           animations={["ripple", "tactile"]}
                           colors={colors}
+                          globalBorderRadius={globalBorderRadius}
                         ></MenuItemPreview>
                       ))}
                     </div>

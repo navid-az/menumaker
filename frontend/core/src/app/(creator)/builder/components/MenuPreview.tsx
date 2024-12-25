@@ -13,6 +13,7 @@ import MenuItemsWrapperPreview from "./preview/MenuItemsWrapperPreview";
 export default function MenuPreview() {
   const { watch } = useFormContext();
   const colors = watch("color_palette");
+  const globalBorderRadius = watch("global_border_radius");
 
   return (
     <>
@@ -34,8 +35,14 @@ export default function MenuPreview() {
             className="pointer-events-none z-50"
           ></Image>
           <section className="hide-scrollbar relative mx-[36px] my-[85px] h-full overflow-y-scroll rounded-[30px] bg-gray-200 pb-6 pt-12">
-            <ItemsCategoryPreview colors={colors}></ItemsCategoryPreview>
-            <MenuItemsWrapperPreview colors={colors}></MenuItemsWrapperPreview>
+            <ItemsCategoryPreview
+              colors={colors}
+              globalBorderRadius={globalBorderRadius}
+            ></ItemsCategoryPreview>
+            <MenuItemsWrapperPreview
+              colors={colors}
+              globalBorderRadius={globalBorderRadius}
+            ></MenuItemsWrapperPreview>
           </section>
         </div>
       )}

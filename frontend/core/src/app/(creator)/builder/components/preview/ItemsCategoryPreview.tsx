@@ -161,6 +161,7 @@ type ItemsCategoryType = {
   hasBackGround?: boolean;
   allowAnimation?: boolean;
   colors: string[];
+  globalBorderRadius: "full" | "lg" | "md" | "sm";
 };
 
 export default function ItemsCategoryPreview({
@@ -170,6 +171,7 @@ export default function ItemsCategoryPreview({
   hasBackGround = false,
   allowAnimation = true,
   colors,
+  globalBorderRadius,
 }: ItemsCategoryType) {
   return (
     <div
@@ -190,6 +192,7 @@ export default function ItemsCategoryPreview({
           icon={category.icon.image}
           animations={["ripple", "tactile"]}
           colors={colors}
+          globalBorderRadius={globalBorderRadius}
         ></CategoryBtnPreview>
       ))}
     </div>

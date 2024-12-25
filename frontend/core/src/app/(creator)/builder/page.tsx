@@ -120,15 +120,10 @@ export default function Page() {
     alert("invalid");
 
     // Check and set default values for radio groups if not selected
-    if (!form.getValues("main_page_type")) {
-      form.setValue("main_page_type", "couple");
-    }
-    if (!form.getValues("categories_display_type")) {
-      form.setValue("categories_display_type", "circular");
-    }
-    if (!form.getValues("item_page_type")) {
-      form.setValue("item_page_type", "horizontal");
-    }
+    form.setValue("main_page_type", "couple");
+    form.setValue("categories_display_type", "circular");
+    form.setValue("item_page_type", "horizontal");
+    form.setValue("global_border_radius", "full");
 
     // Programmatically submit the form after setting default values
     if (formRef.current) {
@@ -190,7 +185,7 @@ export default function Page() {
                                       iconSrc={tab.iconSrc}
                                     >
                                       <RadioGroupItem
-                                        value={tab.value as keyOfFormSchemaType}
+                                        value={tab.value}
                                       ></RadioGroupItem>
                                     </SliderTabTitle>
                                     {tab.action && (
@@ -215,7 +210,7 @@ export default function Page() {
                         <FormField
                           key={tabIndex}
                           control={form.control}
-                          name={tab.name as keyOfFormSchemaType}
+                          name={tab.name || "color_palette"}
                           render={({ field }) => (
                             <FormItem>
                               <FormControl>

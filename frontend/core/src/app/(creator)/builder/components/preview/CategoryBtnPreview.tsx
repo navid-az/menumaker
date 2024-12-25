@@ -22,6 +22,7 @@ type CategoryBtnType = {
   parentType?: string;
   animations?: AnimationVariantType[];
   colors: string[];
+  globalBorderRadius: "full" | "lg" | "md" | "sm";
 };
 
 //hooks
@@ -30,7 +31,7 @@ import { useTactileAnimation } from "@/app/hooks/useTactileAnimation"; //animati
 import { useRippleAnimation } from "@/app/hooks/useRippleAnimation"; //animation hook
 
 const buttonVariants = cva(
-  `flex-none select-none transition-colors duration-500`,
+  `flex-none select-none transition-[border-color,border-radius,background-color] duration-300`,
   {
     variants: {
       types: { vertical: "", horizontal: "" },
@@ -45,17 +46,17 @@ const buttonVariants = cva(
         classic: "",
       },
       borderRadius: {
-        default: "rounded-full",
         sm: "rounded-sm",
         md: "rounded-md",
         lg: "rounded-lg",
+        full: "rounded-full",
       },
     },
     defaultVariants: {
       types: "horizontal",
       size: "default",
       variant: "default",
-      borderRadius: "default",
+      borderRadius: "full",
     },
   }
 );
@@ -70,13 +71,11 @@ export default function CategoryBtnPreview({
   parentType,
   id,
   variant,
-  borderRadius,
   className,
   size,
-  //   primary_color,
-  //   secondary_color,
   animations = [],
   colors,
+  globalBorderRadius,
 }: ButtonProps) {
   const [isIconOnly, setIsIconOnly] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -101,7 +100,7 @@ export default function CategoryBtnPreview({
   //component specific animation settings
   const categoryBtnAnimationConfigs: AnimationConfigType = {
     ripple: {},
-    tactile: { scale: 0.08 },
+    tactile: {},
   };
 
   //Function to map selected animations to their configs
@@ -171,10 +170,18 @@ export default function CategoryBtnPreview({
     <Button
       id={`category-${id}`}
       onClick={moveToCat}
-      className={cn(buttonVariants({ variant, size, borderRadius, className }))}
+      className={cn(buttonVariants({ variant, size, className }))}
       style={{
         backgroundColor: colors ? colors[1] : "blue",
         color: colors ? colors[0] : "blue",
+        borderRadius:
+          globalBorderRadius === "full"
+            ? "20px"
+            : globalBorderRadius === "lg"
+            ? "14px"
+            : globalBorderRadius === "md"
+            ? "7px"
+            : "3px",
       }}
       ref={buttonRef}
     >

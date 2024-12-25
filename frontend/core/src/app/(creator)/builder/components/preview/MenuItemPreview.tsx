@@ -24,6 +24,7 @@ export type MenuItemType = {
   isFeatured?: boolean;
   animations?: AnimationVariantType[];
   colors: string[];
+  globalBorderRadius: "full" | "lg" | "md" | "sm";
 };
 
 export function MenuItemPreview({
@@ -37,6 +38,7 @@ export function MenuItemPreview({
   isFeatured = false,
   animations = [],
   colors,
+  globalBorderRadius,
 }: MenuItemType) {
   if (is_available) {
     return (
@@ -52,8 +54,24 @@ export function MenuItemPreview({
           style={{
             color: colors ? colors[1] : "red",
             backgroundColor: colors ? colors[0] : "red",
+            borderBottomLeftRadius:
+              globalBorderRadius === "full"
+                ? "20px"
+                : globalBorderRadius === "lg"
+                ? "14px"
+                : globalBorderRadius === "md"
+                ? "7px"
+                : "3px",
+            borderBottomRightRadius:
+              globalBorderRadius === "full"
+                ? "20px"
+                : globalBorderRadius === "lg"
+                ? "14px"
+                : globalBorderRadius === "md"
+                ? "7px"
+                : "3px",
           }}
-          className={`absolute bottom-0 right-0 z-20 flex w-full flex-col justify-between gap-2 rounded-b-3xl p-4 transition-colors`}
+          className={`absolute bottom-0 right-0 z-20 flex w-full flex-col justify-between gap-2 rounded-b-3xl p-4 transition-all duration-300`}
         >
           <div className="flex w-full justify-between gap-1">
             <p className="text-xl font-bold">{name}</p>
@@ -77,7 +95,7 @@ export function MenuItemPreview({
           <Button
             size="icon"
             onClick={(e) => e.stopPropagation()}
-            className="absolute z-20 h-8 w-8 rounded-full bg-inherit backdrop-blur-lg"
+            className="z-10 h-8 w-8 bg-inherit backdrop-blur-lg"
           >
             <Heart
               className="h-4 w-4"
@@ -85,18 +103,52 @@ export function MenuItemPreview({
             ></Heart>
           </Button>
           <Image
-            className=" rounded-t-2xl object-cover"
+            className="object-cover transition-all duration-300"
             src={`http://127.0.0.1:8000/${image}`}
             alt={name}
             fill
+            style={{
+              borderTopLeftRadius:
+                globalBorderRadius === "full"
+                  ? "20px"
+                  : globalBorderRadius === "lg"
+                  ? "14px"
+                  : globalBorderRadius === "md"
+                  ? "7px"
+                  : "4px",
+              borderTopRightRadius:
+                globalBorderRadius === "full"
+                  ? "20px"
+                  : globalBorderRadius === "lg"
+                  ? "14px"
+                  : globalBorderRadius === "md"
+                  ? "7px"
+                  : "4px",
+            }}
           ></Image>
         </div>
         <div
           style={{
             color: colors ? colors[1] : "red",
             backgroundColor: colors ? colors[0] : "red",
+            borderBottomLeftRadius:
+              globalBorderRadius === "full"
+                ? "20px"
+                : globalBorderRadius === "lg"
+                ? "14px"
+                : globalBorderRadius === "md"
+                ? "7px"
+                : "3px",
+            borderBottomRightRadius:
+              globalBorderRadius === "full"
+                ? "20px"
+                : globalBorderRadius === "lg"
+                ? "14px"
+                : globalBorderRadius === "md"
+                ? "7px"
+                : "3px",
           }}
-          className={`flex w-full basis-5/12 flex-col justify-end gap-3 rounded-b-3xl p-2`}
+          className={`flex w-full basis-5/12 flex-col justify-end gap-3 p-2 transition-all duration-300`}
         >
           <div className="space-y-0.5">
             <p className="text-sm font-bold">{name}</p>
@@ -110,6 +162,9 @@ export function MenuItemPreview({
             primaryColor={colors ? colors[0] : "red"}
             secondaryColor={colors ? colors[1] : "red"}
             animations={animations}
+            borderRadius={
+              globalBorderRadius === "full" ? "default" : globalBorderRadius
+            }
           ></AddToCartBtn>
         </div>
       </div>
