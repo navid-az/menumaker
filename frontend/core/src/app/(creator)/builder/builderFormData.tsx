@@ -3,6 +3,7 @@ import ItemAdder from "@/components/global/ItemAdder";
 import PaletteBuilder from "@/components/global/PaletteBuilder";
 import SuggestedPalettes from "@/components/global/SuggestedPalettes";
 import RadiusSelector from "@/components/global/itemAdderButtons/RadiusSelector";
+import AnimationSelector from "@/components/global/itemAdderButtons/AnimationSelector";
 
 //types
 import { UseFormReturn } from "react-hook-form";
@@ -92,17 +93,11 @@ export const getSliderData = (
             action: <RadiusSelector></RadiusSelector>,
           },
           {
-            name: "categories_display_type",
+            name: "global_interaction_animation_is_active",
             title: "انیمیشن",
             description: "انیمیشنی که هنگام کلیک روی اجزای منو اجرا میشود",
             iconSrc: "/images/form-icons/sparkles.svg",
-            action: (
-              <ItemAdder
-                name="menu_sections"
-                limit={3}
-                placeholder="نام بخش"
-              ></ItemAdder>
-            ),
+            action: <AnimationSelector></AnimationSelector>,
           },
         ],
       },

@@ -35,6 +35,13 @@ const itemArraySchema = z.array(itemSchema);
 const formSchema = z.object({
   color_palette: z.array(z.string()),
   global_border_radius: z.enum(["full", "lg", "md", "sm"]),
+  global_interaction_animation_is_active: z.boolean().default(false),
+  global_interaction_animation: z.enum([
+    "ripple",
+    "tactile",
+    "ripple-tactile",
+    "none",
+  ]),
   main_page_type: z.enum(["single", "couple", "none"]),
   menu_sections: itemArraySchema,
   link_is_active: z.boolean().default(false),

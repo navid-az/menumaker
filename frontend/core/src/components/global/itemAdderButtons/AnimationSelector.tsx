@@ -26,7 +26,7 @@ export default function AnimationSelector() {
   const rippleTactileBtnRef = useRef<HTMLButtonElement>(null);
   const noneBtnRef = useRef<HTMLButtonElement>(null);
 
-  const { watch } = useFormContext();
+  const { watch, setValue } = useFormContext();
   const colors = watch("color_palette");
 
   //animation for animation buttons
@@ -61,6 +61,8 @@ export default function AnimationSelector() {
     } else if (animationType === "ripple-tactile") {
       triggerRippleAnimation();
       triggerTactileAnimation();
+    } else {
+      setValue("global_interaction_animation_is_active", false);
     }
   };
 
@@ -72,7 +74,10 @@ export default function AnimationSelector() {
     } else if (activeBtn === "ripple-tactile") {
       triggerRippleAnimation();
       triggerTactileAnimation();
+    } else {
+      setValue("global_interaction_animation_is_active", false);
     }
+    setValue("global_interaction_animation", activeBtn);
   }, [activeBtn]);
 
   const handlePreviewBtnClick = (e: React.MouseEvent) => {
