@@ -20,40 +20,39 @@ export const useTactileAnimation: UseTactileAnimationType = (
   const { duration = 0.18, scale = 0.08 } = config;
 
   const triggerAnimation = useCallback(() => {
-    if (element.current) {
-      element.current.classList.add("transition-all");
-      element.current.classList.add("scale-pro");
+    if (!animate || !element.current) return;
 
-      const scaleDown = 1 - scale * 1.5;
-      const scaleUp = 1 + scale;
+    const scaleDown = 1 - scale * 1.5;
+    const scaleUp = 1 + scale;
 
-      const tl = gsap.timeline();
-      tl.to(element.current, {
-        scale: scaleDown,
+    const tl = gsap.timeline();
+    tl.to(element.current, {
+      scale: scaleDown,
+      duration: duration,
+    })
+      .to(element.current, {
+        scale: scaleUp,
         duration: duration,
       })
-        .to(element.current, {
-          scale: scaleUp,
-          duration: duration,
-        })
-        .to(element.current, {
-          scale: 1,
-          duration: duration,
-        });
-    }
-  }, [element, scale, duration]);
+      .to(element.current, {
+        scale: 1,
+        duration: duration,
+      });
+  }, [animate, element, scale, duration]);
 
   useEffect(() => {
-    if (element.current && animate) {
-      element.current.addEventListener("mousedown", triggerAnimation);
+    if (element.current) {
+      const currentElement = element.current;
 
-      const cleanupRef = element.current;
+      if (animate) {
+        currentElement.addEventListener("mousedown", triggerAnimation);
+      }
 
       return () => {
-        cleanupRef.removeEventListener("mousedown", triggerAnimation);
+        currentElement.removeEventListener("mousedown", triggerAnimation);
       };
     }
-  }, [triggerAnimation]);
+  }, [triggerAnimation, animate]);
 
   return triggerAnimation;
 };
