@@ -14,6 +14,7 @@ type SliderTabType = {
   isActive?: boolean;
   onClick: () => void;
   children: React.ReactNode;
+  className?: string;
 };
 
 type SliderTabTitle = {
@@ -28,14 +29,19 @@ type SliderTabBody = {
   children?: React.ReactNode;
 };
 
-export function SliderTab({ isActive, onClick, children }: SliderTabType) {
+export function SliderTab({
+  isActive,
+  onClick,
+  children,
+  className,
+}: SliderTabType) {
   return (
     <div
       onClick={onClick}
       className={cn(
         `flex w-full cursor-pointer select-none flex-col justify-between rounded-lg border-[3px] bg-soft-blue text-royal-green transition-all duration-200 ease-in-out ${
           isActive ? "border-royal-green" : "border-sad-blue"
-        }`
+        } ${className}`
       )}
     >
       {children}

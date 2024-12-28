@@ -28,15 +28,17 @@ async function Navbar() {
       </Link>
       <Link href="/pricing">تعرفه ها</Link>
       <Link href="/builder">ساخت منو جدید</Link>
-      <Link href="/1/menu">صفحه منو</Link>
+
+      {/* for testing purposes */}
+      <Link href="/venhan/menu">صفحه منو</Link>
+
+      <Link href="/builder/setup">معرفی</Link>
       {isAuthenticated ? (
         <Link href={`/dashboard/${places[0].menu_id}/insights`}>داشبورد</Link>
       ) : (
         <Link href={`/register`}>داشبورد</Link>
       )}
-
       <Link href="/">درباره ما</Link>
-
       <div className="flex gap-2">
         <Suspense fallback={<Skeleton className="h-10 w-10" />}>
           {isAuthenticated ? (
