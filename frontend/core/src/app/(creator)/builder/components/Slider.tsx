@@ -33,7 +33,7 @@ type stepType = {
 export function Slider({ children }: { children: React.ReactNode }) {
   const sectionsContainerRef = useRef<HTMLDivElement>(null);
 
-  const activeStepHeight = useSlider((state) => state.activeStepHeight);
+  const { activeStepHeight } = useSlider();
 
   //update slider height according to active step(step height change/active step change)
   useEffect(() => {
@@ -63,12 +63,8 @@ export function Slider({ children }: { children: React.ReactNode }) {
 export function SliderSection({ sectionNum, title, children }: sectionType) {
   const builderSectionRef = useRef<HTMLDivElement>(null);
 
-  const activeSection = useSlider((state) => state.activeSection);
-  const updateActiveStepCount = useSlider(
-    (state) => state.updateActiveStepCount
-  );
-
-  const updateTitle = useSliderTitle((state) => state.updateTitle);
+  const { activeSection, updateActiveStepCount } = useSlider();
+  const { updateTitle } = useSliderTitle();
 
   useEffect(() => {
     if (sectionNum == activeSection) {
@@ -101,12 +97,8 @@ export function SliderStep({
 }: stepType) {
   const stepRef = useRef<HTMLDivElement>(null);
 
-  const activeSection = useSlider((state) => state.activeSection);
-  const activeStep = useSlider((state) => state.activeStep);
-  const stepCount = useSlider((state) => state.stepCount);
-  const updateHeight = useSlider((state) => state.updateHeight);
-
-  const updateSubtitle = useSliderTitle((state) => state.updateSubtitle);
+  const { activeSection, updateHeight, activeStep, stepCount } = useSlider();
+  const { updateSubtitle } = useSliderTitle();
 
   useEffect(() => {
     if (stepRef.current) {

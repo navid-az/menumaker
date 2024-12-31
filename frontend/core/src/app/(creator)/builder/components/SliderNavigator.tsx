@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 
 //hooks
 import { useSlider } from "@/lib/stores";
-import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
+import { useTactileAnimation } from "@/app/hooks/useTactileAnimation"; //animation hook
 
 //libraries
 import gsap from "gsap";
@@ -16,21 +16,8 @@ import gsap from "gsap";
 type disabledStateType = "nextDisabled" | "prevDisabled" | "";
 
 export function SliderNavigator() {
-  const activeSection = useSlider((state) => state.activeSection);
-  const sectionCount = useSlider((state) => state.sectionCount);
-  const activeStep = useSlider((state) => state.activeStep);
-  const stepCount = useSlider((state) => state.stepCount);
-  const increaseActiveSection = useSlider(
-    (state) => state.increaseActiveSection
-  );
-  const decreaseActiveSection = useSlider(
-    (state) => state.decreaseActiveSection
-  );
-  const increaseActiveStep = useSlider((state) => state.increaseActiveStep);
-  const decreaseActiveStep = useSlider((state) => state.decreaseActiveStep);
-  //if it's last step change active step to 1
-  //if it's first step change active step to stepCount
-  const updateActiveStep = useSlider((state) => state.updateActiveStep);
+  const { activeSection, sectionCount, activeStep, stepCount, next, previous } =
+    useSlider();
 
   // next/prev disability
   const [disabled, setDisabled] = useState<disabledStateType>("prevDisabled");
@@ -85,28 +72,6 @@ export function SliderNavigator() {
     }
   }, [disabled]);
 
-  //when next button is clicked
-  const handleNext = () => {
-    if (activeStep != stepCount) {
-      increaseActiveStep(activeStep);
-    } else if (activeStep == stepCount && activeSection != sectionCount) {
-      increaseActiveSection(activeSection);
-      updateActiveStep();
-    }
-  };
-
-  //when previous button is clicked
-  const handlePrev = () => {
-    if (activeStep > 1) {
-      decreaseActiveStep(activeStep);
-    } else if (activeStep == 1 && activeSection != 1) {
-      decreaseActiveSection(activeSection);
-      setTimeout(() => {
-        updateActiveStep();
-      });
-    }
-  };
-
   return (
     <div className="flex w-full items-center justify-between rtl:flex-row-reverse">
       <div className="flex basis-6/12 justify-end">
@@ -114,7 +79,7 @@ export function SliderNavigator() {
           ref={prevBtnRef}
           type="button"
           disabled={disabled == "prevDisabled"}
-          onClick={handlePrev}
+          onClick={previous}
           className="h-9 select-none rounded-full px-5 transition-opacity duration-300 sm:h-10 sm:px-6"
         >
           قبلی
@@ -142,7 +107,7 @@ export function SliderNavigator() {
           ref={nextBtnRef}
           type="button"
           disabled={disabled == "nextDisabled"}
-          onClick={handleNext}
+          onClick={next}
           className="h-9 select-none rounded-full px-5 transition-opacity duration-300 sm:h-10 sm:px-6"
         >
           بعدی
@@ -158,7 +123,7 @@ type SliderNavigatorDot = {
 };
 
 function SliderNavigatorDot({ active, index }: SliderNavigatorDot) {
-  const setActiveStep = useSlider((state) => state.setActiveStep);
+  const { setActiveStep } = useSlider();
 
   const handleClick = () => {
     setActiveStep(index + 1);

@@ -1,8 +1,11 @@
 import React, { useRef } from "react";
 
+//components
+import { Label } from "@/components/ui/label";
+
 //hooks
 import { useTactileAnimation } from "@/app/hooks/useTactileAnimation"; //animation hook
-import { Label } from "@/components/ui/label";
+
 //types
 type TileType = {
   title: string;
@@ -19,12 +22,12 @@ function Tile({ title, description, isActive, children }: TileType) {
 
   return (
     <Label
-      ref={tileRef}
       className={`${
         isActive
           ? "border-primary hover:border-primary"
           : "border-sad-blue hover:border-primary/20"
       } relative flex h-full flex-1 cursor-pointer select-none flex-col items-center justify-between rounded-lg border-[3px] bg-soft-blue p-2 text-royal-green transition-[border-color] duration-300`}
+      ref={tileRef}
     >
       <div className="absolute left-2 top-2 flex w-full justify-end">
         {children}

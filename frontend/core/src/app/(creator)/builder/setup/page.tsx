@@ -21,7 +21,7 @@ export default function page() {
 
   return (
     <section className="container h-screen w-full px-40">
-      {/* <div className="flex flex-col bg-red-200">
+      {/* <div className="flex justify-between gap-4 bg-red-200">
         <div>
           <p>step count</p>
           {stepCount}

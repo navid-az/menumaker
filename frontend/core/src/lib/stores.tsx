@@ -38,24 +38,17 @@ type TabsStateType = {
   activeStepHeight: number;
   activeStep: number;
   updateHeight: ActiveHandler<number>;
-  increaseActiveSection: ActiveHandler<number>;
-  decreaseActiveSection: ActiveHandler<number>;
   updateSectionCount: ActiveHandler<number>;
-  increaseActiveStep: ActiveHandler<number>;
-  decreaseActiveStep: ActiveHandler<number>;
   updateActiveStepCount: ActiveHandler<number>;
-  updateActiveStep: () => void;
   setActiveStep: ActiveHandler<number>;
+  next: () => void;
+  previous: () => void;
 };
 
-export const useSlider = create<TabsStateType>()((set) => ({
+export const useSlider = create<TabsStateType>()((set, get) => ({
   //sections
   activeSection: 1,
   sectionCount: 1,
-  increaseActiveSection: () =>
-    set((state) => ({ activeSection: state.activeSection + 1 })),
-  decreaseActiveSection: () =>
-    set((state) => ({ activeSection: state.activeSection - 1 })),
   updateSectionCount: (sectionCount) =>
     set(() => ({ sectionCount: sectionCount })),
 
@@ -63,17 +56,7 @@ export const useSlider = create<TabsStateType>()((set) => ({
   activeStep: 1,
   stepCount: 1,
   activeStepHeight: 0,
-  increaseActiveStep: () =>
-    set((state) => ({ activeStep: state.activeStep + 1 })),
-  decreaseActiveStep: () =>
-    set((state) => ({ activeStep: state.activeStep - 1 })),
   updateActiveStepCount: (stepCount) => set(() => ({ stepCount: stepCount })),
-
-  //update active step when active section changes
-  updateActiveStep: () =>
-    set((state) => ({
-      activeStep: state.activeStep == state.stepCount ? 1 : state.stepCount,
-    })),
 
   //set active step to a desired number
   setActiveStep: (stepNum) =>
@@ -84,6 +67,42 @@ export const useSlider = create<TabsStateType>()((set) => ({
 
   //update the height of the tabs container according to the height of active step
   updateHeight: (height) => set(() => ({ activeStepHeight: height })),
+
+  // next function
+  next: () => {
+    const state = get(); // Use get to access the current state
+    if (state.activeStep != state.stepCount) {
+      set({ activeStep: state.activeStep + 1 });
+    } else if (
+      state.activeStep == state.stepCount &&
+      state.activeSection != state.sectionCount
+    ) {
+      set({
+        activeSection: state.activeSection + 1,
+        activeStep: state.activeStep == state.stepCount ? 1 : state.stepCount,
+      });
+    }
+  },
+  // previous function
+  previous: () => {
+    const state = get(); // Use get to access the current state
+    if (state.activeStep > 1) {
+      set({ activeStep: state.activeStep - 1 });
+    } else if (state.activeStep === 1 && state.activeSection !== 1) {
+      set({
+        activeSection: state.activeSection - 1,
+      });
+      setTimeout(() => {
+        const updatedState = get(); // Re-fetch the state inside the timeout
+        set({
+          activeStep:
+            updatedState.activeStep === updatedState.stepCount
+              ? 1
+              : updatedState.stepCount,
+        });
+      });
+    }
+  },
 }));
 
 //~~~~slider titles & subtitles~~~~
