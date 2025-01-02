@@ -13,4 +13,5 @@
   ],
   "python.analysis.typeCheckingMode": "off",
   "cSpell.language": "en,fa",
+  "references.preferredLocation": "view",
 }

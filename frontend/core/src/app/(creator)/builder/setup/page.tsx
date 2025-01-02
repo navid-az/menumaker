@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 
 //components
-import Setup from "../components/Setup";
+import Setup from "../components/setup/Setup";
 
 //hooks
 import { useSlider } from "@/lib/stores";

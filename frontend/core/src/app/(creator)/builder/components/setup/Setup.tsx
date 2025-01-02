@@ -15,7 +15,11 @@ import {
 } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Input } from "@/components/ui/input";
-import { Slider, SliderSection, SliderStep } from "./Slider";
+import {
+  Slider,
+  SliderSection,
+  SliderStep,
+} from "../../../../../components/global/slider/Slider";
 import Tile from "./Tile";
 
 //zod schema

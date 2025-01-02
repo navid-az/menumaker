@@ -4,11 +4,11 @@ import React from "react";
 
 //components
 import Image from "next/image";
-import ItemsCategoryPreview from "./preview/ItemsCategoryPreview";
+import ItemsCategoryPreview from "./ItemsCategoryPreview";
 
 //libraries
 import { useFormContext } from "react-hook-form";
-import MenuItemsWrapperPreview from "./preview/MenuItemsWrapperPreview";
+import MenuItemsWrapperPreview from "./MenuItemsWrapperPreview";
 
 export default function MenuPreview() {
   const { watch } = useFormContext();
