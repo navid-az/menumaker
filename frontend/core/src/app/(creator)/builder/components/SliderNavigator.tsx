@@ -16,10 +16,12 @@ import gsap from "gsap";
 type disabledStateType = "nextDisabled" | "prevDisabled" | "";
 type SliderNavigatorType = {
   disableSubmitBtn?: boolean;
+  submitBtnText?: string;
 };
 
 export function SliderNavigator({
   disableSubmitBtn = false,
+  submitBtnText,
 }: SliderNavigatorType) {
   const { activeSection, sectionCount, activeStep, stepCount, next, previous } =
     useSlider();
@@ -109,7 +111,7 @@ export function SliderNavigator({
             className="h-9 select-none rounded-full px-5 opacity-0 sm:h-10 sm:px-6"
             type="submit"
           >
-            ایجاد منو
+            {submitBtnText ? submitBtnText : "ایجاد منو"}
           </Button>
         )}
 

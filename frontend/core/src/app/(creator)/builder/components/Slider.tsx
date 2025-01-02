@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 //types
 type SliderType = {
   disableSubmitBtn?: boolean;
+  submitBtnText?: string;
   children: React.ReactNode;
 };
 type sectionType = {
@@ -33,7 +34,11 @@ type stepType = {
   children: React.ReactNode;
 };
 
-export function Slider({ disableSubmitBtn, children }: SliderType) {
+export function Slider({
+  disableSubmitBtn,
+  submitBtnText,
+  children,
+}: SliderType) {
   const sectionsContainerRef = useRef<HTMLDivElement>(null);
 
   const { activeStepHeight } = useSlider();
@@ -57,7 +62,10 @@ export function Slider({ disableSubmitBtn, children }: SliderType) {
         {children}
       </div>
       <footer className="flex w-full items-center justify-between">
-        <SliderNavigator disableSubmitBtn={disableSubmitBtn}></SliderNavigator>
+        <SliderNavigator
+          disableSubmitBtn={disableSubmitBtn}
+          submitBtnText={submitBtnText}
+        ></SliderNavigator>
       </footer>
     </section>
   );
