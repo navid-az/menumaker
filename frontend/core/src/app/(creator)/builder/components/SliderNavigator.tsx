@@ -14,8 +14,13 @@ import gsap from "gsap";
 
 //types
 type disabledStateType = "nextDisabled" | "prevDisabled" | "";
+type SliderNavigatorType = {
+  disableSubmitBtn?: boolean;
+};
 
-export function SliderNavigator() {
+export function SliderNavigator({
+  disableSubmitBtn = false,
+}: SliderNavigatorType) {
   const { activeSection, sectionCount, activeStep, stepCount, next, previous } =
     useSlider();
 
@@ -45,30 +50,32 @@ export function SliderNavigator() {
 
   //animate next/submit buttons according to disabled state
   useEffect(() => {
-    if (disabled === "nextDisabled") {
-      if (submitBtnRef.current) {
-        submitBtnRef.current.style.display = "flex";
-      }
-      gsap.to(submitBtnRef.current, {
-        duration: 0.2,
-        x: 0,
-        opacity: 1,
-      });
+    if (!disableSubmitBtn) {
+      if (disabled === "nextDisabled") {
+        if (submitBtnRef.current) {
+          submitBtnRef.current.style.display = "flex";
+        }
+        gsap.to(submitBtnRef.current, {
+          duration: 0.2,
+          x: 0,
+          opacity: 1,
+        });
 
-      gsap.to(nextBtnRef.current, {
-        duration: 0.2,
-        x: 0,
-      });
-    } else {
-      gsap.to(submitBtnRef.current, {
-        duration: 0.2,
-        x: "100%",
-        opacity: 0,
-      });
-      gsap.to(nextBtnRef.current, {
-        duration: 0.2,
-        x: "142%",
-      });
+        gsap.to(nextBtnRef.current, {
+          duration: 0.2,
+          x: 0,
+        });
+      } else {
+        gsap.to(submitBtnRef.current, {
+          duration: 0.2,
+          x: "100%",
+          opacity: 0,
+        });
+        gsap.to(nextBtnRef.current, {
+          duration: 0.2,
+          x: "142%",
+        });
+      }
     }
   }, [disabled]);
 
@@ -95,14 +102,17 @@ export function SliderNavigator() {
         ))}
       </div>
       <div ref={buttonsContainerRef} className="flex w-full basis-6/12 gap-2">
-        <Button
-          ref={submitBtnRef}
-          disabled={disabled != "nextDisabled"}
-          className="h-9 select-none rounded-full px-5 opacity-0 sm:h-10 sm:px-6"
-          type="submit"
-        >
-          ایجاد منو
-        </Button>
+        {!disableSubmitBtn && (
+          <Button
+            ref={submitBtnRef}
+            disabled={disabled != "nextDisabled"}
+            className="h-9 select-none rounded-full px-5 opacity-0 sm:h-10 sm:px-6"
+            type="submit"
+          >
+            ایجاد منو
+          </Button>
+        )}
+
         <Button
           ref={nextBtnRef}
           type="button"

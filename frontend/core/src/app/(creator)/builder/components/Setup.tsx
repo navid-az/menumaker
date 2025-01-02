@@ -67,10 +67,6 @@ export default function Setup() {
     // }
   };
 
-  const handleValueChange = () => {
-    return;
-  };
-
   return (
     <Form {...form}>
       <form
@@ -79,7 +75,7 @@ export default function Setup() {
         onSubmit={form.handleSubmit(onSubmit, onInvalid)}
         className="px-32"
       >
-        <Slider>
+        <Slider disableSubmitBtn>
           <SliderSection sectionNum={1} title="آشنایی با شما">
             <SliderStep sectionNum={1} stepNum={1} title="نام مدیر مجموعه">
               <FormField
