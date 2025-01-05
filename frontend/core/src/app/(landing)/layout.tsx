@@ -32,7 +32,6 @@ async function Navbar() {
       {/* for testing purposes */}
       <Link href="/venhan/menu">صفحه منو</Link>
 
-      <Link href="/builder/setup">معرفی</Link>
       {isAuthenticated ? (
         <Link href={`/dashboard/${places[0].menu_id}/insights`}>داشبورد</Link>
       ) : (

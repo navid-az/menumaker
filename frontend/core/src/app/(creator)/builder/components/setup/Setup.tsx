@@ -1,4 +1,6 @@
-import React, { useRef } from "react";
+"use client";
+
+import React, { useEffect, useRef } from "react";
 
 //libraries
 import * as z from "zod";
@@ -6,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 //components
+import { toast } from "sonner";
 import {
   Form,
   FormControl,
@@ -22,6 +25,9 @@ import {
 } from "../../../../../components/global/slider/Slider";
 import Tile from "./Tile";
 
+//hooks
+import { useSlider } from "@/lib/stores";
+
 //zod schema
 const formSchema = z.object({
   owner_name: z.string().min(2, {
@@ -36,13 +42,17 @@ const formSchema = z.object({
   service_type: z.enum(["in-person", "delivery", "both"]),
   service_type_priority: z.enum(["in-person", "delivery"]),
   restaurant_type: z.enum(["single", "multiple"]),
-  menuType: z.enum(["custom", "pre-made"]),
+  // menuType: z.enum(["custom", "pre-made"]),
 });
 
 //types
 export type formSchemaType = z.infer<typeof formSchema>;
 
-export default function Setup() {
+export default function Setup({
+  setShowBuilder,
+}: {
+  setShowBuilder: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const formRef = useRef<HTMLFormElement>(null);
   const form = useForm<formSchemaType>({
     resolver: zodResolver(formSchema),
@@ -53,14 +63,28 @@ export default function Setup() {
     },
   });
 
+  const { updateSectionCount, reset } = useSlider();
+
+  useEffect(() => {
+    updateSectionCount(3);
+  }, []);
+
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
-    alert("valid");
+    console.log("invalid");
+
+    //reset zustand states
+    reset();
+    //show Builder form
+    setShowBuilder(true);
   }
 
   const onInvalid = () => {
-    console.log("invalid");
-
+    toast.error("لطفا همه سوالات را پاسخ دهید", {
+      cancel: {
+        label: "باشه",
+      },
+    });
     // Check and set default values for radio groups if not selected
 
     // Programmatically submit the form after setting default values
@@ -71,13 +95,17 @@ export default function Setup() {
     // }
   };
 
+  const handleLastTileClick = () => {
+    form.handleSubmit(onSubmit, onInvalid)();
+  };
+
   return (
     <Form {...form}>
       <form
         name="builder-form"
         ref={formRef}
         onSubmit={form.handleSubmit(onSubmit, onInvalid)}
-        className="px-32"
+        className="w-full px-52"
       >
         <Slider disableSubmitBtn>
           <SliderSection sectionNum={1} title="آشنایی با شما">
@@ -278,42 +306,14 @@ export default function Setup() {
               sectionNum={3}
               stepNum={1}
               title="منو مجموعتان همانطور که می خواهید"
+              className="flex h-80 flex-row"
             >
-              <FormField
-                control={form.control}
-                name="menuType"
-                render={({ field }) => (
-                  <FormControl>
-                    <RadioGroup
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      dir="rtl"
-                      className="flex h-80 w-full gap-4"
-                    >
-                      <Tile
-                        title="شخصی سازی منو"
-                        isActive={field.value === "pre-made"}
-                      >
-                        <FormItem>
-                          <FormControl>
-                            <RadioGroupItem value="pre-made"></RadioGroupItem>
-                          </FormControl>
-                        </FormItem>
-                      </Tile>
-                      <Tile
-                        title="انتخاب منو از پیش ساخته شده"
-                        isActive={field.value === "custom"}
-                      >
-                        <FormItem>
-                          <FormControl>
-                            <RadioGroupItem value="custom"></RadioGroupItem>
-                          </FormControl>
-                        </FormItem>
-                      </Tile>
-                    </RadioGroup>
-                  </FormControl>
-                )}
-              />
+              <Tile
+                isButton
+                title="شخصی سازی منو"
+                onClick={handleLastTileClick}
+              ></Tile>
+              <Tile isButton title="انتخاب منو از پیش ساخته شده"></Tile>
             </SliderStep>
           </SliderSection>
         </Slider>

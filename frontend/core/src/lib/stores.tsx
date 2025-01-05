@@ -43,6 +43,7 @@ type TabsStateType = {
   setActiveStep: ActiveHandler<number>;
   next: () => void;
   previous: () => void;
+  reset: () => void;
 };
 
 export const useSlider = create<TabsStateType>()((set, get) => ({
@@ -103,6 +104,15 @@ export const useSlider = create<TabsStateType>()((set, get) => ({
       });
     }
   },
+
+  reset: () =>
+    set({
+      activeStep: 1,
+      activeSection: 1,
+      sectionCount: 1,
+      stepCount: 1,
+      activeStepHeight: 0,
+    }),
 }));
 
 //~~~~slider titles & subtitles~~~~
