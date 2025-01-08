@@ -8,7 +8,7 @@ export type RippleAnimationConfig = {
 };
 
 type UseRippleAnimationType = (
-  element: React.RefObject<HTMLElement>,
+  element: React.RefObject<HTMLElement | null>,
   config?: RippleAnimationConfig,
   animate?: boolean
 ) => (e?: MouseEvent) => void;

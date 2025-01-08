@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 //closes the target element on outside click
 export default function useClickOutside<T extends HTMLElement>(
-  ref: React.RefObject<T>
+  ref: React.RefObject<T | null>
 ) {
   const [isClickedOutside, setIsClickedOutside] = useState(false);
 

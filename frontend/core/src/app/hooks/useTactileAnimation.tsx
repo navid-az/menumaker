@@ -6,7 +6,7 @@ import gsap from "gsap";
 //types
 export type TactileAnimationConfig = { duration?: number; scale?: number };
 type UseTactileAnimationType = (
-  element: React.RefObject<HTMLElement>,
+  element: React.RefObject<HTMLElement | null>,
   config?: TactileAnimationConfig,
   animate?: boolean
 ) => () => void;

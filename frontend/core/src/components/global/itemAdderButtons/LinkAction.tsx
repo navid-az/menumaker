@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { PlatformTypes } from "@/lib/identifyPlatform";
 type SelectorButtonType = {
   text: string | undefined;
-  ref: React.RefObject<HTMLButtonElement>;
+  ref: React.RefObject<HTMLButtonElement | null>;
 };
 
 //SVGs

@@ -6,13 +6,18 @@ import {
   DashboardTabsTrigger,
 } from "../../components/DashboardTabs";
 
-export default function DataLayout({
-  children,
-  params,
-}: {
-  children: React.ReactNode;
-  params: { menu_id: string };
-}) {
+export default async function DataLayout(
+  props: {
+    children: React.ReactNode;
+    params: Promise<{ menu_id: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    children
+  } = props;
+
   return (
     <>
       <ToolBar>

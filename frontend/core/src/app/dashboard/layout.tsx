@@ -38,13 +38,18 @@ export type PlacesType = {
 //   return res.json();
 // };
 
-export default async function DashboardLayout({
-  children,
-  params,
-}: {
-  children: React.ReactNode;
-  params: { menu_id: string };
-}) {
+export default async function DashboardLayout(
+  props: {
+    children: React.ReactNode;
+    params: Promise<{ menu_id: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    children
+  } = props;
+
   const user = await getUserData();
   const places: PlacesType = await getUserPlaces(user.pk);
   return (

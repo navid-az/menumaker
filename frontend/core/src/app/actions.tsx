@@ -18,7 +18,7 @@ export async function createCookie(
   value: string,
   httpOnly = true
 ) {
-  cookies().set(name, value, { httpOnly: httpOnly });
+  (await cookies()).set(name, value, { httpOnly: httpOnly });
   redirect("/");
 }
 
@@ -29,15 +29,15 @@ type ItemType = {
 
 //logOut user
 export async function logOut() {
-  cookies().delete("access");
-  cookies().delete("refresh");
+  (await cookies()).delete("access");
+  (await cookies()).delete("refresh");
   verifyToken();
   redirect("/");
 }
 
 //verify access token
 export async function verifyToken() {
-  const accessToken = cookies().get("access");
+  const accessToken = (await cookies()).get("access");
 
   const res = await fetch("http://127.0.0.1:8000/accounts/token/verify/", {
     method: "POST",
@@ -61,7 +61,7 @@ export async function updateCategory(
   categoryId: number,
   data: object
 ) {
-  const accessToken = cookies().get("access");
+  const accessToken = (await cookies()).get("access");
 
   const res = await fetch(
     `http://127.0.0.1:8000/menu/${menuSlug}/categories/${categoryId}/update/`,
@@ -79,7 +79,7 @@ export async function updateCategory(
 }
 
 export async function deleteCategory(menuSlug: string, categoryId: number) {
-  const accessToken = cookies().get("access");
+  const accessToken = (await cookies()).get("access");
 
   const res = await fetch(
     `http://127.0.0.1:8000/menu/${menuSlug}/categories/${categoryId}/delete/`,
@@ -127,7 +127,7 @@ export async function updateItem(
   itemId: number,
   data: object
 ) {
-  const accessToken = cookies().get("access");
+  const accessToken = (await cookies()).get("access");
 
   const res = await fetch(
     `http://127.0.0.1:8000/menu/${menuSlug}/items/${itemId}/update/`,
@@ -145,7 +145,7 @@ export async function updateItem(
 }
 
 export async function deleteItem(menuSlug: string, itemId: number) {
-  const accessToken = cookies().get("access");
+  const accessToken = (await cookies()).get("access");
 
   const res = await fetch(
     `http://127.0.0.1:8000/menu/${menuSlug}/items/${itemId}/delete/`,

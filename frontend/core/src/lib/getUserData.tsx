@@ -3,7 +3,7 @@ import jwtDecoder from "./jwtDecoder";
 
 // get user data
 export async function getUserData() {
-  const accessToken = cookies().get("access");
+  const accessToken = (await cookies()).get("access");
   if (!accessToken) {
     return null;
   }

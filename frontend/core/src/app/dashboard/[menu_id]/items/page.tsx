@@ -7,9 +7,6 @@ import ToolBar from "../../components/ToolBar";
 import { CreateItemForm } from "../../components/CreateItemForm";
 import FormDialog from "../../components/FormDialog";
 
-//server function
-import { revalidatePath } from "next/cache";
-
 //menu categories data
 async function getMenuCategoriesData(menu_id: string): Promise<Category[]> {
   const data = await fetch(
@@ -22,7 +19,6 @@ async function getMenuCategoriesData(menu_id: string): Promise<Category[]> {
     throw new Error("Failed to fetch data");
   }
 
-  revalidatePath("/dashboard/insights");
   return data.json();
 }
 
@@ -34,15 +30,13 @@ async function getMenuItemsData(menu_id: string): Promise<Item[]> {
   if (!data.ok) {
     throw new Error("Failed to fetch data");
   }
-  revalidatePath("/dashboard/insights");
   return data.json();
 }
 
-export default async function Insights({
-  params,
-}: {
-  params: { menu_id: string };
+export default async function Insights(props: {
+  params: Promise<{ menu_id: string }>;
 }) {
+  const params = await props.params;
   const itemsData = await getMenuItemsData(params.menu_id);
   const categoriesData = await getMenuCategoriesData(params.menu_id);
 
