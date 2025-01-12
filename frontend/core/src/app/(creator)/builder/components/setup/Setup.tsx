@@ -49,11 +49,10 @@ const formSchema = z.object({
 export type formSchemaType = z.infer<typeof formSchema>;
 
 export default function Setup({
-  setShowBuilder,
+  ref,
 }: {
-  setShowBuilder: React.Dispatch<React.SetStateAction<boolean>>;
+  ref: React.RefObject<HTMLFormElement | null>;
 }) {
-  const formRef = useRef<HTMLFormElement>(null);
   const form = useForm<formSchemaType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -72,11 +71,6 @@ export default function Setup({
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
     console.log("invalid");
-
-    //reset zustand states
-    reset();
-    //show Builder form
-    setShowBuilder(true);
   }
 
   const onInvalid = () => {
@@ -88,8 +82,8 @@ export default function Setup({
     // Check and set default values for radio groups if not selected
 
     // Programmatically submit the form after setting default values
-    // if (formRef.current) {
-    //   formRef.current.dispatchEvent(
+    // if (ref.current) {
+    //   ref.current.dispatchEvent(
     //     new Event("submit", { cancelable: true, bubbles: true })
     //   );
     // }
@@ -102,10 +96,10 @@ export default function Setup({
   return (
     <Form {...form}>
       <form
-        name="builder-form"
-        ref={formRef}
+        name="setup-form"
+        ref={ref}
         onSubmit={form.handleSubmit(onSubmit, onInvalid)}
-        className="w-full px-52"
+        className="hidden w-full px-52"
       >
         <Slider disableSubmitBtn>
           <SliderSection sectionNum={1} title="آشنایی با شما">

@@ -64,7 +64,11 @@ export type formSchemaType = z.infer<typeof formSchema>;
 export type keyOfFormSchemaType = keyof formSchemaType;
 import { type sliderDataType } from "./builderFormData";
 
-export default function Builder() {
+export default function Builder({
+  ref,
+}: {
+  ref: React.RefObject<HTMLDivElement | null>;
+}) {
   const form = useForm<formSchemaType>({
     resolver: zodResolver(formSchema),
     defaultValues: { links: [], menu_sections: [], phone_numbers: [] },
@@ -146,62 +150,115 @@ export default function Builder() {
 
   return (
     <Form {...form}>
-      {/* multipart form */}
-      <form
-        name="builder-form"
-        ref={formRef}
-        onSubmit={form.handleSubmit(onSubmit, onInvalid)}
-        className="basis-8/12 px-32"
-      >
-        <Slider>
-          {validSections.map((section, sectionIndex) => (
-            <SliderSection
-              key={sectionIndex}
-              sectionNum={sectionIndex + 1}
-              title={section.title}
-            >
-              {section.steps.map((step, stepIndex) => (
-                <SliderStep
-                  key={stepIndex}
-                  sectionNum={sectionIndex + 1}
-                  stepNum={stepIndex + 1}
-                  title={step.title}
-                >
-                  {step.isRadioGroup ? (
-                    // radio group section
-                    <FormField
-                      control={form.control}
-                      name={step.name}
-                      render={({ field }) => (
-                        <FormControl>
-                          <RadioGroup
-                            dir="rtl"
-                            onValueChange={field.onChange}
-                            defaultValue={field.value as keyOfFormSchemaType}
-                            value={field.value as keyOfFormSchemaType}
-                            className="flex flex-col gap-4"
-                          >
-                            {step.tabs.map((tab, tabIndex) => (
-                              <FormItem key={tabIndex}>
+      <div className="hidden h-full w-full" ref={ref}>
+        {/* multipart form */}
+        <form
+          name="builder-form"
+          ref={formRef}
+          onSubmit={form.handleSubmit(onSubmit, onInvalid)}
+          className="basis-8/12 px-32"
+        >
+          <Slider>
+            {validSections.map((section, sectionIndex) => (
+              <SliderSection
+                key={sectionIndex}
+                sectionNum={sectionIndex + 1}
+                title={section.title}
+              >
+                {section.steps.map((step, stepIndex) => (
+                  <SliderStep
+                    key={stepIndex}
+                    sectionNum={sectionIndex + 1}
+                    stepNum={stepIndex + 1}
+                    title={step.title}
+                  >
+                    {step.isRadioGroup ? (
+                      // radio group section
+                      <FormField
+                        control={form.control}
+                        name={step.name}
+                        render={({ field }) => (
+                          <FormControl>
+                            <RadioGroup
+                              dir="rtl"
+                              onValueChange={field.onChange}
+                              defaultValue={field.value as keyOfFormSchemaType}
+                              value={field.value as keyOfFormSchemaType}
+                              className="flex flex-col gap-4"
+                            >
+                              {step.tabs.map((tab, tabIndex) => (
+                                <FormItem key={tabIndex}>
+                                  <FormControl>
+                                    <SliderTab
+                                      onClick={() =>
+                                        handleValueChange(field.name)
+                                      }
+                                      isActive={field.value === tab.value}
+                                    >
+                                      <SliderTabTitle
+                                        title={tab.title}
+                                        description={tab.description}
+                                        iconSrc={tab.iconSrc}
+                                      >
+                                        <RadioGroupItem
+                                          value={tab.value}
+                                        ></RadioGroupItem>
+                                      </SliderTabTitle>
+                                      {tab.action && (
+                                        <SliderTabBody
+                                          isOpen={field.value === tab.value}
+                                        >
+                                          {tab.action}
+                                        </SliderTabBody>
+                                      )}
+                                    </SliderTab>
+                                  </FormControl>
+                                </FormItem>
+                              ))}
+                            </RadioGroup>
+                          </FormControl>
+                        )}
+                      />
+                    ) : (
+                      // switch section
+                      <>
+                        {step.tabs.map((tab, tabIndex) => (
+                          <FormField
+                            key={tabIndex}
+                            control={form.control}
+                            name={tab.name || "color_palette"}
+                            render={({ field }) => (
+                              <FormItem>
                                 <FormControl>
                                   <SliderTab
                                     onClick={() =>
-                                      handleValueChange(field.name)
+                                      handleValueChange(
+                                        field.name as keyOfFormSchemaType
+                                      )
                                     }
-                                    isActive={field.value === tab.value}
+                                    isActive={
+                                      (field.value as boolean) ||
+                                      (tab.alwaysOn as boolean)
+                                    }
                                   >
                                     <SliderTabTitle
                                       title={tab.title}
                                       description={tab.description}
                                       iconSrc={tab.iconSrc}
                                     >
-                                      <RadioGroupItem
-                                        value={tab.value}
-                                      ></RadioGroupItem>
+                                      {!tab.alwaysOn && (
+                                        <Switch
+                                          checked={field.value as boolean}
+                                          onCheckedChange={field.onChange}
+                                        ></Switch>
+                                      )}
                                     </SliderTabTitle>
                                     {tab.action && (
                                       <SliderTabBody
-                                        isOpen={field.value === tab.value}
+                                        isOpen={
+                                          (field.value as boolean) ||
+                                          (tab.alwaysOn as boolean)
+                                        }
                                       >
                                         {tab.action}
                                       </SliderTabBody>
@@ -209,73 +266,22 @@ export default function Builder() {
                                   </SliderTab>
                                 </FormControl>
                               </FormItem>
-                            ))}
-                          </RadioGroup>
-                        </FormControl>
-                      )}
-                    />
-                  ) : (
-                    // switch section
-                    <>
-                      {step.tabs.map((tab, tabIndex) => (
-                        <FormField
-                          key={tabIndex}
-                          control={form.control}
-                          name={tab.name || "color_palette"}
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormControl>
-                                <SliderTab
-                                  onClick={() =>
-                                    handleValueChange(
-                                      field.name as keyOfFormSchemaType
-                                    )
-                                  }
-                                  isActive={
-                                    (field.value as boolean) ||
-                                    (tab.alwaysOn as boolean)
-                                  }
-                                >
-                                  <SliderTabTitle
-                                    title={tab.title}
-                                    description={tab.description}
-                                    iconSrc={tab.iconSrc}
-                                  >
-                                    {!tab.alwaysOn && (
-                                      <Switch
-                                        checked={field.value as boolean}
-                                        onCheckedChange={field.onChange}
-                                      ></Switch>
-                                    )}
-                                  </SliderTabTitle>
-                                  {tab.action && (
-                                    <SliderTabBody
-                                      isOpen={
-                                        (field.value as boolean) ||
-                                        (tab.alwaysOn as boolean)
-                                      }
-                                    >
-                                      {tab.action}
-                                    </SliderTabBody>
-                                  )}
-                                </SliderTab>
-                              </FormControl>
-                            </FormItem>
-                          )}
-                        />
-                      ))}
-                    </>
-                  )}
-                </SliderStep>
-              ))}
-            </SliderSection>
-          ))}
-        </Slider>
-      </form>
-      {/* live menu preview */}
-      <section className="relative ml-20 flex h-screen basis-4/12 items-center justify-center">
-        <MenuPreview></MenuPreview>
-      </section>
+                            )}
+                          />
+                        ))}
+                      </>
+                    )}
+                  </SliderStep>
+                ))}
+              </SliderSection>
+            ))}
+          </Slider>
+        </form>
+        {/* live menu preview */}
+        <section className="relative ml-20 flex h-screen basis-4/12 items-center justify-center">
+          <MenuPreview></MenuPreview>
+        </section>
+      </div>
     </Form>
   );
 }
