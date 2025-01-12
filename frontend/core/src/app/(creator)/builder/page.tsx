@@ -94,11 +94,15 @@ export default function Page() {
       {showBuilder ? (
         <Builder ref={builderFormRef}></Builder>
       ) : (
-        <Setup ref={setupFormRef}></Setup>
+        <Setup
+          handleCustomMenu={handleToggleForm}
+          handlePreBuiltMenu={handleToggleForm}
+          ref={setupFormRef}
+        ></Setup>
       )}
-      <div className="absolute left-10 top-10 flex h-max w-max gap-2">
+      {/* <div className="absolute left-10 top-10 flex h-max w-max gap-2">
         <Button onClick={handleToggleForm}>next form</Button>
-      </div>
+      </div> */}
     </section>
   );
 }

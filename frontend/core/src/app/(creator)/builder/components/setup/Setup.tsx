@@ -49,8 +49,12 @@ const formSchema = z.object({
 export type formSchemaType = z.infer<typeof formSchema>;
 
 export default function Setup({
+  handleCustomMenu,
+  handlePreBuiltMenu,
   ref,
 }: {
+  handleCustomMenu: () => void;
+  handlePreBuiltMenu: () => void;
   ref: React.RefObject<HTMLFormElement | null>;
 }) {
   const form = useForm<formSchemaType>({
@@ -62,15 +66,15 @@ export default function Setup({
     },
   });
 
-  const { updateSectionCount, reset } = useSlider();
+  const { updateSectionCount } = useSlider();
 
+  //set the correct section count on mount
   useEffect(() => {
     updateSectionCount(3);
   }, []);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
-    console.log("invalid");
   }
 
   const onInvalid = () => {
@@ -79,18 +83,26 @@ export default function Setup({
         label: "باشه",
       },
     });
-    // Check and set default values for radio groups if not selected
-
-    // Programmatically submit the form after setting default values
-    // if (ref.current) {
-    //   ref.current.dispatchEvent(
-    //     new Event("submit", { cancelable: true, bubbles: true })
-    //   );
-    // }
   };
 
-  const handleLastTileClick = () => {
-    form.handleSubmit(onSubmit, onInvalid)();
+  const handleLastTileClick = async (userChoice: "custom" | "pre-built") => {
+    const isValid = await form.trigger();
+
+    if (!isValid) {
+      onInvalid();
+      return;
+    }
+
+    // If form is valid, proceed
+    const formValues = form.getValues();
+    onSubmit(formValues);
+
+    // Handle user choice
+    if (userChoice === "custom") {
+      handleCustomMenu();
+    } else if (userChoice === "pre-built") {
+      handlePreBuiltMenu();
+    }
   };
 
   return (
@@ -305,9 +317,13 @@ export default function Setup({
               <Tile
                 isButton
                 title="شخصی سازی منو"
-                onClick={handleLastTileClick}
+                onClick={() => handleLastTileClick("custom")}
               ></Tile>
-              <Tile isButton title="انتخاب منو از پیش ساخته شده"></Tile>
+              <Tile
+                isButton
+                title="انتخاب منو از پیش ساخته شده"
+                onClick={() => handleLastTileClick("pre-built")}
+              ></Tile>
             </SliderStep>
           </SliderSection>
         </Slider>
