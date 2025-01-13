@@ -150,7 +150,8 @@ export default function Builder({
 
   return (
     <Form {...form}>
-      <div className="hidden h-full w-full" ref={ref}>
+      {/* ref is used for animating the entire component */}
+      <div className="h-full w-full" ref={ref}>
         {/* multipart form */}
         <form
           name="builder-form"

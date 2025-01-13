@@ -8,7 +8,6 @@ import gsap from "gsap";
 //components
 import Builder from "./components/builder/Builder";
 import Setup from "./components/setup/Setup";
-import { Button } from "@/components/ui/button";
 
 //hooks
 import { useSlider } from "@/lib/stores";
@@ -21,61 +20,90 @@ export default function Page() {
   const setupFormRef = useRef(null);
   const builderFormRef = useRef(null);
 
-  const tl = gsap.timeline();
   const hideSetupFormTl = gsap.timeline({
     paused: true,
   });
 
   useEffect(() => {
-    tl.set(setupFormRef.current, { display: "flex" })
-      .from(setupFormRef.current, {
-        opacity: 0,
+    const setupForm = setupFormRef.current;
+
+    // Ensure initial styles are set
+    gsap.set(setupForm, {
+      x: 0,
+      opacity: 1,
+      filter: "blur(0px)",
+    });
+
+    const tl = gsap.timeline();
+    tl.set(setupForm, { display: "flex" })
+      .from(setupForm, {
         x: 150,
-        duration: 0.45,
+        opacity: 0,
         ease: "power3.out",
+        duration: 0.45,
         delay: 0.5,
       })
       .from(
-        setupFormRef.current,
+        setupForm,
         {
-          duration: 0.45,
           filter: "blur(4px)",
+          duration: 0.45,
           ease: "power3.out",
         },
         "<0.1"
       );
+
+    return () => {
+      tl.kill(); // Stop and clear the timeline
+    };
   }, []);
 
   useEffect(() => {
     if (showBuilder) {
-      tl.set(builderFormRef.current, { display: "flex" })
+      const showBuilderFormTl = gsap.timeline();
+
+      showBuilderFormTl
+        .set(builderFormRef.current, { display: "flex" })
         .from(builderFormRef.current, {
-          opacity: 0,
           x: 150,
+          opacity: 0,
           duration: 0.45,
-          ease: "power3.out",
           delay: 0.5,
+          ease: "power3.out",
         })
         .from(
           builderFormRef.current,
           {
-            duration: 0.45,
             filter: "blur(4px)",
+            duration: 0.45,
             ease: "power3.out",
           },
           "<0.1"
         );
+      return () => {
+        showBuilderFormTl.kill(); // Stop and clear the timeline
+      };
     }
   }, [showBuilder]);
 
   const handleToggleForm = () => {
     hideSetupFormTl
+
       .to(setupFormRef.current, {
-        opacity: 0,
-        x: -100,
+        filter: "blur(4px)",
         duration: 0.45,
         ease: "power3.out",
       })
+      .to(
+        setupFormRef.current,
+        {
+          opacity: 0,
+          x: -150,
+          duration: 0.45,
+          ease: "power3.out",
+        },
+        "<0.1"
+      )
       .set(setupFormRef.current, {
         display: "none",
       })

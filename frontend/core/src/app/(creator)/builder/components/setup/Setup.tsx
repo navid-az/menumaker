@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 
 //libraries
 import * as z from "zod";
@@ -22,7 +22,7 @@ import {
   Slider,
   SliderSection,
   SliderStep,
-} from "../../../../../components/global/slider/Slider";
+} from "@/components/global/slider/Slider";
 import Tile from "./Tile";
 
 //hooks
@@ -88,6 +88,7 @@ export default function Setup({
   const handleLastTileClick = async (userChoice: "custom" | "pre-built") => {
     const isValid = await form.trigger();
 
+    //opt out if form is invalid
     if (!isValid) {
       onInvalid();
       return;
