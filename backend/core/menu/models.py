@@ -10,7 +10,6 @@ User = settings.AUTH_USER_MODEL
 
 
 class Menu(models.Model):
-    menu_id = models.CharField(max_length=100, unique=True)
     name = models.CharField(max_length=100)
     name_en = models.CharField(max_length=100)
     slug = models.SlugField(
@@ -35,6 +34,7 @@ class MenuGlobalStyling(models.Model):
         ("engL", "engLetter"),
         ("perL", "perLetter"),
     ]
+
     menu = models.OneToOneField(Menu, on_delete=models.CASCADE,)
     primary_color = ColorField()
     secondary_color = ColorField()

@@ -46,25 +46,25 @@ export async function UserProfile() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem asChild className="flex gap-2 py-2">
-            <Link href={`/dashboard/${places[0].menu_id}/insights`}>
+            <Link href={`/dashboard/${places[0].slug}/insights`}>
               <BarChart className="h-5 w-5"></BarChart>
               <p>داشبورد</p>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild className="flex gap-2 py-2">
-            <Link href={`/dashboard/${places[0].menu_id}/liveManagement`}>
+            <Link href={`/dashboard/${places[0].slug}/liveManagement`}>
               <Radar className="h-5 w-5"></Radar>
               <p>مدیریت زنده</p>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild className="flex gap-2 py-2">
-            <Link href={`/dashboard/${places[0].menu_id}/liveManagement`}>
+            <Link href={`/dashboard/${places[0].slug}/liveManagement`}>
               <User className="h-5 w-5"></User>
               <p>پرسنل</p>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild className="flex gap-2 py-2">
-            <Link href={`/dashboard/${places[0].menu_id}/liveManagement`}>
+            <Link href={`/dashboard/${places[0].slug}/liveManagement`}>
               <Settings className="h-5 w-5"></Settings>
               <p>تنضیمات</p>
             </Link>

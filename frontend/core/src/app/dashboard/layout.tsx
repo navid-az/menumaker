@@ -38,23 +38,19 @@ export type PlacesType = {
 //   return res.json();
 // };
 
-export default async function DashboardLayout(
-  props: {
-    children: React.ReactNode;
-    params: Promise<{ menu_id: string }>;
-  }
-) {
+export default async function DashboardLayout(props: {
+  children: React.ReactNode;
+  params: Promise<{ slug: string }>;
+}) {
   const params = await props.params;
 
-  const {
-    children
-  } = props;
+  const { children } = props;
 
   const user = await getUserData();
   const places: PlacesType = await getUserPlaces(user.pk);
   return (
     <div className="flex h-screen flex-col bg-primary">
-      <DashboardHeader menu_id={params.menu_id}></DashboardHeader>
+      <DashboardHeader menu_id={params.slug}></DashboardHeader>
       <ResizablePanelGroup
         autoSaveId="dashboard-size"
         direction="horizontal"
