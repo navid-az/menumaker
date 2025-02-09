@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Menu, MenuGlobalStyling, Item, ItemCategory, Icon
+from django.utils.text import slugify
 
 
 class IconsSerializer(serializers.ModelSerializer):
@@ -54,3 +55,14 @@ class MenuGlobalStylingSerializer(serializers.ModelSerializer):
     class Meta:
         model = MenuGlobalStyling
         fields = '__all__'
+
+
+class InitialMenuSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Menu
+        fields = ['name', 'name_en', 'slug',
+                  'service_type', 'primary_service_type']
+
+    def create(self, validated_data):
+        validated_data['slug'] = slugify(validated_data['name_en'])
+        return super().create(validated_data)

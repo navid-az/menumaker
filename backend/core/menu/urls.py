@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import (MenuListView, MenuGlobalStylingView, MenuCategoriesView, MenuCategoryCreateView, MenuCategoryUpdateView,
-                    MenuCategoryDeleteView, MenuItemsView, MenuItemCreateView, MenuItemUpdateView, MenuItemDeleteView)
+                    MenuCategoryDeleteView, MenuItemsView, MenuItemCreateView, MenuItemUpdateView, MenuItemDeleteView, RegisterBusinessView)
 
 app_name = 'menu'
 
@@ -9,6 +9,10 @@ urlpatterns = [
     path('all', MenuListView.as_view(), name='menu-list'),
     path('<str:slug>/global-styling/', MenuGlobalStylingView.as_view(),
          name='menu-global-styling'),
+
+    # register business
+    path('business/register/', RegisterBusinessView.as_view(),
+         name='register business'),
 
     # category endpoints
     path('<str:slug>/categories/',

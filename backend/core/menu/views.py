@@ -1,6 +1,7 @@
 from .models import Item, Menu, MenuGlobalStyling, ItemCategory
-from .serializers import (MenuListSerializer, MenuGlobalStylingSerializer, MenuCategoriesSerializer,
+from .serializers import (InitialMenuSerializer, MenuListSerializer, MenuGlobalStylingSerializer, MenuCategoriesSerializer,
                           MenuCategoryCreateUpdateSerializer, MenuItemsSerializer,  MenuItemCreateUpdateSerializer)
+from django.contrib.auth import get_user_model
 
 # rest dependencies
 from rest_framework import status
@@ -9,8 +10,11 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from permissions import IsOwner
 
+User = get_user_model()
 
 # get list of all menus
+
+
 class MenuListView(APIView):
     def get(self, request):
         all_menus = Menu.objects.all()
@@ -30,7 +34,19 @@ class MenuGlobalStylingView(APIView):
             return Response('Menu not found for the provided slug', status=status.HTTP_404_NOT_FOUND)
 
 
+class RegisterBusinessView(APIView):
+    permission_classes = [IsAuthenticated, IsOwner]
+
+    def post(self, request):
+        ser_data = InitialMenuSerializer(data=request.data)
+        if ser_data.is_valid():
+            ser_data.save(owner=request.user)
+            return Response({"message": "Business registered successfully"}, status=status.HTTP_201_CREATED)
+        return Response(ser_data.errors, status=status.HTTP_400_BAD_REQUEST)
+
 # item CRUD views
+
+
 class MenuCategoriesView(APIView):
     def get(self, request, slug):
         menu = Menu.objects.get(slug=slug)
@@ -49,7 +65,7 @@ class MenuCategoryCreateView(APIView):
         if ser_data.is_valid():
             try:
                 menu = Menu.objects.get(slug=slug)
-            except:
+            except Menu.DoesNotExist:
                 return Response({"message": "menu with this id does not exist"}, status.HTTP_404_NOT_FOUND)
             self.check_object_permissions(request, menu)
             ser_data.validated_data['menu'] = menu

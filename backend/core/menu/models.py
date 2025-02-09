@@ -1,9 +1,9 @@
-import datetime
 from django.db import models
-from colorfield.fields import ColorField
 from django.conf import settings
+
+# external dependencies
+from colorfield.fields import ColorField
 from pickers.models import Icon
-from django.utils.text import slugify
 from multiselectfield import MultiSelectField
 
 User = settings.AUTH_USER_MODEL
@@ -19,6 +19,38 @@ class Menu(models.Model):
     is_active = models.BooleanField(default=True)
     personnel = models.ManyToManyField(
         User, related_name='places', blank=True)
+    service_type = models.CharField(
+        max_length=20,
+        choices=[('online', 'Online Order Only'),
+                 ('in_person', 'In-Person Only'), ('both', 'Both')],
+        default='both'
+    )
+    primary_service_type = models.CharField(
+        max_length=20,
+        choices=[('online', 'Online Order Only'),
+                 ('in_person', 'In-Person Only')],
+        null=True, blank=True
+    )
+    branch_count = models.PositiveIntegerField(default=1)
+    social_links = models.JSONField(default=dict, blank=True)
+    # ex: [{"Telegram":"[telegram link]", "Instagram":"[instagram link]", ...}]
+    phone_numbers = models.JSONField(default=list, blank=True)
+    # ex: [{"number_1":[number], "number_2":[number], ...}]
+    locations = models.JSONField(default=list, blank=True)
+    # ex: [{"branch-1":"[address]", "branch_2":"[address]", ...}]
+    item_page_type = models.CharField(
+        max_length=20,
+        choices=[('vertical', 'Vertical'), ('horizontal', 'Horizontal')],
+        default='horizontal'
+    )
+    categories_display_type = models.CharField(
+        max_length=20, choices=[('slider', 'Slider'), ('circular', 'Circular')], default='slider')
+    waiter_request_is_active = models.BooleanField(default=False)
+    search_item_is_active = models.BooleanField(default=False)
+    logo = models.ImageField(
+        upload_to="menu/images/logo/", null=True, blank=True)
+    updated = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.slug
@@ -40,6 +72,11 @@ class MenuGlobalStyling(models.Model):
     secondary_color = ColorField()
     tertiary_color = ColorField()
     bg_color = ColorField()
+    border_radius = models.CharField(
+        max_length=2,
+        choices=[('sm', 'small'), ('md', 'medium'), ('lg', 'large')],
+        default='full'
+    )
     unit_display_type = models.CharField(
         max_length=9, choices=PRICE_UNITS, default="simp")
     click_animation = MultiSelectField(
