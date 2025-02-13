@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from .models import OtpCode, User
-from menu.models import Menu
+from menu.models import Business, Menu
 
 
 class validateCredentialSerializer(serializers.Serializer):
@@ -77,5 +77,5 @@ class getUserDataSerializer(serializers.ModelSerializer):
 
 class getUserPlacesSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Menu
+        model = Business
         fields = '__all__'

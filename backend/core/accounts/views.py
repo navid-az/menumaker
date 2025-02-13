@@ -195,8 +195,8 @@ class getUserDataView(APIView):
 class getUserPlacesView(APIView):
     def get(self, request, id):
         user = get_user_model().objects.get(pk=id)
-        owned_places = user.owned_places.all()
-        places = user.places.all()
-        all_places = owned_places.union(places)
-        ser_data = getUserPlacesSerializer(instance=all_places, many=True)
+        owned_places = user.businesses.all()
+        # places = user.places.all()
+        # all_places = owned_places.union(places)
+        ser_data = getUserPlacesSerializer(instance=owned_places, many=True)
         return Response(data=ser_data.data)

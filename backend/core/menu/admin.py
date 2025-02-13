@@ -1,6 +1,5 @@
-from .models import Menu, MenuGlobalStyling
 from django.contrib import admin
-from .models import Menu, MenuGlobalStyling, Table, ItemCategory, Item, Tag
+from .models import Business, Menu, MenuGlobalStyling, Table, ItemCategory, Item, Tag
 
 admin.site.register(Table)
 admin.site.register(ItemCategory)
@@ -13,7 +12,11 @@ class MenuGlobalStylingInline(admin.StackedInline):
     can_delete = False
 
 
+@admin.register(Business)
+class BusinessAdmin(admin.ModelAdmin):
+    prepopulated_fields = {'slug': ['name_en']}
+
+
 @admin.register(Menu)
 class MenuAdmin(admin.ModelAdmin):
     inlines = [MenuGlobalStylingInline]
-    prepopulated_fields = {'slug': ['name_en']}

@@ -1,6 +1,7 @@
 from rest_framework import serializers
-from .models import Menu, MenuGlobalStyling, Item, ItemCategory, Icon
+from .models import Business, Menu, MenuGlobalStyling, Item, ItemCategory, Icon
 from django.utils.text import slugify
+from django.db import transaction
 
 
 class IconsSerializer(serializers.ModelSerializer):
@@ -57,9 +58,10 @@ class MenuGlobalStylingSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class InitialMenuSerializer(serializers.ModelSerializer):
+# business serializers
+class BusinessCreateSerializer(serializers.ModelSerializer):  # checked
     class Meta:
-        model = Menu
+        model = Business
         fields = ['name', 'name_en', 'slug',
                   'service_type', 'primary_service_type']
 

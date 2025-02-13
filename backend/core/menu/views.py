@@ -1,5 +1,5 @@
-from .models import Item, Menu, MenuGlobalStyling, ItemCategory
-from .serializers import (InitialMenuSerializer, MenuListSerializer, MenuGlobalStylingSerializer, MenuCategoriesSerializer,
+from .models import Business, Item, Menu, MenuGlobalStyling, ItemCategory
+from .serializers import (BusinessCreateSerializer, MenuListSerializer, MenuGlobalStylingSerializer, MenuCategoriesSerializer,
                           MenuCategoryCreateUpdateSerializer, MenuItemsSerializer,  MenuItemCreateUpdateSerializer)
 from django.contrib.auth import get_user_model
 
@@ -38,20 +38,30 @@ class RegisterBusinessView(APIView):
     permission_classes = [IsAuthenticated, IsOwner]
 
     def post(self, request):
-        ser_data = InitialMenuSerializer(data=request.data)
+        ser_data = BusinessCreateSerializer(data=request.data)
         if ser_data.is_valid():
             ser_data.save(owner=request.user)
             return Response({"message": "Business registered successfully"}, status=status.HTTP_201_CREATED)
         return Response(ser_data.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# item CRUD views
+
+class MenuCreateView(APIView):
+    pass
+    # permission_classes = [IsAuthenticated, IsOwner]
+
+    # def post(self, request):
+    #     ser_data = CreateMenuSerializer(data=request.data)
+    #     if ser_data.is_valid():
+    #         ser_data.save(owner)
+
+    # item CRUD views
 
 
 class MenuCategoriesView(APIView):
     def get(self, request, slug):
-        menu = Menu.objects.get(slug=slug)
-        if menu is not None:
-            categories = menu.categories.all()
+        business = Business.objects.get(slug=slug)
+        if business is not None:
+            categories = ItemCategory.objects.filter(menu__business=business)
             ser_data = MenuCategoriesSerializer(instance=categories, many=True)
             return Response(ser_data.data)
         return Response('menu with this id does not exist', status.HTTP_404_NOT_FOUND)
@@ -113,9 +123,9 @@ class MenuCategoryDeleteView(APIView):
 # item CRUD views
 class MenuItemsView(APIView):
     def get(self, request, slug):
-        menu = Menu.objects.get(slug=slug)
-        if menu is not None:
-            items = menu.items.all()
+        business = Business.objects.get(slug=slug)
+        if business is not None:
+            items = Item.objects.filter(menu__business=business)
             ser_data = MenuItemsSerializer(instance=items, many=True)
             return Response(ser_data.data)
         return Response('menu with this id does not exist', status.HTTP_404_NOT_FOUND)

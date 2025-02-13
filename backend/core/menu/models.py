@@ -9,16 +9,13 @@ from multiselectfield import MultiSelectField
 User = settings.AUTH_USER_MODEL
 
 
-class Menu(models.Model):
-    name = models.CharField(max_length=100)
-    name_en = models.CharField(max_length=100)
+class Business(models.Model):
+    owner = models.ForeignKey(
+        User, on_delete=models.CASCADE, default=1, related_name='businesses')
+    name = models.CharField(max_length=100, null=True, blank=True)
+    name_en = models.CharField(max_length=100, null=True, blank=True)
     slug = models.SlugField(
         max_length=100, unique=True, null=True, blank=True)
-    owner = models.ForeignKey(
-        User, on_delete=models.CASCADE, default=1, related_name='owned_places')
-    is_active = models.BooleanField(default=True)
-    personnel = models.ManyToManyField(
-        User, related_name='places', blank=True)
     service_type = models.CharField(
         max_length=20,
         choices=[('online', 'Online Order Only'),
@@ -32,12 +29,23 @@ class Menu(models.Model):
         null=True, blank=True
     )
     branch_count = models.PositiveIntegerField(default=1)
-    social_links = models.JSONField(default=dict, blank=True)
     # ex: [{"Telegram":"[telegram link]", "Instagram":"[instagram link]", ...}]
+    social_links = models.JSONField(default=dict, blank=True)
     phone_numbers = models.JSONField(default=list, blank=True)
     # ex: [{"number_1":[number], "number_2":[number], ...}]
     locations = models.JSONField(default=list, blank=True)
     # ex: [{"branch-1":"[address]", "branch_2":"[address]", ...}]
+
+    updated = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'[{self.slug}] owned by [{self.owner}]'
+
+
+class Menu(models.Model):
+    business = models.ForeignKey(
+        Business, on_delete=models.CASCADE, null=True, blank=True, related_name='menus')
     item_page_type = models.CharField(
         max_length=20,
         choices=[('vertical', 'Vertical'), ('horizontal', 'Horizontal')],
@@ -53,10 +61,12 @@ class Menu(models.Model):
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.slug
+        return f"[{self.business.name_en if self.business else 'Unknown Business!'}]'s menu"
 
 
-# global animation for the entire menu app(home page, items page, ...)
+# stylings which effect the entire menu
+
+
 class MenuGlobalStyling(models.Model):
     CLICK_ANIMATION_CHOICES = [
         ('ripple', 'ripple effect'), ('tactile', 'tactile effect')]
@@ -67,7 +77,8 @@ class MenuGlobalStyling(models.Model):
         ("perL", "perLetter"),
     ]
 
-    menu = models.OneToOneField(Menu, on_delete=models.CASCADE,)
+    menu = models.OneToOneField(
+        Menu, on_delete=models.CASCADE, null=True, blank=True)
     primary_color = ColorField()
     secondary_color = ColorField()
     tertiary_color = ColorField()
