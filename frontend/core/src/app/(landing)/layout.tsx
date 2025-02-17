@@ -1,19 +1,22 @@
-import React from "react";
+import React, { Suspense } from "react";
+
+//components
 import Link from "next/link";
 import Image from "next/image";
-import { UserProfile } from "@/components/global/UserProfile";
-import { Button } from "@/components/ui/button";
-import { verifyToken } from "../actions";
-import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { UserProfile } from "@/components/global/UserProfile";
+
+//actions and functions
+import { verifyToken } from "../actions";
 import { getUserData } from "@/lib/getUserData";
-import { getUserPlaces } from "@/lib/getUserPlaces";
+import { getUserBusinesses } from "@/lib/getUserBusinesses";
 
 async function Navbar() {
   const isAuthenticated = await verifyToken();
   if (isAuthenticated) {
     const { pk } = await getUserData();
-    var places = await getUserPlaces(pk);
+    var businesses = await getUserBusinesses(pk);
   }
 
   return (
@@ -33,7 +36,7 @@ async function Navbar() {
       <Link href="/venhan/menu">صفحه منو</Link>
 
       {isAuthenticated ? (
-        <Link href={`/dashboard/${places[0].menu_id}/insights`}>داشبورد</Link>
+        <Link href={`/dashboard/${businesses[0].slug}/insights`}>داشبورد</Link>
       ) : (
         <Link href={`/register`}>داشبورد</Link>
       )}

@@ -29,7 +29,7 @@ import { ArrowUpDown, ImageIcon, MoreVertical, Trash2 } from "lucide-react";
 import { CellContext } from "@tanstack/react-table";
 export type Category = {
   id: number;
-  menu: string;
+  business: string;
   name: string;
   icon: { name: string; image: string };
   is_active: boolean;
@@ -40,7 +40,7 @@ const handleSwitch = async (
   data: object
 ) => {
   const isUpdated = await updateCategory(
-    props.row.original.menu,
+    props.row.original.business,
     props.row.original.id,
     data
   );
@@ -50,7 +50,7 @@ const handleSwitch = async (
 };
 
 const handleDelete = async (props: CellContext<Category, unknown>) => {
-  deleteCategory(props.row.original.menu, props.row.original.id);
+  deleteCategory(props.row.original.business, props.row.original.id);
 };
 
 export const categoryColumns: ColumnDef<Category>[] = [

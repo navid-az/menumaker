@@ -75,7 +75,7 @@ class getUserDataSerializer(serializers.ModelSerializer):
         fields = ["pk", "phone_number", "email"]
 
 
-class getUserPlacesSerializer(serializers.ModelSerializer):
+class getUserBusinessesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Business
         fields = '__all__'

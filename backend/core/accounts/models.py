@@ -7,8 +7,10 @@ from django.utils.functional import cached_property
 
 # change the default user model
 class User(AbstractBaseUser):
-    phone_number = models.CharField(max_length=11, unique=True, null=True, blank=True)
-    email = models.EmailField(max_length=255, unique=True, null=True, blank=True)
+    phone_number = models.CharField(
+        max_length=11, unique=True, null=True, blank=True)
+    email = models.EmailField(
+        max_length=255, unique=True, null=True, blank=True)
     full_name = models.CharField(max_length=100, null=True, blank=True)
     first_name = models.CharField(max_length=100, null=True, blank=True)
     last_name = models.CharField(max_length=100, null=True, blank=True)
@@ -32,12 +34,14 @@ class User(AbstractBaseUser):
         return self.is_admin
 
     def __str__(self):
-        return f"{self.phone_number or self.email}"
+        return self.phone_number if self.phone_number else self.email
 
 
 class OtpCode(models.Model):
-    phone_number = models.CharField(max_length=11, unique=True, null=True, blank=True)
-    email = models.EmailField(max_length=255, unique=True, null=True, blank=True)
+    phone_number = models.CharField(
+        max_length=11, unique=True, null=True, blank=True)
+    email = models.EmailField(
+        max_length=255, unique=True, null=True, blank=True)
     password = models.PositiveIntegerField()
     created = models.DateTimeField(auto_now_add=True)
 

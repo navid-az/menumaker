@@ -32,7 +32,7 @@ export type Item = {
   image: string;
   name: string;
   category: string;
-  menu: string; //slug
+  business: string; //slug
   price: number;
   is_available: boolean;
   is_active: boolean;
@@ -43,7 +43,7 @@ const handleSwitch = async (
   data: object
 ) => {
   const isUpdated = await updateItem(
-    props.row.original.menu,
+    props.row.original.business,
     props.row.original.id,
     data
   );
@@ -53,7 +53,7 @@ const handleSwitch = async (
 };
 
 const handleDelete = async (props: CellContext<Item, unknown>) => {
-  const res = await deleteItem(props.row.original.menu, props.row.original.id);
+  await deleteItem(props.row.original.business, props.row.original.id);
 };
 
 export const itemColumns: ColumnDef<Item>[] = [

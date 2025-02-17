@@ -6,29 +6,30 @@ import {
 import { DashboardHeader } from "./components/DashboardHeader";
 import DashboardNavbar from "./components/DashboardSidebar";
 import DashboardPanel from "./components/DashboardPanel";
+
+//functions
 import { getUserData } from "@/lib/getUserData";
-import { getUserPlaces } from "@/lib/getUserPlaces";
+import { getUserBusinesses } from "@/lib/getUserBusinesses";
 
 //types
-export type PlacesType = {
+export type BusinessType = {
   id: number;
-  menu_id: string;
+  owner: number;
   slug: string;
   name: string;
-  primary_color: string;
-  secondary_color: string;
-  tertiary_color: string;
-  bg_color: string;
-  price_unit: string;
-  is_active: boolean;
-  owner: number;
-  personnel: [];
+  name_en: string;
+  service_type: "online" | "in_person" | "both";
+  primary_service_type: "online" | "in_person";
+  branch_count: number;
+  social_links: {};
+  phone_numbers: {};
+  locations: {};
 }[];
 
 // get user's restaurants/cafes info
-// const getUserPlaces = async (userId: number) => {
+// const getUserBusinesses = async (userId: number) => {
 //   const res = await fetch(
-//     `http://127.0.0.1:8000/accounts/user/${userId}/places`
+//     `http://127.0.0.1:8000/accounts/user/${userId}/businesses`
 //   );
 //   return res.json();
 // };
@@ -47,7 +48,7 @@ export default async function DashboardLayout(props: {
   const { children } = props;
 
   const user = await getUserData();
-  const places: PlacesType = await getUserPlaces(user.pk);
+  const businesses: BusinessType = await getUserBusinesses(user.pk);
   return (
     <div className="flex h-screen flex-col bg-primary">
       <DashboardHeader menu_id={params.slug}></DashboardHeader>
@@ -56,7 +57,7 @@ export default async function DashboardLayout(props: {
         direction="horizontal"
         className="flex flex-1"
       >
-        <DashboardNavbar places={places}></DashboardNavbar>
+        <DashboardNavbar businesses={businesses}></DashboardNavbar>
         <ResizableHandle withHandle></ResizableHandle>
         <DashboardPanel>{children}</DashboardPanel>
       </ResizablePanelGroup>

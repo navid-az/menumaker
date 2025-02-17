@@ -1,6 +1,9 @@
+//component
 import Link from "next/link";
+
+//functions
 import { getUserData } from "@/lib/getUserData";
-import { getUserPlaces } from "@/lib/getUserPlaces";
+import { getUserBusinesses } from "@/lib/getUserBusinesses";
 
 //actions
 import { logOut } from "@/app/actions";
@@ -24,12 +27,12 @@ import {
 } from "@/app/dashboard/components/svg";
 
 //types
-import type { PlacesType } from "@/app/dashboard/layout";
+import type { BusinessType } from "@/app/dashboard/layout";
 import { User, User2Icon } from "lucide-react";
 
 export async function UserProfile() {
   const { pk, phone_number } = await getUserData();
-  const places: PlacesType = await getUserPlaces(pk);
+  const businesses: BusinessType = await getUserBusinesses(pk);
 
   return (
     <DropdownMenu dir="rtl" modal={false}>
@@ -46,25 +49,25 @@ export async function UserProfile() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem asChild className="flex gap-2 py-2">
-            <Link href={`/dashboard/${places[0].slug}/insights`}>
+            <Link href={`/dashboard/${businesses[0].slug}/insights`}>
               <BarChart className="h-5 w-5"></BarChart>
               <p>داشبورد</p>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild className="flex gap-2 py-2">
-            <Link href={`/dashboard/${places[0].slug}/liveManagement`}>
+            <Link href={`/dashboard/${businesses[0].slug}/liveManagement`}>
               <Radar className="h-5 w-5"></Radar>
               <p>مدیریت زنده</p>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild className="flex gap-2 py-2">
-            <Link href={`/dashboard/${places[0].slug}/liveManagement`}>
+            <Link href={`/dashboard/${businesses[0].slug}/liveManagement`}>
               <User className="h-5 w-5"></User>
               <p>پرسنل</p>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild className="flex gap-2 py-2">
-            <Link href={`/dashboard/${places[0].slug}/liveManagement`}>
+            <Link href={`/dashboard/${businesses[0].slug}/liveManagement`}>
               <Settings className="h-5 w-5"></Settings>
               <p>تنضیمات</p>
             </Link>

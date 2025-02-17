@@ -15,53 +15,48 @@ import { ArrowLeft } from "lucide-react";
 
 //hooks
 import { usePathname, useRouter } from "next/navigation";
-import { useCurrentPlaceStore } from "@/lib/stores";
+import { useCurrentBusinessStore } from "@/lib/stores";
 
 //types
-import { PlacesType } from "../layout";
-type MyPlacesTabType = {
+import { BusinessType } from "../layout";
+type MyBusinessesTabType = {
   position: string;
-  places: PlacesType;
+  businesses: BusinessType;
   isCollapsed: boolean;
   collapsePanel: () => void;
   //   venueType: "restaurant" | "cafe" | "buffet" | "food truck";
 };
 
-export default function MyPlacesTab({
+export default function MyBusinessesTab({
   position,
-  places,
+  businesses,
   isCollapsed,
   collapsePanel,
-}: MyPlacesTabType) {
+}: MyBusinessesTabType) {
   const router = useRouter();
   const tab = useRef(null);
 
   const [isOpen, setIsOpen] = useState(false);
-  const [prevPath, setPrevPath] = useState("insights");
-  const currentPlace = useCurrentPlaceStore((state) => state.currentPlace);
-  const setCurrentPlace = useCurrentPlaceStore(
-    (state) => state.updateCurrentPlace
+  const currentBusiness = useCurrentBusinessStore(
+    (state) => state.currentBusiness
+  );
+  const setCurrentBusiness = useCurrentBusinessStore(
+    (state) => state.updateCurrentBusiness
   );
 
   const outsideClick = useClickOutside(tab);
   const pathname = usePathname();
 
-  //will open the same dashboard section depending on pathname
-  useEffect(() => {
-    const prevPath = pathname.split("/").pop();
-    if (prevPath) {
-      setPrevPath(prevPath);
-    }
-  }, [pathname]);
-
+  //collapse Tab on outside click
   useEffect(() => {
     if (outsideClick) {
       setIsOpen(false);
     }
   }, [outsideClick]);
 
+  // Tab's opening/closing functionality
   const handleTab = () => {
-    if (places.length > 1) {
+    if (businesses.length > 1) {
       if (isCollapsed) {
         collapsePanel();
       }
@@ -69,9 +64,17 @@ export default function MyPlacesTab({
     }
   };
 
-  const handleClick = (name: string, menuSlug: string) => {
-    setCurrentPlace(name);
-    router.push(`/dashboard/${menuSlug}/${prevPath}`);
+  // change path on business select
+  const handleClick = (name: string, menu_id: string) => {
+    const pathSegments = pathname.split("/");
+    // update current path with new menu_id
+    pathSegments[2] = menu_id;
+
+    // Reconstruct the new path
+    const newPath = pathSegments.join("/");
+
+    setCurrentBusiness(name);
+    router.push(newPath);
     setIsOpen(!isOpen);
   };
 
@@ -96,13 +99,13 @@ export default function MyPlacesTab({
           <div className="flex items-center gap-2">
             <Building className="h-6 w-6"></Building>
             <p className={`text-xl ${isCollapsed ? "hidden" : "flex"}`}>
-              مجموعه {currentPlace || places[0].name}
+              مجموعه {currentBusiness || businesses[0].name}
             </p>
           </div>
           <ArrowLeft
             className={` transition-all ${isCollapsed ? "hidden" : "flex"} ${
               !isOpen ? "rotate-0" : "-rotate-90"
-            } ${places.length <= 1 ? "hidden" : "flex"}`}
+            } ${businesses.length <= 1 ? "hidden" : "flex"}`}
           ></ArrowLeft>
         </section>
         <span
@@ -116,23 +119,23 @@ export default function MyPlacesTab({
           </p>
         </span>
       </Button>
-      {/* places list */}
-      {places.length > 1 ? (
+      {/* businesses list */}
+      {businesses.length > 1 ? (
         <AnimateHeight duration={300} height={isOpen ? "auto" : 0}>
           <section className="p-2">
             <div className="flex w-full flex-col gap-1 rounded-lg border border-primary/30 bg-sad-blue ">
-              {places.map((place) => (
+              {businesses.map((business) => (
                 <Button
-                  key={place.id}
-                  onClick={() => handleClick(place.name, place.slug)}
+                  key={business.id}
+                  onClick={() => handleClick(business.name, business.slug)}
                   className={`${
-                    (currentPlace || places[0].name) === place.name
+                    (currentBusiness || businesses[0].name) === business.name
                       ? "hidden"
                       : "flex"
                   } scale-pro justify-start gap-2 border border-sad-blue bg-sad-blue px-2 py-3 text-base font-normal text-primary transition-all duration-300 hover:scale-105 hover:border-primary hover:bg-white`}
                 >
                   <Building className="h-6 w-6"></Building>
-                  {place.name}
+                  {business.name}
                 </Button>
               ))}
             </div>

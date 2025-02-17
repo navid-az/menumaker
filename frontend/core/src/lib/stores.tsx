@@ -15,18 +15,22 @@ export const usePhoneNumberStore = create<State & Action>()((set) => ({
   updatePhoneNumber: (phoneNumber) => set(() => ({ phoneNumber: phoneNumber })),
 }));
 
-//for myPlacesTab component
-type placeState = {
-  currentPlace: string;
+//~~~~myBusinessesTab~~~~
+type businessState = {
+  currentBusiness: string;
 };
-type placeAction = {
-  updateCurrentPlace: (currentPlace: placeState["currentPlace"]) => void;
+type businessAction = {
+  updateCurrentBusiness: (
+    currentBusiness: businessState["currentBusiness"]
+  ) => void;
 };
-export const useCurrentPlaceStore = create<placeState & placeAction>((set) => ({
-  currentPlace: "",
-  updateCurrentPlace: (currentPlace: string) =>
-    set(() => ({ currentPlace: currentPlace })),
-}));
+export const useCurrentBusinessStore = create<businessState & businessAction>(
+  (set) => ({
+    currentBusiness: "",
+    updateCurrentBusiness: (currentBusiness: string) =>
+      set(() => ({ currentBusiness: currentBusiness })),
+  })
+);
 
 //~~~~Slider~~~~
 type ActiveHandler<T> = (value: T) => void;

@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { cn } from "@/lib/utils";
+import { useRef, useState } from "react";
 
 //SVGs
 import { BarChart, Radar, ScrollText, Settings, Users } from "./svg";
@@ -9,19 +8,26 @@ import { BarChart, Radar, ScrollText, Settings, Users } from "./svg";
 //hooks
 import { usePathname } from "next/navigation";
 import { useMediaQuery } from "@/app/hooks/useMediaQuery";
-import { useRef, useState } from "react";
 import { useParams } from "next/navigation";
 
+//libraries
+import { cn } from "@/lib/utils";
+import { ImperativePanelHandle } from "react-resizable-panels";
+
 //components
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ResizablePanel } from "@/components/ui/resizable";
-import { ImperativePanelHandle } from "react-resizable-panels";
-import MyPlacesTab from "./MyPlacesTab";
+import MyBusinessesTab from "./MyBusinessesTab";
 
 //types
-import { PlacesType } from "@/app/dashboard/layout";
+import { BusinessType } from "@/app/dashboard/layout";
 
-export default function DashboardNavbar({ places }: { places: PlacesType }) {
+export default function DashboardNavbar({
+  businesses,
+}: {
+  businesses: BusinessType;
+}) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const md = useMediaQuery("(min-width: 768px)");
   const lg = useMediaQuery("(min-width: 1024px)");
@@ -51,12 +57,12 @@ export default function DashboardNavbar({ places }: { places: PlacesType }) {
       }}
     >
       <section className="flex w-full flex-col items-end gap-4 bg-primary px-2 text-soft-blue">
-        <MyPlacesTab
-          places={places}
+        <MyBusinessesTab
+          businesses={businesses}
           position="صاحب مجموعه"
           isCollapsed={isCollapsed}
           collapsePanel={collapsePanel}
-        ></MyPlacesTab>
+        ></MyBusinessesTab>
         <DashboardNavbarBtn
           text="وضعیت مجموعه"
           isCollapsed={isCollapsed}
