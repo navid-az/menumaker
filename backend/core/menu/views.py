@@ -27,12 +27,15 @@ class MenuListView(APIView):
 class MenuGlobalStylingView(APIView):
     def get(self, request, slug):
         try:
-            menu = Menu.objects.get(slug=slug)
+            menu = Menu.objects.get(business__slug=slug)
             styles = MenuGlobalStyling.objects.get(menu=menu)
             srz_data = MenuGlobalStylingSerializer(instance=styles)
             return Response(data=srz_data.data)
         except Menu.DoesNotExist:
-            return Response('Menu not found for the provided slug', status=status.HTTP_404_NOT_FOUND)
+            return Response({
+                "error": "Business with the provided slug was not found.",
+                "detail": "Unable to retrieve the menu's global styling data."
+            }, status=status.HTTP_404_NOT_FOUND)
 
 
 class RegisterBusinessView(APIView):
