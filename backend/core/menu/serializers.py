@@ -1,7 +1,7 @@
-from rest_framework import serializers
 from .models import Business, Menu, MenuGlobalStyling, Item, ItemCategory, Icon
 from django.utils.text import slugify
 from django.db import transaction
+from rest_framework import serializers
 
 
 class IconsSerializer(serializers.ModelSerializer):
@@ -79,13 +79,43 @@ class MenuGlobalStylingSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class MenuCreateSerializer(serializers.ModelSerializer):
+    global_styling = MenuGlobalStylingSerializer(write_only=True)
+
+    class Meta:
+        model = Menu
+        fields = '__all__'
+
+    def create(self, validated_data):
+        global_style_data = validated_data.pop('global_styling')
+
+        with transaction.atomic():
+            menu = Menu.objects.create(**validated_data)
+            if global_style_data:
+                MenuGlobalStyling.objects.create(
+                    menu=menu, **global_style_data)
+        return menu
+
+
 # business serializers
-class BusinessCreateSerializer(serializers.ModelSerializer):  # checked
+class BusinessCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Business
         fields = ['name', 'name_en', 'slug',
                   'service_type', 'primary_service_type']
 
+    def validate(self, data):
+        # Generate the slug from the English name
+        slug = slugify(data['name_en'])
+
+        # Check if a Business with this slug already exists
+        if Business.objects.filter(slug=slug).exists():
+            raise serializers.ValidationError(
+                {"slug": "A business with this slug already exists."})
+
+        # Add the slug to the validated data
+        data['slug'] = slug
+        return data
+
     def create(self, validated_data):
-        validated_data['slug'] = slugify(validated_data['name_en'])
         return super().create(validated_data)

@@ -1,5 +1,5 @@
 from .models import Business, Item, Menu, MenuGlobalStyling, ItemCategory
-from .serializers import (BusinessCreateSerializer, MenuListSerializer, MenuGlobalStylingSerializer, MenuCategoriesSerializer,
+from .serializers import (BusinessCreateSerializer, MenuCreateSerializer, MenuListSerializer, MenuGlobalStylingSerializer, MenuCategoriesSerializer,
                           MenuCategoryCreateUpdateSerializer, MenuItemsSerializer,  MenuItemCreateUpdateSerializer)
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
@@ -13,9 +13,8 @@ from permissions import IsOwner
 
 User = get_user_model()
 
+
 # get list of all menus
-
-
 class MenuListView(APIView):
     def get(self, request):
         all_menus = Menu.objects.all()
@@ -43,6 +42,7 @@ class RegisterBusinessView(APIView):
 
     def post(self, request):
         ser_data = BusinessCreateSerializer(data=request.data)
+
         if ser_data.is_valid():
             ser_data.save(owner=request.user)
             return Response({"message": "Business registered successfully"}, status=status.HTTP_201_CREATED)
@@ -50,17 +50,28 @@ class RegisterBusinessView(APIView):
 
 
 class MenuCreateView(APIView):
-    pass
-    # permission_classes = [IsAuthenticated, IsOwner]
+    permission_classes = [IsAuthenticated, IsOwner]
 
-    # def post(self, request):
-    #     ser_data = CreateMenuSerializer(data=request.data)
-    #     if ser_data.is_valid():
-    #         ser_data.save(owner)
+    def post(self, request, slug):
+        business = get_object_or_404(Business, slug=slug)
+        serializer = MenuCreateSerializer(data=request.data)
 
-    # item CRUD views
+        self.check_object_permissions(request, business)
+
+        if business.menus.exists():
+            return Response(
+                {"error": "A menu already exists for this business."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if serializer.is_valid():
+            serializer.save(business=business)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# item CRUD views
 class MenuCategoriesView(APIView):
     def get(self, request, slug):
         business = Business.objects.get(slug=slug)
