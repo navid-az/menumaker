@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useActionState } from "react";
 
 //libraries
 import * as z from "zod";
@@ -22,64 +22,92 @@ import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import MenuPreview from "../preview/MenuPreview";
+import { toast } from "sonner";
 
 //hooks
 import { useSlider } from "@/lib/stores";
 
-//data
+//form's data
 import { getSliderData } from "./builderFormData";
 
-//zod schema
-const itemSchema = z.object({
-  id: z.string(),
-  name: z.string().optional(),
-  icon: z.string().optional(),
+//actions and functions
+import { createMenu } from "@/app/actions";
+
+//zod schemas
+const InstanceSchema = z.array(
+  z.object({
+    id: z.string(),
+    name: z.string().optional(),
+    icon: z.string().optional(),
+  })
+);
+const BusinessSchema = z.object({
+  phone_numbers: InstanceSchema,
+  social_links: InstanceSchema,
+  branches: z.array(z.string()),
 });
-const itemArraySchema = z.array(itemSchema);
-const formSchema = z.object({
-  color_palette: z.array(z.string()),
-  global_border_radius: z.enum(["full", "lg", "md", "sm"]),
-  global_interaction_animation_is_active: z.boolean().default(false),
-  global_interaction_animation: z.enum([
-    "ripple",
-    "tactile",
-    "ripple-tactile",
-    "none",
-  ]),
-  main_page_type: z.enum(["single", "couple", "none"]),
-  menu_sections: itemArraySchema,
-  link_is_active: z.boolean().default(false),
-  links: itemArraySchema,
-  phone_number_is_active: z.boolean().default(false),
-  phone_numbers: itemArraySchema,
-  location_is_active: z.boolean().default(false),
-  item_page_type: z.enum(["horizontal", "vertical"]),
+const GlobalStylingSchema = z.object({
+  color_palette: z
+    .array(
+      z
+        .string()
+        .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Invalid hex color")
+    )
+    .default([]),
+  border_radius: z.enum(["sm", "md", "lg", "full"]),
+  click_animation_enabled: z.boolean().default(false),
+  click_animation_type: z.array(z.enum(["ripple", "tactile"])).optional(),
+  // unit_display_type: z.enum(["simp", "comp", "engL", "perL"]),
+});
+const BuilderSchema = z.object({
+  welcome_page_layout: z.enum(["single", "couple", "none"]),
+  menu_sections: InstanceSchema,
+  show_social_links: z.boolean().default(false),
+  show_phone_numbers: z.boolean().default(false),
+  show_branches: z.boolean().default(false),
+  items_page_layout: z.enum(["horizontal", "vertical"]),
+  // items_display_type: z.enum(["modern", "square", "list"]), //
   categories_display_type: z.enum(["slider", "circular"]),
-  waiter_request_is_active: z.boolean().default(false),
-  search_item_is_active: z.boolean().default(false),
+  call_waiter_enabled: z.boolean().default(false),
+  searchbar_enabled: z.boolean().default(false),
+  business: BusinessSchema, // Nested Business schema
+  global_styling: GlobalStylingSchema, // Nested Global Styling schema
 });
 
 //types
-export type formSchemaType = z.infer<typeof formSchema>;
-export type keyOfFormSchemaType = keyof formSchemaType;
 import { type sliderDataType } from "./builderFormData";
+export type GlobalStylingType = z.infer<typeof GlobalStylingSchema>;
+export type BuilderFormType = z.infer<typeof BuilderSchema>;
+export type keyOfBuilderSchemaType = keyof BuilderFormType;
+export type keyOfGlobalStylingSchemaType = keyof GlobalStylingType;
 
+//builder multipart form
 export default function Builder({
   ref,
 }: {
   ref: React.RefObject<HTMLDivElement | null>;
 }) {
-  const form = useForm<formSchemaType>({
-    resolver: zodResolver(formSchema),
-    defaultValues: { links: [], menu_sections: [], phone_numbers: [] },
+  const form = useForm<BuilderFormType>({
+    resolver: zodResolver(BuilderSchema),
+    defaultValues: {
+      business: { social_links: [], phone_numbers: [], branches: [] },
+      menu_sections: [],
+    },
   });
 
   const sliderData = getSliderData(form);
 
   const [validSections, setValidSections] = useState<sliderDataType[]>([]);
   const [activeConditionalInput, setActiveConditionalInput] =
-    useState<keyOfFormSchemaType | null>(null);
+    useState<keyOfBuilderSchemaType | null>(null);
 
+  //monitor the state of the form onSubmit
+  const [formState, action, pending] = useActionState(createMenu, {
+    success: null,
+    error: null,
+  });
+
+  //global states
   const activeSection = useSlider((state) => state.activeSection);
   const updateSectionCount = useSlider((state) => state.updateSectionCount);
   const updateActiveStepCount = useSlider(
@@ -89,9 +117,9 @@ export default function Builder({
   const formRef = useRef<HTMLFormElement>(null);
 
   //all conditions used for conditional inputs
-  const conditions: keyOfFormSchemaType[] = ["phone_number_is_active"];
+  const conditions: keyOfBuilderSchemaType[] = ["show_phone_numbers"];
 
-  const handleValueChange = (name: keyOfFormSchemaType) => {
+  const handleValueChange = (name: keyOfBuilderSchemaType) => {
     if (conditions.includes(name)) {
       if (activeConditionalInput === null) {
         setActiveConditionalInput(name);
@@ -126,19 +154,58 @@ export default function Builder({
     updateActiveStepCount(updatedValidSections[activeSection - 1].steps.length);
   }, [!activeConditionalInput ? "" : form.watch(activeConditionalInput)]);
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    alert("valid");
+  //inform user by the result of the form submission
+  useEffect(() => {
+    if (formState.error) {
+      toast.error(formState.error, {
+        cancel: { label: "باشه" },
+      });
+    } else if (formState.success) {
+      toast.success("Menu created successfully!", {
+        cancel: { label: "باشه" },
+      });
+    }
+  }, [formState]);
+
+  function onSubmit(values: BuilderFormType) {
+    console.log("values:", values);
+
+    const { business, global_styling, ...menuData } = values;
+
+    //destructure color_palette array of hex codes
+    const [primary_color, secondary_color, tertiary_color, bg_color] =
+      global_styling.color_palette;
+
+    delete global_styling.color_palette;
+
+    const payload = {
+      businessSlug: "shandiz",
+      data: {
+        ...menuData,
+        global_styling: {
+          ...global_styling,
+          primary_color,
+          secondary_color,
+          tertiary_color,
+          bg_color,
+        },
+      },
+    };
+
+    console.log("payload:", payload);
+
+    //call server action
+    action(payload);
   }
 
-  const onInvalid = () => {
-    alert("invalid");
+  const onInvalid = (errors: BuilderFormType) => {
+    console.log("invalid:", errors);
 
     // Check and set default values for radio groups if not selected
-    form.setValue("main_page_type", "couple");
+    form.setValue("welcome_page_layout", "couple");
     form.setValue("categories_display_type", "circular");
-    form.setValue("item_page_type", "horizontal");
-    form.setValue("global_border_radius", "full");
+    form.setValue("items_page_layout", "horizontal");
+    form.setValue("global_styling.border_radius", "full");
 
     // Programmatically submit the form after setting default values
     if (formRef.current) {
@@ -150,9 +217,7 @@ export default function Builder({
 
   return (
     <Form {...form}>
-      {/* ref is used for animating the entire component */}
-      <div className="h-full w-full" ref={ref}>
-        {/* multipart form */}
+      <div className="flex h-full w-full" ref={ref}>
         <form
           name="builder-form"
           ref={formRef}
@@ -183,8 +248,10 @@ export default function Builder({
                             <RadioGroup
                               dir="rtl"
                               onValueChange={field.onChange}
-                              defaultValue={field.value as keyOfFormSchemaType}
-                              value={field.value as keyOfFormSchemaType}
+                              defaultValue={
+                                field.value as keyOfBuilderSchemaType
+                              }
+                              value={field.value as keyOfBuilderSchemaType}
                               className="flex flex-col gap-4"
                             >
                               {step.tabs.map((tab, tabIndex) => (
@@ -221,20 +288,20 @@ export default function Builder({
                         )}
                       />
                     ) : (
-                      // switch section
+                      //if isRadioGroup is false generate a switch instead
                       <>
                         {step.tabs.map((tab, tabIndex) => (
                           <FormField
                             key={tabIndex}
                             control={form.control}
-                            name={tab.name || "color_palette"}
+                            name={tab.name || "call_waiter_enabled"}
                             render={({ field }) => (
                               <FormItem>
                                 <FormControl>
                                   <SliderTab
                                     onClick={() =>
                                       handleValueChange(
-                                        field.name as keyOfFormSchemaType
+                                        field.name as keyOfBuilderSchemaType
                                       )
                                     }
                                     isActive={

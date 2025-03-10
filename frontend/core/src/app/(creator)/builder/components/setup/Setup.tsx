@@ -8,7 +8,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 //components
-import { toast } from "sonner";
 import {
   Form,
   FormControl,
@@ -23,6 +22,7 @@ import {
   SliderSection,
   SliderStep,
 } from "@/components/global/slider/Slider";
+import { toast } from "sonner";
 import Tile from "./Tile";
 
 //hooks
@@ -85,7 +85,8 @@ export default function Setup({
     });
   };
 
-  const handleLastTileClick = async (userChoice: "custom" | "pre-built") => {
+  //submit form and proceed to the next step
+  const handleSubmit = async (userChoice: "custom" | "pre-built") => {
     const isValid = await form.trigger();
 
     //opt out if form is invalid
@@ -94,7 +95,7 @@ export default function Setup({
       return;
     }
 
-    // If form is valid, proceed
+    //proceed if form is valid
     const formValues = form.getValues();
     onSubmit(formValues);
 
@@ -123,7 +124,7 @@ export default function Setup({
                 render={({ field }) => (
                   <FormControl>
                     <FormItem>
-                      <FormLabel>نام مجموعه</FormLabel>
+                      <FormLabel>نام مدیر</FormLabel>
                       <Input
                         type="text"
                         placeholder="نام و نام خانوادگی مدیر"
@@ -318,12 +319,12 @@ export default function Setup({
               <Tile
                 isButton
                 title="شخصی سازی منو"
-                onClick={() => handleLastTileClick("custom")}
+                onClick={() => handleSubmit("custom")}
               ></Tile>
               <Tile
                 isButton
                 title="انتخاب منو از پیش ساخته شده"
-                onClick={() => handleLastTileClick("pre-built")}
+                onClick={() => handleSubmit("pre-built")}
               ></Tile>
             </SliderStep>
           </SliderSection>

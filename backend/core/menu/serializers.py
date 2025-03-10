@@ -74,6 +74,12 @@ class MenuListSerializer(serializers.ModelSerializer):
 
 
 class MenuGlobalStylingSerializer(serializers.ModelSerializer):
+    CLICK_ANIMATION_CHOICES = [
+        ('ripple', 'ripple effect'), ('tactile', 'tactile effect')]
+
+    click_animation_type = serializers.MultipleChoiceField(
+        choices=CLICK_ANIMATION_CHOICES, allow_null=True)
+
     class Meta:
         model = MenuGlobalStyling
         fields = '__all__'
@@ -87,7 +93,7 @@ class MenuCreateSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
-        global_style_data = validated_data.pop('global_styling')
+        global_style_data = validated_data.pop('global_styling', {})
 
         with transaction.atomic():
             menu = Menu.objects.create(**validated_data)

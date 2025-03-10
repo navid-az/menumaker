@@ -8,16 +8,18 @@ import { useTactileAnimation } from "@/app/hooks/useTactileAnimation"; //animati
 import { useRippleAnimation } from "@/app/hooks/useRippleAnimation"; //animation hook
 
 //Types
-type AnimationOptionsType = "ripple" | "tactile" | "ripple-tactile" | "none";
+type AnimationOptionsType = "ripple" | "tactile";
 
 //SVGs
-import { Sparkles, X } from "lucide-react";
+import { Check, Sparkles } from "lucide-react";
 
 //libraries
 import { useFormContext } from "react-hook-form";
 
 export default function AnimationSelector() {
-  const [activeBtn, setActiveBtn] = useState<AnimationOptionsType>("none");
+  const [selectedAnimations, setSelectedAnimations] = useState<
+    AnimationOptionsType[]
+  >([]);
 
   const previewBtnRef = useRef<HTMLButtonElement>(null);
 
@@ -27,124 +29,101 @@ export default function AnimationSelector() {
   const noneBtnRef = useRef<HTMLButtonElement>(null);
 
   const { watch, setValue } = useFormContext();
-  const colors = watch("color_palette");
+  const colors = watch("global_styling.color_palette");
 
-  //animation for animation buttons
-  useTactileAnimation(rippleBtnRef, { scale: 0.04 });
-  useTactileAnimation(tactileBtnRef, { scale: 0.04 });
-  useTactileAnimation(rippleTactileBtnRef, { scale: 0.04 });
+  //animation for option buttons(default animation for app's buttons)
+  useTactileAnimation(rippleBtnRef, { scale: 0.02 });
+  useTactileAnimation(tactileBtnRef, { scale: 0.02 });
+  useTactileAnimation(rippleTactileBtnRef, { scale: 0.02 });
   useTactileAnimation(noneBtnRef, { scale: 0.04 });
 
+  //initial animations mount
   const triggerRippleAnimation = useRippleAnimation(
     previewBtnRef,
     {},
-    activeBtn === "ripple" || activeBtn === "ripple-tactile"
+    selectedAnimations.includes("ripple")
   );
   const triggerTactileAnimation = useTactileAnimation(
     previewBtnRef,
-    {},
-    activeBtn === "tactile" || activeBtn === "ripple-tactile"
+    { scale: 0.04 },
+    selectedAnimations.includes("tactile")
   );
 
+  //handle animation options button click
   const handleBtnClick = (
     e: React.MouseEvent,
-    animationType: AnimationOptionsType
+    animationType: AnimationOptionsType | ""
   ) => {
     e.preventDefault();
-    setActiveBtn(animationType);
 
-    //Trigger the selected animation immediately
-    if (animationType === "ripple") {
-      triggerRippleAnimation();
-    } else if (animationType === "tactile") {
-      triggerTactileAnimation();
-    } else if (animationType === "ripple-tactile") {
-      triggerRippleAnimation();
-      triggerTactileAnimation();
-    } else {
-      setValue("global_interaction_animation_is_active", false);
+    if (animationType) {
+      if (selectedAnimations.includes(animationType)) {
+        setSelectedAnimations((prev) =>
+          prev.filter((item) => item !== animationType)
+        );
+      } else {
+        setSelectedAnimations((prev) => [...prev, animationType]);
+      }
+    } else if (animationType.length == 0) {
+      setSelectedAnimations([]);
     }
   };
 
+  //Trigger selected animations & update click_animation_type accordingly
   useEffect(() => {
-    if (activeBtn === "ripple") {
+    if (selectedAnimations.includes("ripple")) {
       triggerRippleAnimation();
-    } else if (activeBtn === "tactile") {
-      triggerTactileAnimation();
-    } else if (activeBtn === "ripple-tactile") {
-      triggerRippleAnimation();
-      triggerTactileAnimation();
-    } else {
-      setValue("global_interaction_animation_is_active", false);
     }
-    setValue("global_interaction_animation", activeBtn);
-  }, [activeBtn]);
-
-  const handlePreviewBtnClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-  };
+    if (selectedAnimations.includes("tactile")) {
+      triggerTactileAnimation();
+    }
+    setValue("global_styling.click_animation_type", selectedAnimations);
+  }, [selectedAnimations]);
 
   return (
     <div className="flex h-max w-full flex-col items-end gap-4 rounded-md">
       <Button
-        disabled={activeBtn === "none"}
-        onClick={handlePreviewBtnClick}
+        type="button"
+        disabled={!selectedAnimations.length}
         ref={previewBtnRef}
         className="scale-pro flex gap-2 border-2 shadow-sm transition-opacity duration-300"
         style={{
-          backgroundColor: colors ? colors[1] : "blue",
-          color: colors ? colors[0] : "blue",
-          borderColor: colors ? colors[0] : "blue",
+          backgroundColor: colors ? colors[1] : "pink",
+          color: colors ? colors[0] : "brown",
+          borderColor: colors ? colors[0] : "pink",
         }}
       >
         <Sparkles className="h-5 w-5"></Sparkles>
-        <p className="font-normal">نمونه انیمیشن</p>
+        <p className="font-normal">نمونه افکت</p>
       </Button>
       <section className="flex w-full gap-2">
         <Button
-          ref={tactileBtnRef}
-          onClick={(e) => handleBtnClick(e, "tactile")}
-          className={`scale-pro h-[52px] w-[52px] flex-1 border-2 bg-sad-blue/80 px-4 text-primary transition-[border-color] duration-300 ${
-            activeBtn === "tactile"
-              ? "border-primary hover:border-primary"
-              : "border-transparent hover:border-primary/30"
-          }`}
-        >
-          Ripple
-        </Button>
-        <Button
           ref={rippleBtnRef}
           onClick={(e) => handleBtnClick(e, "ripple")}
-          className={`scale-pro h-[52px] w-[52px] flex-1 border-2 bg-sad-blue/80 px-4 text-primary transition-[border-color] duration-300 ${
-            activeBtn === "ripple"
-              ? "border-primary hover:border-primary"
+          className={`scale-pro h-[52px] w-[52px] flex-1 gap-1 border-2 bg-sad-blue/80 px-4 text-base text-primary transition-[border-color,background-color] duration-300 ${
+            selectedAnimations.includes("ripple")
+              ? "border-primary bg-primary text-primary-foreground hover:border-primary"
               : "border-transparent hover:border-primary/30"
           }`}
         >
-          Tactile
+          {selectedAnimations.includes("ripple") && (
+            <Check className="h-6 w-6"></Check>
+          )}
+          <p>ریپل</p>
         </Button>
         <Button
-          ref={rippleTactileBtnRef}
-          onClick={(e) => handleBtnClick(e, "ripple-tactile")}
-          className={`scale-pro h-[52px] w-[52px] flex-1 border-2 bg-sad-blue/80 px-4 text-primary transition-[border-color] duration-300 ${
-            activeBtn === "ripple-tactile"
-              ? "border-primary hover:border-primary"
+          ref={tactileBtnRef}
+          onClick={(e) => handleBtnClick(e, "tactile")}
+          className={`scale-pro h-[52px] w-[52px] flex-1 gap-1 border-2 bg-sad-blue/80 text-base text-primary transition-[border-color,background-color] duration-300 ${
+            selectedAnimations.includes("tactile")
+              ? "border-primary bg-primary text-primary-foreground hover:border-primary"
               : "border-transparent hover:border-primary/30"
           }`}
         >
-          Ripple & Tactile
-        </Button>
-        <Button
-          size="icon"
-          ref={noneBtnRef}
-          onClick={(e) => handleBtnClick(e, "none")}
-          className={`scale-pro aspect-square h-[52px] w-[52px] border-2 bg-sad-blue/80 text-primary transition-[border-color] duration-300 ${
-            activeBtn === "none"
-              ? "border-primary hover:border-primary"
-              : "border-transparent hover:border-primary/30"
-          }`}
-        >
-          <X></X>
+          {selectedAnimations.includes("tactile") && (
+            <Check className="h-6 w-6"></Check>
+          )}
+          <p>تکتایل</p>
         </Button>
       </section>
     </div>

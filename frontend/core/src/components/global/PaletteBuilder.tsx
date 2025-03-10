@@ -34,7 +34,7 @@ const PaletteBuilder = () => {
 
   //set colors to builderForm data
   useEffect(() => {
-    form.setValue("color_palette", colors);
+    form.setValue("global_styling.color_palette", colors);
   }, [colors]);
 
   return (

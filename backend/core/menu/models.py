@@ -33,7 +33,7 @@ class Business(models.Model):
     social_links = models.JSONField(default=dict, blank=True)
     phone_numbers = models.JSONField(default=list, blank=True)
     # ex: [{"number_1":[number], "number_2":[number], ...}]
-    locations = models.JSONField(default=list, blank=True)
+    branches = models.JSONField(default=list, blank=True)
     # ex: [{"branch-1":"[address]", "branch_2":"[address]", ...}]
 
     updated = models.DateTimeField(auto_now=True)
@@ -44,17 +44,23 @@ class Business(models.Model):
 
 
 class Menu(models.Model):
+    CATEGORIES_DISPLAY_CHOICES = [
+        ('slider', 'Slider'), ('circular', 'Circular')]
+
     business = models.ForeignKey(
         Business, on_delete=models.CASCADE, null=True, blank=True, related_name='menus')
-    item_page_type = models.CharField(
+    show_social_links = models.BooleanField(default=False)
+    show_phone_numbers = models.BooleanField(default=False)
+    show_branches = models.BooleanField(default=False)
+    items_page_layout = models.CharField(
         max_length=20,
         choices=[('vertical', 'Vertical'), ('horizontal', 'Horizontal')],
         default='horizontal'
     )
     categories_display_type = models.CharField(
-        max_length=20, choices=[('slider', 'Slider'), ('circular', 'Circular')], default='slider')
-    waiter_request_is_active = models.BooleanField(default=False)
-    search_item_is_active = models.BooleanField(default=False)
+        max_length=20, choices=CATEGORIES_DISPLAY_CHOICES, default='slider')
+    call_waiter_enabled = models.BooleanField(default=False)
+    searchbar_enabled = models.BooleanField(default=False)
     logo = models.ImageField(
         upload_to="menu/images/logo/", null=True, blank=True)
     updated = models.DateTimeField(auto_now=True)
@@ -84,14 +90,16 @@ class MenuGlobalStyling(models.Model):
     tertiary_color = ColorField()
     bg_color = ColorField()
     border_radius = models.CharField(
-        max_length=2,
-        choices=[('sm', 'small'), ('md', 'medium'), ('lg', 'large')],
+        max_length=4,
+        choices=[('sm', 'small'), ('md', 'medium'),
+                 ('lg', 'large'), ('full', 'full')],
         default='full'
     )
     unit_display_type = models.CharField(
         max_length=9, choices=PRICE_UNITS, default="simp")
-    click_animation = MultiSelectField(
-        choices=CLICK_ANIMATION_CHOICES, max_choices=3)
+    click_animation_type = MultiSelectField(
+        choices=CLICK_ANIMATION_CHOICES, max_choices=3, null=True, blank=True)
+    click_animation_enabled = models.BooleanField(default=False)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 

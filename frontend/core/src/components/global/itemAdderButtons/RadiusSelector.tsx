@@ -54,7 +54,7 @@ function RadiusSelectorBtn({
   };
 
   useEffect(() => {
-    setValue("global_border_radius", activeBtn);
+    setValue("global_styling.border_radius", activeBtn);
   }, [activeBtn]);
 
   return (

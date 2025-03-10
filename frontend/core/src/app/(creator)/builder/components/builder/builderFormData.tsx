@@ -6,9 +6,9 @@ import RadiusSelector from "@/components/global/itemAdderButtons/RadiusSelector"
 import AnimationSelector from "@/components/global/itemAdderButtons/AnimationSelector";
 
 //types
+import { type BuilderFormType } from "./Builder";
 import { UseFormReturn } from "react-hook-form";
-import { formSchemaType } from "./page";
-import { keyOfFormSchemaType } from "./page";
+import { keyOfBuilderSchemaType } from "./Builder";
 
 export type stepTabBase = {
   title: string;
@@ -19,20 +19,23 @@ export type stepTabBase = {
 type stepTabType = stepTabBase &
   (
     | { alwaysOn: true; name?: never } // If alwaysOn is true, no `name`
-    | { alwaysOn?: false; name: keyOfFormSchemaType }
+    | {
+        alwaysOn?: false;
+        name: keyOfBuilderSchemaType;
+      }
   );
 export type sliderStepType =
   | {
       title: string;
       isRadioGroup: true; // If true, modify `tabs` accordingly
-      name: keyOfFormSchemaType;
+      name: keyOfBuilderSchemaType;
       tabs: (Omit<stepTabType, "name"> & { name?: never; value: string })[]; // Tabs without `name`
       condition: () => boolean;
     }
   | {
       title: string;
       isRadioGroup?: false; // Default or explicitly false
-      name?: keyOfFormSchemaType;
+      name?: keyOfBuilderSchemaType;
       tabs: stepTabType[]; // Standard tabs with `name` logic from `stepTabType`
       condition: () => boolean;
     };
@@ -43,7 +46,7 @@ export type sliderDataType = {
 };
 
 export const getSliderData = (
-  form: UseFormReturn<formSchemaType>
+  form: UseFormReturn<BuilderFormType>
 ): sliderDataType[] => [
   {
     title: "شخصی سازی",
@@ -93,7 +96,7 @@ export const getSliderData = (
             action: <RadiusSelector></RadiusSelector>,
           },
           {
-            name: "global_interaction_animation_is_active",
+            name: "global_styling.click_animation_enabled",
             title: "انیمیشن",
             description: "انیمیشنی که هنگام کلیک روی اجزای منو اجرا میشود",
             iconSrc: "/images/form-icons/sparkles.svg",
@@ -110,7 +113,7 @@ export const getSliderData = (
     steps: [
       {
         isRadioGroup: true,
-        name: "main_page_type",
+        name: "welcome_page_layout",
         title: "تعداد بخش های منو خود را مشخص کنید",
         condition: () => true,
         //radio buttons
@@ -156,20 +159,20 @@ export const getSliderData = (
         //switches
         tabs: [
           {
-            name: "link_is_active",
+            name: "show_social_links",
             title: "لینک ها",
             description: "لینک های تلگرام و اینستاگرام و ...",
             iconSrc: "/images/form-icons/link.svg",
             action: (
               <ItemAdder
-                name="links"
+                name="social_links"
                 limit={4}
                 placeholder="نام بخش"
               ></ItemAdder>
             ),
           },
           {
-            name: "phone_number_is_active",
+            name: "show_phone_numbers",
             title: "شماره تماس",
             description: "لینک های تلگرام و اینستاگرام و ...",
             iconSrc: "/images/form-icons/phone.svg",
@@ -182,7 +185,7 @@ export const getSliderData = (
             ),
           },
           {
-            name: "location_is_active",
+            name: "show_branches",
             title: "موقعیت مکانی",
             description: "لینک های تلگرام و اینستاگرام و ...",
             iconSrc: "/images/form-icons/pin.svg",
@@ -217,11 +220,11 @@ export const getSliderData = (
   },
   {
     title: "صفحه آیتم ها",
-    condition: () => form.watch("phone_number_is_active"),
+    condition: () => form.watch("show_phone_numbers"),
     steps: [
       {
         isRadioGroup: true,
-        name: "item_page_type",
+        name: "items_page_layout",
         title: "نوع قالب مورد نظر خود را انتخاب کنید",
         condition: () => true,
         //radio buttons
@@ -267,14 +270,14 @@ export const getSliderData = (
         //switches
         tabs: [
           {
-            name: "waiter_request_is_active",
+            name: "call_waiter_enabled",
             title: "درخواست گارسون",
             description:
               "دکمه ای که به مشتری این امکان را میدهد که گارسون را صدا بزند",
             iconSrc: "/images/form-icons/concierge-bell.svg",
           },
           {
-            name: "search_item_is_active",
+            name: "searchbar_enabled",
             title: "جستجو آیتم ها",
             description: "قابلیت جستجو آیتم ها",
             iconSrc: "/images/form-icons/search.svg",

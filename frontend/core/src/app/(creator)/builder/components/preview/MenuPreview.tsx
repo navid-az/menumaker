@@ -12,8 +12,8 @@ import MenuItemsWrapperPreview from "./MenuItemsWrapperPreview";
 
 export default function MenuPreview() {
   const { watch } = useFormContext();
-  const colors = watch("color_palette");
-  const globalBorderRadius = watch("global_border_radius");
+  const colors = watch("global_styling.color_palette");
+  const globalBorderRadius = watch("global_styling.border_radius");
 
   return (
     <>

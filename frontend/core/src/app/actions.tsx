@@ -162,3 +162,60 @@ export async function deleteItem(menuSlug: string, itemId: number) {
   }
   revalidateTag("items");
 }
+
+//create menu
+type GlobalStyling = {
+  primary_color: string;
+  secondary_color: string;
+  tertiary_color: string;
+  bg_color: string;
+  border_radius: "sm" | "md" | "lg";
+  unit_display_type: "comp" | "";
+  click_animation: "ripple" | "tactile";
+};
+
+type menuType = {
+  item_page_type: "vertical" | "horizontal";
+  waiter_request_is_active: boolean;
+  search_item_is_active: boolean;
+  global_styling: GlobalStyling;
+};
+
+export async function createMenu(
+  prevState: any,
+  { businessSlug, data }: { businessSlug: string; data: menuType }
+) {
+  const accessToken = (await cookies()).get("access");
+
+  try {
+    const res = await fetch(
+      `http://localhost:8000/menu/create/${businessSlug}/`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken?.value}`,
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      console.log(errorData);
+
+      return {
+        success: false,
+        error: errorData.error || "Failed to create menu",
+      };
+    }
+
+    const responseData = await res.json();
+    return { success: true, data: responseData };
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.message || "An unexpected error occurred",
+    };
+  }
+}
