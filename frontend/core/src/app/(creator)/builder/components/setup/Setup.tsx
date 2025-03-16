@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useActionState, useEffect } from "react";
 
 //libraries
 import * as z from "zod";
@@ -22,31 +22,32 @@ import {
   SliderSection,
   SliderStep,
 } from "@/components/global/slider/Slider";
-import { toast } from "sonner";
 import Tile from "./Tile";
+import { toast } from "sonner";
 
 //hooks
 import { useSlider } from "@/lib/stores";
+import { createBusiness } from "@/app/actions";
 
 //zod schema
-const formSchema = z.object({
+const SetupSchema = z.object({
   owner_name: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
-  restaurant_name: z.string().min(2, {
+  name: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
-  restaurant_name_en: z.string().min(2, {
+  name_en: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
-  service_type: z.enum(["in-person", "delivery", "both"]),
-  service_type_priority: z.enum(["in-person", "delivery"]),
-  restaurant_type: z.enum(["single", "multiple"]),
+  service_type: z.enum(["in_person", "online", "both"]),
+  primary_service_type: z.enum(["in_person", "online"]),
+  // restaurant_type: z.enum(["single", "multiple"]),
   // menuType: z.enum(["custom", "pre-made"]),
 });
 
 //types
-export type formSchemaType = z.infer<typeof formSchema>;
+export type SetupSchemaType = z.infer<typeof SetupSchema>;
 
 export default function Setup({
   handleCustomMenu,
@@ -57,24 +58,42 @@ export default function Setup({
   handlePreBuiltMenu: () => void;
   ref: React.RefObject<HTMLFormElement | null>;
 }) {
-  const form = useForm<formSchemaType>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<SetupSchemaType>({
+    resolver: zodResolver(SetupSchema),
     defaultValues: {
       owner_name: "",
-      restaurant_name: "",
-      restaurant_name_en: "",
+      name: "",
+      name_en: "",
     },
   });
 
   const { updateSectionCount } = useSlider();
+  const [formState, action, idPending] = useActionState(createBusiness, {
+    success: false,
+    error: "An unexpected error occurred",
+  });
 
   //set the correct section count on mount
   useEffect(() => {
     updateSectionCount(3);
   }, []);
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  //inform user by the result of the form submission
+  useEffect(() => {
+    if (formState.error) {
+      toast.error(formState.error, {
+        cancel: { label: "باشه" },
+      });
+    } else if (formState.success) {
+      toast.success("Menu created successfully!", {
+        cancel: { label: "باشه" },
+      });
+    }
+  }, [formState]);
+
+  function onSubmit(values: SetupSchemaType) {
     console.log(values);
+    action(values);
   }
 
   const onInvalid = () => {
@@ -144,7 +163,7 @@ export default function Setup({
             <SliderStep sectionNum={2} stepNum={1} title="نام مجموعه شما">
               <FormField
                 control={form.control}
-                name="restaurant_name"
+                name="name"
                 render={({ field }) => (
                   <FormControl>
                     <FormItem>
@@ -161,7 +180,7 @@ export default function Setup({
               />
               <FormField
                 control={form.control}
-                name="restaurant_name_en"
+                name="name_en"
                 render={({ field }) => (
                   <FormControl>
                     <FormItem>
@@ -195,21 +214,21 @@ export default function Setup({
                     >
                       <Tile
                         title="فقط حضوری"
-                        isActive={field.value === "in-person"}
+                        isActive={field.value === "in_person"}
                       >
                         <FormItem>
                           <FormControl>
-                            <RadioGroupItem value="in-person"></RadioGroupItem>
+                            <RadioGroupItem value="in_person"></RadioGroupItem>
                           </FormControl>
                         </FormItem>
                       </Tile>
                       <Tile
                         title="فقط آنلاین"
-                        isActive={field.value === "delivery"}
+                        isActive={field.value === "online"}
                       >
                         <FormItem>
                           <FormControl>
-                            <RadioGroupItem value="delivery"></RadioGroupItem>
+                            <RadioGroupItem value="online"></RadioGroupItem>
                           </FormControl>
                         </FormItem>
                       </Tile>
@@ -235,7 +254,7 @@ export default function Setup({
             >
               <FormField
                 control={form.control}
-                name="service_type_priority"
+                name="primary_service_type"
                 render={({ field }) => (
                   <FormControl>
                     <RadioGroup
@@ -246,21 +265,21 @@ export default function Setup({
                     >
                       <Tile
                         title="بیشتر فروش حضوری داریم"
-                        isActive={field.value === "in-person"}
+                        isActive={field.value === "in_person"}
                       >
                         <FormItem>
                           <FormControl>
-                            <RadioGroupItem value="in-person"></RadioGroupItem>
+                            <RadioGroupItem value="in_person"></RadioGroupItem>
                           </FormControl>
                         </FormItem>
                       </Tile>
                       <Tile
                         title="بیشتر فروش آنلاین داریم"
-                        isActive={field.value === "delivery"}
+                        isActive={field.value === "online"}
                       >
                         <FormItem>
                           <FormControl>
-                            <RadioGroupItem value="delivery"></RadioGroupItem>
+                            <RadioGroupItem value="online"></RadioGroupItem>
                           </FormControl>
                         </FormItem>
                       </Tile>
@@ -269,7 +288,7 @@ export default function Setup({
                 )}
               />
             </SliderStep>
-            <SliderStep
+            {/* <SliderStep
               sectionNum={2}
               stepNum={4}
               title="مقیاس مجموعه شما چقدر است؟"
@@ -307,7 +326,7 @@ export default function Setup({
                   </FormControl>
                 )}
               />
-            </SliderStep>
+            </SliderStep> */}
           </SliderSection>
           <SliderSection title="منو مجموعه" sectionNum={3}>
             <SliderStep

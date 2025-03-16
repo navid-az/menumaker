@@ -13,7 +13,7 @@ class Business(models.Model):
     owner = models.ForeignKey(
         User, on_delete=models.CASCADE, default=1, related_name='businesses')
     name = models.CharField(max_length=100, null=True, blank=True)
-    name_en = models.CharField(max_length=100, null=True, blank=True)
+    name_en = models.CharField(max_length=100, default='business name')
     slug = models.SlugField(
         max_length=100, unique=True, null=True, blank=True)
     service_type = models.CharField(

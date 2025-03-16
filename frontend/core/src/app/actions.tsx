@@ -4,6 +4,9 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { revalidateTag } from "next/cache";
 
+//types
+import { SetupSchemaType } from "./(creator)/builder/components/setup/Setup";
+
 // import jwtDecoder from "@/lib/jwtDecoder";
 // type DecodedJwtType = {
 //   token_type: "access" | "refresh";
@@ -207,6 +210,40 @@ export async function createMenu(
       return {
         success: false,
         error: errorData.error || "Failed to create menu",
+      };
+    }
+
+    const responseData = await res.json();
+    return { success: true, data: responseData };
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.message || "An unexpected error occurred",
+    };
+  }
+}
+
+//create business
+export async function createBusiness(prevState: any, data: SetupSchemaType) {
+  const accessToken = (await cookies()).get("access");
+
+  try {
+    const res = await fetch("http://localhost:8000/menu/business/register/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      console.log(errorData);
+
+      return {
+        success: false,
+        error: errorData.error || "Failed to register business",
       };
     }
 
