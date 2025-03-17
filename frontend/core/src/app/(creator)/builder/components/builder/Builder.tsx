@@ -84,8 +84,10 @@ export type keyOfGlobalStylingSchemaType = keyof GlobalStylingType;
 //builder multipart form
 export default function Builder({
   ref,
+  businessSlug,
 }: {
   ref: React.RefObject<HTMLDivElement | null>;
+  businessSlug: string;
 }) {
   const form = useForm<BuilderFormType>({
     resolver: zodResolver(BuilderSchema),
@@ -179,7 +181,7 @@ export default function Builder({
     delete global_styling.color_palette;
 
     const payload = {
-      businessSlug: "shandiz",
+      businessSlug: businessSlug,
       data: {
         ...menuData,
         global_styling: {

@@ -14,6 +14,7 @@ import { useSlider } from "@/lib/stores";
 
 export default function Page() {
   const [showBuilder, setShowBuilder] = useState(false);
+  const [businessSlug, setBusinessSlug] = useState("");
 
   const { reset } = useSlider();
 
@@ -88,7 +89,6 @@ export default function Page() {
 
   const handleToggleForm = () => {
     hideSetupFormTl
-
       .to(setupFormRef.current, {
         filter: "blur(4px)",
         duration: 0.45,
@@ -120,17 +120,15 @@ export default function Page() {
   return (
     <section className="container m-auto flex h-screen w-full items-center justify-between gap-12 overflow-hidden">
       {showBuilder ? (
-        <Builder ref={builderFormRef}></Builder>
+        <Builder ref={builderFormRef} businessSlug={businessSlug}></Builder>
       ) : (
         <Setup
+          ref={setupFormRef}
           handleCustomMenu={handleToggleForm}
           handlePreBuiltMenu={handleToggleForm}
-          ref={setupFormRef}
+          setBusinessSlug={setBusinessSlug}
         ></Setup>
       )}
-      {/* <div className="absolute left-10 top-10 flex h-max w-max gap-2">
-        <Button onClick={handleToggleForm}>next form</Button>
-      </div> */}
     </section>
   );
 }

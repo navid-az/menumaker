@@ -27,7 +27,12 @@ import { toast } from "sonner";
 
 //hooks
 import { useSlider } from "@/lib/stores";
+
+//actions and functions
 import { createBusiness } from "@/app/actions";
+
+//types
+export type SetupSchemaType = z.infer<typeof SetupSchema>;
 
 //zod schema
 const SetupSchema = z.object({
@@ -46,17 +51,16 @@ const SetupSchema = z.object({
   // menuType: z.enum(["custom", "pre-made"]),
 });
 
-//types
-export type SetupSchemaType = z.infer<typeof SetupSchema>;
-
 export default function Setup({
   handleCustomMenu,
   handlePreBuiltMenu,
   ref,
+  setBusinessSlug,
 }: {
   handleCustomMenu: () => void;
   handlePreBuiltMenu: () => void;
   ref: React.RefObject<HTMLFormElement | null>;
+  setBusinessSlug: React.Dispatch<React.SetStateAction<string>>;
 }) {
   const form = useForm<SetupSchemaType>({
     resolver: zodResolver(SetupSchema),
@@ -68,12 +72,15 @@ export default function Setup({
   });
 
   const { updateSectionCount } = useSlider();
+
+  //monitor the state of the form onSubmit
   const [formState, action, idPending] = useActionState(createBusiness, {
     success: false,
-    error: "An unexpected error occurred",
+    error: "",
   });
 
   //set the correct section count on mount
+  //the given number should reflect form's number of sections
   useEffect(() => {
     updateSectionCount(3);
   }, []);
@@ -85,19 +92,23 @@ export default function Setup({
         cancel: { label: "باشه" },
       });
     } else if (formState.success) {
-      toast.success("Menu created successfully!", {
+      //provide businessSlug value to builder form
+      const businessSlug = form.watch("name_en");
+      setBusinessSlug(businessSlug);
+
+      toast.success("Business registered successfully!", {
         cancel: { label: "باشه" },
       });
     }
   }, [formState]);
 
   function onSubmit(values: SetupSchemaType) {
-    console.log(values);
     action(values);
   }
 
+  //if given data is not valid
   const onInvalid = () => {
-    toast.error("لطفا همه سوالات را پاسخ دهید", {
+    toast.error("لطفا به همه سوالات را پاسخ دهید", {
       cancel: {
         label: "باشه",
       },
