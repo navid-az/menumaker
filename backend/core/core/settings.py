@@ -39,8 +39,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "accounts",
-    "pickers",
+    "business",
     "menu",
+    "pickers",
     # "dashboard",
 
     # 3rd party packages

@@ -228,7 +228,7 @@ export async function createBusiness(prevState: any, data: SetupSchemaType) {
   const accessToken = (await cookies()).get("access");
 
   try {
-    const res = await fetch("http://localhost:8000/menu/business/register/", {
+    const res = await fetch("http://localhost:8000/business/create/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

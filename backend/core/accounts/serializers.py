@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from .models import OtpCode, User
-from menu.models import Business, Menu
+from business.models import Business
 
 
 class validateCredentialSerializer(serializers.Serializer):

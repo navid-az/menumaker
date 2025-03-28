@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from menu.models import Item
+from business.models import Item
 
 
 class ItemsSerializer(serializers.ModelSerializer):
