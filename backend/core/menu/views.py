@@ -1,8 +1,10 @@
+from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
+
+# dependencies
 from .models import Menu, MenuGlobalStyling
 from business.models import Business
 from .serializers import MenuCreateSerializer, MenuListSerializer, MenuGlobalStylingSerializer
-from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404
 
 # rest dependencies
 from rest_framework import status

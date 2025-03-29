@@ -1,13 +1,12 @@
 from django.db import transaction
 from .models import Menu, MenuGlobalStyling
 from rest_framework import serializers
-from business.serializers import MenuCategoriesSerializer
+from business.serializers import CategoriesSerializer
+
 
 # menu serializers
-
-
 class MenuListSerializer(serializers.ModelSerializer):
-    categories = MenuCategoriesSerializer(many=True, read_only=True)
+    categories = CategoriesSerializer(many=True, read_only=True)
 
     class Meta:
         model = Menu

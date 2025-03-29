@@ -1,5 +1,5 @@
-from .serializers import BusinessCreateSerializer, MenuCategoriesSerializer, MenuCategoryCreateUpdateSerializer, MenuItemsSerializer, MenuItemCreateUpdateSerializer
-from .models import Business, ItemCategory, Item
+from .serializers import BusinessCreateSerializer, CategoriesSerializer, CategoryCreateUpdateSerializer, ItemsSerializer, ItemCreateUpdateSerializer
+from .models import Business, Category, Item
 from menu.models import Menu
 
 from django.shortcuts import get_object_or_404
@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 
-class RegisterBusinessView(APIView):
+class BusinessCreateView(APIView):
     permission_classes = [IsAuthenticated, IsOwner]
 
     def post(self, request):
@@ -25,21 +25,21 @@ class RegisterBusinessView(APIView):
 
 
 # category CRUD views
-class MenuCategoriesView(APIView):
+class CategoriesView(APIView):
     def get(self, request, slug):
         business = Business.objects.get(slug=slug)
         if business is not None:
-            categories = ItemCategory.objects.filter(menu__business=business)
-            ser_data = MenuCategoriesSerializer(instance=categories, many=True)
+            categories = Category.objects.filter(menu__business=business)
+            ser_data = CategoriesSerializer(instance=categories, many=True)
             return Response(ser_data.data)
         return Response('menu with this id does not exist', status.HTTP_404_NOT_FOUND)
 
 
-class MenuCategoryCreateView(APIView):
+class CategoryCreateView(APIView):
     permission_classes = [IsAuthenticated, IsOwner]
 
     def post(self, request, slug):
-        ser_data = MenuCategoryCreateUpdateSerializer(data=request.data)
+        ser_data = CategoryCreateUpdateSerializer(data=request.data)
         if ser_data.is_valid():
             try:
                 menu = Menu.objects.get(slug=slug)
@@ -52,11 +52,11 @@ class MenuCategoryCreateView(APIView):
         return Response(ser_data.errors, status.HTTP_400_BAD_REQUEST)
 
 
-class MenuCategoryUpdateView(APIView):
+class CategoryUpdateView(APIView):
     permission_classes = [IsAuthenticated, IsOwner]
 
     def put(self, request, slug, category_id):
-        category = get_object_or_404(ItemCategory, pk=category_id)
+        category = get_object_or_404(Category, pk=category_id)
 
         # check if the category belongs to the provided business
         if category.menu.business.slug != slug:
@@ -64,7 +64,7 @@ class MenuCategoryUpdateView(APIView):
 
         self.check_object_permissions(request, category.menu.business)
 
-        ser_data = MenuCategoryCreateUpdateSerializer(
+        ser_data = CategoryCreateUpdateSerializer(
             instance=category, data=request.data, partial=True)
 
         if ser_data.is_valid():
@@ -73,11 +73,11 @@ class MenuCategoryUpdateView(APIView):
         return Response(ser_data.errors, status.HTTP_400_BAD_REQUEST)
 
 
-class MenuCategoryDeleteView(APIView):
+class CategoryDeleteView(APIView):
     permission_classes = [IsAuthenticated, IsOwner]
 
     def delete(self, request, slug, category_id):
-        category = get_object_or_404(ItemCategory, pk=category_id)
+        category = get_object_or_404(Category, pk=category_id)
 
         # check if the category belongs to the provided business
         if category.menu.business.slug != slug:
@@ -90,21 +90,21 @@ class MenuCategoryDeleteView(APIView):
 
 
 # item CRUD views
-class MenuItemsView(APIView):
+class ItemsView(APIView):
     def get(self, request, slug):
         business = Business.objects.get(slug=slug)
         if business is not None:
             items = Item.objects.filter(menu__business=business)
-            ser_data = MenuItemsSerializer(instance=items, many=True)
+            ser_data = ItemsSerializer(instance=items, many=True)
             return Response(ser_data.data)
         return Response('menu with this id does not exist', status.HTTP_404_NOT_FOUND)
 
 
-class MenuItemCreateView(APIView):
+class ItemCreateView(APIView):
     permission_classes = [IsAuthenticated, IsOwner]
 
     def post(self, request, slug):
-        ser_data = MenuItemCreateUpdateSerializer(data=request.data)
+        ser_data = ItemCreateUpdateSerializer(data=request.data)
         if ser_data.is_valid():
             menu = Menu.objects.get(slug=slug)
             self.check_object_permissions(request, menu)
@@ -114,7 +114,7 @@ class MenuItemCreateView(APIView):
         return Response(ser_data.errors, status.HTTP_400_BAD_REQUEST)
 
 
-class MenuItemUpdateView(APIView):
+class ItemUpdateView(APIView):
     permission_classes = [IsAuthenticated, IsOwner]
 
     def put(self, request, slug, item_id):
@@ -125,7 +125,7 @@ class MenuItemUpdateView(APIView):
             return Response({"error": "This item does not belong to the provided business."}, status=status.HTTP_400_BAD_REQUEST)
 
         self.check_object_permissions(request, item.menu.business)
-        ser_data = MenuItemCreateUpdateSerializer(
+        ser_data = ItemCreateUpdateSerializer(
             instance=item, data=request.data, partial=True)
 
         if ser_data.is_valid():
@@ -134,7 +134,7 @@ class MenuItemUpdateView(APIView):
         return Response(ser_data.errors, status.HTTP_400_BAD_REQUEST)
 
 
-class MenuItemDeleteView(APIView):
+class ItemDeleteView(APIView):
     permission_classes = [IsAuthenticated, IsOwner]
 
     def delete(self, request, slug, item_id):

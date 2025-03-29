@@ -43,7 +43,7 @@ class Business(models.Model):
         return f'[{self.slug}] owned by [{self.owner}]'
 
 
-class ItemCategory(models.Model):
+class Category(models.Model):
     menu = models.ForeignKey(
         Menu, on_delete=models.CASCADE, related_name="categories", null=True, blank=True)
     name = models.CharField(max_length=20, blank=True, null=True)
@@ -59,6 +59,9 @@ class ItemCategory(models.Model):
     parent_bg = ColorField()
     is_active = models.BooleanField(default=True)
 
+    class Meta:
+        verbose_name_plural = "Categories"
+
     def __str__(self) -> str:
         return f"menu: {self.menu} - items category: {self.name} - {self.menu.pk}"
 
@@ -67,7 +70,7 @@ class Item(models.Model):
     menu = models.ForeignKey(
         Menu, on_delete=models.CASCADE, related_name="items", null=True, blank=True)
     category = models.ForeignKey(
-        ItemCategory, on_delete=models.CASCADE, related_name="items"
+        Category, on_delete=models.CASCADE, related_name="items"
     )
     name = models.CharField(max_length=110)
     description = models.TextField(max_length=300, blank=True, null=True)

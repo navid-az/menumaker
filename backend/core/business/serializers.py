@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Business, ItemCategory, Item
+from .models import Business, Category, Item
 from pickers.models import Icon
 from django.utils.text import slugify
 
@@ -29,7 +29,7 @@ class BusinessCreateSerializer(serializers.ModelSerializer):
 
 
 # item serializers
-class MenuItemsSerializer(serializers.ModelSerializer):
+class ItemsSerializer(serializers.ModelSerializer):
     business = serializers.SerializerMethodField()
     category = serializers.SlugRelatedField(slug_field='name', read_only=True)
 
@@ -42,7 +42,7 @@ class MenuItemsSerializer(serializers.ModelSerializer):
         return obj.menu.business.slug
 
 
-class MenuItemCreateUpdateSerializer(serializers.ModelSerializer):
+class ItemCreateUpdateSerializer(serializers.ModelSerializer):
     business = serializers.SerializerMethodField()
 
     class Meta:
@@ -61,14 +61,14 @@ class IconsSerializer(serializers.ModelSerializer):
 
 
 # category serializers
-class MenuCategoriesSerializer(serializers.ModelSerializer):
+class CategoriesSerializer(serializers.ModelSerializer):
 
     business = serializers.SerializerMethodField()
-    items = MenuItemsSerializer(many=True, read_only=True)
+    items = ItemsSerializer(many=True, read_only=True)
     icon = IconsSerializer(read_only=True)
 
     class Meta:
-        model = ItemCategory
+        model = Category
         fields = '__all__'
         extra_fields = ['business']
 
@@ -76,11 +76,11 @@ class MenuCategoriesSerializer(serializers.ModelSerializer):
         return obj.menu.business.slug
 
 
-class MenuCategoryCreateUpdateSerializer(serializers.ModelSerializer):
+class CategoryCreateUpdateSerializer(serializers.ModelSerializer):
     business = serializers.SerializerMethodField()
 
     class Meta:
-        model = ItemCategory
+        model = Category
         fields = '__all__'
         extra_fields = ['business']
 
