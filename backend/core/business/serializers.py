@@ -30,28 +30,18 @@ class BusinessCreateSerializer(serializers.ModelSerializer):
 
 # item serializers
 class ItemsSerializer(serializers.ModelSerializer):
-    business = serializers.SerializerMethodField()
-    category = serializers.SlugRelatedField(slug_field='name', read_only=True)
-
     class Meta:
         model = Item
         fields = '__all__'
-        extra_fields = ['business']
-
-    def get_business(self, obj):
-        return obj.menu.business.slug
 
 
 class ItemCreateUpdateSerializer(serializers.ModelSerializer):
-    business = serializers.SerializerMethodField()
+    # forbids changing business updates
+    business = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Item
         fields = '__all__'
-        extra_fields = ['business']
-
-    def get_business(self, obj):
-        return obj.menu.business.slug
 
 
 class IconsSerializer(serializers.ModelSerializer):
@@ -62,27 +52,18 @@ class IconsSerializer(serializers.ModelSerializer):
 
 # category serializers
 class CategoriesSerializer(serializers.ModelSerializer):
-
-    business = serializers.SerializerMethodField()
     items = ItemsSerializer(many=True, read_only=True)
     icon = IconsSerializer(read_only=True)
 
     class Meta:
         model = Category
         fields = '__all__'
-        extra_fields = ['business']
-
-    def get_business(self, obj):
-        return obj.menu.business.slug
 
 
 class CategoryCreateUpdateSerializer(serializers.ModelSerializer):
-    business = serializers.SerializerMethodField()
+    # forbids changing business updates
+    business = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Category
         fields = '__all__'
-        extra_fields = ['business']
-
-    def get_business(self, obj):
-        return obj.menu.business.slug

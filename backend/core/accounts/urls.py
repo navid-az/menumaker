@@ -1,11 +1,6 @@
 from django.urls import path
-from .views import (
-    validateCredentialView,
-    ValidateOtpCodeView,
-    CustomTokenObtainPairView,
-    getUserDataView,
-    getUserBusinessesView
-)
+from .views import validateCredentialView, ValidateOtpCodeView, CustomTokenObtainPairView, getUserDataView, getUserBusinessesView
+
 
 # JWT dependencies
 from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
