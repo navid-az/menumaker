@@ -36,7 +36,13 @@ async function Navbar() {
       <Link href="/venhan/menu">صفحه منو</Link>
 
       {isAuthenticated ? (
-        <Link href={`/dashboard/${businesses[0].slug}/insights`}>داشبورد</Link>
+        businesses.length ? (
+          <Link href={`/dashboard/${businesses[0].slug}/insights`}>
+            داشبورد
+          </Link>
+        ) : (
+          ""
+        )
       ) : (
         <Link href={`/register`}>داشبورد</Link>
       )}

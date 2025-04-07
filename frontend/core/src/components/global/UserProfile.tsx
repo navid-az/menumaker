@@ -28,7 +28,7 @@ import {
 
 //types
 import type { BusinessType } from "@/app/dashboard/layout";
-import { User, User2Icon } from "lucide-react";
+import { Plus, User, User2Icon } from "lucide-react";
 
 export async function UserProfile() {
   const { pk, phone_number } = await getUserData();
@@ -47,32 +47,44 @@ export async function UserProfile() {
       >
         <DropdownMenuLabel>{phone_number}</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem asChild className="flex gap-2 py-2">
-            <Link href={`/dashboard/${businesses[0].slug}/insights`}>
-              <BarChart className="h-5 w-5"></BarChart>
-              <p>داشبورد</p>
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild className="flex gap-2 py-2">
-            <Link href={`/dashboard/${businesses[0].slug}/liveManagement`}>
-              <Radar className="h-5 w-5"></Radar>
-              <p>مدیریت زنده</p>
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild className="flex gap-2 py-2">
-            <Link href={`/dashboard/${businesses[0].slug}/liveManagement`}>
-              <User className="h-5 w-5"></User>
-              <p>پرسنل</p>
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild className="flex gap-2 py-2">
-            <Link href={`/dashboard/${businesses[0].slug}/liveManagement`}>
-              <Settings className="h-5 w-5"></Settings>
-              <p>تنضیمات</p>
-            </Link>
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
+
+        {businesses.length ? (
+          <DropdownMenuGroup>
+            <DropdownMenuItem asChild className="flex gap-2 py-2">
+              <Link href={`/dashboard/${businesses[0].slug}/insights`}>
+                <BarChart className="h-5 w-5"></BarChart>
+                <p>داشبورد</p>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild className="flex gap-2 py-2">
+              <Link href={`/dashboard/${businesses[0].slug}/liveManagement`}>
+                <Radar className="h-5 w-5"></Radar>
+                <p>مدیریت زنده</p>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild className="flex gap-2 py-2">
+              <Link href={`/dashboard/${businesses[0].slug}/liveManagement`}>
+                <User className="h-5 w-5"></User>
+                <p>پرسنل</p>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild className="flex gap-2 py-2">
+              <Link href={`/dashboard/${businesses[0].slug}/liveManagement`}>
+                <Settings className="h-5 w-5"></Settings>
+                <p>تنضیمات</p>
+              </Link>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        ) : (
+          <DropdownMenuGroup>
+            <DropdownMenuItem asChild className="flex gap-2 py-2">
+              <Link href={"/builder"}>
+                <Plus></Plus>
+                <p>ثبت مجموعه جدید</p>
+              </Link>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem className="p-0">
