@@ -108,7 +108,6 @@ __pypackages__/
 
 ### NextJS ###
 # Dependencies and build files
-/node_modules
 /.pnp
 .pnp.js
 /coverage
@@ -154,10 +153,6 @@ sketch
 ### IDE-Specific Files ###
 # JetBrains IDEs (e.g., PyCharm)
 .idea/
-
-# VSCode
-.vscode/
-
 
 ### Miscellaneous ###
 # Linting and type-checking files
