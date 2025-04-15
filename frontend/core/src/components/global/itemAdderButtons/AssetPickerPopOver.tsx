@@ -8,28 +8,24 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from "@/components/ui/popover";
-//need fixing
-import Selector from "@/components/global/itemAdderButtons/Selector";
-
-//types
-import { type SelectorItemType } from "@/components/global/itemAdderButtons/Selector";
+import AssetPicker, { type AssetType } from "../AssetPicker";
 
 //SVGs
 import { Plus } from "lucide-react";
 import { useActionButton } from "@/lib/stores";
 import React from "react";
 
-export function SelectorAction({
+export function AssetPickerPopOver({
   ref,
 }: {
-  ref: React.RefObject<HTMLButtonElement>;
+  ref?: React.RefObject<HTMLButtonElement | null>;
 }) {
   const setValue = useActionButton((state) => state.setValue);
   const resetValue = useActionButton((state) => state.resetValue);
   const icon = useActionButton((state) => state.icon);
   const iconName = useActionButton((state) => state.name);
 
-  const handleSelector = (icon: SelectorItemType) => {
+  const handleAssetPicker = (icon: AssetType) => {
     const item = {
       id: icon.pk.toString(),
       icon: icon.image,
@@ -76,11 +72,11 @@ export function SelectorAction({
       </PopoverTrigger>
       <PopoverContent asChild className="pointer-events-auto">
         <div className="flex h-full flex-col rounded-xl border-2 border-primary bg-soft-blue !p-3">
-          <Selector
-            action={(selectedIcon: SelectorItemType) => {
-              handleSelector(selectedIcon);
+          <AssetPicker
+            action={(selectedIcon: AssetType) => {
+              handleAssetPicker(selectedIcon);
             }}
-          ></Selector>
+          ></AssetPicker>
         </div>
       </PopoverContent>
     </Popover>

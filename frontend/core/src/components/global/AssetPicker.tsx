@@ -15,27 +15,27 @@ import { gsap } from "gsap";
 import { ArrowLeft } from "lucide-react";
 
 //types
-type SelectorType = {
-  action: (selectedItem: SelectorItemType) => void;
+type AssetPickerType = {
+  action: (selectedItem: AssetType) => void;
   defaultTab?: "icons" | "backgrounds";
 };
-export type SelectorItemType = { pk: number; name: string; image: string };
-export type SelectorItemGroupType = {
+export type AssetType = { pk: number; name: string; image: string };
+export type AssetGroupType = {
   pk: number;
   name: string;
-  icons: SelectorItemType[];
+  icons: AssetType[];
 };
 type ItemTabType = {
   onClick: () => void;
   children: React.ReactNode;
 };
 
-export default function Selector({
+export default function AssetPicker({
   action,
   defaultTab = "icons",
-}: SelectorType) {
-  const [selectedItem, setSelectedItem] = useState<SelectorItemType>();
-  const [items, setItems] = useState<SelectorItemGroupType[]>([]);
+}: AssetPickerType) {
+  const [selectedItem, setSelectedItem] = useState<AssetType>();
+  const [items, setItems] = useState<AssetGroupType[]>([]);
 
   const fetchIconsData = () => {
     fetch("http://127.0.0.1:8000/pickers/icon-pickers")
@@ -96,12 +96,10 @@ export default function Selector({
 }
 
 type TabType = {
-  data: SelectorItemGroupType[];
+  data: AssetGroupType[];
   title: string;
   description: string;
-  setSelectedItem: React.Dispatch<
-    React.SetStateAction<SelectorItemType | undefined>
-  >;
+  setSelectedItem: React.Dispatch<React.SetStateAction<AssetType | undefined>>;
 };
 
 //assets tab
@@ -127,7 +125,7 @@ function Tab({ data, title, description, setSelectedItem }: TabType) {
   };
 
   // checks the input of the clicked iconTile
-  const selectItem = (item: SelectorItemType) => {
+  const selectItem = (item: AssetType) => {
     setGroupIsOpen(false);
     setSelectedItem(item);
   };
@@ -201,7 +199,7 @@ function Asset({ onClick, children }: ItemTabType) {
 
 //representation of each group
 //shows first three assets of each group
-function GroupImage({ itemGroup }: { itemGroup: SelectorItemGroupType }) {
+function GroupImage({ itemGroup }: { itemGroup: AssetGroupType }) {
   //first three icons
   const icons = itemGroup.icons.slice(0, 3);
 

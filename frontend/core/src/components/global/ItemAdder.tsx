@@ -6,7 +6,7 @@ import React, { useEffect, useReducer, useRef, useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { SelectorAction } from "./itemAdderButtons/ActionButton";
+import { AssetPickerPopOver } from "./itemAdderButtons/AssetPickerPopOver";
 import { LinkAction } from "./itemAdderButtons/LinkAction";
 
 //libraries
@@ -218,7 +218,7 @@ export default function ItemAdder({
           ></Input>
           <section className="flex gap-2">
             {/* ~~~~action buttons~~~~ */}
-            <SelectorAction ref={selectorActionRef}></SelectorAction>
+            <AssetPickerPopOver ref={selectorActionRef}></AssetPickerPopOver>
             <LinkAction ref={linkActionRef} text={text}></LinkAction>
             {/* ~~~~action buttons~~~~  */}
             <Button
