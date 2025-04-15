@@ -48,7 +48,7 @@ export function SelectorAction({
           type="button"
         >
           {icon ? (
-            <div className=" flex justify-between gap-4 [&>*]:transition-transform [&>*]:duration-200">
+            <div className=" flex justify-between gap-3 [&>*]:transition-transform [&>*]:duration-200">
               {/* delete icon button */}
               <Button
                 size="icon"
@@ -74,12 +74,14 @@ export function SelectorAction({
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="border-0 bg-primary p-0">
-        <Selector
-          action={(selectedIcon: SelectorItemType) => {
-            handleSelector(selectedIcon);
-          }}
-        ></Selector>
+      <PopoverContent asChild className="pointer-events-auto">
+        <div className="flex h-full flex-col rounded-xl border-2 border-primary bg-soft-blue !p-3">
+          <Selector
+            action={(selectedIcon: SelectorItemType) => {
+              handleSelector(selectedIcon);
+            }}
+          ></Selector>
+        </div>
       </PopoverContent>
     </Popover>
   );
