@@ -1,16 +1,16 @@
 from rest_framework import serializers
-from .models import Icon, IconGroup
+from .models import AssetGroup, Asset
 
 
-class IconSerializer(serializers.ModelSerializer):
+class AssetSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Icon
+        model = Asset
         fields = ["pk", "name", "image"]
 
 
-class IconGroupSerializer(serializers.ModelSerializer):
-    icons = IconSerializer(many=True, read_only=True)
+class AssetGroupSerializer(serializers.ModelSerializer):
+    icons = AssetSerializer(many=True, read_only=True)
 
     class Meta:
-        model = IconGroup
+        model = AssetGroup
         fields = ["pk", "name", "icons"]

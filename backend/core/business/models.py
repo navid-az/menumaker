@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from pickers.models import Icon
+from pickers.models import Asset
 
 # external dependencies
 from colorfield.fields import ColorField
@@ -47,7 +47,7 @@ class Category(models.Model):
         Business, on_delete=models.CASCADE, related_name="categories")
     name = models.CharField(max_length=20, blank=True, null=True)
     icon = models.ForeignKey(
-        Icon,
+        Asset,
         on_delete=models.DO_NOTHING,
         blank=True,
         null=True,
