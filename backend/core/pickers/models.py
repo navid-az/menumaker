@@ -4,6 +4,7 @@ from django.core.validators import FileExtensionValidator
 
 class AssetGroup(models.Model):
     name = models.CharField(max_length=50, unique=True)
+    description = models.TextField(null=True, blank=True)
 
     def __str__(self) -> str:
         return self.name

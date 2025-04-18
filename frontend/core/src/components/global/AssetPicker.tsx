@@ -19,10 +19,11 @@ type AssetPickerType = {
   action: (selectedItem: AssetType) => void;
   defaultTab?: "icons" | "backgrounds";
 };
-export type AssetType = { pk: number; name: string; image: string };
+export type AssetType = { id: number; name: string; image: string };
 export type AssetGroupType = {
-  pk: number;
+  id: number;
   name: string;
+  description: string;
   icons: AssetType[];
 };
 type ItemTabType = {
@@ -149,7 +150,7 @@ function Tab({ data, title, description, setSelectedItem }: TabType) {
           </h2>
         </div>
         <p className="text-right text-sm font-light text-primary">
-          {groupIsOpen ? data[groupIndex].name : description}
+          {groupIsOpen ? data[groupIndex].description : description}
         </p>
       </header>
       <section className=" max-h-64 overflow-y-auto">
@@ -160,7 +161,7 @@ function Tab({ data, title, description, setSelectedItem }: TabType) {
           {groupIsOpen
             ? // show items of the selected group
               data[groupIndex].icons.map((icon) => (
-                <Asset key={icon.pk} onClick={() => selectItem(icon)}>
+                <Asset key={icon.id} onClick={() => selectItem(icon)}>
                   <div className="relative h-12 w-12 rounded-md">
                     <Image
                       className="rounded-md"
@@ -174,7 +175,7 @@ function Tab({ data, title, description, setSelectedItem }: TabType) {
             : //show all groups
               data.map((itemGroup, itemGroupIndex) => (
                 <Asset
-                  key={itemGroup.pk}
+                  key={itemGroup.id}
                   onClick={() => handleClick(itemGroupIndex)}
                 >
                   <GroupImage itemGroup={itemGroup}></GroupImage>
