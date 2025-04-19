@@ -9,7 +9,7 @@ class AssetSerializer(serializers.ModelSerializer):
 
 
 class AssetGroupSerializer(serializers.ModelSerializer):
-    icons = AssetSerializer(many=True, read_only=True)
+    assets = AssetSerializer(many=True, read_only=True)
 
     class Meta:
         model = AssetGroup

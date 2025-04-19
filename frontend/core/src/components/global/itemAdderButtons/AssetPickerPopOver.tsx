@@ -1,5 +1,7 @@
 "use client";
 
+import React from "react";
+
 //components
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
@@ -8,16 +10,17 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from "@/components/ui/popover";
-import AssetPicker, { type AssetType } from "../AssetPicker";
+import AssetPicker, { AssetGroupType, type AssetType } from "../AssetPicker";
 
 //SVGs
 import { Plus } from "lucide-react";
 import { useActionButton } from "@/lib/stores";
-import React from "react";
 
 export function AssetPickerPopOver({
+  assetGroups,
   ref,
 }: {
+  assetGroups: AssetGroupType[];
   ref?: React.RefObject<HTMLButtonElement | null>;
 }) {
   const setValue = useActionButton((state) => state.setValue);
@@ -27,7 +30,7 @@ export function AssetPickerPopOver({
 
   const handleAssetPicker = (icon: AssetType) => {
     const item = {
-      id: icon.pk.toString(),
+      id: icon.id.toString(),
       icon: icon.image,
       name: icon.name,
     };
@@ -73,6 +76,7 @@ export function AssetPickerPopOver({
       <PopoverContent asChild className="pointer-events-auto">
         <div className="flex h-full flex-col rounded-xl border-2 border-primary bg-soft-blue !p-3">
           <AssetPicker
+            assetGroups={assetGroups}
             action={(selectedIcon: AssetType) => {
               handleAssetPicker(selectedIcon);
             }}

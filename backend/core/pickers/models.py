@@ -12,7 +12,7 @@ class AssetGroup(models.Model):
 
 class Asset(models.Model):
     group = models.ForeignKey(
-        AssetGroup, on_delete=models.CASCADE, related_name="icons")
+        AssetGroup, on_delete=models.CASCADE, related_name="assets")
     name = models.CharField(max_length=50)
     image = models.FileField(
         upload_to="iconPicker/icons/",
