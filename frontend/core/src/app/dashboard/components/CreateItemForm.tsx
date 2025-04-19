@@ -35,6 +35,7 @@ import { createItem } from "@/app/actions";
 
 //SVGs
 import { Bot, Plus } from "lucide-react";
+import { AssetPickerPopOver } from "@/components/global/itemAdderButtons/AssetPickerPopOver";
 
 const FormSchema = z.object({
   image: z.string().optional(),
@@ -64,6 +65,7 @@ export function CreateItemForm() {
 
   return (
     <Form {...form}>
+      <AssetPickerPopOver></AssetPickerPopOver>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         id="item-form"

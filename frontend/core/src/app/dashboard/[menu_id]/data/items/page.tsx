@@ -4,7 +4,7 @@ import { Item, itemColumns } from "@/app/dashboard/items/columns";
 
 //menu items data
 async function getMenuItemsData(menu_id: string): Promise<Item[]> {
-  const data = await fetch(`http://127.0.0.1:8000/menu/${menu_id}/items/`, {
+  const data = await fetch(`http://127.0.0.1:8000/business/${menu_id}/items/`, {
     next: { tags: ["items"] },
   });
   if (!data.ok) {
