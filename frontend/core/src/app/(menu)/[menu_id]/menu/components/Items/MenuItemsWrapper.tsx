@@ -42,7 +42,7 @@ export default function MenuItemsWrapper({
     queryKey: ["categories"],
     queryFn: async () => {
       const { data } = await axios.get(
-        `http://127.0.0.1:8000/menu/${params.menu_id}/categories`
+        `http://127.0.0.1:8000/business/${params.menu_id}/categories`
       );
       return data as CategoriesType[];
     },

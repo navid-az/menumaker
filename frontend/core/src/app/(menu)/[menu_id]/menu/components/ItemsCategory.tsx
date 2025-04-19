@@ -23,7 +23,9 @@ type ItemsCategoryType = {
 // GET menu categories
 export async function getCategories(menu_id: string) {
   try {
-    let res = await fetch(`http://127.0.0.1:8000/menu/${menu_id}/categories`);
+    let res = await fetch(
+      `http://127.0.0.1:8000/business/${menu_id}/categories`
+    );
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
     }

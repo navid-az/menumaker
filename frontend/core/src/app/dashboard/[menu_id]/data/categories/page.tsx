@@ -6,7 +6,7 @@ import { Category, categoryColumns } from "@/app/dashboard/categories/columns";
 //menu categories data
 async function getMenuCategoriesData(menu_id: string): Promise<Category[]> {
   const data = await fetch(
-    `http://127.0.0.1:8000/menu/${menu_id}/categories/`,
+    `http://127.0.0.1:8000/business/${menu_id}/categories/`,
     {
       next: { tags: ["categories"] },
     }
