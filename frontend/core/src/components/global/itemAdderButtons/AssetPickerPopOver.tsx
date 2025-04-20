@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 
 //components
 import { Button } from "@/components/ui/button";
@@ -25,20 +25,24 @@ export function AssetPickerPopOver({
 }) {
   const setValue = useActionButton((state) => state.setValue);
   const resetValue = useActionButton((state) => state.resetValue);
-  const icon = useActionButton((state) => state.icon);
-  const iconName = useActionButton((state) => state.name);
+  const asset = useActionButton((state) => state.icon);
+  const assetName = useActionButton((state) => state.name);
 
-  const handleAssetPicker = (icon: AssetType) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  // Handler for when an asset is selected in AssetPicker
+  const handleAssetSelect = (icon: AssetType) => {
     const item = {
       id: icon.id.toString(),
-      icon: icon.image,
       name: icon.name,
+      image: icon.image,
     };
     setValue(item);
+    setIsOpen(false);
   };
 
   return (
-    <Popover>
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
         <Button
           ref={ref}
@@ -46,14 +50,15 @@ export function AssetPickerPopOver({
           className="px-4 text-xs sm:text-sm"
           type="button"
         >
-          {icon ? (
+          {asset ? (
             <div className=" flex justify-between gap-3 [&>*]:transition-transform [&>*]:duration-200">
               {/* delete icon button */}
               <Button
                 size="icon"
                 asChild
-                onClick={() => {
+                onClick={(e) => {
                   resetValue();
+                  e.stopPropagation();
                 }}
                 className="scale-pro hover:scale-110"
               >
@@ -63,8 +68,8 @@ export function AssetPickerPopOver({
                 <Image
                   className="rounded-md"
                   fill
-                  alt={iconName}
-                  src={`http://127.0.0.1:8000/${icon}`}
+                  alt={assetName}
+                  src={`http://127.0.0.1:8000/${asset}`}
                 ></Image>
               </div>
             </div>
@@ -73,12 +78,12 @@ export function AssetPickerPopOver({
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent asChild className="pointer-events-auto">
-        <div className="flex h-full flex-col rounded-xl border-2 border-primary bg-soft-blue !p-3">
+      <PopoverContent asChild className="pointer-events-auto p-3">
+        <div className="flex h-full flex-col rounded-xl border-2 border-primary bg-soft-blue">
           <AssetPicker
             assetGroups={assetGroups}
             action={(selectedIcon: AssetType) => {
-              handleAssetPicker(selectedIcon);
+              handleAssetSelect(selectedIcon);
             }}
           ></AssetPicker>
         </div>
