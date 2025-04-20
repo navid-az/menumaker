@@ -105,6 +105,8 @@ celerybeat.pid
 *.sage.py
 __pypackages__/
 
+# Django Media
+backend/core/media/iconPicker/
 
 ### NextJS ###
 # Dependencies and build files
