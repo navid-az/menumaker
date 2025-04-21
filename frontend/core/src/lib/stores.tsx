@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 //types
-import { ItemType } from "@/components/global/ItemAdder";
+import { AssetType } from "@/components/global/AssetPicker";
 
 type State = {
   phoneNumber: string;
@@ -135,25 +135,30 @@ export const useSliderTitle = create<builderTitleType>()((set) => ({
 }));
 
 //~~~~ItemAdder ActionButton~~~~
-type ActionButtonType = {
-  id: number | string;
-  icon: string;
-  name: string;
-  resetValue: () => void;
-  setValue: (item: ItemType) => void;
+type useAssetPickerType = {
+  asset: {
+    id: number;
+    image: string;
+    name: string;
+  };
+  resetAsset: () => void;
+  setAsset: (newAsset: AssetType) => void;
 };
-export const useActionButton = create<ActionButtonType>((set) => ({
-  id: 0,
-  icon: "",
-  name: "",
-  resetValue: () =>
+export const useAssetPicker = create<useAssetPickerType>((set) => ({
+  asset: {
+    id: 0,
+    name: "",
+    image: "",
+  },
+  setAsset: (newAsset) => set(() => ({ asset: newAsset })),
+  resetAsset: () =>
     set(() => ({
-      id: 0,
-      icon: "",
-      name: "",
+      asset: {
+        id: 0,
+        name: "",
+        image: "",
+      },
     })),
-  setValue: (item) =>
-    set(() => ({ id: item.id, icon: item.icon, name: item.name })),
 }));
 
 //~~~~ItemAdder ActionButton~~~~

@@ -14,7 +14,9 @@ import AssetPicker, { AssetGroupType, type AssetType } from "../AssetPicker";
 
 //SVGs
 import { Plus } from "lucide-react";
-import { useActionButton } from "@/lib/stores";
+
+//hooks
+import { useAssetPicker } from "@/lib/stores";
 
 export function AssetPickerPopOver({
   assetGroups,
@@ -23,22 +25,15 @@ export function AssetPickerPopOver({
   assetGroups: AssetGroupType[];
   ref?: React.RefObject<HTMLButtonElement | null>;
 }) {
-  const setValue = useActionButton((state) => state.setValue);
-  const resetValue = useActionButton((state) => state.resetValue);
-  const asset = useActionButton((state) => state.icon);
-  const assetName = useActionButton((state) => state.name);
+  //get access to global state
+  const { asset, setAsset, resetAsset } = useAssetPicker();
 
   const [isOpen, setIsOpen] = useState(false);
 
   // Handler for when an asset is selected in AssetPicker
-  const handleAssetSelect = (icon: AssetType) => {
-    const item = {
-      id: icon.id.toString(),
-      name: icon.name,
-      image: icon.image,
-    };
-    setValue(item);
+  const handleAssetSelect = (asset: AssetType) => {
     setIsOpen(false);
+    setAsset(asset);
   };
 
   return (
@@ -50,14 +45,14 @@ export function AssetPickerPopOver({
           className="px-4 text-xs sm:text-sm"
           type="button"
         >
-          {asset ? (
+          {asset.image ? (
             <div className=" flex justify-between gap-3 [&>*]:transition-transform [&>*]:duration-200">
               {/* delete icon button */}
               <Button
                 size="icon"
                 asChild
                 onClick={(e) => {
-                  resetValue();
+                  resetAsset();
                   e.stopPropagation();
                 }}
                 className="scale-pro hover:scale-110"
@@ -68,8 +63,8 @@ export function AssetPickerPopOver({
                 <Image
                   className="rounded-md"
                   fill
-                  alt={assetName}
-                  src={`http://127.0.0.1:8000/${asset}`}
+                  alt={asset.name}
+                  src={`http://127.0.0.1:8000/${asset.image}`}
                 ></Image>
               </div>
             </div>
@@ -82,8 +77,8 @@ export function AssetPickerPopOver({
         <div className="flex h-full flex-col rounded-xl border-2 border-primary bg-soft-blue">
           <AssetPicker
             assetGroups={assetGroups}
-            action={(selectedIcon: AssetType) => {
-              handleAssetSelect(selectedIcon);
+            action={(selectedAsset: AssetType) => {
+              handleAssetSelect(selectedAsset);
             }}
           ></AssetPicker>
         </div>
