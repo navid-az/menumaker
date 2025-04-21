@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Business, Category, Item
-from pickers.models import Icon
+from pickers.models import Asset
 from django.utils.text import slugify
 
 
@@ -46,7 +46,7 @@ class ItemCreateUpdateSerializer(serializers.ModelSerializer):
 
 class IconsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Icon
+        model = Asset
         fields = ['name', 'image']
 
 

@@ -1,5 +1,7 @@
 "use client";
 
+//used to pick from various groups of styling assets such as Icons, Backgrounds, etc for customization purposes
+
 import React, { useState, useEffect, useRef } from "react";
 
 //components
@@ -9,44 +11,33 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 //libraries
 import { gsap } from "gsap";
 
+//SVGs
+import { ArrowLeft } from "lucide-react";
+
 //types
-type SelectorType = {
-  action: (selectedItem: SelectorItemType) => void;
+type AssetPickerType = {
+  assetGroups: AssetGroupType[];
+  action: (selectedItem: AssetType) => void;
   defaultTab?: "icons" | "backgrounds";
 };
-export type SelectorItemType = { pk: number; name: string; image: string };
-export type SelectorItemGroupType = {
-  pk: number;
+export type AssetType = { id: number; name: string; image: string };
+export type AssetGroupType = {
+  id: number;
   name: string;
-  icons: SelectorItemType[];
+  description: string;
+  assets: AssetType[];
 };
 type ItemTabType = {
   onClick: () => void;
   children: React.ReactNode;
 };
 
-export default function Selector({
+export default function AssetPicker({
+  assetGroups,
   action,
   defaultTab = "icons",
-}: SelectorType) {
-  const [selectedItem, setSelectedItem] = useState<
-    SelectorItemType | undefined
-  >();
-  const [items, setItems] = useState<SelectorItemGroupType[]>([]);
-
-  const fetchIconsData = () => {
-    fetch("http://127.0.0.1:8000/pickers/icon-pickers")
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        setItems(data);
-      });
-  };
-
-  useEffect(() => {
-    fetchIconsData();
-  }, []);
+}: AssetPickerType) {
+  const [selectedItem, setSelectedItem] = useState<AssetType>();
 
   useEffect(() => {
     if (selectedItem) {
@@ -57,19 +48,22 @@ export default function Selector({
   return (
     <Tabs
       defaultValue={defaultTab}
-      className="flex h-full w-full flex-col gap-2 p-3"
+      className="flex h-full w-full flex-col gap-3"
     >
-      <TabsList className="flex h-max w-full gap-3 p-1.5">
-        <TabsTrigger className=" h-10 flex-1" value="icons">
+      <TabsList
+        dir="rtl"
+        className="flex h-max w-full gap-2 rounded-md border-2 border-primary bg-soft-blue p-1.5"
+      >
+        <TabsTrigger className="h-10 flex-1 rounded-md" value="icons">
           آیکون
         </TabsTrigger>
-        <TabsTrigger className=" h-10 flex-1" value="backgrounds">
+        <TabsTrigger className="h-10 flex-1 rounded-md" value="backgrounds">
           پس زمینه ها
         </TabsTrigger>
       </TabsList>
       <TabsContent value="icons">
         <Tab
-          data={items}
+          data={assetGroups}
           description={"آیکون مورد نظر خود را از بین گروه های زیر انتخاب کنید"}
           title={"لیست آیکون ها"}
           setSelectedItem={setSelectedItem}
@@ -77,9 +71,9 @@ export default function Selector({
       </TabsContent>
       <TabsContent value="backgrounds">
         <Tab
-          data={items}
+          data={assetGroups}
           description={
-            "پس زمنیه مورد نظر خود را از بین گروه های زیر انتخاب کنید"
+            "پس زمینه مورد نظر خود را از بین گروه های زیر انتخاب کنید"
           }
           title={"لیست پس زمینه ها"}
           setSelectedItem={setSelectedItem}
@@ -90,23 +84,22 @@ export default function Selector({
 }
 
 type TabType = {
-  data: SelectorItemGroupType[];
+  data: AssetGroupType[];
   title: string;
   description: string;
-  setSelectedItem: React.Dispatch<
-    React.SetStateAction<SelectorItemType | undefined>
-  >;
+  setSelectedItem: React.Dispatch<React.SetStateAction<AssetType | undefined>>;
 };
 
+//assets tab
 function Tab({ data, title, description, setSelectedItem }: TabType) {
   const [groupIndex, setGroupIndex] = useState(0);
   const [groupIsOpen, setGroupIsOpen] = useState(false);
 
   const goBackBtnRef = useRef(null);
 
+  //animate go back button
   useEffect(() => {
     const goBackBtn = goBackBtnRef.current;
-    //animate go back button
     if (groupIsOpen) {
       gsap.to(goBackBtn, { x: 0, opacity: 1, duration: 0.2 });
     } else {
@@ -120,62 +113,60 @@ function Tab({ data, title, description, setSelectedItem }: TabType) {
   };
 
   // checks the input of the clicked iconTile
-  const selectItem = (item: SelectorItemType) => {
+  const selectItem = (item: AssetType) => {
     setGroupIsOpen(false);
     setSelectedItem(item);
   };
 
   return (
     <div className="flex h-full w-full select-none flex-col gap-3 rounded-lg transition-all ease-in-out">
-      <header className="flex flex-col items-end gap-2">
-        <div className="flex w-full justify-between">
-          {/* go back btn  */}
+      <header className="flex flex-col items-end gap-1">
+        <div className="flex w-full items-center justify-between">
+          {/* go back to button  */}
           <button
             type="button"
             ref={goBackBtnRef}
             id="go-back-btn"
-            className="opacity-0"
+            className="rounded-md bg-primary p-1 opacity-0"
             onClick={() => setGroupIsOpen((prev) => !prev)}
           >
-            <Image
-              width={24}
-              height={24}
-              alt="arrow left"
-              src={"images/arrow-left.svg"}
-            ></Image>
+            <ArrowLeft className="text-primary-foreground"></ArrowLeft>
           </button>
-          <h2 className="text-xl font-bold text-sky-blue">{title}</h2>
+          <h2 className="text-xl font-bold text-primary">
+            {groupIsOpen ? data[groupIndex].name : title}
+          </h2>
         </div>
-        <p className="text-right text-sm font-light text-sad-blue">
-          {description}
+        <p className="text-right text-sm font-light text-primary">
+          {groupIsOpen ? data[groupIndex].description : description}
         </p>
       </header>
       <section className=" max-h-64 overflow-y-auto">
         <section
           id="groups-tab"
-          className="scrollbar-thin scrollbar-track-[#0C2123] scrollbar-thumb-sky-blue scrollbar-thumb-rounded-lg grid w-full grid-cols-3 gap-2 rounded-lg pr-2 transition-all ease-in-out"
+          className="scrollbar-thin scrollbar-track-[#0C2123] scrollbar-thumb-sky-blue scrollbar-thumb-rounded-lg grid w-full grid-cols-3 gap-3 rounded-lg transition-all ease-in-out"
         >
-          {/* show groups/items  */}
           {groupIsOpen
-            ? data[groupIndex].icons.map((icon) => (
-                <ItemTab key={icon.pk} onClick={() => selectItem(icon)}>
+            ? // show items of the selected group
+              data[groupIndex].assets.map((asset) => (
+                <Asset key={asset.id} onClick={() => selectItem(asset)}>
                   <div className="relative h-12 w-12 rounded-md">
                     <Image
                       className="rounded-md"
                       fill
-                      alt={icon.name}
-                      src={`http://127.0.0.1:8000/${icon.image}`}
+                      alt={asset.name}
+                      src={`http://127.0.0.1:8000/${asset.image}`}
                     ></Image>
                   </div>
-                </ItemTab>
+                </Asset>
               ))
-            : data.map((itemGroup, itemGroupIndex) => (
-                <ItemTab
-                  key={itemGroup.pk}
+            : //show all groups
+              data.map((itemGroup, itemGroupIndex) => (
+                <Asset
+                  key={itemGroup.id}
                   onClick={() => handleClick(itemGroupIndex)}
                 >
                   <GroupImage itemGroup={itemGroup}></GroupImage>
-                </ItemTab>
+                </Asset>
               ))}
         </section>
       </section>
@@ -183,50 +174,52 @@ function Tab({ data, title, description, setSelectedItem }: TabType) {
   );
 }
 
-function ItemTab({ onClick, children }: ItemTabType) {
+function Asset({ onClick, children }: ItemTabType) {
   return (
     <div
       onClick={onClick}
-      className="flex h-20 cursor-pointer items-center justify-center rounded-lg bg-sad-blue transition-transform duration-300 ease-in-out hover:scale-95"
+      className="scale-pro flex h-20 cursor-pointer items-center justify-center rounded-lg border-2 border-transparent bg-sad-blue transition-all duration-300 ease-in-out hover:scale-95 hover:border-primary"
     >
       {children}
     </div>
   );
 }
 
-//item's group image
-function GroupImage({ itemGroup }: { itemGroup: SelectorItemGroupType }) {
-  const icons = itemGroup.icons.slice(0, 3);
+//representation of each group
+//shows first three assets of each group
+function GroupImage({ itemGroup }: { itemGroup: AssetGroupType }) {
+  //first three assets
+  const instances = itemGroup.assets.slice(0, 3);
 
   return (
     <div className="group relative flex h-full w-full items-center justify-center">
-      {icons[1] && (
+      {instances[1] && (
         <div className="absolute left-0.5 h-10 w-10 scale-75 transform rounded-md opacity-70 transition-all duration-300 group-hover:-translate-x-1 group-hover:translate-y-1 group-hover:-rotate-6 group-hover:scale-90">
           <Image
             className="rounded-md"
             fill
-            alt={icons[1].name}
-            src={`http://127.0.0.1:8000/${icons[1].image}`}
+            alt={instances[1].name}
+            src={`http://127.0.0.1:8000/${instances[1].image}`}
           />
         </div>
       )}
-      {icons[0] && (
+      {instances[0] && (
         <div className="absolute z-10 h-12 w-12 rounded-md transition-all duration-300 group-hover:scale-95">
           <Image
             className="rounded-md"
             fill
-            alt={icons[0].name}
-            src={`http://127.0.0.1:8000/${icons[0].image}`}
+            alt={instances[0].name}
+            src={`http://127.0.0.1:8000/${instances[0].image}`}
           />
         </div>
       )}
-      {icons[2] && (
+      {instances[2] && (
         <div className="absolute right-0.5 h-10 w-10 scale-75 transform rounded-md opacity-70 transition-all duration-300 group-hover:translate-x-1 group-hover:translate-y-1 group-hover:rotate-6 group-hover:scale-90">
           <Image
             className="rounded-md"
             fill
-            alt={icons[2].name}
-            src={`http://127.0.0.1:8000/${icons[2].image}`}
+            alt={instances[2].name}
+            src={`http://127.0.0.1:8000/${instances[2].image}`}
           />
         </div>
       )}
