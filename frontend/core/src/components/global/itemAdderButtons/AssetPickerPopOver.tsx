@@ -1,39 +1,53 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 //components
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
 import {
   Popover,
   PopoverTrigger,
   PopoverContent,
 } from "@/components/ui/popover";
-import AssetPicker, { AssetGroupType, type AssetType } from "../AssetPicker";
+import AssetPicker from "../AssetPicker";
 
 //SVGs
 import { Plus } from "lucide-react";
 
-//hooks
-import { useAssetPicker } from "@/lib/stores";
+//types
+import { AssetType, AssetGroupType } from "../AssetPicker";
 
 export function AssetPickerPopOver({
   assetGroups,
   ref,
+  value,
+  onChange,
 }: {
   assetGroups: AssetGroupType[];
   ref?: React.RefObject<HTMLButtonElement | null>;
+  value?: AssetType;
+  onChange?: (selectedItem: AssetType | undefined) => void;
 }) {
-  //get access to global state
-  const { asset, setAsset, resetAsset } = useAssetPicker();
-
   const [isOpen, setIsOpen] = useState(false);
+  const [asset, setAsset] = useState<AssetType | undefined>(value);
 
-  // Handler for when an asset is selected in AssetPicker
-  const handleAssetSelect = (asset: AssetType) => {
+  useEffect(() => {
+    setAsset(value);
+  }, [value]);
+
+  const handleOnChange = (selectedAsset: AssetType) => {
+    setAsset(selectedAsset);
     setIsOpen(false);
-    setAsset(asset);
+    onChange?.(selectedAsset);
+  };
+
+  const removeSelectedAsset = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.stopPropagation();
+    setAsset(undefined);
+    onChange?.(undefined);
   };
 
   return (
@@ -45,15 +59,13 @@ export function AssetPickerPopOver({
           className="px-4 text-xs sm:text-sm"
           type="button"
         >
-          {asset.image ? (
-            <div className=" flex justify-between gap-3 [&>*]:transition-transform [&>*]:duration-200">
-              {/* delete icon button */}
+          {asset ? (
+            <div className="flex justify-between gap-3 [&>*]:transition-transform [&>*]:duration-200">
               <Button
                 size="icon"
                 asChild
                 onClick={(e) => {
-                  resetAsset();
-                  e.stopPropagation();
+                  removeSelectedAsset(e);
                 }}
                 className="scale-pro hover:scale-110"
               >
@@ -65,7 +77,7 @@ export function AssetPickerPopOver({
                   fill
                   alt={asset.name}
                   src={`http://127.0.0.1:8000/${asset.image}`}
-                ></Image>
+                />
               </div>
             </div>
           ) : (
@@ -76,11 +88,12 @@ export function AssetPickerPopOver({
       <PopoverContent asChild className="pointer-events-auto p-3">
         <div className="flex h-full flex-col rounded-xl border-2 border-primary bg-soft-blue">
           <AssetPicker
-            assetGroups={assetGroups}
-            action={(selectedAsset: AssetType) => {
-              handleAssetSelect(selectedAsset);
+            value={value}
+            onChange={(selectedAsset) => {
+              handleOnChange(selectedAsset);
             }}
-          ></AssetPicker>
+            assetGroups={assetGroups}
+          />
         </div>
       </PopoverContent>
     </Popover>

@@ -1,25 +1,18 @@
 "use client";
 
-//used to pick from various groups of styling assets such as Icons, Backgrounds, etc for customization purposes
-
 import React, { useState, useEffect, useRef } from "react";
 
 //components
 import Image from "next/image";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
-//libraries
-import { gsap } from "gsap";
-
 //SVGs
 import { ArrowLeft } from "lucide-react";
 
+//libraries
+import { gsap } from "gsap";
+
 //types
-type AssetPickerType = {
-  assetGroups: AssetGroupType[];
-  action: (selectedItem: AssetType) => void;
-  defaultTab?: "icons" | "backgrounds";
-};
 export type AssetType = { id: number; name: string; image: string };
 export type AssetGroupType = {
   id: number;
@@ -27,24 +20,34 @@ export type AssetGroupType = {
   description: string;
   assets: AssetType[];
 };
-type ItemTabType = {
+
+type AssetPickerType = {
+  assetGroups: AssetGroupType[];
+  value?: AssetType; // Controlled value (selected asset)
+  onChange?: (selectedItem: AssetType) => void; // Callback to update value
+  defaultTab?: "icons" | "backgrounds";
+};
+
+type AssetSelectorType = {
+  data: AssetGroupType[];
+  title: string;
+  description: string;
+  value?: AssetType;
+  onChange?: (selectedItem: AssetType) => void;
+};
+
+type AssetProps = {
   onClick: () => void;
   children: React.ReactNode;
+  isSelected?: boolean;
 };
 
 export default function AssetPicker({
   assetGroups,
-  action,
+  value,
+  onChange,
   defaultTab = "icons",
 }: AssetPickerType) {
-  const [selectedItem, setSelectedItem] = useState<AssetType>();
-
-  useEffect(() => {
-    if (selectedItem) {
-      action(selectedItem);
-    }
-  }, [selectedItem]);
-
   return (
     <Tabs
       defaultValue={defaultTab}
@@ -62,42 +65,40 @@ export default function AssetPicker({
         </TabsTrigger>
       </TabsList>
       <TabsContent value="icons">
-        <Tab
+        <AssetTab
           data={assetGroups}
-          description={"آیکون مورد نظر خود را از بین گروه های زیر انتخاب کنید"}
-          title={"لیست آیکون ها"}
-          setSelectedItem={setSelectedItem}
-        ></Tab>
+          title="لیست آیکون ها"
+          description="آیکون مورد نظر خود را از بین گروه های زیر انتخاب کنید"
+          value={value}
+          onChange={onChange}
+        />
       </TabsContent>
       <TabsContent value="backgrounds">
-        <Tab
+        <AssetTab
           data={assetGroups}
-          description={
-            "پس زمینه مورد نظر خود را از بین گروه های زیر انتخاب کنید"
-          }
-          title={"لیست پس زمینه ها"}
-          setSelectedItem={setSelectedItem}
-        ></Tab>
+          title="لیست پس زمینه ها"
+          description="پس زمینه مورد نظر خود را از بین گروه های زیر انتخاب کنید"
+          value={value}
+          onChange={onChange}
+        />
       </TabsContent>
     </Tabs>
   );
 }
 
-type TabType = {
-  data: AssetGroupType[];
-  title: string;
-  description: string;
-  setSelectedItem: React.Dispatch<React.SetStateAction<AssetType | undefined>>;
-};
-
-//assets tab
-function Tab({ data, title, description, setSelectedItem }: TabType) {
+function AssetTab({
+  data,
+  title,
+  description,
+  value,
+  onChange,
+}: AssetSelectorType) {
   const [groupIndex, setGroupIndex] = useState(0);
   const [groupIsOpen, setGroupIsOpen] = useState(false);
 
   const goBackBtnRef = useRef(null);
 
-  //animate go back button
+  //go back button animation
   useEffect(() => {
     const goBackBtn = goBackBtnRef.current;
     if (groupIsOpen) {
@@ -112,25 +113,25 @@ function Tab({ data, title, description, setSelectedItem }: TabType) {
     setGroupIsOpen(true);
   };
 
-  // checks the input of the clicked iconTile
   const selectItem = (item: AssetType) => {
     setGroupIsOpen(false);
-    setSelectedItem(item);
+    if (onChange) {
+      onChange(item);
+    }
   };
 
   return (
     <div className="flex h-full w-full select-none flex-col gap-3 rounded-lg transition-all ease-in-out">
       <header className="flex flex-col items-end gap-1">
         <div className="flex w-full items-center justify-between">
-          {/* go back to button  */}
           <button
             type="button"
             ref={goBackBtnRef}
             id="go-back-btn"
             className="rounded-md bg-primary p-1 opacity-0"
-            onClick={() => setGroupIsOpen((prev) => !prev)}
+            onClick={() => setGroupIsOpen(false)}
           >
-            <ArrowLeft className="text-primary-foreground"></ArrowLeft>
+            <ArrowLeft className="text-primary-foreground" />
           </button>
           <h2 className="text-xl font-bold text-primary">
             {groupIsOpen ? data[groupIndex].name : title}
@@ -140,33 +141,38 @@ function Tab({ data, title, description, setSelectedItem }: TabType) {
           {groupIsOpen ? data[groupIndex].description : description}
         </p>
       </header>
-      <section className=" max-h-64 overflow-y-auto">
+      <section className="max-h-64 overflow-y-auto">
         <section
           id="groups-tab"
           className="scrollbar-thin scrollbar-track-[#0C2123] scrollbar-thumb-sky-blue scrollbar-thumb-rounded-lg grid w-full grid-cols-3 gap-3 rounded-lg transition-all ease-in-out"
         >
           {groupIsOpen
-            ? // show items of the selected group
-              data[groupIndex].assets.map((asset) => (
-                <Asset key={asset.id} onClick={() => selectItem(asset)}>
+            ? data[groupIndex].assets.map((asset) => (
+                <AssetTile
+                  key={asset.id}
+                  onClick={() => selectItem(asset)}
+                  isSelected={asset.id === value?.id}
+                >
                   <div className="relative h-12 w-12 rounded-md">
                     <Image
                       className="rounded-md"
                       fill
                       alt={asset.name}
                       src={`http://127.0.0.1:8000/${asset.image}`}
-                    ></Image>
+                    />
                   </div>
-                </Asset>
+                </AssetTile>
               ))
-            : //show all groups
-              data.map((itemGroup, itemGroupIndex) => (
-                <Asset
+            : data.map((itemGroup, itemGroupIndex) => (
+                <AssetTile
                   key={itemGroup.id}
                   onClick={() => handleClick(itemGroupIndex)}
+                  isSelected={itemGroup.assets.some(
+                    (asset) => asset.id === value?.id
+                  )}
                 >
-                  <GroupImage itemGroup={itemGroup}></GroupImage>
-                </Asset>
+                  <AssetGroupImage itemGroup={itemGroup} />
+                </AssetTile>
               ))}
         </section>
       </section>
@@ -174,23 +180,21 @@ function Tab({ data, title, description, setSelectedItem }: TabType) {
   );
 }
 
-function Asset({ onClick, children }: ItemTabType) {
+function AssetTile({ onClick, children, isSelected }: AssetProps) {
   return (
     <div
       onClick={onClick}
-      className="scale-pro flex h-20 cursor-pointer items-center justify-center rounded-lg border-2 border-transparent bg-sad-blue transition-all duration-300 ease-in-out hover:scale-95 hover:border-primary"
+      className={`flex h-20 cursor-pointer items-center justify-center rounded-lg border-2 ${
+        isSelected ? "border-primary" : "border-transparent"
+      } bg-sad-blue transition-all duration-300 ease-in-out hover:scale-95 hover:border-primary`}
     >
       {children}
     </div>
   );
 }
 
-//representation of each group
-//shows first three assets of each group
-function GroupImage({ itemGroup }: { itemGroup: AssetGroupType }) {
-  //first three assets
+function AssetGroupImage({ itemGroup }: { itemGroup: AssetGroupType }) {
   const instances = itemGroup.assets.slice(0, 3);
-
   return (
     <div className="group relative flex h-full w-full items-center justify-center">
       {instances[1] && (
