@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 //components
 import Image from "next/image";
@@ -23,18 +23,16 @@ export function AssetPickerPopOver({
   ref,
   value,
   onChange,
+  btnTriggerSize = "default",
 }: {
   assetGroups: AssetGroupType[];
   ref?: React.RefObject<HTMLButtonElement | null>;
   value?: AssetType;
   onChange?: (selectedItem: AssetType | undefined) => void;
+  btnTriggerSize?: "default" | "sm" | "lg" | "icon";
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [asset, setAsset] = useState<AssetType | undefined>(value);
-
-  useEffect(() => {
-    setAsset(value);
-  }, [value]);
+  const [asset, setAsset] = useState<AssetType | undefined>(undefined);
 
   const handleOnChange = (selectedAsset: AssetType) => {
     setAsset(selectedAsset);
@@ -55,7 +53,7 @@ export function AssetPickerPopOver({
       <PopoverTrigger asChild>
         <Button
           ref={ref}
-          size="sm"
+          size={btnTriggerSize}
           className="px-4 text-xs sm:text-sm"
           type="button"
         >

@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 //types
 import { SetupSchemaType } from "./(creator)/builder/components/setup/Setup";
@@ -59,6 +59,41 @@ export async function verifyToken() {
 //~~~~dashboard table mutation-related actions~~~
 
 //CATEGORY ACTIONS
+export async function createCategory(
+  businessSlug: string,
+  data: { name: string; icon: number }
+) {
+  const accessToken = (await cookies()).get("access");
+
+  try {
+    const res = await fetch(
+      `http://localhost:8000/business/${businessSlug}/categories/create/`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken?.value}`,
+        },
+        body: JSON.stringify(data),
+      }
+    );
+    if (!res.ok) {
+      const errorData = await res.json();
+
+      return {
+        success: false,
+        error: errorData.error || "Failed to create category",
+      };
+    }
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.message || "An unexpected error occurred",
+    };
+  }
+  revalidatePath(`/dashboard/${businessSlug}/data/categories`);
+}
+
 export async function updateCategory(
   menuSlug: string,
   categoryId: number,

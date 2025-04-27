@@ -13,8 +13,16 @@ import { usePathname } from "next/navigation";
 
 //SVGs
 import { Filter } from "lucide-react";
+import { CreateCategoryForm } from "./CreateCategoryForm";
 
-export default function ToolBar() {
+//types
+import { AssetGroupType } from "@/components/global/AssetPicker";
+
+export default function ToolBar({
+  assetGroups,
+}: {
+  assetGroups: AssetGroupType[];
+}) {
   const pathName = usePathname();
 
   const sections = pathName.split("/").filter((section) => section);
@@ -87,7 +95,7 @@ export default function ToolBar() {
           title="ایجاد دسته بندی"
           description="با انتخاب گزینه های مورد نظر دسته بندی جدید به منو اضافه کنید"
         >
-          <CreateItemForm></CreateItemForm>
+          <CreateCategoryForm assetGroups={assetGroups}></CreateCategoryForm>
         </FormDialog>
       )}
       {/* add more here if needed */}
