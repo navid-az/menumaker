@@ -26,6 +26,7 @@ export default function ToolBar({
   const pathName = usePathname();
 
   const sections = pathName.split("/").filter((section) => section);
+  const businessSlug = sections[sections.indexOf("dashboard") + 1];
   const lastTwoSections = sections.slice(-2);
   const parentSection = lastTwoSections[0];
   const childSection = lastTwoSections[1];
@@ -95,7 +96,10 @@ export default function ToolBar({
           title="ایجاد دسته بندی"
           description="با انتخاب گزینه های مورد نظر دسته بندی جدید به منو اضافه کنید"
         >
-          <CreateCategoryForm assetGroups={assetGroups}></CreateCategoryForm>
+          <CreateCategoryForm
+            businessSlug={businessSlug}
+            assetGroups={assetGroups}
+          ></CreateCategoryForm>
         </FormDialog>
       )}
       {/* add more here if needed */}

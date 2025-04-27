@@ -29,8 +29,10 @@ const FormSchema = z.object({
 });
 
 export function CreateCategoryForm({
+  businessSlug,
   assetGroups,
 }: {
+  businessSlug: string;
   assetGroups: AssetGroupType[];
 }) {
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -46,7 +48,7 @@ export function CreateCategoryForm({
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    await createCategory("venhan", { name: data.name, icon: data.icon.id });
+    await createCategory(businessSlug, { name: data.name, icon: data.icon.id });
   }
 
   return (
