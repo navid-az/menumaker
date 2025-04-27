@@ -38,8 +38,8 @@ export default function FormDialog({
           <p>{title}</p>
         </Button>
       </DialogTrigger>
-      <DialogContent>
-        <DialogHeader className=" items-start ">
+      <DialogContent className="gap-8">
+        <DialogHeader className="items-start">
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription className="font-normal">
             {description}
