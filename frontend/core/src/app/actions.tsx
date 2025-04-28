@@ -59,9 +59,15 @@ export async function verifyToken() {
 //~~~~dashboard table mutation-related actions~~~
 
 //CATEGORY ACTIONS
+type IconType = {
+  id: number;
+  name: string;
+  image: string;
+};
+
 export async function createCategory(
   businessSlug: string,
-  data: { name: string; icon: number }
+  data: { name: string; icon?: IconType } | { name?: string; icon: IconType }
 ) {
   const accessToken = (await cookies()).get("access");
 
@@ -74,24 +80,28 @@ export async function createCategory(
           "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken?.value}`,
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ name: data.name, icon: data.icon?.id }),
       }
     );
+
     if (!res.ok) {
       const errorData = await res.json();
-
       return {
         success: false,
         error: errorData.error || "Failed to create category",
       };
     }
+
+    // ✅ ADD THIS
   } catch (error: any) {
     return {
       success: false,
       error: error.message || "An unexpected error occurred",
     };
   }
+
   revalidatePath(`/dashboard/${businessSlug}/data/categories`);
+  return { success: true };
 }
 
 export async function updateCategory(

@@ -19,12 +19,14 @@ import { Plus } from "lucide-react";
 type FormDialogType = {
   title: string;
   description: string;
+  form: string;
   children: React.ReactNode;
 };
 
 export default function FormDialog({
   title,
   description,
+  form,
   children,
 }: FormDialogType) {
   return (
@@ -47,7 +49,7 @@ export default function FormDialog({
         </DialogHeader>
         {children}
         <DialogFooter>
-          <Button form="item-form" type="submit">
+          <Button form={form} type="submit">
             {title}
           </Button>
         </DialogFooter>

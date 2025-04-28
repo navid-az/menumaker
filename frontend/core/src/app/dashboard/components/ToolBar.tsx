@@ -86,6 +86,7 @@ export default function ToolBar({
           <FormDialog
             title="ایجاد آیتم"
             description="با انتخاب گزینه های مورد نظر آیتمی جدید به منو اضافه کنید"
+            form="item-form"
           >
             <CreateItemForm></CreateItemForm>
           </FormDialog>
@@ -95,6 +96,7 @@ export default function ToolBar({
         <FormDialog
           title="ایجاد دسته بندی"
           description="با انتخاب گزینه های مورد نظر دسته بندی جدید به منو اضافه کنید"
+          form="category-form"
         >
           <CreateCategoryForm
             businessSlug={businessSlug}

@@ -141,7 +141,7 @@ function AssetTab({
           {groupIsOpen ? data[groupIndex].description : description}
         </p>
       </header>
-      <section className="max-h-64 overflow-y-auto">
+      <section className="max-h-44 overflow-y-auto">
         <section
           id="groups-tab"
           className="scrollbar-thin scrollbar-track-[#0C2123] scrollbar-thumb-sky-blue scrollbar-thumb-rounded-lg grid w-full grid-cols-3 gap-3 rounded-lg transition-all ease-in-out"
@@ -184,7 +184,7 @@ function AssetTile({ onClick, children, isSelected }: AssetProps) {
   return (
     <div
       onClick={onClick}
-      className={`flex h-20 cursor-pointer items-center justify-center rounded-lg border-2 ${
+      className={`scale-pro flex h-20 cursor-pointer items-center justify-center rounded-lg border-2 ${
         isSelected ? "border-primary" : "border-transparent"
       } bg-sad-blue transition-all duration-300 ease-in-out hover:scale-95 hover:border-primary`}
     >
