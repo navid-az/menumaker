@@ -50,7 +50,15 @@ const handleSwitch = async (
 };
 
 const handleDelete = async (props: CellContext<Category, unknown>) => {
-  deleteCategory(props.row.original.business, props.row.original.id);
+  const res = await deleteCategory(
+    props.row.original.business,
+    props.row.original.id
+  );
+  if (res.success) {
+    toast.success("دسته بندی با موفقیت حذف شد");
+  } else {
+    toast.error(res.error);
+  }
 };
 
 export const categoryColumns: ColumnDef<Category>[] = [

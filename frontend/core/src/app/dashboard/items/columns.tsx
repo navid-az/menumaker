@@ -53,7 +53,15 @@ const handleSwitch = async (
 };
 
 const handleDelete = async (props: CellContext<Item, unknown>) => {
-  await deleteItem(props.row.original.business, props.row.original.id);
+  const res = await deleteItem(
+    props.row.original.business,
+    props.row.original.id
+  );
+  if (res.success) {
+    toast.success("آیتم با موفقیت حذف شد");
+  } else {
+    toast.error(res.error);
+  }
 };
 
 export const itemColumns: ColumnDef<Item>[] = [

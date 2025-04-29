@@ -126,21 +126,32 @@ export async function updateCategory(
 
 export async function deleteCategory(businessSlug: string, categoryId: number) {
   const accessToken = (await cookies()).get("access");
-
-  const res = await fetch(
-    `http://127.0.0.1:8000/business/${businessSlug}/categories/${categoryId}/delete/`,
-    {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken?.value}`,
-      },
+  try {
+    const res = await fetch(
+      `http://127.0.0.1:8000/business/${businessSlug}/categories/${categoryId}/delete/`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken?.value}`,
+        },
+      }
+    );
+    if (!res.ok) {
+      const errorData = await res.json();
+      return {
+        success: false,
+        error: errorData.error || "Failed to delete category",
+      };
     }
-  );
-  if (!res.ok) {
-    return new Error("wtf is this shit bro?");
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.message || "An unexpected error occurred",
+    };
   }
   revalidateTag("categories");
+  return { success: true };
 }
 
 //ITEM ACTIONS
@@ -192,21 +203,32 @@ export async function updateItem(
 
 export async function deleteItem(businessSlug: string, itemId: number) {
   const accessToken = (await cookies()).get("access");
-
-  const res = await fetch(
-    `http://127.0.0.1:8000/business/${businessSlug}/items/${itemId}/delete/`,
-    {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken?.value}`,
-      },
+  try {
+    const res = await fetch(
+      `http://127.0.0.1:8000/business/${businessSlug}/items/${itemId}/delete/`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken?.value}`,
+        },
+      }
+    );
+    if (!res.ok) {
+      const errorData = await res.json();
+      return {
+        success: false,
+        error: errorData.error || "Failed to delete item",
+      };
     }
-  );
-  if (!res.ok) {
-    return new Error("wtf is this shit bro?");
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.message || "An unexpected error occurred",
+    };
   }
   revalidateTag("items");
+  return { success: true };
 }
 
 //create menu
