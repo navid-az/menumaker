@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useActionState, useEffect } from "react";
+import { useRef, useState } from "react";
 
 //zod validator
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,21 +12,38 @@ import { Input } from "@/components/ui/input";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { AssetPickerPopOver } from "@/components/global/itemAdderButtons/AssetPickerPopOver";
 
+//SVGs
+import { Loader2, Plus } from "lucide-react";
+
 //hooks
 import { useForm } from "react-hook-form";
-import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
 
 //types
 import { type AssetGroupType } from "@/components/global/AssetPicker";
+type CreateCategoryFormType = {
+  businessSlug: string;
+  assetGroups: AssetGroupType[];
+  title: string;
+  description: string;
+};
 
 //server actions
 import { createCategory } from "@/app/actions";
@@ -63,10 +80,9 @@ const FormSchema = RawFormSchema.superRefine((data, ctx) => {
 export function CreateCategoryForm({
   businessSlug,
   assetGroups,
-}: {
-  businessSlug: string;
-  assetGroups: AssetGroupType[];
-}) {
+  title,
+  description,
+}: CreateCategoryFormType) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -74,11 +90,19 @@ export function CreateCategoryForm({
     },
   });
 
+  //control dialog component
+  const [open, setOpen] = useState(false);
+
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
       const res = await createCategory(businessSlug, data);
       if (res?.success) {
+        //wait for route revalidation to happen first
+        setTimeout(() => {
+          setOpen(false);
+        }, 300);
         toast.success("دسته بندی با موفقیت ایجاد شد");
+        form.reset();
       } else {
         toast.error(res?.error);
       }
@@ -94,56 +118,85 @@ export function CreateCategoryForm({
     });
   };
 
-  //animate AssetPicker's trigger button
-  const assetPickerRef = useRef<HTMLButtonElement>(null);
-  useTactileAnimation(assetPickerRef);
-
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit, onError)} id="category-form">
-        <section className="flex w-full items-end gap-2 space-y-6">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>نام دسته</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="پیتزا، برگر، نوشیدنی سرد، ..."
-                    type="text"
-                    {...field}
-                  ></Input>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button
+          size="lg"
+          className="scale-pro rounded-full border-2 border-primary bg-soft-blue px-4 font-semibold text-primary transition-all duration-200 hover:scale-95 hover:bg-primary hover:text-primary-foreground data-[state=open]:scale-95 data-[state=open]:bg-primary data-[state=open]:text-primary-foreground"
+        >
+          <Plus className="ml-2 h-5 w-5"></Plus>
+          <p>{title}</p>
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="gap-8">
+        <DialogHeader className="items-start">
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription className="font-normal">
+            {description}
+          </DialogDescription>
+        </DialogHeader>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit, onError)}
+            id="category-form"
+          >
+            <section className="flex w-full items-end gap-2 space-y-6">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>نام دسته</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="پیتزا، برگر، نوشیدنی سرد، ..."
+                        type="text"
+                        {...field}
+                      ></Input>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="icon"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <AssetPickerPopOver
+                        value={field.value}
+                        onChange={field.onChange}
+                        assetGroups={assetGroups}
+                      ></AssetPickerPopOver>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </section>
+            {/* global error */}
+            {form.formState.errors.root && (
+              <p className="mt-3 text-sm text-red-600">
+                {form.formState.errors.root?.message}
+              </p>
             )}
-          />
-          <FormField
-            control={form.control}
-            name="icon"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <AssetPickerPopOver
-                    ref={assetPickerRef}
-                    value={field.value}
-                    onChange={field.onChange}
-                    assetGroups={assetGroups}
-                  ></AssetPickerPopOver>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+          </form>
+        </Form>
+        <DialogFooter className="flex w-full flex-col justify-between gap-2">
+          <Button
+            disabled={form.formState.isSubmitting}
+            form="category-form"
+            type="submit"
+          >
+            {form.formState.isSubmitting && (
+              <Loader2 className="ml-2 h-4 w-4 animate-spin"></Loader2>
             )}
-          />
-        </section>
-        {/* global error */}
-        {form.formState.errors.root && (
-          <p className="mt-3 text-sm text-red-600">
-            {form.formState.errors.root?.message}
-          </p>
-        )}
-      </form>
-    </Form>
+            {title}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

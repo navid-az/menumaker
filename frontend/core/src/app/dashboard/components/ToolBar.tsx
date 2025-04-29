@@ -93,16 +93,12 @@ export default function ToolBar({
         </div>
       )}
       {parentSection === "data" && childSection === "categories" && (
-        <FormDialog
+        <CreateCategoryForm
+          businessSlug={businessSlug}
+          assetGroups={assetGroups}
           title="ایجاد دسته بندی"
           description="با انتخاب گزینه های مورد نظر دسته بندی جدید به منو اضافه کنید"
-          form="category-form"
-        >
-          <CreateCategoryForm
-            businessSlug={businessSlug}
-            assetGroups={assetGroups}
-          ></CreateCategoryForm>
-        </FormDialog>
+        ></CreateCategoryForm>
       )}
       {/* add more here if needed */}
     </div>
