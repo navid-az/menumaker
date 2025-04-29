@@ -52,6 +52,7 @@ class IconsSerializer(serializers.ModelSerializer):
 
 # category serializers
 class CategoriesSerializer(serializers.ModelSerializer):
+    business = serializers.SlugRelatedField(slug_field='slug', read_only=True)
     items = ItemsSerializer(many=True, read_only=True)
     icon = IconsSerializer(read_only=True)
 

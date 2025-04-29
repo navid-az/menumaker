@@ -91,8 +91,6 @@ export async function createCategory(
         error: errorData.error || "Failed to create category",
       };
     }
-
-    // ✅ ADD THIS
   } catch (error: any) {
     return {
       success: false,
@@ -126,11 +124,11 @@ export async function updateCategory(
   return res.ok;
 }
 
-export async function deleteCategory(menuSlug: string, categoryId: number) {
+export async function deleteCategory(businessSlug: string, categoryId: number) {
   const accessToken = (await cookies()).get("access");
 
   const res = await fetch(
-    `http://127.0.0.1:8000/menu/${menuSlug}/categories/${categoryId}/delete/`,
+    `http://127.0.0.1:8000/business/${businessSlug}/categories/${categoryId}/delete/`,
     {
       method: "DELETE",
       headers: {
@@ -192,11 +190,11 @@ export async function updateItem(
   return res.ok;
 }
 
-export async function deleteItem(menuSlug: string, itemId: number) {
+export async function deleteItem(businessSlug: string, itemId: number) {
   const accessToken = (await cookies()).get("access");
 
   const res = await fetch(
-    `http://127.0.0.1:8000/menu/${menuSlug}/items/${itemId}/delete/`,
+    `http://127.0.0.1:8000/business/${businessSlug}/items/${itemId}/delete/`,
     {
       method: "DELETE",
       headers: {
