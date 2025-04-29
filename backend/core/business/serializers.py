@@ -30,6 +30,8 @@ class BusinessCreateSerializer(serializers.ModelSerializer):
 
 # item serializers
 class ItemsSerializer(serializers.ModelSerializer):
+    business = serializers.SlugRelatedField(slug_field='slug', read_only=True)
+
     class Meta:
         model = Item
         fields = '__all__'
