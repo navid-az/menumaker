@@ -244,7 +244,7 @@ export default function ItemAdder({
               size="icon"
               className={`${
                 editMode ? "w-16" : "w-9"
-              } h-9 transition-opacity duration-300`}
+              } h-9 transition-[opacity,width] duration-300`}
               onClick={editMode ? handleEditItem : handleAddItem}
             >
               {editMode ? (
