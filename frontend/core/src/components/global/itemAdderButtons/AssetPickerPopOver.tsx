@@ -32,10 +32,8 @@ export function AssetPickerPopOver({
   btnTriggerSize?: "default" | "sm" | "lg" | "icon";
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [asset, setAsset] = useState<AssetType | undefined>(undefined);
 
   const handleOnChange = (selectedAsset: AssetType) => {
-    setAsset(selectedAsset);
     setIsOpen(false);
     onChange?.(selectedAsset);
   };
@@ -44,7 +42,6 @@ export function AssetPickerPopOver({
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.stopPropagation();
-    setAsset(undefined);
     onChange?.(undefined);
   };
 
@@ -57,8 +54,8 @@ export function AssetPickerPopOver({
           className="px-4 text-xs sm:text-sm"
           type="button"
         >
-          {asset ? (
-            <div className="flex justify-between gap-3 [&>*]:transition-transform [&>*]:duration-200">
+          {value?.image ? (
+            <div className="flex justify-between gap-3 ">
               <Button
                 size="icon"
                 asChild
@@ -73,13 +70,13 @@ export function AssetPickerPopOver({
                 <Image
                   className="rounded-md"
                   fill
-                  alt={asset.name}
-                  src={`http://127.0.0.1:8000/${asset.image}`}
+                  alt={value.name}
+                  src={`http://127.0.0.1:8000/${value.image}`}
                 />
               </div>
             </div>
           ) : (
-            "آیکون"
+            <p>آیکون</p>
           )}
         </Button>
       </PopoverTrigger>
