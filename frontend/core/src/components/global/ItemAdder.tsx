@@ -15,7 +15,7 @@ import { useFormContext } from "react-hook-form";
 
 //hooks
 import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
-import { useActionButton } from "@/lib/stores";
+import { useAssetPicker } from "@/lib/stores";
 
 //functions
 import isRTL from "@/lib/isRtl";
@@ -26,7 +26,8 @@ import { Plus } from "@/app/components/svgs";
 import { Edit3, ImageOff } from "lucide-react";
 
 //types
-export type ItemType = { id: string; name?: string; icon?: string };
+import { type AssetGroupType, type AssetType } from "./AssetPicker";
+export type ItemType = { id: number; name?: string; image?: string };
 type ItemsType = ItemType[];
 type ReducerActionType = ItemType & { type: ItemAdderActions };
 type ItemAdderType = {
@@ -34,6 +35,7 @@ type ItemAdderType = {
   limit?: number;
   name?: string;
   initValue?: ItemsType;
+  assetGroups: AssetGroupType[];
 };
 
 //reducer actions
@@ -51,7 +53,7 @@ const reducer = (items: ItemsType, action: ReducerActionType) => {
         {
           id: action.id,
           name: action.name,
-          icon: action.icon,
+          image: action.image,
         },
       ];
     case ItemAdderActions.EDIT_ITEM:
@@ -60,7 +62,7 @@ const reducer = (items: ItemsType, action: ReducerActionType) => {
           return {
             id: action.id,
             name: action.name,
-            icon: action.icon,
+            image: action.image,
           };
         } else {
           return item;
@@ -74,71 +76,76 @@ const reducer = (items: ItemsType, action: ReducerActionType) => {
 };
 let nextItemId = 0;
 
-const itemAdderInputSchema = z.string().max(50).nullable();
+const textInputSchema = z.string().max(50).nullable();
 
 export default function ItemAdder({
   placeholder,
   limit = 3,
   name = "",
   initValue = [],
+  assetGroups,
 }: ItemAdderType) {
   const [items, dispatch] = useReducer(reducer, []);
 
+  const [asset, setAsset] = useState<AssetType>();
+  const [text, setText] = useState("");
+
   //get access to parent's form methods/data
-  const form = useFormContext();
+  // const form = useFormContext();
 
   const [isDisabled, setIsDisabled] = useState(false);
   const [editMode, setEditMode] = useState(false);
 
-  const [currentItem, setCurrentItem] = useState("");
-  const [text, setText] = useState("");
+  const [currentItem, setCurrentItem] = useState<number | undefined>(undefined);
 
-  const actionIcon = useActionButton((state) => state.icon);
-  const setValue = useActionButton((state) => state.setValue);
-  const resetValue = useActionButton((state) => state.resetValue);
+  // const { resetAsset } = useAssetPicker();
 
   const [direction, setDirection] = useState<"ltr" | "rtl">("rtl");
   const [inputError, setInputError] = useState("");
 
-  const selectorActionRef = useRef<HTMLButtonElement>(null);
-  const linkActionRef = useRef<HTMLButtonElement>(null);
+  const assetPickerRef = useRef<HTMLButtonElement>(null);
+  // const linkActionRef = useRef<HTMLButtonElement>(null);
   const textInputRef = useRef<HTMLInputElement>(null);
   const addEditItemBtnRef = useRef<HTMLButtonElement>(null);
 
   //enable/disable add button according to input values
   useEffect(() => {
     if (!editMode) {
-      if (!actionIcon && !text) {
+      if (!text && !asset) {
         setIsDisabled(true);
+        setInputError("");
       } else if (items.length >= limit) {
         setInputError(`حداکثر میتوان ${limit} آیتم ایجاد کرد`);
+        setIsDisabled(true);
       } else {
         setIsDisabled(false);
+        setInputError("");
       }
     } else {
       if (textInputRef.current?.value) {
-        textInputRef.current?.focus();
+        textInputRef.current.focus();
       }
       setIsDisabled(false);
+      setInputError("");
     }
   });
 
   //add ItemAdders data to the parent form
-  useEffect(() => {
-    form.setValue(name, items);
-  }, [items]);
+  // useEffect(() => {
+  //   form.setValue(name, items);
+  // }, [items]);
 
   //buttons animation
-  useTactileAnimation(selectorActionRef, {});
-  useTactileAnimation(linkActionRef, {});
-  useTactileAnimation(addEditItemBtnRef, {});
+  useTactileAnimation(assetPickerRef);
+  // useTactileAnimation(linkActionRef);
+  useTactileAnimation(addEditItemBtnRef);
 
   //reset actionButton and text input value
   const resetInputs = () => {
-    setCurrentItem("");
+    setCurrentItem(undefined);
     setText("");
-    resetValue();
     setEditMode(false);
+    setAsset(undefined);
   };
 
   //set input values to the item which is being edited
@@ -147,38 +154,41 @@ export default function ItemAdder({
     if (item.name) {
       setText(item.name);
     }
-    setValue(item);
+    setAsset(item as AssetType);
     setEditMode(true);
   };
 
   const handleAddItem = () => {
     resetInputs();
-    const textIsValid = itemAdderInputSchema.parse(text);
 
-    //should at least have an icon/text
-    if (textIsValid || actionIcon) {
+    //validate text input
+    const textIsValid = textInputSchema.parse(text);
+
+    //should at least have an image/text
+    if (textIsValid || asset) {
       dispatch({
         type: ItemAdderActions.ADD_ITEM,
-        id: (nextItemId++).toString(),
+        id: nextItemId++,
         name: text,
-        icon: actionIcon,
+        image: asset?.image,
       });
+      //remove any error text
       setInputError("");
     }
   };
 
   const handleEditItem = () => {
+    if (currentItem === undefined) return;
     resetInputs();
-
     dispatch({
       type: ItemAdderActions.EDIT_ITEM,
       id: currentItem,
       name: text,
-      icon: actionIcon,
+      image: asset?.image,
     });
   };
 
-  const handleDeleteItem = (itemId: string) => {
+  const handleDeleteItem = (itemId: number) => {
     resetInputs();
 
     dispatch({
@@ -218,8 +228,14 @@ export default function ItemAdder({
           ></Input>
           <section className="flex gap-2">
             {/* ~~~~action buttons~~~~ */}
-            <AssetPickerPopOver ref={selectorActionRef}></AssetPickerPopOver>
-            <LinkAction ref={linkActionRef} text={text}></LinkAction>
+            <AssetPickerPopOver
+              ref={assetPickerRef}
+              value={asset}
+              onChange={setAsset}
+              assetGroups={assetGroups}
+              btnTriggerSize="sm"
+            ></AssetPickerPopOver>
+            {/* <LinkAction ref={linkActionRef} text={text}></LinkAction> */}
             {/* ~~~~action buttons~~~~  */}
             <Button
               ref={addEditItemBtnRef}
@@ -228,7 +244,7 @@ export default function ItemAdder({
               size="icon"
               className={`${
                 editMode ? "w-16" : "w-9"
-              } h-9 transition-all duration-300`}
+              } h-9 transition-opacity duration-300`}
               onClick={editMode ? handleEditItem : handleAddItem}
             >
               {editMode ? (
@@ -274,12 +290,12 @@ function ListItem({ item, handleEdit, handleDelete, isActive }: ListItemType) {
     >
       <section className="flex !items-center gap-2">
         <div className="relative h-8 w-8 rounded-md">
-          {item.icon ? (
+          {item.image ? (
             <Image
               className="rounded-md"
               fill
               alt={item.name!}
-              src={`http://127.0.0.1:8000/${item.icon}`}
+              src={`http://127.0.0.1:8000/${item.image}`}
             ></Image>
           ) : (
             <ImageOff
