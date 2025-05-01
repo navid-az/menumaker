@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef, useActionState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 //libraries
 import * as z from "zod";
@@ -32,6 +32,9 @@ import { getSliderData } from "./builderFormData";
 
 //actions and functions
 import { createMenu } from "@/app/actions";
+
+//functions and libraries
+import { slugify } from "@/lib/slugify";
 
 //zod schemas
 const InstanceSchema = z.array(
@@ -85,11 +88,11 @@ export type keyOfGlobalStylingSchemaType = keyof GlobalStylingType;
 //builder multipart form
 export default function Builder({
   ref,
-  businessSlug,
+  businessName,
   assetGroups,
 }: {
   ref: React.RefObject<HTMLDivElement | null>;
-  businessSlug: string;
+  businessName: string;
   assetGroups: AssetGroupType[];
 }) {
   const form = useForm<BuilderFormType>({
@@ -105,12 +108,6 @@ export default function Builder({
   const [validSections, setValidSections] = useState<sliderDataType[]>([]);
   const [activeConditionalInput, setActiveConditionalInput] =
     useState<keyOfBuilderSchemaType | null>(null);
-
-  //monitor the state of the form onSubmit
-  const [formState, action, pending] = useActionState(createMenu, {
-    success: null,
-    error: null,
-  });
 
   //global states
   const activeSection = useSlider((state) => state.activeSection);
@@ -160,19 +157,19 @@ export default function Builder({
   }, [!activeConditionalInput ? "" : form.watch(activeConditionalInput)]);
 
   //inform user by the result of the form submission
-  useEffect(() => {
-    if (formState.error) {
-      toast.error(formState.error, {
-        cancel: { label: "باشه" },
-      });
-    } else if (formState.success) {
-      toast.success("Menu created successfully!", {
-        cancel: { label: "باشه" },
-      });
-    }
-  }, [formState]);
+  // useEffect(() => {
+  //   if (formState.error) {
+  //     toast.error(formState.error, {
+  //       cancel: { label: "باشه" },
+  //     });
+  //   } else if (formState.success) {
+  //     toast.success("Menu created successfully!", {
+  //       cancel: { label: "باشه" },
+  //     });
+  //   }
+  // }, [formState]);
 
-  function onSubmit(values: BuilderFormType) {
+  async function onSubmit(values: BuilderFormType) {
     console.log("values:", values);
 
     const { business, global_styling, ...menuData } = values;
@@ -181,29 +178,37 @@ export default function Builder({
     const [primary_color, secondary_color, tertiary_color, bg_color] =
       global_styling.color_palette;
 
-    delete global_styling.color_palette;
+    // Create the cleaned-up global_styling object
+    const { color_palette, ...restStyling } = global_styling;
 
-    const payload = {
-      businessSlug: businessSlug,
-      data: {
-        ...menuData,
-        global_styling: {
-          ...global_styling,
-          primary_color,
-          secondary_color,
-          tertiary_color,
-          bg_color,
-        },
+    const data = {
+      ...menuData,
+      global_styling: {
+        ...restStyling,
+        primary_color,
+        secondary_color,
+        tertiary_color,
+        bg_color,
       },
     };
 
-    console.log("payload:", payload);
+    const businessSlug = slugify(businessName);
 
     //call server action
-    action(payload);
+    const res = await createMenu(businessSlug, data);
+
+    if (res.success) {
+      toast.success("Menu created successfully!", {
+        cancel: { label: "باشه" },
+      });
+    } else {
+      toast.error(res.error, {
+        cancel: { label: "باشه" },
+      });
+    }
   }
 
-  const onInvalid = (errors: BuilderFormType) => {
+  const onInvalid = (errors: any) => {
     console.log("invalid:", errors);
 
     // Check and set default values for radio groups if not selected

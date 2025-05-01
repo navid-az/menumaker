@@ -249,10 +249,7 @@ type menuType = {
   global_styling: GlobalStyling;
 };
 
-export async function createMenu(
-  prevState: any,
-  { businessSlug, data }: { businessSlug: string; data: menuType }
-) {
+export async function createMenu(businessSlug: string, data: menuType) {
   const accessToken = (await cookies()).get("access");
 
   try {

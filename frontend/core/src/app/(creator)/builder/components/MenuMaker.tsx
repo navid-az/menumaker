@@ -130,7 +130,7 @@ export default function MenuMaker({
         <Builder
           assetGroups={assetGroups}
           ref={builderFormRef}
-          businessSlug={businessSlug}
+          businessName={businessSlug}
         ></Builder>
       ) : (
         <Setup
