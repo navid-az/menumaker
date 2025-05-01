@@ -32,8 +32,6 @@ import { getSliderData } from "./builderFormData";
 
 //actions and functions
 import { createMenu } from "@/app/actions";
-
-//functions and libraries
 import { slugify } from "@/lib/slugify";
 
 //zod schemas
@@ -155,19 +153,6 @@ export default function Builder({
     updateSectionCount(updatedValidSections.length);
     updateActiveStepCount(updatedValidSections[activeSection - 1].steps.length);
   }, [!activeConditionalInput ? "" : form.watch(activeConditionalInput)]);
-
-  //inform user by the result of the form submission
-  // useEffect(() => {
-  //   if (formState.error) {
-  //     toast.error(formState.error, {
-  //       cancel: { label: "باشه" },
-  //     });
-  //   } else if (formState.success) {
-  //     toast.success("Menu created successfully!", {
-  //       cancel: { label: "باشه" },
-  //     });
-  //   }
-  // }, [formState]);
 
   async function onSubmit(values: BuilderFormType) {
     console.log("values:", values);

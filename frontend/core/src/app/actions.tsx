@@ -6,6 +6,7 @@ import { revalidatePath, revalidateTag } from "next/cache";
 
 //types
 import { SetupSchemaType } from "./(creator)/builder/components/setup/Setup";
+import { BuilderFormType } from "./(creator)/builder/components/builder/Builder";
 
 // import jwtDecoder from "@/lib/jwtDecoder";
 // type DecodedJwtType = {
@@ -242,14 +243,16 @@ type GlobalStyling = {
   click_animation: "ripple" | "tactile";
 };
 
-type menuType = {
-  item_page_type: "vertical" | "horizontal";
-  waiter_request_is_active: boolean;
-  search_item_is_active: boolean;
-  global_styling: GlobalStyling;
+type MenuType = Omit<BuilderFormType, "global_styling" | "business"> & {
+  global_styling: Omit<BuilderFormType["global_styling"], "color_palette"> & {
+    primary_color: string;
+    secondary_color: string;
+    tertiary_color: string;
+    bg_color: string;
+  };
 };
 
-export async function createMenu(businessSlug: string, data: menuType) {
+export async function createMenu(businessSlug: string, data: MenuType) {
   const accessToken = (await cookies()).get("access");
 
   try {
