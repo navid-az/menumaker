@@ -9,6 +9,7 @@ import AnimationSelector from "@/components/global/itemAdderButtons/AnimationSel
 import { type BuilderFormType } from "./Builder";
 import { UseFormReturn } from "react-hook-form";
 import { keyOfBuilderSchemaType } from "./Builder";
+import { AssetGroupType } from "@/components/global/AssetPicker";
 
 export type stepTabBase = {
   title: string;
@@ -46,7 +47,8 @@ export type sliderDataType = {
 };
 
 export const getSliderData = (
-  form: UseFormReturn<BuilderFormType>
+  form: UseFormReturn<BuilderFormType>,
+  assetGroups: AssetGroupType[]
 ): sliderDataType[] => [
   {
     title: "شخصی سازی",
@@ -125,6 +127,7 @@ export const getSliderData = (
             iconSrc: "/images/form-icons/single.svg",
             action: (
               <ItemAdder
+                assetGroups={assetGroups}
                 name="menu_sections"
                 limit={1}
                 placeholder="نام بخش"
@@ -138,6 +141,7 @@ export const getSliderData = (
             iconSrc: "/images/form-icons/couple.svg",
             action: (
               <ItemAdder
+                assetGroups={assetGroups}
                 name="menu_sections"
                 limit={3}
                 placeholder="نام بخش"
@@ -165,6 +169,7 @@ export const getSliderData = (
             iconSrc: "/images/form-icons/link.svg",
             action: (
               <ItemAdder
+                assetGroups={assetGroups}
                 name="social_links"
                 limit={4}
                 placeholder="نام بخش"
@@ -178,6 +183,7 @@ export const getSliderData = (
             iconSrc: "/images/form-icons/phone.svg",
             action: (
               <ItemAdder
+                assetGroups={assetGroups}
                 name="phone_numbers"
                 limit={3}
                 placeholder="نام بخش"

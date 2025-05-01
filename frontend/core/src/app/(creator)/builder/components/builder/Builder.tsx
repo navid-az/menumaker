@@ -76,6 +76,7 @@ const BuilderSchema = z.object({
 
 //types
 import { type sliderDataType } from "./builderFormData";
+import { AssetGroupType } from "@/components/global/AssetPicker";
 export type GlobalStylingType = z.infer<typeof GlobalStylingSchema>;
 export type BuilderFormType = z.infer<typeof BuilderSchema>;
 export type keyOfBuilderSchemaType = keyof BuilderFormType;
@@ -85,9 +86,11 @@ export type keyOfGlobalStylingSchemaType = keyof GlobalStylingType;
 export default function Builder({
   ref,
   businessSlug,
+  assetGroups,
 }: {
   ref: React.RefObject<HTMLDivElement | null>;
   businessSlug: string;
+  assetGroups: AssetGroupType[];
 }) {
   const form = useForm<BuilderFormType>({
     resolver: zodResolver(BuilderSchema),
@@ -97,7 +100,7 @@ export default function Builder({
     },
   });
 
-  const sliderData = getSliderData(form);
+  const sliderData = getSliderData(form, assetGroups);
 
   const [validSections, setValidSections] = useState<sliderDataType[]>([]);
   const [activeConditionalInput, setActiveConditionalInput] =
