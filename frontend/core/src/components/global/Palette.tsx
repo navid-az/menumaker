@@ -16,19 +16,14 @@ import { useColorPalette } from "@/lib/stores";
 type PaletteType = {
   colors: string[];
   disableOptions?: boolean;
+  handleRemoveColor?: (colorIndex: number) => void;
 };
 
 const Palette = ({
   colors,
   disableOptions = false, //if `true`: simple color palette visualizer
+  handleRemoveColor,
 }: PaletteType) => {
-  const removeColor = useColorPalette((state) => state.removeColor);
-
-  const handleDelete = (e: React.MouseEvent, index: number) => {
-    e.preventDefault();
-    removeColor(index);
-  };
-
   return (
     <div className="flex h-10 flex-1 flex-row-reverse rounded-full bg-white outline outline-2 outline-primary">
       {colors.map((color, index) => (
@@ -42,7 +37,8 @@ const Palette = ({
           {disableOptions ? null : colors.length > 2 ? (
             <>
               <Button
-                onClick={(e) => handleDelete(e, index)}
+                type="button"
+                onClick={() => handleRemoveColor && handleRemoveColor(index)}
                 className="w-auto bg-transparent opacity-0 transition-all duration-200 hover:scale-125 hover:!opacity-100 group-hover:opacity-80"
                 size="icon"
               >

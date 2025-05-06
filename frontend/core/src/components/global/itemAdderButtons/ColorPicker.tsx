@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 //components
 import {
@@ -11,22 +11,34 @@ import { Input } from "@/components/ui/input";
 
 //libraries
 import { HexColorPicker } from "react-colorful";
-import { useColorPalette } from "@/lib/stores";
 
 //SVGs
 import { Plus } from "lucide-react";
 
-//types
-type ColorPickerType = {
+export default function ColorPicker({
+  defaultValue = "#FFFFFF",
+  value,
+  onChange,
+  children,
+}: {
+  defaultValue?: string;
+  value?: string;
+  onChange?: (value: string) => void;
   children: React.ReactNode;
-};
+}) {
+  const [internalValue, setInternalValue] = useState(defaultValue);
+  const [tempColor, setTempColor] = useState(defaultValue);
 
-function ColorPicker({ children }: ColorPickerType) {
-  const addColor = useColorPalette((state) => state.updateColor);
-  const color = useColorPalette((state) => state.selectedColor);
-  const updateSelectedColor = useColorPalette(
-    (state) => state.updateSelectedColor
-  );
+  const isControlled = value !== undefined;
+  const color = isControlled ? value : internalValue;
+
+  const addColor = () => {
+    if (!isControlled) {
+      setInternalValue(tempColor);
+    }
+    onChange?.(tempColor);
+  };
+
   return (
     <Popover>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
@@ -34,15 +46,15 @@ function ColorPicker({ children }: ColorPickerType) {
         <div className="flex h-full flex-col gap-4 !rounded-xl border-2 border-primary bg-soft-blue !p-4">
           <HexColorPicker
             className="custom-color-picker !h-44 !w-full"
-            color={color}
-            onChange={updateSelectedColor}
+            color={tempColor}
+            onChange={setTempColor}
           ></HexColorPicker>
 
           <div className="relative">
             <div
               className="absolute bottom-0 right-1 top-1 h-8 w-8 rounded-md border"
               style={{
-                backgroundColor: color ? color : "#FFFFFF",
+                backgroundColor: tempColor ? tempColor : defaultValue,
               }}
             ></div>
             <Input
@@ -50,14 +62,11 @@ function ColorPicker({ children }: ColorPickerType) {
               dir="ltr"
               type="text"
               placeholder="#FFFFFF"
-              value={color}
-              onChange={(e) => updateSelectedColor(e.target.value)}
+              value={tempColor}
+              onChange={(e) => setTempColor(e.target.value)}
             />
           </div>
-          <Button
-            className="flex gap-2 text-sad-blue"
-            onClick={() => addColor(color)}
-          >
+          <Button className="flex gap-2 text-sad-blue" onClick={addColor}>
             افزودن رنگ
             <Plus></Plus>
           </Button>
@@ -66,5 +75,3 @@ function ColorPicker({ children }: ColorPickerType) {
     </Popover>
   );
 }
-
-export default ColorPicker;
