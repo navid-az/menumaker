@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useRef, useState } from "react";
 
 //Components
@@ -16,113 +18,110 @@ import { Check, Sparkles } from "lucide-react";
 //libraries
 import { useFormContext } from "react-hook-form";
 
-export default function AnimationSelector() {
-  const [selectedAnimations, setSelectedAnimations] = useState<
-    AnimationOptionsType[]
-  >([]);
+export default function AnimationSelector({
+  defaultValue = [],
+  value,
+  onChange,
+}: {
+  defaultValue?: AnimationOptionsType[];
+  value?: AnimationOptionsType[];
+  onChange?: (value: AnimationOptionsType[]) => void;
+}) {
+  const [internalValue, setInternalValue] =
+    useState<AnimationOptionsType[]>(defaultValue);
+  const isControlled = value !== undefined;
+  const selected = isControlled ? value! : internalValue;
 
   const previewBtnRef = useRef<HTMLButtonElement>(null);
-
   const tactileBtnRef = useRef<HTMLButtonElement>(null);
   const rippleBtnRef = useRef<HTMLButtonElement>(null);
-  const rippleTactileBtnRef = useRef<HTMLButtonElement>(null);
-  const noneBtnRef = useRef<HTMLButtonElement>(null);
 
-  const { watch, setValue } = useFormContext();
-  const colors = watch("global_styling.color_palette");
+  const { watch } = useFormContext();
+
+  //match preview button with the selected theme
+  const theme = watch("global_styling.color_palette");
 
   //animation for option buttons(default animation for app's buttons)
   useTactileAnimation(rippleBtnRef, { scale: 0.02 });
   useTactileAnimation(tactileBtnRef, { scale: 0.02 });
-  useTactileAnimation(rippleTactileBtnRef, { scale: 0.02 });
-  useTactileAnimation(noneBtnRef, { scale: 0.04 });
 
   //initial animations mount
   const triggerRippleAnimation = useRippleAnimation(
     previewBtnRef,
     {},
-    selectedAnimations.includes("ripple")
+    selected.includes("ripple")
   );
   const triggerTactileAnimation = useTactileAnimation(
     previewBtnRef,
     { scale: 0.04 },
-    selectedAnimations.includes("tactile")
+    selected.includes("tactile")
   );
 
-  //handle animation options button click
-  const handleBtnClick = (
-    e: React.MouseEvent,
-    animationType: AnimationOptionsType | ""
-  ) => {
-    e.preventDefault();
+  const toggle = (option: AnimationOptionsType) => {
+    const exists = selected.includes(option);
+    const newValue = exists
+      ? selected.filter((val) => val !== option)
+      : [...selected, option];
 
-    if (animationType) {
-      if (selectedAnimations.includes(animationType)) {
-        setSelectedAnimations((prev) =>
-          prev.filter((item) => item !== animationType)
-        );
-      } else {
-        setSelectedAnimations((prev) => [...prev, animationType]);
-      }
-    } else if (animationType.length == 0) {
-      setSelectedAnimations([]);
+    if (!isControlled) {
+      setInternalValue(newValue);
     }
+    onChange?.(newValue);
+    console.log(newValue);
   };
 
-  //Trigger selected animations & update click_animation_type accordingly
+  //trigger selected animations
   useEffect(() => {
-    if (selectedAnimations.includes("ripple")) {
+    if (selected.includes("ripple")) {
       triggerRippleAnimation();
     }
-    if (selectedAnimations.includes("tactile")) {
+    if (selected.includes("tactile")) {
       triggerTactileAnimation();
     }
-    setValue("global_styling.click_animation_type", selectedAnimations);
-  }, [selectedAnimations]);
+  }, [selected]);
 
   return (
     <div className="flex h-max w-full flex-col items-end gap-4 rounded-md">
       <Button
         type="button"
-        disabled={!selectedAnimations.length}
+        disabled={!selected.length}
         ref={previewBtnRef}
         className="scale-pro flex gap-2 border-2 shadow-sm transition-opacity duration-300"
         style={{
-          backgroundColor: colors ? colors[1] : "pink",
-          color: colors ? colors[0] : "brown",
-          borderColor: colors ? colors[0] : "pink",
+          backgroundColor: theme ? theme[1] : "pink",
+          color: theme ? theme[0] : "brown",
+          borderColor: theme ? theme[0] : "pink",
         }}
       >
         <Sparkles className="h-5 w-5"></Sparkles>
         <p className="font-normal">نمونه افکت</p>
       </Button>
+
       <section className="flex w-full gap-2">
         <Button
           ref={rippleBtnRef}
-          onClick={(e) => handleBtnClick(e, "ripple")}
+          onClick={() => toggle("ripple")}
           className={`scale-pro h-[52px] w-[52px] flex-1 gap-1 border-2 bg-sad-blue/80 px-4 text-base text-primary transition-[border-color,background-color] duration-300 ${
-            selectedAnimations.includes("ripple")
+            selected.includes("ripple")
               ? "border-primary bg-primary text-primary-foreground hover:border-primary"
               : "border-transparent hover:border-primary/30"
           }`}
+          type="button"
         >
-          {selectedAnimations.includes("ripple") && (
-            <Check className="h-6 w-6"></Check>
-          )}
+          {selected.includes("ripple") && <Check className="h-6 w-6"></Check>}
           <p>ریپل</p>
         </Button>
         <Button
           ref={tactileBtnRef}
-          onClick={(e) => handleBtnClick(e, "tactile")}
+          onClick={() => toggle("tactile")}
           className={`scale-pro h-[52px] w-[52px] flex-1 gap-1 border-2 bg-sad-blue/80 text-base text-primary transition-[border-color,background-color] duration-300 ${
-            selectedAnimations.includes("tactile")
+            selected.includes("tactile")
               ? "border-primary bg-primary text-primary-foreground hover:border-primary"
               : "border-transparent hover:border-primary/30"
           }`}
+          type="button"
         >
-          {selectedAnimations.includes("tactile") && (
-            <Check className="h-6 w-6"></Check>
-          )}
+          {selected.includes("tactile") && <Check className="h-6 w-6"></Check>}
           <p>تکتایل</p>
         </Button>
       </section>
