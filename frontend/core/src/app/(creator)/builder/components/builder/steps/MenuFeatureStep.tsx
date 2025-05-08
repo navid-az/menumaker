@@ -9,21 +9,12 @@ import { SliderStep } from "@/components/global/slider/Slider";
 import {
   SliderTab,
   SliderTabTitle,
-  SliderTabBody,
 } from "@/components/global/slider/SliderTab";
-import ItemAdder from "@/components/global/ItemAdder";
 
 //libraries
 import { useFormContext } from "react-hook-form";
 
-//types
-import { type AssetGroupType } from "@/components/global/AssetPicker";
-
-export default function MenuFeatureStep({
-  assetGroups,
-}: {
-  assetGroups: AssetGroupType[];
-}) {
+export default function MenuFeatureStep() {
   const { control } = useFormContext();
 
   return (

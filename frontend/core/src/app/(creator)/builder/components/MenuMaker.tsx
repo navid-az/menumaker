@@ -14,6 +14,7 @@ import { type AssetGroupType } from "@/components/global/AssetPicker";
 
 //hooks
 import { useSlider } from "@/lib/stores";
+import BuilderTest from "./builder/BuilderTest";
 
 export default function MenuMaker({
   assetGroups,
@@ -126,20 +127,11 @@ export default function MenuMaker({
 
   return (
     <section className="container m-auto flex h-screen w-full items-center justify-between gap-12 overflow-hidden">
-      {showBuilder ? (
-        <Builder
-          assetGroups={assetGroups}
-          ref={builderFormRef}
-          businessName={businessSlug}
-        ></Builder>
-      ) : (
-        <Setup
-          ref={setupFormRef}
-          handleCustomMenu={handleToggleForm}
-          handlePreBuiltMenu={handleToggleForm}
-          setBusinessSlug={setBusinessSlug}
-        ></Setup>
-      )}
+      <BuilderTest
+        ref={builderFormRef}
+        businessName={businessSlug}
+        assetGroups={assetGroups}
+      ></BuilderTest>
     </section>
   );
 }

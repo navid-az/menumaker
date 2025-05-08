@@ -28,7 +28,7 @@ export default function StyleStep() {
     >
       <FormField
         control={control}
-        name="categories_display_type"
+        name="global_styling.border_radius"
         render={({ field }) => (
           <FormItem>
             <FormControl>
@@ -39,7 +39,10 @@ export default function StyleStep() {
                   iconSrc="/images/form-icons/border.svg"
                 ></SliderTabTitle>
                 <SliderTabBody isOpen>
-                  <RadiusSelector></RadiusSelector>
+                  <RadiusSelector
+                    value={field.value}
+                    onChange={field.onChange}
+                  ></RadiusSelector>
                 </SliderTabBody>
               </SliderTab>
             </FormControl>
@@ -50,28 +53,41 @@ export default function StyleStep() {
         control={control}
         name="global_styling.click_animation_enabled"
         render={({ field }) => (
-          <FormItem>
-            <FormControl>
-              <SliderTab
-                onClick={() => console.log("clicked")}
-                isActive={field.value}
-              >
-                <SliderTabTitle
-                  title="انیمیشن"
-                  description="انیمیشنی که هنگام کلیک روی اجزای منو اجرا میشود"
-                  iconSrc="/images/form-icons/sparkles.svg"
-                >
+          <SliderTab
+            onClick={() => console.log("clicked")}
+            isActive={field.value}
+          >
+            <SliderTabTitle
+              title="انیمیشن"
+              description="انیمیشنی که هنگام کلیک روی اجزای منو اجرا میشود"
+              iconSrc="/images/form-icons/sparkles.svg"
+            >
+              <FormItem>
+                <FormControl>
                   <Switch
                     checked={field.value}
                     onCheckedChange={field.onChange}
-                  ></Switch>
-                </SliderTabTitle>
-                <SliderTabBody isOpen={field.value}>
-                  <AnimationSelector></AnimationSelector>
-                </SliderTabBody>
-              </SliderTab>
-            </FormControl>
-          </FormItem>
+                  />
+                </FormControl>
+              </FormItem>
+            </SliderTabTitle>
+            <SliderTabBody isOpen={field.value}>
+              <FormField
+                control={control}
+                name="global_styling.click_animation_type"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormControl>
+                      <AnimationSelector
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </SliderTabBody>
+          </SliderTab>
         )}
       />
     </SliderStep>

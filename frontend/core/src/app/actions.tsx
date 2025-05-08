@@ -243,7 +243,10 @@ type GlobalStyling = {
   click_animation: "ripple" | "tactile";
 };
 
-type MenuType = Omit<BuilderFormType, "global_styling" | "business"> & {
+type MenuType = Omit<
+  BuilderFormType,
+  "global_styling" | "business" | "menu_sections"
+> & {
   global_styling: Omit<BuilderFormType["global_styling"], "color_palette"> & {
     primary_color: string;
     secondary_color: string;

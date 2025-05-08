@@ -62,26 +62,29 @@ export default function ThemeStep() {
           </FormItem>
         )}
       />
-      <FormField
-        control={control}
-        name="categories_display_type"
-        render={({ field }) => (
-          <FormItem>
-            <FormControl>
-              <SliderTab onClick={() => console.log("cum")} isActive>
-                <SliderTabTitle
-                  title="رنگ بندی منو"
-                  description="پالت رنگی دلخواه خود را برای ظاهر منوی ایجاد کنید"
-                  iconSrc="/images/form-icons/pallet.svg"
-                ></SliderTabTitle>
-                <SliderTabBody isOpen>
-                  <PaletteBuilder></PaletteBuilder>
-                </SliderTabBody>
-              </SliderTab>
-            </FormControl>
-          </FormItem>
-        )}
-      />
+      <SliderTab onClick={() => console.log("cum")} isActive>
+        <SliderTabTitle
+          title="رنگ بندی منو"
+          description="پالت رنگی دلخواه خود را برای ظاهر منوی ایجاد کنید"
+          iconSrc="/images/form-icons/pallet.svg"
+        ></SliderTabTitle>
+        <SliderTabBody isOpen>
+          <FormField
+            control={control}
+            name="global_styling.color_palette"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormControl>
+                  <PaletteBuilder
+                    value={field.value}
+                    onChange={field.onChange}
+                  ></PaletteBuilder>
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </SliderTabBody>
+      </SliderTab>
     </SliderStep>
   );
 }
