@@ -11,70 +11,51 @@ import { LinkAction } from "./itemAdderButtons/LinkAction";
 
 //libraries
 import * as z from "zod";
-import { useFormContext } from "react-hook-form";
+import { nanoid } from "nanoid";
 
 //hooks
 import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
-import { useAssetPicker } from "@/lib/stores";
 
 //functions
 import isRTL from "@/lib/isRtl";
 
-// SVGs
+//SVGs
 import { Trash } from "@/app/components/svgs";
 import { Plus } from "@/app/components/svgs";
 import { Edit3, ImageOff } from "lucide-react";
 
 //types
 import { type AssetGroupType, type AssetType } from "./AssetPicker";
-export type ItemType = { id: number; name?: string; image?: string };
-type ItemsType = ItemType[];
-type ReducerActionType = ItemType & { type: ItemAdderActions };
+export type ItemType = { id: string; name?: string; asset?: AssetType };
 type ItemAdderType = {
   placeholder: string;
   limit?: number;
   name?: string;
-  initValue?: ItemsType;
+  defaultValue?: ItemType[];
+  value?: ItemType[];
+  onChange?: (value: ItemType[]) => void;
   assetGroups: AssetGroupType[];
 };
 
-//reducer actions
-enum ItemAdderActions {
-  ADD_ITEM,
-  DELETE_ITEM,
-  EDIT_ITEM,
-}
+type ItemAction =
+  | { type: "ADD"; payload: ItemType }
+  | { type: "UPDATE"; id: string; payload: Partial<ItemType> }
+  | { type: "DELETE"; id: string };
 
-const reducer = (items: ItemsType, action: ReducerActionType) => {
+const reducer = (items: ItemType[], action: ItemAction): ItemType[] => {
   switch (action.type) {
-    case ItemAdderActions.ADD_ITEM:
-      return [
-        ...items,
-        {
-          id: action.id,
-          name: action.name,
-          image: action.image,
-        },
-      ];
-    case ItemAdderActions.EDIT_ITEM:
-      return items.map((item) => {
-        if (item.id === action.id) {
-          return {
-            id: action.id,
-            name: action.name,
-            image: action.image,
-          };
-        } else {
-          return item;
-        }
-      });
-    case ItemAdderActions.DELETE_ITEM:
+    case "ADD":
+      return [...items, action.payload];
+    case "UPDATE":
+      return items.map((item) =>
+        item.id === action.id ? { ...item, ...action.payload } : item
+      );
+    case "DELETE":
       return items.filter((item) => item.id !== action.id);
     default:
       return items;
   }
 };
-let nextItemId = 0;
 
 const textInputSchema = z.string().max(50).nullable();
 
@@ -82,23 +63,22 @@ export default function ItemAdder({
   placeholder,
   limit = 3,
   name = "",
-  initValue = [],
+  defaultValue = [],
+  value,
+  onChange,
   assetGroups,
 }: ItemAdderType) {
-  const [items, dispatch] = useReducer(reducer, []);
+  const [internalState, dispatch] = useReducer(reducer, defaultValue);
+  const isControlled = value !== undefined;
+  const currentValue = isControlled ? value : internalState;
 
   const [asset, setAsset] = useState<AssetType>();
   const [text, setText] = useState("");
 
-  //get access to parent's form methods/data
-  // const form = useFormContext();
-
   const [isDisabled, setIsDisabled] = useState(false);
   const [editMode, setEditMode] = useState(false);
 
-  const [currentItem, setCurrentItem] = useState<number | undefined>(undefined);
-
-  // const { resetAsset } = useAssetPicker();
+  const [currentItemIndex, setCurrentItemIndex] = useState("");
 
   const [direction, setDirection] = useState<"ltr" | "rtl">("rtl");
   const [inputError, setInputError] = useState("");
@@ -114,15 +94,16 @@ export default function ItemAdder({
       if (!text && !asset) {
         setIsDisabled(true);
         setInputError("");
-      } else if (items.length >= limit) {
-        setInputError(`حداکثر میتوان ${limit} آیتم ایجاد کرد`);
+      } else if (currentValue.length >= limit) {
         setIsDisabled(true);
+        setInputError(`حداکثر میتوان ${limit} آیتم ایجاد کرد`);
       } else {
         setIsDisabled(false);
         setInputError("");
       }
     } else {
       if (textInputRef.current?.value) {
+        //autofocus on the name if there is nay
         textInputRef.current.focus();
       }
       setIsDisabled(false);
@@ -130,19 +111,14 @@ export default function ItemAdder({
     }
   });
 
-  //add ItemAdders data to the parent form
-  // useEffect(() => {
-  //   form.setValue(name, items);
-  // }, [items]);
-
   //buttons animation
   useTactileAnimation(assetPickerRef);
-  // useTactileAnimation(linkActionRef);
   useTactileAnimation(addEditItemBtnRef);
+  // useTactileAnimation(linkActionRef);
 
   //reset actionButton and text input value
   const resetInputs = () => {
-    setCurrentItem(undefined);
+    setCurrentItemIndex("");
     setText("");
     setEditMode(false);
     setAsset(undefined);
@@ -150,11 +126,11 @@ export default function ItemAdder({
 
   //set input values to the item which is being edited
   const setInputs = (item: ItemType) => {
-    setCurrentItem(item.id);
+    setCurrentItemIndex(item.id);
     if (item.name) {
       setText(item.name);
     }
-    setAsset(item as AssetType);
+    setAsset(item.asset);
     setEditMode(true);
   };
 
@@ -166,35 +142,54 @@ export default function ItemAdder({
 
     //should at least have an image/text
     if (textIsValid || asset) {
-      dispatch({
-        type: ItemAdderActions.ADD_ITEM,
-        id: nextItemId++,
-        name: text,
-        image: asset?.image,
-      });
+      if (!isControlled) {
+        dispatch({
+          type: "ADD",
+          payload: { id: nanoid(), name: text, asset: asset },
+        });
+      }
+      onChange?.([...value!, { id: nanoid(), name: text, asset: asset }]);
       //remove any error text
       setInputError("");
     }
   };
 
   const handleEditItem = () => {
-    if (currentItem === undefined) return;
+    if (currentItemIndex === undefined) return;
     resetInputs();
-    dispatch({
-      type: ItemAdderActions.EDIT_ITEM,
-      id: currentItem,
-      name: text,
-      image: asset?.image,
-    });
+
+    if (!isControlled) {
+      dispatch({
+        type: "UPDATE",
+        id: currentItemIndex,
+        payload: { name: text, asset: asset },
+      });
+    }
+    onChange?.(
+      value!.map((item) => {
+        if (item.id === currentItemIndex) {
+          return {
+            id: currentItemIndex,
+            name: text,
+            asset: asset,
+          };
+        } else {
+          return item;
+        }
+      })
+    );
   };
 
-  const handleDeleteItem = (itemId: number) => {
+  const handleDeleteItem = (itemId: string) => {
     resetInputs();
 
-    dispatch({
-      type: ItemAdderActions.DELETE_ITEM,
-      id: itemId,
-    });
+    if (!isControlled) {
+      dispatch({
+        type: "DELETE",
+        id: itemId,
+      });
+    }
+    onChange?.(value!.filter((item) => item.id !== itemId));
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -204,7 +199,7 @@ export default function ItemAdder({
   };
 
   const editing = (item: ItemType) => {
-    if (currentItem == item.id) {
+    if (currentItemIndex == item.id) {
       resetInputs();
     } else {
       setInputs(item);
@@ -221,10 +216,10 @@ export default function ItemAdder({
             name={name + "-text-input"}
             placeholder={placeholder}
             value={text}
+            onChange={handleInputChange}
             dir={`${direction === "rtl" ? "rtl" : "ltr"}`}
             className={`h-9 border-0 bg-sad-blue focus-visible:ring-primary/50`}
             isFocused
-            onChange={handleInputChange}
           ></Input>
           <section className="flex gap-2">
             {/* ~~~~action buttons~~~~ */}
@@ -258,15 +253,15 @@ export default function ItemAdder({
         {inputError && <p className="text-xs text-red-400">{inputError}</p>}
       </section>
       {/* items list */}
-      {items.length != 0 && (
+      {currentValue.length != 0 && (
         <section className="flex flex-col gap-2 rounded-md bg-sad-blue p-1 sm:p-2">
-          {items.map((item) => (
+          {currentValue.map((item) => (
             <ListItem
               key={item.id}
               item={item}
               handleEdit={() => editing(item)}
               handleDelete={() => handleDeleteItem(item.id)}
-              isActive={item.id === currentItem}
+              isActive={item.id === currentItemIndex}
             ></ListItem>
           ))}
         </section>
@@ -290,12 +285,12 @@ function ListItem({ item, handleEdit, handleDelete, isActive }: ListItemType) {
     >
       <section className="flex !items-center gap-2">
         <div className="relative h-8 w-8 rounded-md">
-          {item.image ? (
+          {item.asset ? (
             <Image
               className="rounded-md"
               fill
-              alt={item.name!}
-              src={`http://127.0.0.1:8000/${item.image}`}
+              alt={item.asset.name}
+              src={`http://127.0.0.1:8000/${item.asset.image}`}
             ></Image>
           ) : (
             <ImageOff
@@ -316,7 +311,7 @@ function ListItem({ item, handleEdit, handleDelete, isActive }: ListItemType) {
           className={`h-8 w-8 text-royal-green transition-transform duration-300 hover:scale-125 ${
             isActive ? "bg-primary hover:scale-95" : "bg-inherit"
           }`}
-          onClick={() => handleEdit()}
+          onClick={handleEdit}
         >
           <Edit3
             className={`h-5 w-5 ${
