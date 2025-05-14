@@ -15,14 +15,12 @@ import lightenDarkenColor from "@/lib/lightenDarkenColor";
 import mapAnimationsToConfigs from "@/lib/mapAnimationsToConfigs";
 
 //types
+import { type MenuGlobalStyling } from "../page";
 import { type AnimationConfigType } from "@/components/global/InteractiveWrapper";
-import { type AnimationVariantType } from "@/components/global/InteractiveWrapper";
 type CategoryBtnType = {
   icon: string;
   parentType?: string;
-  primary_color: string;
-  secondary_color: string;
-  animations?: AnimationVariantType[];
+  globalStyling: MenuGlobalStyling;
 };
 
 //hooks
@@ -74,17 +72,14 @@ export default function CategoryBtn({
   borderRadius,
   className,
   size,
-  primary_color,
-  secondary_color,
-  animations = [],
+  globalStyling,
 }: ButtonProps) {
   const [isIconOnly, setIsIconOnly] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  const activeCategory = useCategoryBtn((state) => state.activeCategory);
-  const setActiveCategory = useCategoryBtn(
-    (state) => state.updateActiveCategory
-  );
+  const { activeCategory, updateActiveCategory, updateIsAutoScrolling } =
+    useCategoryBtn();
+
   const shouldAutoAnimate = useCategoryBtn((state) => state.shouldAutoAnimate);
   const updateShouldAutoAnimate = useCategoryBtn(
     (state) => state.updateShouldAutoAnimate
@@ -98,53 +93,33 @@ export default function CategoryBtn({
     }
   }, [name, icon]);
 
-  //component specific animation settings
-  const categoryBtnAnimationConfigs: AnimationConfigType = {
-    ripple: {},
-    tactile: { scale: 0.08 },
-  };
-
-  //Function to map selected animations to their configs
-  const animationConfig = mapAnimationsToConfigs(
-    categoryBtnAnimationConfigs,
-    animations
-  );
-
-  //animations on click
-  const triggerRippleAnimation = useRippleAnimation(
-    buttonRef,
-    animationConfig.ripple,
-    !!animationConfig.ripple
-  );
-  const triggerTactileAnimation = useTactileAnimation(
-    buttonRef,
-    animationConfig.tactile,
-    !!animationConfig.tactile
-  );
-
   //style active CategoryBtn
   useEffect(() => {
     if (buttonRef.current) {
       if (activeCategory === id) {
         buttonRef.current.style.background = lightenDarkenColor(
-          secondary_color,
+          globalStyling.secondary_color,
           20
         );
-        buttonRef.current.style.border = `2px solid ${primary_color}`;
-        //programmatically trigger animations
-        if (shouldAutoAnimate) {
-          if (animationConfig.ripple) {
-            triggerRippleAnimation();
-          }
-          if (animationConfig.tactile) {
-            triggerTactileAnimation();
-          }
+        buttonRef.current.style.border = `2px solid ${globalStyling.primary_color}`;
+
+        const button = buttonRef.current;
+        const container = button.parentElement;
+
+        if (container) {
+          const buttonLeft = button.offsetLeft;
+          const scrollTo = buttonLeft - 16;
+
+          container.scrollTo({
+            left: scrollTo,
+            behavior: "smooth",
+          });
         }
         updateShouldAutoAnimate(true);
       } else {
         buttonRef.current.style.border = `2px solid transparent`;
-        buttonRef.current.style.background = secondary_color;
-        buttonRef.current.style.color = primary_color;
+        buttonRef.current.style.background = globalStyling.secondary_color;
+        buttonRef.current.style.color = globalStyling.primary_color;
       }
     }
   }, [activeCategory]);
@@ -152,11 +127,12 @@ export default function CategoryBtn({
   //move to the related items on click
   const moveToCat = () => {
     updateShouldAutoAnimate(false);
-    if (id) {
-      setActiveCategory(id);
+    updateIsAutoScrolling(true); // <--- lock observer
 
+    if (id) {
+      updateActiveCategory(id);
       const categoryTitle = document.getElementById(id);
-      const verticalCategoriesNavHeight = 56;
+      const verticalCategoriesNavHeight = 72;
 
       if (categoryTitle) {
         window.scroll({
@@ -166,6 +142,8 @@ export default function CategoryBtn({
             (parentType != "vertical" ? verticalCategoriesNavHeight : 0),
           behavior: "smooth",
         });
+
+        updateIsAutoScrolling(false);
       }
     }
   };
@@ -175,7 +153,10 @@ export default function CategoryBtn({
       id={`category-${id}`}
       onClick={moveToCat}
       className={cn(buttonVariants({ variant, size, borderRadius, className }))}
-      style={{ backgroundColor: secondary_color, color: primary_color }}
+      style={{
+        backgroundColor: globalStyling.secondary_color,
+        color: globalStyling.primary_color,
+      }}
       ref={buttonRef}
     >
       {icon && (

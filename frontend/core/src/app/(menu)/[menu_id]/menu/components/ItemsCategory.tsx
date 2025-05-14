@@ -58,7 +58,6 @@ export default async function ItemsCategory({
   hasBackGround = false,
   allowAnimation = true,
 }: ItemsCategoryType) {
-  // await new Promise((resolve) => setTimeout(resolve, 2000));
   const categories = await getCategories(params.menu_id);
   const globalStyling: MenuGlobalStyling = await getGlobalStyling(
     params.menu_id
@@ -66,11 +65,11 @@ export default async function ItemsCategory({
 
   return (
     <div
-      className={`hide-scrollbar avoid-stretch backdrop-blur-lg ${
+      className={`hide-scrollbar avoid-stretch ${
         isSticky && "sticky"
       } top-0 z-50 flex overflow-y-auto ${
         hasBackGround && "bg-primary"
-      } p-2 transition-all ${
+      } p-4 transition-all ${
         type == "horizontal"
           ? "w-full flex-row gap-2"
           : "flex-color h-screen w-2/12 flex-col gap-4"
@@ -86,9 +85,7 @@ export default async function ItemsCategory({
               name={category.name}
               parentType={type}
               icon={category.icon.image}
-              primary_color={globalStyling.primary_color}
-              secondary_color={globalStyling.secondary_color}
-              animations={globalStyling.click_animation}
+              globalStyling={globalStyling}
             ></CategoryBtn>
           )
       )}

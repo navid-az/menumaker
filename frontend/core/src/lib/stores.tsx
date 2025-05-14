@@ -163,19 +163,23 @@ export const useAssetPicker = create<useAssetPickerType>((set) => ({
 
 //~~~~ItemAdder ActionButton~~~~
 type CategoryBtn = {
-  activeCategory: string;
+  activeCategory: string | null;
+  isAutoScrolling: boolean;
   shouldAutoAnimate: boolean;
   updateShouldAutoAnimate: (value: boolean) => void;
+  updateIsAutoScrolling: (val: boolean) => void;
   updateActiveCategory: (id: string) => void;
 };
 
 export const useCategoryBtn = create<CategoryBtn>()((set) => ({
-  activeCategory: "",
+  activeCategory: null,
+  isAutoScrolling: false,
   shouldAutoAnimate: true,
   updateShouldAutoAnimate: (value) =>
     set(() => ({
       shouldAutoAnimate: value,
     })),
+  updateIsAutoScrolling: (value) => set({ isAutoScrolling: value }),
   updateActiveCategory: (id) => set(() => ({ activeCategory: id })),
 }));
 
