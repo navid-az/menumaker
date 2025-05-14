@@ -23,7 +23,7 @@ type PriceTagType = {
 
 export default function PriceTag({
   price,
-  unitDisplayType,
+  unitDisplayType = "default",
   size,
   removeZeroes = false,
   isLoading,

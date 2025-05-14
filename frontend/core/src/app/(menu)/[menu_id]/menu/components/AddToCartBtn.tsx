@@ -23,11 +23,11 @@ import { useItemCart } from "@/lib/stores";
 
 //types
 import { type AnimationConfigType } from "@/components/global/InteractiveWrapper";
+import { type MenuGlobalStyling } from "../page";
 type AddToCartBtnType = {
   itemId: number;
-  primaryColor: string;
-  secondaryColor: string;
   animations?: AnimationVariantType[];
+  globalStyling: MenuGlobalStyling;
 };
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLDivElement>,
@@ -66,13 +66,11 @@ const AddToCartBtnVariants = cva(
 
 export default function AddToCartBtn({
   itemId,
-  primaryColor,
-  secondaryColor,
   size,
-  borderRadius,
   variant,
   className,
-  animations = [],
+  borderRadius,
+  globalStyling,
 }: ButtonProps) {
   const cartItems = useItemCart((state) => state.items);
   const incrementItemCount = useItemCart((state) => state.incrementItemCount);
@@ -111,7 +109,7 @@ export default function AddToCartBtn({
       className={cn(
         AddToCartBtnVariants({ variant, size, borderRadius, className })
       )}
-      style={{ background: secondaryColor }}
+      style={{ backgroundColor: globalStyling.primary_color }}
     >
       {quantity > 0 ? (
         <>
@@ -119,14 +117,14 @@ export default function AddToCartBtn({
             name="increase"
             action={handleIncrement}
             iconSrc="plus"
-            borderRadius={borderRadius}
-            primaryColor={primaryColor}
-            secondaryColor={secondaryColor}
-            animations={animations}
+            globalStyling={globalStyling}
           ></ValueChangerBtn>
 
           <span className="mt-1 flex-initial basis-4/12 text-center text-lg">
-            <p className="text-2xl" style={{ color: primaryColor }}>
+            <p
+              className="text-2xl"
+              style={{ color: globalStyling.secondary_color }}
+            >
               {quantity}
             </p>
           </span>
@@ -134,18 +132,15 @@ export default function AddToCartBtn({
             name="decrease"
             action={handleDecrement}
             iconSrc={quantity != 1 ? "minus" : "trash"}
-            borderRadius={borderRadius}
-            primaryColor={primaryColor}
-            secondaryColor={secondaryColor}
-            animations={animations}
+            globalStyling={globalStyling}
           ></ValueChangerBtn>
         </>
       ) : (
         <Button
           className="h-full w-full rounded-full p-0"
           style={{
-            background: secondaryColor,
-            color: primaryColor,
+            background: globalStyling.primary_color,
+            color: globalStyling.secondary_color,
           }}
           onClick={handleAdd}
         >
@@ -162,10 +157,8 @@ type ValueChangeBtnType = {
   iconSrc: string;
   action: () => void;
   borderRadius?: "default" | "lg" | "md" | "sm" | null;
-  primaryColor: string;
-  secondaryColor: string;
   className?: string;
-  animations: AnimationVariantType[];
+  globalStyling: MenuGlobalStyling;
 };
 
 const ValueChangerBtn = ({
@@ -173,10 +166,8 @@ const ValueChangerBtn = ({
   iconSrc,
   action,
   borderRadius,
-  primaryColor,
-  secondaryColor,
   className,
-  animations = [],
+  globalStyling,
 }: ValueChangeBtnType) => {
   //component specific animation settings
   const AddToCartBtnAnimationConfigs: AnimationConfigType = {
@@ -186,40 +177,38 @@ const ValueChangerBtn = ({
 
   const animationSettings = mapAnimationsToConfigs(
     AddToCartBtnAnimationConfigs,
-    animations
+    globalStyling.click_animation_type
   );
 
   return (
-    <InteractiveWrapper asChild animations={animationSettings}>
-      <Button
-        name={name}
-        onClick={action}
-        size="icon"
-        className={cn(
-          `h-full w-14 ${
-            borderRadius === "lg"
-              ? "rounded-lg"
-              : borderRadius === "md"
-              ? "rounded-md"
-              : borderRadius === "sm"
-              ? "rounded-sm"
-              : "rounded-full"
-          }`,
-          className
-        )}
-        style={{
-          background: primaryColor,
-          color: secondaryColor,
-        }}
-      >
-        {iconSrc == "minus" ? (
-          <Minus className="h-full w-full" />
-        ) : iconSrc == "trash" ? (
-          <Trash className="h-full w-full" />
-        ) : (
-          <Plus className="h-full w-full" />
-        )}
-      </Button>
-    </InteractiveWrapper>
+    <Button
+      name={name}
+      onClick={action}
+      size="icon"
+      className={cn(
+        `h-full w-14 ${
+          borderRadius === "lg"
+            ? "rounded-lg"
+            : borderRadius === "md"
+            ? "rounded-md"
+            : borderRadius === "sm"
+            ? "rounded-sm"
+            : "rounded-full"
+        }`,
+        className
+      )}
+      style={{
+        background: globalStyling.secondary_color,
+        color: globalStyling.primary_color,
+      }}
+    >
+      {iconSrc == "minus" ? (
+        <Minus className="h-full w-full" />
+      ) : iconSrc == "trash" ? (
+        <Trash className="h-full w-full" />
+      ) : (
+        <Plus className="h-full w-full" />
+      )}
+    </Button>
   );
 };
