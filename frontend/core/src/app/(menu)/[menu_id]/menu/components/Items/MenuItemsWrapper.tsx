@@ -61,7 +61,7 @@ export default function MenuItemsWrapper({
                     ref={ref}
                     key={category.id}
                     id={category.id.toString()}
-                    className="grid h-auto w-full grid-cols-2 gap-4 px-4"
+                    className="grid h-auto grid-cols-2 gap-4 px-4"
                   >
                     {category.items.map((item) => (
                       <MenuItem

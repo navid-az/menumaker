@@ -7,13 +7,9 @@ import { Minus, Plus, Trash } from "@/app/components/svgs";
 
 //components
 import { Button } from "@/components/ui/button";
-import InteractiveWrapper, {
-  type AnimationVariantType,
-} from "@/components/global/InteractiveWrapper";
 
 //libraries
 import { cn } from "@/lib/utils";
-import { cva, type VariantProps } from "class-variance-authority";
 
 //functions
 import mapAnimationsToConfigs from "@/lib/mapAnimationsToConfigs";
@@ -26,68 +22,35 @@ import { type AnimationConfigType } from "@/components/global/InteractiveWrapper
 import { type MenuGlobalStyling } from "../page";
 type AddToCartBtnType = {
   itemId: number;
-  animations?: AnimationVariantType[];
   globalStyling: MenuGlobalStyling;
 };
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLDivElement>,
-    AddToCartBtnType,
-    VariantProps<typeof AddToCartBtnVariants> {}
-
-//component variants
-const AddToCartBtnVariants = cva(
-  `flex items-center justify-between transition-all`,
-  {
-    variants: {
-      size: {
-        default: "h-10 p-1",
-        sm: "h-9 rounded-md p-1",
-        lg: "h-11 rounded-md p-1.5",
-      },
-      variant: {
-        default: "",
-        minimal: "",
-        classic: "",
-      },
-      borderRadius: {
-        default: "rounded-full",
-        sm: "rounded-sm",
-        md: "rounded-md",
-        lg: "rounded-lg",
-      },
-    },
-    defaultVariants: {
-      size: "default",
-      variant: "default",
-      borderRadius: "default",
-    },
-  }
-);
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    AddToCartBtnType {}
 
 export default function AddToCartBtn({
   itemId,
-  size,
-  variant,
   className,
-  borderRadius,
   globalStyling,
 }: ButtonProps) {
-  const cartItems = useItemCart((state) => state.items);
-  const incrementItemCount = useItemCart((state) => state.incrementItemCount);
-  const decrementItemCount = useItemCart((state) => state.decrementItemCount);
-  const removeItem = useItemCart((state) => state.removeItem);
-  const addItem = useItemCart((state) => state.updateItems);
+  const {
+    items,
+    incrementItemCount,
+    decrementItemCount,
+    removeItem,
+    updateItems,
+  } = useItemCart();
 
   const [quantity, setQuantity] = useState(0);
 
   useEffect(() => {
-    const item = cartItems.find((item) => item.id === itemId);
+    const item = items.find((item) => item.id === itemId);
     if (item) {
       setQuantity(item.count);
     } else {
       setQuantity(0);
     }
-  }, [cartItems]);
+  }, [items]);
 
   const handleIncrement = () => {
     incrementItemCount(itemId);
@@ -100,44 +63,41 @@ export default function AddToCartBtn({
     }
   };
   const handleAdd = () => {
-    addItem(itemId);
+    updateItems(itemId);
   };
 
   return (
     <div
       onClick={(e) => e.stopPropagation()}
-      className={cn(
-        AddToCartBtnVariants({ variant, size, borderRadius, className })
-      )}
+      className="flex h-10 w-full justify-center gap-2 rounded-full"
       style={{ backgroundColor: globalStyling.primary_color }}
     >
       {quantity > 0 ? (
-        <>
-          <ValueChangerBtn
+        <div className="flex w-full items-center justify-between gap-3 p-1">
+          <StepperBtn
             name="increase"
             action={handleIncrement}
             iconSrc="plus"
             globalStyling={globalStyling}
-          ></ValueChangerBtn>
-
-          <span className="mt-1 flex-initial basis-4/12 text-center text-lg">
+          ></StepperBtn>
+          <span className="mt-1 flex-initial basis-2/12 text-center text-lg">
             <p
-              className="text-2xl"
+              className="text-xl"
               style={{ color: globalStyling.secondary_color }}
             >
               {quantity}
             </p>
           </span>
-          <ValueChangerBtn
+          <StepperBtn
             name="decrease"
             action={handleDecrement}
             iconSrc={quantity != 1 ? "minus" : "trash"}
             globalStyling={globalStyling}
-          ></ValueChangerBtn>
-        </>
+          ></StepperBtn>
+        </div>
       ) : (
         <Button
-          className="h-full w-full rounded-full p-0"
+          className="h-full w-full rounded-full"
           style={{
             background: globalStyling.primary_color,
             color: globalStyling.secondary_color,
@@ -145,7 +105,7 @@ export default function AddToCartBtn({
           onClick={handleAdd}
         >
           <Plus className="h-6 w-6 ltr:mr-2 rtl:ml-2" />
-          <p className="text-lg">افزودن</p>
+          <p className=" text-base">افزودن</p>
         </Button>
       )}
     </div>
@@ -161,7 +121,7 @@ type ValueChangeBtnType = {
   globalStyling: MenuGlobalStyling;
 };
 
-const ValueChangerBtn = ({
+const StepperBtn = ({
   name,
   iconSrc,
   action,
@@ -186,7 +146,7 @@ const ValueChangerBtn = ({
       onClick={action}
       size="icon"
       className={cn(
-        `h-full w-14 ${
+        `h-full w-24 flex-initial ${
           borderRadius === "lg"
             ? "rounded-lg"
             : borderRadius === "md"
@@ -203,11 +163,11 @@ const ValueChangerBtn = ({
       }}
     >
       {iconSrc == "minus" ? (
-        <Minus className="h-full w-full" />
+        <Minus className="h-8 w-8" />
       ) : iconSrc == "trash" ? (
-        <Trash className="h-full w-full" />
+        <Trash className="h-8 w-8" />
       ) : (
-        <Plus className="h-full w-full" />
+        <Plus className="h-8 w-8" />
       )}
     </Button>
   );
