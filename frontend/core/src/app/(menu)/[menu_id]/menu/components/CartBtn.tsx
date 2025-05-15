@@ -3,9 +3,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
 //libraries
-import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
-import { useItemCart } from "@/lib/stores";
 import gsap from "gsap";
 
 //components
@@ -14,45 +11,35 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
 //hooks
+import { useItemCart } from "@/lib/stores";
 import { useMenuItemDrawer } from "@/lib/stores";
 import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
-// import useConditionalAnimation from "@/app/hooks/useConditionalAnimation";
 
 //SVGs
 import { ShoppingBag } from "lucide-react";
 
 //types
-import { type CategoriesType } from "./Items/MenuItemsWrapper";
 import { type MenuItemType } from "./Items/MenuItem";
 import { type MenuGlobalStyling } from "../page";
+import { type CategoryType } from "./ItemsCategory";
 
 type CartBtnType = {
   type?: "default" | "compact";
+  categories: CategoryType[];
   globalStyling: MenuGlobalStyling;
 };
 
-export default function CartBtn({ type, globalStyling }: CartBtnType) {
-  const { isLoading, isError, data, error } = useQuery({
-    queryKey: ["categories"],
-    queryFn: async () => {
-      const { data } = await axios.get(
-        `http://127.0.0.1:8000/menu/${"venhan"}/categories`
-      );
-      return data as CategoriesType[];
-    },
-  });
-
-  // if (isError) {
-  //   const errorMessage = (error as Error).message;
-  //   return <span>Error: {errorMessage}</span>;
-  // }
-
+export default function CartBtn({
+  type = "default",
+  categories,
+  globalStyling,
+}: CartBtnType) {
   const cartBtnRef = useRef<HTMLButtonElement>(null);
 
   const DrawerIsOpen = useMenuItemDrawer((state) => state.isOpen);
   const cartItems = useItemCart((state) => state.items);
 
-  //store data of items inside cartItems
+  //store categories of items inside cartItems
   const [matchingItems, setMatchingItems] = useState<
     { item: MenuItemType; count: number }[]
   >([]);
@@ -61,8 +48,8 @@ export default function CartBtn({ type, globalStyling }: CartBtnType) {
     const items = cartItems
       .map((cartItem) => cartItem.id)
       .flatMap((cartItemId) => {
-        if (data) {
-          return data.flatMap((category) =>
+        if (categories) {
+          return categories.flatMap((category) =>
             category.items
               .filter((item) => item.id === cartItemId)
               .map((matchingItem) => ({
@@ -77,7 +64,7 @@ export default function CartBtn({ type, globalStyling }: CartBtnType) {
         }
       });
     setMatchingItems(items);
-  }, [isLoading, cartItems]);
+  }, [cartItems]);
 
   //show/hide cart button according to MenuItem Drawer & items count
   useEffect(() => {

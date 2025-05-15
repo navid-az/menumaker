@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import MenuItemsWrapper from "./components/Items/MenuItemsWrapper";
 import ItemsCategory from "./components/ItemsCategory";
+import CartBtn from "./components/CartBtn";
 
 //types
 import { type AnimationVariantType } from "@/components/global/InteractiveWrapper";
@@ -110,6 +111,7 @@ export default async function Page(props: {
         params={params}
         globalStyling={globalStyling}
       ></MenuItemsWrapper>
+      <CartBtn categories={categories} globalStyling={globalStyling}></CartBtn>
     </div>
   );
 }
