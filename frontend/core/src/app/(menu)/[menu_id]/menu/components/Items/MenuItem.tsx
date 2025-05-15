@@ -25,7 +25,8 @@ import {
   type AnimationConfigType,
   type AnimationVariantType,
 } from "@/components/global/InteractiveWrapper";
-import { MenuGlobalStyling } from "../../page";
+import { type MenuGlobalStyling } from "../../page";
+
 export type MenuItemType = {
   id: number;
   menu?: string;
@@ -49,8 +50,7 @@ export function MenuItem({
   price,
   is_active = true,
   is_available = false,
-  isFeatured = true,
-  animations = [],
+  isFeatured = false,
   globalStyling,
 }: MenuItemType) {
   //change the value of drawerIsOpen global state
@@ -67,42 +67,76 @@ export function MenuItem({
 
   const animationConfigs = mapAnimationsToConfigs(
     MenuItemAnimationConfigs,
-    animations
+    globalStyling.click_animation_type
   );
 
   return (
     <Drawer setBackgroundColorOnScale={false} onOpenChange={handleDrawer}>
       <DrawerTrigger asChild>
-        <div className="relative col-span-2 flex h-[300px] flex-none flex-col xss:col-span-1">
-          <div className="relative flex h-full w-full">
-            <Image
-              className="rounded-b-3xl rounded-t-2xl object-cover"
-              src={`http://127.0.0.1:8000/${image}`}
-              alt={name}
-              fill
-            ></Image>
-          </div>
-          <div
-            style={{
-              color: globalStyling.primary_color,
-              backgroundColor: globalStyling.secondary_color,
-            }}
-            className={`absolute bottom-0 flex w-full flex-none shrink-0 basis-5/12 flex-col justify-between gap-3 rounded-b-2xl p-2`}
-          >
-            <div className="space-y-0.5">
-              <p className="text-lg font-semibold">{name}</p>
-              <PriceTag size="sm" price={price}></PriceTag>
+        {isFeatured ? (
+          <div className="relative col-span-2 flex h-[300px] flex-none flex-col">
+            <div className="relative flex h-full w-full">
+              <Image
+                className="rounded-b-3xl rounded-t-2xl object-cover"
+                src={`http://127.0.0.1:8000/${image}`}
+                alt={name}
+                fill
+              ></Image>
             </div>
-            <AddToCartBtn
-              size="sm"
-              itemId={id}
-              animations={animations}
-              globalStyling={globalStyling}
-            ></AddToCartBtn>
+            <div
+              style={{
+                color: globalStyling.primary_color,
+                backgroundColor: globalStyling.secondary_color,
+              }}
+              className={`absolute bottom-0 flex w-full flex-none shrink-0 basis-5/12 flex-col justify-between gap-3 rounded-b-2xl p-3`}
+            >
+              <div className="flex flex-col">
+                <p className="text-lg font-semibold">{name}</p>
+                <p className="text-sm font-normal">{description}</p>
+              </div>
+              <div className="flex justify-between">
+                <PriceTag
+                  unitDisplayType="compact"
+                  removeZeroes
+                  price={price}
+                ></PriceTag>
+                <AddToCartBtn
+                  itemId={id}
+                  globalStyling={globalStyling}
+                ></AddToCartBtn>
+              </div>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="relative flex h-[300px] flex-none flex-col xss:col-span-1">
+            <div className="relative flex h-full w-full">
+              <Image
+                className="rounded-b-3xl rounded-t-2xl object-cover"
+                src={`http://127.0.0.1:8000/${image}`}
+                alt={name}
+                fill
+              ></Image>
+            </div>
+            <div
+              style={{
+                color: globalStyling.primary_color,
+                backgroundColor: globalStyling.secondary_color,
+              }}
+              className={`absolute bottom-0 flex w-full flex-none shrink-0 basis-5/12 flex-col justify-between gap-3 rounded-b-2xl p-2`}
+            >
+              <div className="space-y-0.5">
+                <p className="text-lg font-semibold">{name}</p>
+                <PriceTag size="sm" price={price}></PriceTag>
+              </div>
+              <AddToCartBtn
+                itemId={id}
+                globalStyling={globalStyling}
+              ></AddToCartBtn>
+            </div>
+          </div>
+        )}
       </DrawerTrigger>
-      <DrawerContent className="rounded-t-3xl border-0 bg-slate-200 pt-1.5">
+      <DrawerContent className="rounded-t-3xl border-0 bg-white pt-1.5">
         {/* drawer handle */}
         <div
           className="mx-auto mb-1.5 h-2 w-[100px] rounded-full"
@@ -138,7 +172,6 @@ export function MenuItem({
         </DrawerHeader>
         <DrawerFooter>
           <AddToCartBtn
-            size="lg"
             itemId={id}
             globalStyling={globalStyling}
           ></AddToCartBtn>
