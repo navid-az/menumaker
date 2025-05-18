@@ -69,7 +69,6 @@ export default function CategoryBtn({
   parentType,
   id,
   variant,
-  borderRadius,
   className,
   size,
   globalStyling,
@@ -93,34 +92,23 @@ export default function CategoryBtn({
     }
   }, [name, icon]);
 
-  //style active CategoryBtn
+  //scroll to the target category
   useEffect(() => {
-    if (buttonRef.current) {
-      if (activeCategory === id) {
-        buttonRef.current.style.background = lightenDarkenColor(
-          globalStyling.secondary_color,
-          20
-        );
-        buttonRef.current.style.border = `2px solid ${globalStyling.primary_color}`;
+    if (buttonRef.current && activeCategory === id) {
+      const button = buttonRef.current;
+      const container = button.parentElement;
 
-        const button = buttonRef.current;
-        const container = button.parentElement;
+      if (container) {
+        const buttonLeft = button.offsetLeft;
+        const scrollTo = buttonLeft - 16;
 
-        if (container) {
-          const buttonLeft = button.offsetLeft;
-          const scrollTo = buttonLeft - 16;
-
-          container.scrollTo({
-            left: scrollTo,
-            behavior: "smooth",
-          });
-        }
-        updateShouldAutoAnimate(true);
-      } else {
-        buttonRef.current.style.border = `2px solid transparent`;
-        buttonRef.current.style.background = globalStyling.secondary_color;
-        buttonRef.current.style.color = globalStyling.primary_color;
+        container.scrollTo({
+          left: scrollTo,
+          behavior: "smooth",
+        });
       }
+
+      updateShouldAutoAnimate(true);
     }
   }, [activeCategory]);
 
@@ -152,11 +140,13 @@ export default function CategoryBtn({
     <Button
       id={`category-${id}`}
       onClick={moveToCat}
-      className={cn(buttonVariants({ variant, size, borderRadius, className }))}
-      style={{
-        backgroundColor: globalStyling.secondary_color,
-        color: globalStyling.primary_color,
-      }}
+      className={cn(
+        "h-10 flex-none select-none rounded-[var(--radius-base)] border-2 bg-[color:var(--secondary)] px-4 py-2 text-[color:var(--primary)] transition-colors duration-500",
+        activeCategory === id
+          ? "border-[color:var(--primary)]"
+          : "border-transparent",
+        className
+      )}
       ref={buttonRef}
     >
       {icon && (

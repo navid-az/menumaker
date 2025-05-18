@@ -69,8 +69,10 @@ export default function AddToCartBtn({
   return (
     <div
       onClick={(e) => e.stopPropagation()}
-      className="flex h-10 w-full justify-center gap-2 rounded-full"
-      style={{ backgroundColor: globalStyling.primary_color }}
+      className={cn(
+        "flex h-10 w-full justify-center gap-2 rounded-[var(--radius-base)] bg-[color:var(--primary)]",
+        className
+      )}
     >
       {quantity > 0 ? (
         <div className="flex w-full items-center justify-between gap-3 p-1">
@@ -80,13 +82,8 @@ export default function AddToCartBtn({
             iconSrc="plus"
             globalStyling={globalStyling}
           ></StepperBtn>
-          <span className="mt-1 flex-initial basis-2/12 text-center text-lg">
-            <p
-              className="text-xl"
-              style={{ color: globalStyling.secondary_color }}
-            >
-              {quantity}
-            </p>
+          <span className="mt-1 flex-initial basis-2/12 text-center text-lg text-[color:var(--secondary)]">
+            <p className="text-xl">{quantity}</p>
           </span>
           <StepperBtn
             name="decrease"
@@ -97,11 +94,7 @@ export default function AddToCartBtn({
         </div>
       ) : (
         <Button
-          className="h-full w-full rounded-full"
-          style={{
-            background: globalStyling.primary_color,
-            color: globalStyling.secondary_color,
-          }}
+          className="h-full w-full rounded-full bg-[color:var(--primary)] text-[color:var(--secondary)]"
           onClick={handleAdd}
         >
           <Plus className="h-6 w-6 ltr:mr-2 rtl:ml-2" />
@@ -146,21 +139,9 @@ const StepperBtn = ({
       onClick={action}
       size="icon"
       className={cn(
-        `h-full w-24 flex-initial ${
-          borderRadius === "lg"
-            ? "rounded-lg"
-            : borderRadius === "md"
-            ? "rounded-md"
-            : borderRadius === "sm"
-            ? "rounded-sm"
-            : "rounded-full"
-        }`,
+        `h-full w-24 flex-initial rounded-[var(--radius-inner)] bg-[color:var(--secondary)] text-[color:var(--primary)]`,
         className
       )}
-      style={{
-        background: globalStyling.secondary_color,
-        color: globalStyling.primary_color,
-      }}
     >
       {iconSrc == "minus" ? (
         <Minus className="h-8 w-8" />
