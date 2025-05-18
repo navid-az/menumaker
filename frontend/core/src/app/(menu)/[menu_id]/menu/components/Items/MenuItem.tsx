@@ -1,5 +1,7 @@
 "use client";
 
+import React from "react";
+
 //components
 import Image from "next/image";
 import {
@@ -40,6 +42,7 @@ export type MenuItemType = {
   isFeatured?: boolean;
   animations?: AnimationVariantType[];
   globalStyling: MenuGlobalStyling;
+  styleVars: React.CSSProperties;
 };
 
 export function MenuItem({
@@ -52,6 +55,7 @@ export function MenuItem({
   is_available = false,
   isFeatured = false,
   globalStyling,
+  styleVars,
 }: MenuItemType) {
   //change the value of drawerIsOpen global state
   const setDrawerIsOpen = useMenuItemDrawer((state) => state.updateIsOpen);
@@ -77,18 +81,14 @@ export function MenuItem({
           <div className="relative col-span-2 flex h-[300px] flex-none flex-col">
             <div className="relative flex h-full w-full">
               <Image
-                className="rounded-b-3xl rounded-t-2xl object-cover"
+                className="rounded-[var(--radius-base)] object-cover"
                 src={`http://127.0.0.1:8000/${image}`}
                 alt={name}
                 fill
               ></Image>
             </div>
             <div
-              style={{
-                color: globalStyling.primary_color,
-                backgroundColor: globalStyling.secondary_color,
-              }}
-              className={`absolute bottom-0 flex w-full flex-none shrink-0 basis-5/12 flex-col justify-between gap-3 rounded-b-2xl p-3`}
+              className={`absolute  bottom-0 flex w-full flex-none shrink-0 basis-5/12 flex-col justify-between rounded-b-[var(--radius-base)] bg-[color:var(--primary)] p-3 text-[color:var(--secondary)]`}
             >
               <div className="flex flex-col">
                 <p className="text-lg font-semibold">{name}</p>
@@ -111,18 +111,14 @@ export function MenuItem({
           <div className="relative flex h-[300px] flex-none flex-col xss:col-span-1">
             <div className="relative flex h-full w-full">
               <Image
-                className="rounded-b-3xl rounded-t-2xl object-cover"
+                className="rounded-[var(--radius-base)] object-cover"
                 src={`http://127.0.0.1:8000/${image}`}
                 alt={name}
                 fill
               ></Image>
             </div>
             <div
-              style={{
-                color: globalStyling.primary_color,
-                backgroundColor: globalStyling.secondary_color,
-              }}
-              className={`absolute bottom-0 flex w-full flex-none shrink-0 basis-5/12 flex-col justify-between gap-3 rounded-b-2xl p-2`}
+              className={`absolute bottom-0 flex w-full flex-none shrink-0 basis-5/12 flex-col justify-between gap-3 rounded-b-[var(--radius-base)] bg-[color:var(--secondary)] p-2 text-[color:var(--primary)]`}
             >
               <div className="space-y-0.5">
                 <p className="text-lg font-semibold">{name}</p>
@@ -136,26 +132,23 @@ export function MenuItem({
           </div>
         )}
       </DrawerTrigger>
-      <DrawerContent className="rounded-t-3xl border-0 bg-white pt-1.5">
+      <DrawerContent
+        style={styleVars}
+        className="rounded-t-3xl border-0 bg-white pt-1.5"
+      >
         {/* drawer handle */}
-        <div
-          className="mx-auto mb-1.5 h-2 w-[100px] rounded-full"
-          style={{ background: globalStyling.primary_color }}
-        ></div>
+        <div className="mx-auto mb-1.5 h-2 w-[100px] rounded-full bg-[color:var(--primary)]"></div>
 
         <div className="relative h-56 w-full xss:h-64 sm:h-[300px]">
           <Image
-            className="rounded-3xl object-cover px-1.5"
+            className="rounded-3xl object-cover px-1.5 "
             src={`http://127.0.0.1:8000/${image}`}
             alt={name}
             fill
           ></Image>
         </div>
         <DrawerHeader className="flex flex-col text-right">
-          <div
-            className="flex w-full items-center justify-between"
-            style={{ color: globalStyling.primary_color }}
-          >
+          <div className="flex w-full items-center justify-between text-[color:var(--primary)]">
             <DrawerTitle className="text-xl xss:text-2xl">{name}</DrawerTitle>
             <PriceTag
               size="lg"
@@ -163,10 +156,7 @@ export function MenuItem({
               unitDisplayType="compact"
             ></PriceTag>
           </div>
-          <DrawerDescription
-            className="text-right font-light ltr:text-left"
-            style={{ color: globalStyling.primary_color }}
-          >
+          <DrawerDescription className="text-right font-light text-[color:var(--primary)] ltr:text-left">
             {description}
           </DrawerDescription>
         </DrawerHeader>

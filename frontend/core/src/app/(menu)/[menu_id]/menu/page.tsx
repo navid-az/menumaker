@@ -22,7 +22,13 @@ export type MenuGlobalStyling = {
 };
 
 //SVGs
-import { AlignLeft, Filter, Search, ShoppingBag } from "lucide-react";
+import {
+  AlignLeft,
+  ConciergeBell,
+  Filter,
+  Search,
+  ShoppingBag,
+} from "lucide-react";
 
 // GET menu global stylings
 export async function getGlobalStyling(menu_id: string) {
@@ -58,58 +64,70 @@ export default async function Page(props: {
   params: Promise<{ menu_id: string }>;
 }) {
   const params = await props.params;
-  const globalStyling = await getGlobalStyling(params.menu_id);
+  const globalStyling: MenuGlobalStyling = await getGlobalStyling(
+    params.menu_id
+  );
   const categories = await getMenuCategories(params.menu_id);
 
+  const styleVars = {
+    "--primary": globalStyling.primary_color,
+    "--secondary": globalStyling.secondary_color,
+    "--tertiary": globalStyling.tertiary_color,
+    "--bg": globalStyling.bg_color,
+    "--radius-base":
+      globalStyling.border_radius === "sm"
+        ? "4px"
+        : globalStyling.border_radius === "md"
+        ? "6px"
+        : globalStyling.border_radius === "lg"
+        ? "8px"
+        : "9999px", // full
+    "--radius-inner":
+      globalStyling.border_radius === "sm"
+        ? "2px"
+        : globalStyling.border_radius === "md"
+        ? "4px"
+        : globalStyling.border_radius === "lg"
+        ? "6px"
+        : "9999px", // full
+  };
+
   return (
-    <div className="relative flex flex-col bg-white">
+    <div
+      style={styleVars as React.CSSProperties}
+      className="relative flex flex-col bg-white"
+    >
       <section className="flex w-full flex-col gap-4 px-4 pt-4">
         <section className="flex items-center justify-between">
-          <Button
-            className="flex w-max items-center justify-between gap-2 rounded-full bg-white px-4"
-            style={{
-              color: globalStyling.primary_color,
-              backgroundColor: globalStyling.secondary_color,
-            }}
-          >
+          <Button className="flex w-max items-center justify-between gap-2 rounded-[var(--radius-base)] bg-[color:var(--secondary)] px-4 text-[color:var(--primary)]">
             <ShoppingBag className="h-5 w-5"></ShoppingBag>
             <p className="mt-1 text-lg">2</p>
           </Button>
-          <AlignLeft
-            className="ml-2"
-            style={{
-              color: globalStyling.primary_color,
-            }}
-          ></AlignLeft>
+          <AlignLeft className="ml-2 text-[color:var(--primary)]"></AlignLeft>
         </section>
         <div className="flex gap-2">
-          <div
-            className="flex w-full items-center rounded-full px-3 py-2.5"
-            style={{
-              color: globalStyling.primary_color,
-              backgroundColor: globalStyling.secondary_color,
-            }}
-          >
+          <div className="flex w-full items-center rounded-[var(--radius-base)] bg-[color:var(--secondary)] px-3 py-2.5 text-[color:var(--primary)]">
             <Search className="ml-1.5 h-5 w-5 opacity-80"></Search>
             <p className="text-sm opacity-80">جستجو</p>
           </div>
           <Button
             size="icon"
-            className="flex-none rounded-full"
-            style={{
-              color: globalStyling.primary_color,
-              backgroundColor: globalStyling.secondary_color,
-            }}
+            className="flex-none rounded-[var(--radius-base)] bg-[color:var(--secondary)] text-[color:var(--primary)]"
           >
             <Filter className="h-5 w-5"></Filter>
           </Button>
         </div>
+        <Button className="w-max flex-none rounded-full bg-orange-300 text-orange-800">
+          <ConciergeBell className="ml-2"></ConciergeBell>
+          <p>سالن دار</p>
+        </Button>
       </section>
       <ItemsCategory params={params}></ItemsCategory>
       <MenuItemsWrapper
         categories={categories}
         params={params}
         globalStyling={globalStyling}
+        styleVars={styleVars as React.CSSProperties}
       ></MenuItemsWrapper>
       <CartBtn categories={categories} globalStyling={globalStyling}></CartBtn>
     </div>
