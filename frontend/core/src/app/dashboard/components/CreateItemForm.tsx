@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
 //components
+import Image from "next/image";
 import {
   Dialog,
   DialogContent,
@@ -36,6 +37,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import Uploader from "./Uploader";
 
 //SVGs
 import { Plus, Loader2 } from "lucide-react";
@@ -48,6 +50,15 @@ import { useForm } from "react-hook-form";
 
 //server actions
 import { createItem } from "@/app/actions";
+
+//types
+import { type CategoriesType } from "@/app/(menu)/[menu_id]/menu/components/Items/MenuItemsWrapper";
+type CreateItemFormType = {
+  businessSlug: string;
+  categories: CategoriesType[];
+  title: string;
+  description: string;
+};
 
 const FormSchema = z.object({
   image: z
@@ -72,15 +83,6 @@ const FormSchema = z.object({
     invalid_type_error: "Category must be a number",
   }),
 });
-
-//types
-import { type CategoriesType } from "@/app/(menu)/[menu_id]/menu/components/Items/MenuItemsWrapper";
-type CreateItemFormType = {
-  businessSlug: string;
-  categories: CategoriesType[];
-  title: string;
-  description: string;
-};
 
 export function CreateItemForm({
   businessSlug,
@@ -158,22 +160,7 @@ export function CreateItemForm({
             <FormField
               control={form.control}
               name="image"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>تصویر</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        field.onChange(file);
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              render={() => <Uploader name="image" label="تصویر" />}
             />
             <section className="flex gap-2">
               <FormField
@@ -199,7 +186,17 @@ export function CreateItemForm({
                               key={category.id}
                               value={category.id.toString()}
                             >
-                              {category.name}
+                              {category.name || (
+                                <Image
+                                  width={25}
+                                  height={25}
+                                  alt={category.name}
+                                  src={
+                                    "http://localhost:8000/" +
+                                    category.icon.image
+                                  }
+                                ></Image>
+                              )}
                             </SelectItem>
                           ))}
                         </SelectContent>
