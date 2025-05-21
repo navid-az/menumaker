@@ -166,18 +166,37 @@ export async function getItems() {
   return res.json();
 }
 
-export async function createItem(data: ItemType) {
-  const res = await fetch("http://127.0.0.1:8000/menu/venhan/items/create/", {
-    method: "POST",
-    body: JSON.stringify(data),
-  });
-  if (!res.ok) {
-    throw new Error("Failed to fetch data");
-  }
-  console.log("HEADERS:", res.headers);
-  const items = await res.json();
+export async function createItem(businessSlug: string, data: FormData) {
+  const accessToken = (await cookies()).get("access");
+  try {
+    const res = await fetch(
+      `http://127.0.0.1:8000/business/${businessSlug}/items/create/`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken?.value}`,
+        },
+        body: data,
+      }
+    );
+    if (!res.ok) {
+      const errorData = await res.json();
+      console.log("errorData:", errorData);
 
-  return items;
+      return {
+        success: false,
+        error: errorData.error,
+      };
+    }
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.message || "An unexpected error occurred",
+    };
+  }
+
+  revalidatePath(`/dashboard/${businessSlug}/data/items`);
+  return { success: true };
 }
 
 export async function updateItem(

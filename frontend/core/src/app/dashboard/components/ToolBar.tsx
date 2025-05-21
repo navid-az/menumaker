@@ -17,11 +17,14 @@ import { CreateCategoryForm } from "./CreateCategoryForm";
 
 //types
 import { AssetGroupType } from "@/components/global/AssetPicker";
+import { CategoriesType } from "@/app/(menu)/[menu_id]/menu/components/Items/MenuItemsWrapper";
 
 export default function ToolBar({
   assetGroups,
+  categories,
 }: {
   assetGroups: AssetGroupType[];
+  categories: CategoriesType[];
 }) {
   const pathName = usePathname();
 
@@ -83,13 +86,12 @@ export default function ToolBar({
           >
             <Filter className="h-5 w-5"></Filter>
           </Button>
-          <FormDialog
+          <CreateItemForm
+            businessSlug={businessSlug}
+            categories={categories}
             title="ایجاد آیتم"
-            description="با انتخاب گزینه های مورد نظر آیتمی جدید به منو اضافه کنید"
-            form="item-form"
-          >
-            <CreateItemForm></CreateItemForm>
-          </FormDialog>
+            description="با انتخاب گزینه های مورد نظر آیتم جدید به منو اضافه کنید"
+          ></CreateItemForm>
         </div>
       )}
       {parentSection === "data" && childSection === "categories" && (
