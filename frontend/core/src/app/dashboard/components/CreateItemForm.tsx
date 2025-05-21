@@ -74,13 +74,12 @@ const FormSchema = z.object({
     )
     .optional(),
   name: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
+    message: "نام آیتم باید حداقل ۲ حرف باشد",
   }),
   description: z.string().optional(),
   price: z.coerce.number(),
   category: z.number({
-    required_error: "Please select a category",
-    invalid_type_error: "Category must be a number",
+    required_error: "لطفا یک دسته را انتخاب کنید",
   }),
 });
 
@@ -202,7 +201,7 @@ export function CreateItemForm({
                         </SelectContent>
                       </Select>
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="font-normal" />
                   </FormItem>
                 )}
               />
@@ -221,7 +220,7 @@ export function CreateItemForm({
                         />
                       </div>
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="font-normal" />
                   </FormItem>
                 )}
               />
