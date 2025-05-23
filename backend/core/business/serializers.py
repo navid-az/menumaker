@@ -41,6 +41,10 @@ class ItemCreateUpdateSerializer(serializers.ModelSerializer):
     # forbids changing business updates
     business = serializers.PrimaryKeyRelatedField(read_only=True)
 
+    # sets them to True by default if not provided
+    is_available = serializers.BooleanField(default=True, required=False)
+    is_active = serializers.BooleanField(default=True, required=False)
+
     class Meta:
         model = Item
         fields = '__all__'
