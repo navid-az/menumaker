@@ -104,14 +104,14 @@ export async function createCategory(
 }
 
 export async function updateCategory(
-  menuSlug: string,
+  businessSlug: string,
   categoryId: number,
   data: object
 ) {
   const accessToken = (await cookies()).get("access");
 
   const res = await fetch(
-    `http://127.0.0.1:8000/menu/${menuSlug}/categories/${categoryId}/update/`,
+    `http://127.0.0.1:8000/business/${businessSlug}/categories/${categoryId}/update/`,
     {
       method: "PUT",
       headers: {
@@ -200,14 +200,14 @@ export async function createItem(businessSlug: string, data: FormData) {
 }
 
 export async function updateItem(
-  menuSlug: string,
+  businessSlug: string,
   itemId: number,
   data: object
 ) {
   const accessToken = (await cookies()).get("access");
 
   const res = await fetch(
-    `http://127.0.0.1:8000/menu/${menuSlug}/items/${itemId}/update/`,
+    `http://127.0.0.1:8000/business/${businessSlug}/items/${itemId}/update/`,
     {
       method: "PUT",
       headers: {

@@ -104,7 +104,6 @@ export const categoryColumns: ColumnDef<Category>[] = [
     header: "فعال",
     cell: (props) => (
       <Switch
-        size="sm"
         checked={props.cell.getValue() as boolean}
         onCheckedChange={(checked: boolean) =>
           handleSwitch(props, {
