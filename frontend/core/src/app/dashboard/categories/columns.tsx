@@ -19,19 +19,28 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
+import { CreateCategoryForm } from "../components/CreateCategoryForm";
+
 //actions
 import { updateCategory, deleteCategory } from "@/app/actions";
 
 //SVGs
-import { ArrowUpDown, ImageIcon, MoreVertical, Trash2 } from "lucide-react";
+import {
+  ArrowUpDown,
+  Edit2,
+  ImageIcon,
+  MoreVertical,
+  Trash2,
+} from "lucide-react";
 
 //types
 import { CellContext } from "@tanstack/react-table";
+import { AssetGroupType } from "@/components/global/AssetPicker";
 export type Category = {
   id: number;
   business: string;
   name: string;
-  icon: { name: string; image: string };
+  icon: { id: number; name: string; image: string };
   is_active: boolean;
 };
 
@@ -61,7 +70,10 @@ const handleDelete = async (props: CellContext<Category, unknown>) => {
   }
 };
 
-export const categoryColumns: ColumnDef<Category>[] = [
+export const categoryColumns = (
+  businessSlug: string,
+  assetGroups: AssetGroupType[]
+): ColumnDef<Category>[] => [
   {
     accessorKey: "icon",
     header: "آیکون",
@@ -116,38 +128,48 @@ export const categoryColumns: ColumnDef<Category>[] = [
   },
   {
     id: "row-options",
-    cell: (props) => (
-      <div className="flex items-center justify-end gap-2">
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button className="rounded-full" variant="ghost" size="icon">
-              <Trash2 className="h-5 w-5"></Trash2>
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>مطمعنی؟</AlertDialogTitle>
-              <AlertDialogDescription>
-                آیا از حذف این دسته بندی({props.row.getValue("name")}) مطمعنی؟
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>انصراف</AlertDialogCancel>
-              <AlertDialogAction asChild>
-                <Button
-                  onClick={() => handleDelete(props)}
-                  variant="destructive"
-                >
-                  حذف کن
-                </Button>
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-        <Button className="rounded-full" variant="ghost" size="icon">
-          <MoreVertical className="h-5 w-5"></MoreVertical>
-        </Button>
-      </div>
-    ),
+    cell: (props) => {
+      return (
+        <div className="flex items-center justify-end gap-2">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button className="rounded-full" variant="ghost" size="icon">
+                <Trash2 className="h-5 w-5"></Trash2>
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>مطمعنی؟</AlertDialogTitle>
+                <AlertDialogDescription>
+                  آیا از حذف این دسته بندی({props.row.getValue("name")}) مطمعنی؟
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>انصراف</AlertDialogCancel>
+                <AlertDialogAction asChild>
+                  <Button
+                    onClick={() => handleDelete(props)}
+                    variant="destructive"
+                  >
+                    حذف کن
+                  </Button>
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+          <CreateCategoryForm
+            businessSlug={props.row.original.business}
+            assetGroups={assetGroups}
+            title="ویرایش دسته بندی"
+            description="با تغییر موارد زیر دسته بندی را ویرایش کنید"
+            defaultValues={{
+              name: props.row.original.name,
+              icon: props.row.original.icon,
+            }}
+            categoryId={props.row.original.id}
+          />
+        </div>
+      );
+    },
   },
 ];

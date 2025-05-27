@@ -1,13 +1,13 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 
-//zod validator
+// zod validator
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { FieldErrors } from "react-hook-form";
 
-//components
+// components
 import { Input } from "@/components/ui/input";
 import {
   Form,
@@ -30,34 +30,36 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { AssetPickerPopOver } from "@/components/global/itemAdderButtons/AssetPickerPopOver";
 
-//SVGs
-import { Loader2, Plus } from "lucide-react";
+// SVGs
+import { Edit2, Loader2, Plus } from "lucide-react";
 
-//hooks
+// hooks
 import { useForm } from "react-hook-form";
 
-//types
+// types
 import { type AssetGroupType } from "@/components/global/AssetPicker";
 type CreateCategoryFormType = {
   businessSlug: string;
   assetGroups: AssetGroupType[];
   title: string;
   description: string;
+  defaultValues?: z.infer<typeof FormSchema>;
+  categoryId?: number;
 };
 
-//server actions
-import { createCategory } from "@/app/actions";
+//actions
+import { createCategory, updateCategory } from "@/app/actions";
 
-//zod schema
+// zod schema
 const IconSchema = z.object({
+  id: z.number(),
   name: z.string(),
   image: z.string(),
-  id: z.number(),
 });
 
 const NameRequired = z.object({
   name: z.string(),
-  icon: IconSchema.optional(),
+  icon: IconSchema.optional().nullable(),
 });
 
 const IconRequired = z.object({
@@ -82,32 +84,57 @@ export function CreateCategoryForm({
   assetGroups,
   title,
   description,
+  defaultValues,
+  categoryId,
 }: CreateCategoryFormType) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-    defaultValues: {
-      name: "",
-    },
+    defaultValues: defaultValues
+      ? {
+          name: defaultValues.name || "",
+          icon: defaultValues.icon || null,
+        }
+      : {
+          name: "",
+          icon: null,
+        },
   });
 
-  //control dialog component
+  // control dialog component
   const [open, setOpen] = useState(false);
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
-      const res = await createCategory(businessSlug, data);
-      if (res?.success) {
-        //wait for route revalidation to happen first
-        setTimeout(() => {
-          setOpen(false);
-        }, 300);
-        toast.success("دسته بندی با موفقیت ایجاد شد");
-        form.reset();
-      } else {
-        toast.error(res?.error);
+      if (!defaultValues && !categoryId) {
+        // Create new category
+        const res = await createCategory(businessSlug, data);
+        if (res?.success) {
+          setTimeout(() => {
+            setOpen(false);
+          }, 300);
+          toast.success("دسته بندی با موفقیت ایجاد شد");
+          form.reset();
+        } else {
+          toast.error(res?.error || "خطایی در ایجاد دسته بندی رخ داد.");
+        }
+      } else if (defaultValues && categoryId) {
+        const res = await updateCategory(businessSlug, categoryId, {
+          name: data.name,
+          icon: data.icon ? data.icon.id : null, // Explicitly send null if icon is null
+        });
+
+        if (res?.success) {
+          setTimeout(() => {
+            setOpen(false);
+          }, 300);
+          toast.success("دسته بندی با موفقیت ویرایش شد");
+          form.reset();
+        } else {
+          toast.error(res?.error || "خطایی در ویرایش دسته بندی رخ داد.");
+        }
       }
     } catch (error) {
-      toast.error("خطایی در ایجاد دسته بندی رخ داد. لطفاً دوباره تلاش کنید.");
+      toast.error("خطایی در پردازش درخواست رخ داد. لطفاً دوباره تلاش کنید.");
     }
   }
 
@@ -121,13 +148,19 @@ export function CreateCategoryForm({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          size="lg"
-          className="scale-pro rounded-full border-2 border-primary bg-soft-blue px-4 font-semibold text-primary transition-all duration-200 hover:scale-95 hover:bg-primary hover:text-primary-foreground data-[state=open]:scale-95 data-[state=open]:bg-primary data-[state=open]:text-primary-foreground"
-        >
-          <Plus className="ml-2 h-5 w-5"></Plus>
-          <p>{title}</p>
-        </Button>
+        {!defaultValues ? (
+          <Button
+            size="lg"
+            className="scale-pro rounded-full border-2 border-primary bg-soft-blue px-4 font-semibold text-primary transition-all duration-200 hover:scale-95 hover:bg-primary hover:text-primary-foreground data-[state=open]:scale-95 data-[state=open]:bg-primary data-[state=open]:text-primary-foreground"
+          >
+            <Plus className="ml-2 h-5 w-5"></Plus>
+            <p>{title}</p>
+          </Button>
+        ) : (
+          <Button size="icon" variant="ghost" className="rounded-full">
+            <Edit2 className="h-5 w-5"></Edit2>
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="gap-8">
         <DialogHeader className="items-start">

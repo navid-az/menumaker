@@ -53,7 +53,7 @@ class ItemCreateUpdateSerializer(serializers.ModelSerializer):
 class IconsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Asset
-        fields = ['name', 'image']
+        fields = ['id', 'name', 'image']
 
 
 # category serializers

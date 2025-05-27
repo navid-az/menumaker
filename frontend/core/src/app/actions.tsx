@@ -68,7 +68,9 @@ type IconType = {
 
 export async function createCategory(
   businessSlug: string,
-  data: { name: string; icon?: IconType } | { name?: string; icon: IconType }
+  data:
+    | { name: string; icon?: IconType | null }
+    | { name?: string; icon: IconType }
 ) {
   const accessToken = (await cookies()).get("access");
 
@@ -109,20 +111,36 @@ export async function updateCategory(
   data: object
 ) {
   const accessToken = (await cookies()).get("access");
+  try {
+    const res = await fetch(
+      `http://127.0.0.1:8000/business/${businessSlug}/categories/${categoryId}/update/`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken?.value}`,
+        },
+        body: JSON.stringify(data),
+      }
+    );
+    if (!res.ok) {
+      const errorData = await res.json();
+      console.log(errorData);
 
-  const res = await fetch(
-    `http://127.0.0.1:8000/business/${businessSlug}/categories/${categoryId}/update/`,
-    {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken?.value}`,
-      },
-      body: JSON.stringify(data),
+      return {
+        success: false,
+        error: errorData.error || "Failed to update category",
+      };
     }
-  );
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.message || "An unexpected error occurred",
+    };
+  }
+
   revalidateTag("categories");
-  return res.ok;
+  return { success: true };
 }
 
 export async function deleteCategory(businessSlug: string, categoryId: number) {

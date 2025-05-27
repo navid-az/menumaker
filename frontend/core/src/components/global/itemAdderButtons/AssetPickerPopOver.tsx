@@ -27,8 +27,8 @@ export function AssetPickerPopOver({
 }: {
   assetGroups: AssetGroupType[];
   ref?: React.RefObject<HTMLButtonElement | null>;
-  value?: AssetType;
-  onChange?: (selectedItem: AssetType | undefined) => void;
+  value?: AssetType | null;
+  onChange?: (selectedItem: AssetType | undefined | null) => void;
   btnTriggerSize?: "default" | "sm" | "lg" | "icon";
 }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -42,7 +42,8 @@ export function AssetPickerPopOver({
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.stopPropagation();
-    onChange?.(undefined);
+
+    onChange?.(null);
   };
 
   return (

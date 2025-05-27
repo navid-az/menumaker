@@ -23,7 +23,7 @@ export type AssetGroupType = {
 
 type AssetPickerType = {
   assetGroups: AssetGroupType[];
-  value?: AssetType; // Controlled value (selected asset)
+  value?: AssetType | null; // Controlled value (selected asset)
   onChange?: (selectedItem: AssetType) => void; // Callback to update value
   defaultTab?: "icons" | "backgrounds";
 };
@@ -32,7 +32,7 @@ type AssetSelectorType = {
   data: AssetGroupType[];
   title: string;
   description: string;
-  value?: AssetType;
+  value?: AssetType | null;
   onChange?: (selectedItem: AssetType) => void;
 };
 
