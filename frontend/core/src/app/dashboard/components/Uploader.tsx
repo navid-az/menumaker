@@ -20,6 +20,8 @@ import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface ImageUploaderProps {
+  value: File;
+  onChange: (value: File | null) => void;
   name: string;
   label?: string;
   accept?: string;
@@ -28,6 +30,8 @@ interface ImageUploaderProps {
 }
 
 export default function Uploader({
+  value,
+  onChange,
   name,
   label = "تصویر",
   accept = "image/jpeg,image/png,image/gif",
@@ -124,74 +128,63 @@ export default function Uploader({
   };
 
   return (
-    <Controller
-      name={name}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <FormItem className={className}>
-          <FormLabel>{label}</FormLabel>
-          <FormControl>
-            <div
-              className={cn(
-                "cursor-pointer select-none rounded-md border-2 border-dashed bg-secondary p-2 transition-colors duration-300",
-                isDragging ? "border-primary" : "hover:border-primary/50",
-                preview ? "border-primary" : "flex items-center justify-center"
-              )}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop(onChange)}
-              onClick={handleClick}
-              onKeyDown={handleKeyDown}
-              role="button"
-              tabIndex={0}
-            >
-              {preview ? (
-                <div
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevent triggering handleClick
-                  }}
-                  className="group relative flex h-20 w-20 cursor-auto items-center justify-center"
-                >
-                  <Button
-                    size="icon"
-                    className="absolute z-10 h-7 w-7 bg-transparent opacity-0 backdrop-blur-lg transition-opacity duration-300 hover:backdrop-blur-3xl group-focus-within:opacity-100 group-hover:opacity-100"
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevent triggering handleClick
-                      handleImageRemove(onChange);
-                    }}
-                  >
-                    <X className="h-4 w-4 text-secondary"></X>
-                  </Button>
-                  <Image
-                    className="rounded-md object-cover"
-                    src={preview}
-                    alt="Image preview"
-                    fill
-                  ></Image>
-                </div>
-              ) : (
-                <div className="flex h-20 flex-col justify-center text-center text-sm font-normal text-primary/30">
-                  {!isDragging ? (
-                    <>
-                      <p>برای آپلود عکس اینجا بندازید یا کلیک کنید</p>
-                      <p>حداکثر حجم فایل {maxSize / 1024 / 1024} مگابایت</p>
-                    </>
-                  ) : (
-                    <p>فایل را رها کنید</p>
-                  )}
-                </div>
-              )}
-              <Input
-                type="file"
-                accept={accept}
-                className="hidden"
-                ref={fileInputRef}
-                onChange={handleFileInputChange(onChange)}
-              />
-            </div>
-          </FormControl>
-          <FormMessage>{error?.message}</FormMessage>
-        </FormItem>
+    <div
+      className={cn(
+        "cursor-pointer select-none rounded-md border-2 border-dashed bg-secondary p-2 transition-colors duration-300",
+        isDragging ? "border-primary" : "hover:border-primary/50",
+        preview ? "border-primary" : "flex items-center justify-center"
       )}
-    />
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop(onChange)}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      role="button"
+      tabIndex={0}
+    >
+      {preview ? (
+        <div
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent triggering handleClick
+          }}
+          className="group relative flex h-20 w-20 cursor-auto items-center justify-center"
+        >
+          <Button
+            size="icon"
+            className="absolute z-10 h-7 w-7 bg-transparent opacity-0 backdrop-blur-lg transition-opacity duration-300 hover:backdrop-blur-3xl group-focus-within:opacity-100 group-hover:opacity-100"
+            onClick={(e) => {
+              e.stopPropagation(); // Prevent triggering handleClick
+              handleImageRemove(onChange);
+            }}
+          >
+            <X className="h-4 w-4 text-secondary"></X>
+          </Button>
+          <Image
+            className="rounded-md object-cover"
+            src={preview}
+            alt="Image preview"
+            fill
+          ></Image>
+        </div>
+      ) : (
+        <div className="flex h-20 flex-col justify-center text-center text-sm font-normal text-primary/30">
+          {!isDragging ? (
+            <>
+              <p>برای آپلود عکس اینجا بندازید یا کلیک کنید</p>
+              <p>حداکثر حجم فایل {maxSize / 1024 / 1024} مگابایت</p>
+            </>
+          ) : (
+            <p>فایل را رها کنید</p>
+          )}
+        </div>
+      )}
+      <Input
+        type="file"
+        accept={accept}
+        className="hidden"
+        ref={fileInputRef}
+        onChange={handleFileInputChange(onChange)}
+      />
+    </div>
   );
 }

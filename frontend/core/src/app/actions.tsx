@@ -125,7 +125,7 @@ export async function updateCategory(
     );
     if (!res.ok) {
       const errorData = await res.json();
-      console.log(errorData);
+      console.log("errorData:", errorData);
 
       return {
         success: false,
@@ -186,6 +186,7 @@ export async function getItems() {
 
 export async function createItem(businessSlug: string, data: FormData) {
   const accessToken = (await cookies()).get("access");
+
   try {
     const res = await fetch(
       `http://127.0.0.1:8000/business/${businessSlug}/items/create/`,
@@ -220,23 +221,39 @@ export async function createItem(businessSlug: string, data: FormData) {
 export async function updateItem(
   businessSlug: string,
   itemId: number,
-  data: object
+  data: FormData
 ) {
   const accessToken = (await cookies()).get("access");
 
-  const res = await fetch(
-    `http://127.0.0.1:8000/business/${businessSlug}/items/${itemId}/update/`,
-    {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken?.value}`,
-      },
-      body: JSON.stringify(data),
+  try {
+    const res = await fetch(
+      `http://127.0.0.1:8000/business/${businessSlug}/items/${itemId}/update/`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${accessToken?.value}`,
+        },
+        body: data,
+      }
+    );
+    if (!res.ok) {
+      const errorData = await res.json();
+      console.log("errorData:", errorData);
+
+      return {
+        success: false,
+        error: errorData.error || "Failed to update item",
+      };
     }
-  );
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.message || "An unexpected error occurred",
+    };
+  }
+
   revalidateTag("items");
-  return res.ok;
+  return { success: true };
 }
 
 export async function deleteItem(businessSlug: string, itemId: number) {
@@ -310,7 +327,7 @@ export async function createMenu(businessSlug: string, data: MenuType) {
 
     if (!res.ok) {
       const errorData = await res.json();
-      console.log(errorData);
+      console.log("errorData:", errorData);
 
       return {
         success: false,

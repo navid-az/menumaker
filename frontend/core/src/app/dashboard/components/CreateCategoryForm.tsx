@@ -128,7 +128,6 @@ export function CreateCategoryForm({
             setOpen(false);
           }, 300);
           toast.success("دسته بندی با موفقیت ویرایش شد");
-          form.reset();
         } else {
           toast.error(res?.error || "خطایی در ویرایش دسته بندی رخ داد.");
         }

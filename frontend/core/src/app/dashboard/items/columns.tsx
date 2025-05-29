@@ -1,10 +1,7 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
-import Image from "next/image";
-import { toast } from "sonner";
-
 //components
+import Image from "next/image";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,20 +15,27 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { toast } from "sonner";
+import { CreateItemForm } from "../components/CreateItemForm";
 
 //actions
 import { deleteItem, updateItem } from "@/app/actions";
 
 //SVGs
-import { ArrowUpDown, MoreVertical, Trash2, ImageIcon } from "lucide-react";
+import { ArrowUpDown, Trash2, ImageIcon } from "lucide-react";
+
+//libraries
+import { ColumnDef } from "@tanstack/react-table";
+import { CellContext } from "@tanstack/react-table";
 
 //types
-import { CellContext } from "@tanstack/react-table";
+import { Category } from "../categories/columns";
+
 export type Item = {
   id: number;
   image: string;
   name: string;
-  category: string;
+  category: number;
   business: string; //slug
   price: number;
   is_available: boolean;
@@ -40,12 +44,16 @@ export type Item = {
 
 const handleSwitch = async (
   props: CellContext<Item, unknown>,
-  data: object
+  data: Record<string, any>
 ) => {
+  const formData = new FormData();
+  Object.entries(data).forEach(([key, value]) => {
+    formData.append(key, value);
+  });
   const isUpdated = await updateItem(
     props.row.original.business,
     props.row.original.id,
-    data
+    formData
   );
   if (!isUpdated) {
     toast.error("خطا در اعمال تغییرات");
@@ -64,7 +72,10 @@ const handleDelete = async (props: CellContext<Item, unknown>) => {
   }
 };
 
-export const itemColumns: ColumnDef<Item>[] = [
+export const itemColumns = (
+  businessSlug: string,
+  categories: Category[]
+): ColumnDef<Item>[] => [
   {
     accessorKey: "image",
     header: "تصویر",
@@ -184,9 +195,14 @@ export const itemColumns: ColumnDef<Item>[] = [
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-        <Button className="rounded-full" variant="ghost" size="icon">
-          <MoreVertical className="h-5 w-5"></MoreVertical>
-        </Button>
+        <CreateItemForm
+          businessSlug={props.row.original.business}
+          title="ویرایش آیتم"
+          description="با تغییر موارد زیر آیتم را ویرایش کنید"
+          defaultValues={props.row.original}
+          categories={categories}
+          itemId={props.row.original.id}
+        />
       </div>
     ),
   },

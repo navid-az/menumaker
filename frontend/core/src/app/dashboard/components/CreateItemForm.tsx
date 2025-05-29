@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 //zod validator
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -40,7 +40,7 @@ import { toast } from "sonner";
 import Uploader from "./Uploader";
 
 //SVGs
-import { Plus, Loader2 } from "lucide-react";
+import { Plus, Loader2, Edit2 } from "lucide-react";
 
 //libraries
 import { FieldErrors } from "react-hook-form";
@@ -49,15 +49,24 @@ import { FieldErrors } from "react-hook-form";
 import { useForm } from "react-hook-form";
 
 //server actions
-import { createItem } from "@/app/actions";
+import { createItem, updateItem } from "@/app/actions";
 
 //types
-import { type CategoriesType } from "@/app/(menu)/[menu_id]/menu/components/Items/MenuItemsWrapper";
+import { type Category } from "../categories/columns";
+
 type CreateItemFormType = {
   businessSlug: string;
-  categories: CategoriesType[];
+  categories: Category[];
   title: string;
   description: string;
+  defaultValues?: {
+    name?: string;
+    description?: string;
+    category: number;
+    price: number;
+    image?: string;
+  };
+  itemId?: number;
 };
 
 const FormSchema = z.object({
@@ -88,40 +97,81 @@ export function CreateItemForm({
   categories,
   title,
   description,
+  defaultValues,
+  itemId,
 }: CreateItemFormType) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-    defaultValues: {
-      name: "",
-      description: "",
-      price: 0,
-    },
+    defaultValues: defaultValues
+      ? {
+          name: defaultValues.name || "",
+          description: defaultValues.description || "",
+          category: defaultValues.category,
+          price: defaultValues.price || 0,
+          image: undefined,
+        }
+      : {
+          name: "",
+          description: "",
+          price: 0,
+          image: undefined,
+        },
   });
 
   //control dialog component
   const [open, setOpen] = useState(false);
 
+  const [previewUrl, setPreviewUrl] = useState<string | null>(
+    defaultValues?.image ?? null
+  );
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target?.files?.[0];
+    if (file) {
+      const objectUrl = URL.createObjectURL(file);
+      setPreviewUrl(objectUrl);
+      form.setValue("image", file); // set FileList for RHF
+    }
+  };
+
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     const formData = new FormData();
-    formData.append("image", data.image || "");
+    if (data.image instanceof File) {
+      formData.append("image", data.image);
+    }
     formData.append("name", data.name);
     formData.append("description", data.description || "");
-    formData.append("category", data.category.toString());
+    formData.append("category", data.category?.toString());
     formData.append("price", data.price.toString());
     try {
-      const res = await createItem(businessSlug, formData);
-      if (res?.success) {
-        //wait for route revalidation to happen first
-        setTimeout(() => {
-          setOpen(false);
-        }, 300);
-        toast.success("دسته بندی با موفقیت ایجاد شد");
-        form.reset();
-      } else {
-        toast.error(res?.error);
+      if (!defaultValues && !itemId) {
+        // Create new item
+        const res = await createItem(businessSlug, formData);
+        if (res?.success) {
+          //wait for route revalidation to happen first
+          setTimeout(() => {
+            setOpen(false);
+          }, 300);
+          toast.success("آیتم با موفقیت ایجاد شد");
+          form.reset();
+        } else {
+          toast.error(res?.error || "خطایی در ایجاد آیتم رخ داد.");
+        }
+      } else if (defaultValues && itemId) {
+        // Update item
+        const res = await updateItem(businessSlug, itemId, formData);
+
+        if (res?.success) {
+          setTimeout(() => {
+            setOpen(false);
+          }, 300);
+          toast.success("آیتم با موفقیت ویرایش شد");
+        } else {
+          toast.error(res?.error || "خطایی در ویرایش آیتم رخ داد.");
+        }
       }
     } catch (error) {
-      toast.error("خطایی در ایجاد دسته بندی رخ داد. لطفاً دوباره تلاش کنید.");
+      toast.error("خطایی در ویرایش آیتم رخ داد. لطفاً دوباره تلاش کنید.");
     }
   }
 
@@ -135,13 +185,19 @@ export function CreateItemForm({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          size="lg"
-          className="scale-pro rounded-full border-2 border-primary bg-soft-blue px-4 font-semibold text-primary transition-all duration-200 hover:scale-95 hover:bg-primary hover:text-primary-foreground data-[state=open]:scale-95 data-[state=open]:bg-primary data-[state=open]:text-primary-foreground"
-        >
-          <Plus className="ml-2 h-5 w-5"></Plus>
-          <p>{title}</p>
-        </Button>
+        {!defaultValues ? (
+          <Button
+            size="lg"
+            className="scale-pro rounded-full border-2 border-primary bg-soft-blue px-4 font-semibold text-primary transition-all duration-200 hover:scale-95 hover:bg-primary hover:text-primary-foreground data-[state=open]:scale-95 data-[state=open]:bg-primary data-[state=open]:text-primary-foreground"
+          >
+            <Plus className="ml-2 h-5 w-5"></Plus>
+            <p>{title}</p>
+          </Button>
+        ) : (
+          <Button size="icon" variant="ghost" className="rounded-full">
+            <Edit2 className="h-5 w-5"></Edit2>
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="gap-8">
         <DialogHeader className="items-start">
@@ -159,7 +215,40 @@ export function CreateItemForm({
             <FormField
               control={form.control}
               name="image"
-              render={() => <Uploader name="image" label="تصویر" />}
+              render={({ field: { onChange, value, ...rest } }) => (
+                <FormItem className="flex-1">
+                  <FormLabel htmlFor={rest.name}>تصویر</FormLabel>
+                  <FormControl>
+                    {/* <Uploader
+                      value={field.value}
+                      onChange={field.onChange}
+                      name="image"
+                      label="تصویر"
+                    /> */}
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      {...rest}
+                    />
+                  </FormControl>
+                  <div className=" relative h-20 w-20">
+                    {previewUrl && (
+                      <Image
+                        fill
+                        src={
+                          previewUrl?.startsWith("blob:")
+                            ? previewUrl
+                            : `http://127.0.0.1:8000/${previewUrl}`
+                        }
+                        alt="Selected preview"
+                        className="mt-2 h-20 rounded-md"
+                      />
+                    )}
+                  </div>
+                  <FormMessage className="font-normal" />
+                </FormItem>
+              )}
             />
             <section className="flex gap-2">
               <FormField

@@ -17,14 +17,14 @@ import { CreateCategoryForm } from "./CreateCategoryForm";
 
 //types
 import { AssetGroupType } from "@/components/global/AssetPicker";
-import { CategoriesType } from "@/app/(menu)/[menu_id]/menu/components/Items/MenuItemsWrapper";
+import { Category } from "../categories/columns";
 
 export default function ToolBar({
   assetGroups,
   categories,
 }: {
   assetGroups: AssetGroupType[];
-  categories: CategoriesType[];
+  categories: Category[];
 }) {
   const pathName = usePathname();
 
