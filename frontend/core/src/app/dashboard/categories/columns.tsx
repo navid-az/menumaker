@@ -1,10 +1,13 @@
 "use client";
 
+import { useState, useTransition } from "react";
+
+//libraries
 import { ColumnDef } from "@tanstack/react-table";
-import Image from "next/image";
-import { toast } from "sonner";
+import { CellContext } from "@tanstack/react-table";
 
 //components
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -20,6 +23,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { CreateCategoryForm } from "../components/CreateCategoryForm";
+import { toast } from "sonner";
 
 //actions
 import { updateCategory, deleteCategory } from "@/app/actions";
@@ -33,8 +37,6 @@ import {
   Trash2,
 } from "lucide-react";
 
-//types
-import { CellContext } from "@tanstack/react-table";
 import { AssetGroupType } from "@/components/global/AssetPicker";
 export type Category = {
   id: number;
@@ -42,20 +44,6 @@ export type Category = {
   name: string;
   icon: { id: number; name: string; image: string };
   is_active: boolean;
-};
-
-const handleSwitch = async (
-  props: CellContext<Category, unknown>,
-  data: object
-) => {
-  const isUpdated = await updateCategory(
-    props.row.original.business,
-    props.row.original.id,
-    data
-  );
-  if (!isUpdated) {
-    toast.error("خطا در اعمال تغییرات");
-  }
 };
 
 const handleDelete = async (props: CellContext<Category, unknown>) => {
@@ -71,7 +59,6 @@ const handleDelete = async (props: CellContext<Category, unknown>) => {
 };
 
 export const categoryColumns = (
-  businessSlug: string,
   assetGroups: AssetGroupType[]
 ): ColumnDef<Category>[] => [
   {
@@ -114,17 +101,37 @@ export const categoryColumns = (
   {
     accessorKey: "is_active",
     header: "فعال",
-    cell: (props) => (
-      <Switch
-        checked={props.cell.getValue() as boolean}
-        onCheckedChange={(checked: boolean) =>
-          handleSwitch(props, {
-            is_active: checked,
-          })
-        }
-        id={props.row.id}
-      ></Switch>
-    ),
+    cell: (props) => {
+      const originalValue = props.cell.getValue() as boolean;
+      const [checked, setChecked] = useState(originalValue);
+      const [isPending, startTransition] = useTransition();
+
+      const handleToggle = (checked: boolean) => {
+        setChecked(checked); // update UI instantly
+
+        startTransition(async () => {
+          const isUpdated = await updateCategory(
+            props.row.original.business,
+            props.row.original.id,
+            { is_active: checked }
+          );
+
+          if (!isUpdated) {
+            toast.error("خطا در اعمال تغییرات");
+            setChecked(originalValue); // revert on failure
+          }
+        });
+      };
+
+      return (
+        <Switch
+          checked={checked}
+          onCheckedChange={handleToggle}
+          disabled={isPending}
+          id={props.row.id}
+        />
+      );
+    },
   },
   {
     id: "row-options",

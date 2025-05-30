@@ -14,12 +14,12 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { CreateItemForm } from "../components/CreateItemForm";
+import ItemTableSwitch from "../components/ItemTableSwitch";
 
 //actions
-import { deleteItem, updateItem } from "@/app/actions";
+import { deleteItem } from "@/app/actions";
 
 //SVGs
 import { ArrowUpDown, Trash2, ImageIcon } from "lucide-react";
@@ -40,24 +40,6 @@ export type Item = {
   price: number;
   is_available: boolean;
   is_active: boolean;
-};
-
-const handleSwitch = async (
-  props: CellContext<Item, unknown>,
-  data: Record<string, any>
-) => {
-  const formData = new FormData();
-  Object.entries(data).forEach(([key, value]) => {
-    formData.append(key, value);
-  });
-  const isUpdated = await updateItem(
-    props.row.original.business,
-    props.row.original.id,
-    formData
-  );
-  if (!isUpdated) {
-    toast.error("خطا در اعمال تغییرات");
-  }
 };
 
 const handleDelete = async (props: CellContext<Item, unknown>) => {
@@ -138,31 +120,22 @@ export const itemColumns = (
     accessorKey: "is_available",
     header: "موجود",
     cell: (props) => (
-      <Switch
-        checked={props.cell.getValue() as boolean}
-        onCheckedChange={(checked: boolean) =>
-          handleSwitch(props, {
-            is_available: checked,
-          })
-        }
-        id={props.row.id}
-      ></Switch>
+      <ItemTableSwitch
+        initial={props.cell.getValue() as boolean}
+        row={props.row}
+        fieldName="is_available"
+      ></ItemTableSwitch>
     ),
   },
   {
     accessorKey: "is_active",
     header: "فعال",
     cell: (props) => (
-      <Switch
-        // isLoading
-        checked={props.cell.getValue() as boolean}
-        onCheckedChange={(checked: boolean) =>
-          handleSwitch(props, {
-            is_active: checked,
-          })
-        }
-        id={props.row.id}
-      ></Switch>
+      <ItemTableSwitch
+        initial={props.cell.getValue() as boolean}
+        row={props.row}
+        fieldName="is_active"
+      ></ItemTableSwitch>
     ),
   },
   {
