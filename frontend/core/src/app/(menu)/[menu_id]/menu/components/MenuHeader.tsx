@@ -10,7 +10,10 @@ import { ShoppingBag, AlignLeft, Search, Filter, Loader2 } from "lucide-react";
 import { useSearchBar } from "@/lib/stores";
 import { Input } from "@/components/ui/input";
 
-export default function MenuHeader() {
+//types
+import { type Menu } from "../page";
+
+export default function MenuHeader({ menuData }: { menuData: Menu }) {
   const { setSearchQuery, searchQuery } = useSearchBar();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -35,31 +38,24 @@ export default function MenuHeader() {
         <AlignLeft className="ml-2 text-[color:var(--primary)]"></AlignLeft>
       </section>
       <div className="flex gap-2">
-        <div className="relative flex-1">
-          <Input
-            className="rounded-[var(--radius-base) peer rounded-[var(--radius-base)] border-none bg-[color:var(--secondary)] ps-9 text-[color:var(--primary)] !ring-[color:var(--primary)] placeholder:text-[color:var(--primary)] placeholder:opacity-60"
-            placeholder="جستجو"
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-muted-foreground/80 peer-disabled:opacity-50">
-            {isLoading ? (
-              <Loader2 className="ml-1.5 h-5 w-5 animate-spin text-[color:var(--primary)] opacity-80"></Loader2>
-            ) : (
-              <Search className="ml-1.5 h-5 w-5 text-[color:var(--primary)] opacity-80" />
-            )}
+        {menuData.searchbar_enabled && (
+          <div className="relative flex-1">
+            <Input
+              className="rounded-[var(--radius-base) peer rounded-[var(--radius-base)] border-none bg-[color:var(--secondary)] ps-9 text-[color:var(--primary)] !ring-[color:var(--primary)] placeholder:text-[color:var(--primary)] placeholder:opacity-60"
+              placeholder="جستجو"
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-muted-foreground/80 peer-disabled:opacity-50">
+              {isLoading ? (
+                <Loader2 className="ml-1.5 h-5 w-5 animate-spin text-[color:var(--primary)] opacity-80"></Loader2>
+              ) : (
+                <Search className="ml-1.5 h-5 w-5 text-[color:var(--primary)] opacity-80" />
+              )}
+            </div>
           </div>
-        </div>
-        {/* <div className="flex w-full items-center rounded-[var(--radius-base)] bg-[color:var(--secondary)] px-3 py-2.5 text-[color:var(--primary)]">
-          <Search className="ml-1.5 h-5 w-5 opacity-80"></Search>
-          <Input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          ></Input>
-          <p className="text-sm opacity-80">جستجو</p>
-        </div> */}
+        )}
         <Button
           size="icon"
           className="flex-none rounded-[var(--radius-base)] bg-[color:var(--secondary)] text-[color:var(--primary)]"

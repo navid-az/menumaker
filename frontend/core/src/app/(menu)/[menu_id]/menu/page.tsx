@@ -6,6 +6,17 @@ import MenuHeader from "./components/MenuHeader";
 
 //types
 import { type AnimationVariantType } from "@/components/global/InteractiveWrapper";
+export type Menu = {
+  id: number;
+  business: number;
+  show_social_links: boolean;
+  show_phone_numbers: boolean;
+  show_branches: boolean;
+  items_page_layout: string;
+  categories_display_type: string;
+  call_waiter_enabled: boolean;
+  searchbar_enabled: boolean;
+};
 export type MenuGlobalStyling = {
   id: number;
   primary_color: string;
@@ -21,14 +32,18 @@ export type MenuGlobalStyling = {
   menu: number;
 };
 
-//SVGs
-import {
-  AlignLeft,
-  ConciergeBell,
-  Filter,
-  Search,
-  ShoppingBag,
-} from "lucide-react";
+// GET menu data
+export async function getMenuData(menu_id: string) {
+  try {
+    let res = await fetch(`http://127.0.0.1:8000/menu/venhan`);
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+    return await res.json();
+  } catch (error) {
+    console.error("error fetching data:", error);
+  }
+}
 
 // GET menu global stylings
 export async function getGlobalStyling(menu_id: string) {
@@ -64,6 +79,8 @@ export default async function Page(props: {
   params: Promise<{ menu_id: string }>;
 }) {
   const params = await props.params;
+
+  const menuData: Menu = await getMenuData(params.menu_id);
   const globalStyling: MenuGlobalStyling = await getGlobalStyling(
     params.menu_id
   );
@@ -105,7 +122,7 @@ export default async function Page(props: {
       style={styleVars as React.CSSProperties}
       className="relative flex flex-col bg-white"
     >
-      <MenuHeader></MenuHeader>
+      <MenuHeader menuData={menuData}></MenuHeader>
       <ItemsCategory params={params}></ItemsCategory>
       <MenuItemsWrapper
         categories={categories}
