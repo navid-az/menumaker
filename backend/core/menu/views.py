@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 # dependencies
 from .models import Menu, MenuGlobalStyling
 from business.models import Business
-from .serializers import MenuCreateSerializer, MenuListSerializer, MenuGlobalStylingSerializer
+from .serializers import MenuCreateSerializer, MenuListSerializer, MenuGlobalStylingSerializer, MenuSerializer
 
 # rest dependencies
 from rest_framework import status
@@ -21,6 +21,13 @@ class MenuListView(APIView):
     def get(self, request):
         all_menus = Menu.objects.all()
         srz_data = MenuListSerializer(instance=all_menus, many=True)
+        return Response(data=srz_data.data)
+
+
+class MenuView(APIView):
+    def get(self, request, slug):
+        menu = Menu.objects.get(business__slug=slug)
+        srz_data = MenuSerializer(instance=menu)
         return Response(data=srz_data.data)
 
 

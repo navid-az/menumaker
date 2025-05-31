@@ -13,6 +13,12 @@ class MenuListSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class MenuSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Menu
+        exclude = ['updated', 'created', 'logo']
+
+
 class MenuGlobalStylingSerializer(serializers.ModelSerializer):
     CLICK_ANIMATION_CHOICES = [
         ('ripple', 'ripple effect'), ('tactile', 'tactile effect')]
