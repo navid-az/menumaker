@@ -111,14 +111,14 @@ export function MenuItem({
           <div className="relative flex h-[300px] flex-none flex-col xss:col-span-1">
             <div className="relative flex h-full w-full">
               <Image
-                className="rounded-[var(--radius-base)] object-cover"
+                className="rounded-[var(--radius-exception)] object-cover"
                 src={`http://127.0.0.1:8000/${image}`}
                 alt={name}
                 fill
               ></Image>
             </div>
             <div
-              className={`absolute bottom-0 flex w-full flex-none shrink-0 basis-5/12 flex-col justify-between gap-3 rounded-b-[var(--radius-base)] bg-[color:var(--secondary)] p-2 text-[color:var(--primary)]`}
+              className={`absolute bottom-0 flex w-full flex-none shrink-0 basis-5/12 flex-col justify-between gap-3 rounded-b-[var(--radius-exception)] bg-[color:var(--secondary)] p-2 text-[color:var(--primary)]`}
             >
               <div className="space-y-0.5">
                 <p className="text-lg font-semibold">{name}</p>

@@ -89,7 +89,15 @@ export default async function Page(props: {
         ? "4px"
         : globalStyling.border_radius === "lg"
         ? "6px"
-        : "9999px", // full
+        : "9999px", // full,
+    "--radius-exception":
+      globalStyling.border_radius === "sm"
+        ? "2px"
+        : globalStyling.border_radius === "md"
+        ? "4px"
+        : globalStyling.border_radius === "lg"
+        ? "6px"
+        : "24px", // full,
   };
 
   return (
@@ -97,7 +105,7 @@ export default async function Page(props: {
       style={styleVars as React.CSSProperties}
       className="relative flex flex-col bg-white"
     >
-      <section className="flex w-full flex-col gap-4 px-4 pt-4">
+      <section className="flex w-full flex-col gap-4 rounded px-4 pt-4">
         <section className="flex items-center justify-between">
           <Button className="flex w-max items-center justify-between gap-2 rounded-[var(--radius-base)] bg-[color:var(--secondary)] px-4 text-[color:var(--primary)]">
             <ShoppingBag className="h-5 w-5"></ShoppingBag>
