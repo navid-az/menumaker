@@ -1,5 +1,7 @@
 "use client";
 
+import { useState, useEffect } from "react";
+
 //components
 import { MenuItem } from "./MenuItem";
 
@@ -7,7 +9,7 @@ import { MenuItem } from "./MenuItem";
 import { InView } from "react-intersection-observer";
 
 //hooks
-import { useCategoryBtn } from "@/lib/stores";
+import { useCategoryBtn, useSearchBar } from "@/lib/stores";
 
 //types
 import { type MenuItemType } from "./MenuItem";
@@ -39,6 +41,9 @@ export default function MenuItemsWrapper({
   styleVars: React.CSSProperties;
 }) {
   const { updateActiveCategory } = useCategoryBtn();
+  const { searchQuery } = useSearchBar();
+
+  const [debouncedQuery, setDebouncedQuery] = useState(searchQuery);
 
   const setInView = (inView: boolean, entry: IntersectionObserverEntry) => {
     const { isAutoScrolling } = useCategoryBtn.getState();
@@ -51,9 +56,24 @@ export default function MenuItemsWrapper({
     }
   };
 
+  const filteredCategories = categories.map((category) => {
+    const filteredItems = category.items.filter((item) => {
+      const words = item.name.toLowerCase().split(" ");
+      return words.some((word) => word.startsWith(debouncedQuery));
+    });
+
+    return { ...category, items: filteredItems };
+  });
+
+  //debounce input
+  useEffect(() => {
+    const timeout = setTimeout(() => setDebouncedQuery(searchQuery), 200);
+    return () => clearTimeout(timeout);
+  }, [searchQuery]);
+
   return (
     <section className="flex h-max w-full flex-col gap-4 pb-4">
-      {categories.map(
+      {(filteredCategories.length > 0 ? filteredCategories : categories).map(
         (category) =>
           category.items.length > 0 && (
             <InView onChange={setInView} threshold={1} key={category.id}>

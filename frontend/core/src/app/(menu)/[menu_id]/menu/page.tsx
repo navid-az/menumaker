@@ -1,8 +1,8 @@
 //components
-import { Button } from "@/components/ui/button";
 import MenuItemsWrapper from "./components/Items/MenuItemsWrapper";
 import ItemsCategory from "./components/ItemsCategory";
 import CartBtn from "./components/CartBtn";
+import MenuHeader from "./components/MenuHeader";
 
 //types
 import { type AnimationVariantType } from "@/components/global/InteractiveWrapper";
@@ -105,31 +105,7 @@ export default async function Page(props: {
       style={styleVars as React.CSSProperties}
       className="relative flex flex-col bg-white"
     >
-      <section className="flex w-full flex-col gap-4 rounded px-4 pt-4">
-        <section className="flex items-center justify-between">
-          <Button className="flex w-max items-center justify-between gap-2 rounded-[var(--radius-base)] bg-[color:var(--secondary)] px-4 text-[color:var(--primary)]">
-            <ShoppingBag className="h-5 w-5"></ShoppingBag>
-            <p className="mt-1 text-lg">2</p>
-          </Button>
-          <AlignLeft className="ml-2 text-[color:var(--primary)]"></AlignLeft>
-        </section>
-        <div className="flex gap-2">
-          <div className="flex w-full items-center rounded-[var(--radius-base)] bg-[color:var(--secondary)] px-3 py-2.5 text-[color:var(--primary)]">
-            <Search className="ml-1.5 h-5 w-5 opacity-80"></Search>
-            <p className="text-sm opacity-80">جستجو</p>
-          </div>
-          <Button
-            size="icon"
-            className="flex-none rounded-[var(--radius-base)] bg-[color:var(--secondary)] text-[color:var(--primary)]"
-          >
-            <Filter className="h-5 w-5"></Filter>
-          </Button>
-        </div>
-        <Button className="w-max flex-none rounded-full bg-orange-300 text-orange-800">
-          <ConciergeBell className="ml-2"></ConciergeBell>
-          <p>سالن دار</p>
-        </Button>
-      </section>
+      <MenuHeader></MenuHeader>
       <ItemsCategory params={params}></ItemsCategory>
       <MenuItemsWrapper
         categories={categories}

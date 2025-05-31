@@ -279,3 +279,14 @@ export const useColorPalette = create<useColorPaletteType>()((set) => ({
     set(() => ({ colors: palette }));
   },
 }));
+
+//~~~~menu search bar~~~~
+type SearchBarState = {
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
+};
+
+export const useSearchBar = create<SearchBarState>((set) => ({
+  searchQuery: "",
+  setSearchQuery: (query) => set({ searchQuery: query }),
+}));
