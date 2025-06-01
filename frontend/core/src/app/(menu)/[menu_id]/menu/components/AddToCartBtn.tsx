@@ -128,11 +128,6 @@ const StepperBtn = ({
     tactile: {},
   };
 
-  const animationSettings = mapAnimationsToConfigs(
-    AddToCartBtnAnimationConfigs,
-    globalStyling.click_animation_type
-  );
-
   return (
     <Button
       name={name}

@@ -14,7 +14,7 @@ export type ValidItemType = { item: MenuItemType; count?: number };
 // GET menu items
 async function getItems(menu_id: string) {
   try {
-    let res = await fetch(`http://127.0.0.1:8000/menu/${menu_id}/items`);
+    let res = await fetch(`http://127.0.0.1:8000/business/${menu_id}/items`);
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
     }
@@ -39,11 +39,9 @@ export async function getGlobalStyling(menu_id: string) {
   }
 }
 
-export default async function Page(
-  props: {
-    params: Promise<{ menu_id: string }>;
-  }
-) {
+export default async function Page(props: {
+  params: Promise<{ menu_id: string }>;
+}) {
   const params = await props.params;
   const data: MenuItemType[] = await getItems(params.menu_id);
   const globalStyling: MenuGlobalStyling = await getGlobalStyling(
@@ -53,13 +51,11 @@ export default async function Page(
   return (
     <div className="container flex h-screen flex-col justify-between gap-8 p-4">
       <header className="flex items-center justify-between">
-        <h3 className="text-lg" style={{ color: globalStyling.primary_color }}>
-          لیست سفارشات
-        </h3>
+        <h3 className="text-lg text-[color:var(--primary)]">لیست سفارشات</h3>
         <Button
           size="icon"
           variant="ghost"
-          style={{ color: globalStyling.primary_color }}
+          className="rounded-[var(--radius-base)] text-[color:var(--primary)]"
           asChild
         >
           <Link href={`/${params.menu_id}/menu`}>
@@ -71,21 +67,13 @@ export default async function Page(
       <footer className="flex gap-4">
         <Button
           disabled
-          className="h-12 basis-9/12 rounded-full text-base"
-          style={{
-            backgroundColor: globalStyling.primary_color,
-            color: globalStyling.secondary_color,
-          }}
+          className="h-12 basis-9/12 rounded-[var(--radius-base)] bg-[color:var(--primary)] text-base text-[color:var(--secondary)]"
         >
           ثبت سفارش
         </Button>
         <Button
           size="icon"
-          className="h-12 basis-3/12 rounded-full"
-          style={{
-            backgroundColor: globalStyling.primary_color,
-            color: globalStyling.secondary_color,
-          }}
+          className="h-12 basis-3/12 rounded-[var(--radius-base)] bg-[color:var(--primary)] text-[color:var(--secondary)]"
         >
           <ConciergeBell />
         </Button>

@@ -10,8 +10,8 @@ type CartItemType = { globalStyling: MenuGlobalStyling } & ValidItemType;
 
 export default function CartItem({ item, globalStyling }: CartItemType) {
   return (
-    <div className="flex h-max w-full items-center justify-between">
-      <div className="flex basis-9/12 flex-col">
+    <div className="flex h-max w-full items-center justify-between gap-4">
+      <div className="flex flex-col">
         <p className="font-normal">{item.name}</p>
         <PriceTag
           size="sm"
@@ -21,11 +21,9 @@ export default function CartItem({ item, globalStyling }: CartItemType) {
         ></PriceTag>
       </div>
       <AddToCartBtn
-        size="sm"
-        primaryColor={globalStyling.primary_color}
-        secondaryColor={globalStyling.secondary_color}
+        className="w-5/12"
         itemId={item.id}
-        animations={globalStyling.click_animation}
+        globalStyling={globalStyling}
       ></AddToCartBtn>
     </div>
   );

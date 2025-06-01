@@ -65,25 +65,18 @@ export default function OrderList({
               {...validItem}
             />
           ))}
-          <div
-            className="flex w-full items-center justify-between justify-self-center border-t-2 border-dashed pt-4"
-            style={{ borderColor: globalStyling.primary_color }}
-          >
-            <h2>مجموع پرداختی</h2>
+          <div className="flex w-full items-center justify-between justify-self-center border-t-2 border-dashed border-[color:var(--primary)] pt-4 text-[color:var(--primary)]">
+            <h2 className="text-xl">مجموع پرداختی</h2>
             <PriceTag unitDisplayType="default" price={totalPrice} />
           </div>
         </>
       ) : (
         <div className="flex h-full w-full flex-col items-center justify-center gap-4">
           <ShoppingBag
-            className="h-20 w-20"
+            className="h-20 w-20 text-[color:var(--primary)] opacity-40"
             strokeWidth={1.5}
-            style={{ color: globalStyling.primary_color, opacity: "40%" }}
           ></ShoppingBag>
-          <p
-            className="text-lg font-semibold"
-            style={{ color: globalStyling.primary_color, opacity: "40%" }}
-          >
+          <p className="text-lg font-semibold text-[color:var(--primary)] opacity-40">
             آیتمی در سبد شما نیست
           </p>
         </div>
