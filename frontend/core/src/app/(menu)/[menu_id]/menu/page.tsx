@@ -85,6 +85,7 @@ export default async function Page(props: {
     params.menu_id
   );
   const categories = await getMenuCategories(params.menu_id);
+  const businessSlug = await params.menu_id;
 
   return (
     <div className="relative flex flex-col bg-white">
@@ -95,7 +96,11 @@ export default async function Page(props: {
         params={params}
         globalStyling={globalStyling}
       ></MenuItemsWrapper>
-      <CartBtn categories={categories} globalStyling={globalStyling}></CartBtn>
+      <CartBtn
+        businessSlug={businessSlug}
+        categories={categories}
+        globalStyling={globalStyling}
+      ></CartBtn>
     </div>
   );
 }

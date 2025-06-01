@@ -26,12 +26,14 @@ import { type CategoryType } from "./ItemsCategory";
 
 type CartBtnType = {
   type?: "default" | "compact";
+  businessSlug: string;
   categories: CategoryType[];
   globalStyling: MenuGlobalStyling;
 };
 
 export default function CartBtn({
   type = "default",
+  businessSlug,
   categories,
   globalStyling,
 }: CartBtnType) {
@@ -113,7 +115,7 @@ export default function CartBtn({
         asChild
         className="!fixed bottom-[-80px] left-0 right-0 z-50 m-4 flex h-max items-center justify-between rounded-[var(--radius-base)] bg-[color:var(--secondary)] p-2 text-[color:var(--primary)] shadow-2xl xs:p-2.5"
       >
-        <Link href={`/venhan/orders`}>
+        <Link href={`/${businessSlug}/orders`}>
           <div className=" flex items-center pr-2">
             <p className="text-lg font-medium text-[color:var(--primary)] xs:text-xl xs:font-semibold">
               ثبت سفارش
