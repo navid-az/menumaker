@@ -33,12 +33,10 @@ export default function MenuItemsWrapper({
   categories,
   params,
   globalStyling,
-  styleVars,
 }: {
   categories: CategoriesType[];
   params: { menu_id: string };
   globalStyling: MenuGlobalStyling;
-  styleVars: React.CSSProperties;
 }) {
   const { updateActiveCategory } = useCategoryBtn();
   const { searchQuery } = useSearchBar();
@@ -90,7 +88,6 @@ export default function MenuItemsWrapper({
                         key={item.id}
                         {...item}
                         globalStyling={globalStyling}
-                        styleVars={styleVars}
                       ></MenuItem>
                     ))}
                   </section>

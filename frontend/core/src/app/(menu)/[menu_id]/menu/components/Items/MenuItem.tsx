@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { CSSProperties } from "react";
 
 //components
 import Image from "next/image";
@@ -42,7 +42,6 @@ export type MenuItemType = {
   isFeatured?: boolean;
   animations?: AnimationVariantType[];
   globalStyling: MenuGlobalStyling;
-  styleVars: React.CSSProperties;
 };
 
 export function MenuItem({
@@ -55,8 +54,38 @@ export function MenuItem({
   is_available = false,
   isFeatured = false,
   globalStyling,
-  styleVars,
 }: MenuItemType) {
+  const styleVars = {
+    "--primary": globalStyling.primary_color,
+    "--secondary": globalStyling.secondary_color,
+    "--tertiary": globalStyling.tertiary_color,
+    "--bg": globalStyling.bg_color,
+    "--radius-base":
+      globalStyling.border_radius === "sm"
+        ? "4px"
+        : globalStyling.border_radius === "md"
+        ? "6px"
+        : globalStyling.border_radius === "lg"
+        ? "8px"
+        : "9999px", // full
+    "--radius-inner":
+      globalStyling.border_radius === "sm"
+        ? "2px"
+        : globalStyling.border_radius === "md"
+        ? "4px"
+        : globalStyling.border_radius === "lg"
+        ? "6px"
+        : "9999px", // full,
+    "--radius-exception":
+      globalStyling.border_radius === "sm"
+        ? "2px"
+        : globalStyling.border_radius === "md"
+        ? "4px"
+        : globalStyling.border_radius === "lg"
+        ? "6px"
+        : "24px", // full,
+  };
+
   //change the value of drawerIsOpen global state
   const setDrawerIsOpen = useMenuItemDrawer((state) => state.updateIsOpen);
   const handleDrawer = () => {
@@ -133,7 +162,7 @@ export function MenuItem({
         )}
       </DrawerTrigger>
       <DrawerContent
-        style={styleVars}
+        style={styleVars as CSSProperties}
         className="rounded-t-3xl border-0 bg-white pt-1.5"
       >
         {/* drawer handle */}

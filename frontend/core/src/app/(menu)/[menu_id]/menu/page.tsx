@@ -86,49 +86,14 @@ export default async function Page(props: {
   );
   const categories = await getMenuCategories(params.menu_id);
 
-  const styleVars = {
-    "--primary": globalStyling.primary_color,
-    "--secondary": globalStyling.secondary_color,
-    "--tertiary": globalStyling.tertiary_color,
-    "--bg": globalStyling.bg_color,
-    "--radius-base":
-      globalStyling.border_radius === "sm"
-        ? "4px"
-        : globalStyling.border_radius === "md"
-        ? "6px"
-        : globalStyling.border_radius === "lg"
-        ? "8px"
-        : "9999px", // full
-    "--radius-inner":
-      globalStyling.border_radius === "sm"
-        ? "2px"
-        : globalStyling.border_radius === "md"
-        ? "4px"
-        : globalStyling.border_radius === "lg"
-        ? "6px"
-        : "9999px", // full,
-    "--radius-exception":
-      globalStyling.border_radius === "sm"
-        ? "2px"
-        : globalStyling.border_radius === "md"
-        ? "4px"
-        : globalStyling.border_radius === "lg"
-        ? "6px"
-        : "24px", // full,
-  };
-
   return (
-    <div
-      style={styleVars as React.CSSProperties}
-      className="relative flex flex-col bg-white"
-    >
+    <div className="relative flex flex-col bg-white">
       <MenuHeader menuData={menuData}></MenuHeader>
       <ItemsCategory params={params}></ItemsCategory>
       <MenuItemsWrapper
         categories={categories}
         params={params}
         globalStyling={globalStyling}
-        styleVars={styleVars as React.CSSProperties}
       ></MenuItemsWrapper>
       <CartBtn categories={categories} globalStyling={globalStyling}></CartBtn>
     </div>
