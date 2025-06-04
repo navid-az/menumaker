@@ -16,6 +16,11 @@ export type Menu = {
   categories_display_type: string;
   call_waiter_enabled: boolean;
   searchbar_enabled: boolean;
+  home_title: string;
+  home_subtitle: string;
+  primary_image: string;
+  secondary_image: string;
+  tertiary_image: string;
 };
 export type MenuGlobalStyling = {
   id: number;

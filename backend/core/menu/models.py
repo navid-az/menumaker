@@ -28,6 +28,19 @@ class Menu(models.Model):
     searchbar_enabled = models.BooleanField(default=False)
     logo = models.ImageField(
         upload_to="menu/images/logo/", null=True, blank=True)
+
+    # home page
+    primary_image = models.ImageField(
+        upload_to="menu/images/home/primary/", null=True, blank=True)
+    secondary_image = models.ImageField(
+        upload_to="menu/images/home/secondary/", null=True, blank=True)
+    tertiary_image = models.ImageField(
+        upload_to="menu/images/home/tertiary/", null=True, blank=True)
+    home_title = models.CharField(
+        max_length=35, null=True, blank=True)
+    home_subtitle = models.CharField(
+        max_length=80, null=True, blank=True)
+
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
