@@ -1,7 +1,8 @@
 from django.db import transaction
-from .models import Menu, MenuGlobalStyling
+from .models import Menu, MenuGlobalStyling, MenuImage
 from rest_framework import serializers
 from business.serializers import CategoriesSerializer
+import uuid
 
 
 # menu serializers
@@ -47,3 +48,14 @@ class MenuCreateSerializer(serializers.ModelSerializer):
                 MenuGlobalStyling.objects.create(
                     menu=menu, **global_style_data)
         return menu
+
+
+class MenuImageCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MenuImage
+        fields = ['name', 'image']
+
+    def create(self, validated_data):
+        # Generate a temp_id for the image if not provided
+        validated_data["temp_id"] = str(uuid.uuid4())
+        return super().create(validated_data)

@@ -80,6 +80,24 @@ class MenuGlobalStyling(models.Model):
     created = models.DateTimeField(auto_now_add=True)
 
 
+class MenuImage(models.Model):
+    menu = models.ForeignKey(
+        Menu, on_delete=models.CASCADE, related_name="images", null=True, blank=True)
+    name = models.CharField(
+        max_length=5,
+        choices=[('home', 'home'), ('items', 'items')],
+        default='full'
+    )
+    image = models.ImageField(
+        upload_to=f"menu/images/")
+    temp_id = models.CharField(max_length=36, null=True, blank=True)
+    updated = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.temp_id}"
+
+
 class Table(models.Model):
     menu = models.ForeignKey(
         Menu, on_delete=models.CASCADE, related_name="tables")

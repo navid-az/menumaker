@@ -1,8 +1,9 @@
 from django.contrib import admin
-from .models import Menu, MenuGlobalStyling, Table, Tag
+from .models import Menu, MenuGlobalStyling, MenuImage, Table, Tag
 
 admin.site.register(Table)
 admin.site.register(Tag)
+admin.site.register(MenuImage)
 
 
 class MenuGlobalStylingInline(admin.StackedInline):

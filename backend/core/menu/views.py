@@ -1,17 +1,19 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 
-# dependencies
-from .models import Menu, MenuGlobalStyling
-from business.models import Business
-from .serializers import MenuCreateSerializer, MenuListSerializer, MenuGlobalStylingSerializer, MenuSerializer
-
 # rest dependencies
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from permissions import IsOwner
+
+# dependencies
+from .models import Menu, MenuGlobalStyling
+from business.models import Business
+from .serializers import MenuCreateSerializer, MenuListSerializer, MenuGlobalStylingSerializer, MenuSerializer, MenuImageCreateSerializer
+
+from rest_framework.parsers import MultiPartParser
 
 User = get_user_model()
 
@@ -66,3 +68,32 @@ class MenuCreateView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class MenuImageCreateView(APIView):
+
+    def post(self, request, *args, **kwargs):
+        images = request.FILES.getlist("images")
+        if not images:
+            return Response(
+                {"error": "No images provided"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        image_refs = []
+        for image in images:
+            serializer = MenuImageCreateSerializer(data={"image": image})
+            if serializer.is_valid():
+                instance = serializer.save()
+                image_refs.append({
+                    "id": instance.id,
+                    "image": instance.image.url,
+                    "temp_id": instance.temp_id,
+                })
+            else:
+                return Response(
+                    serializer.errors,
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+        return Response({"success": True, "image_refs": image_refs}, status=status.HTTP_201_CREATED)

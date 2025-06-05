@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import MenuListView, MenuView, MenuCreateView, MenuGlobalStylingView
+from .views import MenuListView, MenuView, MenuCreateView, MenuGlobalStylingView, MenuImageCreateView
 
 app_name = 'menu'
 
@@ -10,6 +10,8 @@ urlpatterns = [
     path('<str:slug>/global-styling/', MenuGlobalStylingView.as_view(),
          name='menu-global-styling'),
 
+    path('create/image/', MenuImageCreateView.as_view(),
+         name='menu-image-create'),
     # create menu
     path('create/<slug:slug>/', MenuCreateView.as_view(), name='menu-create')
 ]
