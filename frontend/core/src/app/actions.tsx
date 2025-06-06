@@ -378,3 +378,29 @@ export async function createBusiness(prevState: any, data: SetupSchemaType) {
     };
   }
 }
+
+// image upload
+export async function uploadImage(data: FormData) {
+  try {
+    const res = await fetch("http://localhost:8000/menu/create/image/", {
+      method: "POST",
+      body: data,
+    });
+    if (!res.ok) {
+      const errorData = await res.json();
+      console.log("errorData:", errorData);
+
+      return {
+        success: false,
+        error: errorData.error || "Failed to upload image",
+      };
+    }
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.message || "An unexpected error occurred",
+    };
+  }
+
+  return { success: true };
+}
