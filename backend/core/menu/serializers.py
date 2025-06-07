@@ -35,18 +35,32 @@ class MenuGlobalStylingSerializer(serializers.ModelSerializer):
 class MenuCreateSerializer(serializers.ModelSerializer):
     global_styling = MenuGlobalStylingSerializer(write_only=True)
 
+    # Accept a list of temp_ids from the client
+    home_images = serializers.ListField(
+        child=serializers.UUIDField(),
+        write_only=True,
+        required=False
+    )
+
     class Meta:
         model = Menu
         fields = '__all__'
 
     def create(self, validated_data):
         global_style_data = validated_data.pop('global_styling', {})
+        temp_ids = validated_data.pop("home_images", [])
 
         with transaction.atomic():
             menu = Menu.objects.create(**validated_data)
+
+            # connect submitted images to their newly created menu
+            menu_image = MenuImage.objects.filter(temp_id__in=temp_ids)
+            menu_image.update(menu=menu)
+
             if global_style_data:
                 MenuGlobalStyling.objects.create(
                     menu=menu, **global_style_data)
+
         return menu
 
 
