@@ -41,8 +41,8 @@ export default function HomeLayoutStep({
               <SliderTab onClick={() => console.log("clicked")} isActive>
                 <SliderTabTitle
                   title="تصاویر"
-                  description="لینک های تلگرام و اینستاگرام و ..."
-                  iconSrc="/images/form-icons/link.svg"
+                  description="تصاویری برای شخصی سازی صفحه اصلی"
+                  iconSrc="/images/form-icons/images.svg"
                 ></SliderTabTitle>
                 <SliderTabBody isOpen>
                   <ImageUploader
@@ -57,9 +57,9 @@ export default function HomeLayoutStep({
       />
       <SliderTab onClick={() => console.log("clicked")} isActive>
         <SliderTabTitle
-          title="نوشته صفحه"
-          description="لینک های تلگرام و اینستاگرام و ..."
-          iconSrc="/images/form-icons/phone.svg"
+          title="متن خوش‌آمدگویی"
+          description="عنوان و متنی کوتاه برای خوش‌آمدگویی به بازدیدکنندگان "
+          iconSrc="/images/form-icons/text-cursor-input.svg"
         />
         <SliderTabBody isOpen>
           <div className="flex w-full flex-col gap-2">
@@ -69,7 +69,7 @@ export default function HomeLayoutStep({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder={"نام مجموعه"} {...field}></Input>
+                    <Input placeholder={"مثلا نام مجموعه"} {...field}></Input>
                   </FormControl>
                 </FormItem>
               )}
@@ -80,7 +80,7 @@ export default function HomeLayoutStep({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder={"متن کوتاه"} {...field}></Input>
+                    <Input placeholder={"متنی کوتاه"} {...field}></Input>
                   </FormControl>
                 </FormItem>
               )}
