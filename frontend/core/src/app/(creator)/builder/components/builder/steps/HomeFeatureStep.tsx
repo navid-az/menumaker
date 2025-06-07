@@ -29,7 +29,7 @@ export default function HomeFeatureStep({
   return (
     <SliderStep
       sectionNum={2}
-      stepNum={2}
+      stepNum={3}
       title="ویژگی های مورد نظر خود را انتخاب کنید"
     >
       <FormField

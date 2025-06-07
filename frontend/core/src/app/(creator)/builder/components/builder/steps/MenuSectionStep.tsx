@@ -29,7 +29,7 @@ export default function MenuSectionStep({
   return (
     <SliderStep
       sectionNum={2}
-      stepNum={1}
+      stepNum={2}
       title="تعداد بخش های منو خود را مشخص کنید"
     >
       <FormField
