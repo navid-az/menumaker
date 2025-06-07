@@ -4,14 +4,13 @@ import React from "react";
 
 //components
 import { FormControl, FormField, FormItem } from "@/components/ui/form";
-import { Switch } from "@/components/ui/switch";
 import { SliderStep } from "@/components/global/slider/Slider";
 import {
   SliderTab,
   SliderTabTitle,
   SliderTabBody,
 } from "@/components/global/slider/SliderTab";
-import ItemAdder from "@/components/global/ItemAdder";
+import ImageUploader from "@/components/global/ImageUploader";
 
 //libraries
 import { useFormContext } from "react-hook-form";
@@ -19,7 +18,6 @@ import { useFormContext } from "react-hook-form";
 //types
 import { type AssetGroupType } from "@/components/global/AssetPicker";
 import { Input } from "@/components/ui/input";
-import Uploader from "@/app/dashboard/components/Uploader";
 
 export default function HomeLayoutStep({
   assetGroups,
@@ -47,7 +45,10 @@ export default function HomeLayoutStep({
                   iconSrc="/images/form-icons/link.svg"
                 ></SliderTabTitle>
                 <SliderTabBody isOpen>
-                  <Uploader />
+                  <ImageUploader
+                    value={field.value}
+                    onChange={field.onChange}
+                  ></ImageUploader>
                 </SliderTabBody>
               </SliderTab>
             </FormControl>

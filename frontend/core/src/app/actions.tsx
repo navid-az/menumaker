@@ -395,6 +395,15 @@ export async function uploadImage(data: FormData) {
         error: errorData.error || "Failed to upload image",
       };
     }
+
+    const validData = await res.json();
+
+    if (validData.success && Array.isArray(validData.image_refs)) {
+      return {
+        success: true,
+        imageRefs: validData.image_refs,
+      };
+    }
   } catch (error: any) {
     return {
       success: false,

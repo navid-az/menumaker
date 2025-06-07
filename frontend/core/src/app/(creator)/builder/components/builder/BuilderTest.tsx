@@ -13,6 +13,7 @@ import MenuSectionStep from "./steps/MenuSectionStep";
 import HomeFeatureStep from "./steps/HomeFeatureStep";
 import MenuLayoutStep from "./steps/MenuLayoutStep";
 import CategoryStyleStep from "./steps/CategoryStyleStep";
+import HomeLayoutStep from "./steps/HomeLayoutStep";
 import MenuPreview from "../preview/MenuPreview";
 
 //hooks
@@ -61,16 +62,30 @@ const GlobalStylingSchema = z.object({
   // unit_display_type: z.enum(["simp", "comp", "engL", "perL"]),
 });
 const BuilderSchema = z.object({
+  //home page
+  home_images: z
+    .array(
+      z.object({
+        tempId: z.string(),
+        url: z.string(),
+      })
+    )
+    .optional(),
+  home_title: z.string(),
+  home_subtitle: z.string(),
   welcome_page_layout: z.enum(["single", "couple", "none"]),
   menu_sections: InstanceSchema,
+
   show_social_links: z.boolean().default(false),
   show_phone_numbers: z.boolean().default(false),
   show_branches: z.boolean().default(false),
+  //items page
   items_page_layout: z.enum(["horizontal", "vertical"]),
-  // items_display_type: z.enum(["modern", "square", "list"]), //
   categories_display_type: z.enum(["slider", "circular"]),
   call_waiter_enabled: z.boolean().default(false),
   searchbar_enabled: z.boolean().default(false),
+  // items_display_type: z.enum(["modern", "square", "list"]), //
+
   business: BusinessSchema, // Nested Business schema
   global_styling: GlobalStylingSchema, // Nested Global Styling schema
 });
@@ -95,6 +110,9 @@ export default function BuilderTest({
     defaultValues: {
       business: { social_links: [], phone_numbers: [], branches: [] },
       menu_sections: [],
+      home_title: "",
+      home_subtitle: "",
+      home_images: [],
     },
   });
 
@@ -107,7 +125,7 @@ export default function BuilderTest({
   async function onSubmit(values: BuilderFormType) {
     console.log("values:", values);
 
-    const { business, global_styling, ...menuData } = values;
+    const { business, global_styling, home_images, ...menuData } = values;
 
     //destructure color_palette array of hex codes
     const [primary_color, secondary_color, tertiary_color, bg_color] =
@@ -118,6 +136,7 @@ export default function BuilderTest({
 
     const data = {
       ...menuData,
+      home_images: home_images?.map((image) => image.tempId),
       global_styling: {
         ...restStyling,
         primary_color,
@@ -126,7 +145,6 @@ export default function BuilderTest({
         bg_color,
       },
     };
-
     const businessSlug = slugify(businessName);
 
     //call server action
@@ -175,6 +193,7 @@ export default function BuilderTest({
               <StyleStep></StyleStep>
             </SliderSection>
             <SliderSection title="صفحه اصلی" sectionNum={2}>
+              <HomeLayoutStep assetGroups={assetGroups}></HomeLayoutStep>
               <MenuSectionStep assetGroups={assetGroups}></MenuSectionStep>
               <HomeFeatureStep assetGroups={assetGroups}></HomeFeatureStep>
             </SliderSection>

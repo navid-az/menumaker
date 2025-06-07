@@ -10,9 +10,16 @@ import { uploadImage } from "@/app/actions";
 
 export default function ImageUploader({
   defaultFiles = [],
-  onFilesChange = undefined,
   maxFiles = 5,
   maxSizeMB = 5,
+  value,
+  onChange,
+}: {
+  value: { tempId: string; url: string }[];
+  onChange: (value: { tempId: string; url: string }[]) => void;
+  maxFiles?: number;
+  maxSizeMB?: number;
+  defaultFiles?: { tempId: string; url: string }[];
 }) {
   const maxSize = maxSizeMB * 1024 * 1024;
 
@@ -32,8 +39,6 @@ export default function ImageUploader({
     maxSize,
     multiple: true,
     maxFiles,
-    initialFiles: defaultFiles,
-    onFilesChange,
     onFilesAdded: async (newFiles) => {
       const formData = new FormData();
       newFiles.forEach((file) => {
@@ -45,8 +50,19 @@ export default function ImageUploader({
       });
 
       const res = await uploadImage(formData);
+
       if (res?.success) {
-        console.log(res.success);
+        const newUploaded = res.imageRefs.map(
+          (img: { id: number; image: string; temp_id: string }) => ({
+            tempId: img.temp_id,
+            url: img.image,
+          })
+        );
+
+        // Combine with previous images
+        const updated = [...value, ...newUploaded];
+
+        onChange?.(updated);
       } else {
         console.log(res.error);
       }
