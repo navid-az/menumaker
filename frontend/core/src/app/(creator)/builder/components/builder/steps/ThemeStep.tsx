@@ -28,40 +28,46 @@ export default function ThemeStep() {
     >
       <FormField
         control={control}
-        name="categories_display_type"
+        name="frontend_only.suggested_palette_enabled"
         render={({ field }) => (
-          <FormItem>
-            <FormControl>
-              <SliderTab
-                onClick={() => console.log("clicked")}
-                isActive={field.value}
-              >
-                <SliderTabTitle
-                  title="پالت های پیشنهادی"
-                  description="ترکیب رنگ های پیش فرز"
-                  iconSrc="/images/form-icons/palette.svg"
-                >
+          <SliderTab
+            onClick={() => console.log("clicked")}
+            isActive={field.value}
+          >
+            <SliderTabTitle
+              title="پالت های پیشنهادی"
+              description="ترکیب رنگ های پیش فرز"
+              iconSrc="/images/form-icons/palette.svg"
+            >
+              <FormItem>
+                <FormControl>
                   <Switch
                     checked={field.value}
                     onCheckedChange={field.onChange}
                   ></Switch>
-                </SliderTabTitle>
-                <SliderTabBody isOpen={field.value}>
-                  <SuggestedPalettes
-                    palettes={[
-                      ["#264653", "#E76F51"],
-                      ["#F94144", "#F3722C", "#F8961E", "#F9C74F", "#90BE6D"],
-                      ["#CBDFBD", "#F19C79", "#A44A3F"],
-                      ["#011627", "#FF3366", "#2EC4B6", "#F7B801", "#E71D36"],
-                      ["#A8DADC", "#457B9D", "#E63946", "#F1FAEE"],
-                    ]}
-                  ></SuggestedPalettes>
-                </SliderTabBody>
-              </SliderTab>
-            </FormControl>
-          </FormItem>
+                </FormControl>
+              </FormItem>
+            </SliderTabTitle>
+            <SliderTabBody isOpen={field.value}>
+              <FormField
+                control={control}
+                name="global_styling.color_palette"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormControl>
+                      <SuggestedPalettes
+                        value={field.value}
+                        onChange={field.onChange}
+                      ></SuggestedPalettes>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </SliderTabBody>
+          </SliderTab>
         )}
       />
+
       <SliderTab onClick={() => console.log("cum")} isActive>
         <SliderTabTitle
           title="رنگ بندی منو"

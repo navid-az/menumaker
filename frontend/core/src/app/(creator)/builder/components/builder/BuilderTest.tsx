@@ -61,6 +61,9 @@ const GlobalStylingSchema = z.object({
   click_animation_type: z.array(z.enum(["ripple", "tactile"])).optional(),
   // unit_display_type: z.enum(["simp", "comp", "engL", "perL"]),
 });
+const FrontEndOnlySchema = z.object({
+  suggested_palette_enabled: z.boolean().default(false),
+});
 const BuilderSchema = z.object({
   //home page
   home_images: z
@@ -88,6 +91,7 @@ const BuilderSchema = z.object({
 
   business: BusinessSchema, // Nested Business schema
   global_styling: GlobalStylingSchema, // Nested Global Styling schema
+  frontend_only: FrontEndOnlySchema, // should not be included in the final data
 });
 
 //types
@@ -109,6 +113,10 @@ export default function BuilderTest({
     resolver: zodResolver(BuilderSchema),
     defaultValues: {
       business: { social_links: [], phone_numbers: [], branches: [] },
+      global_styling: {
+        color_palette: ["#0d3b66", "#faf0ca", "#f4d35e"],
+        border_radius: "full",
+      },
       menu_sections: [],
       home_title: "",
       home_subtitle: "",
@@ -125,7 +133,13 @@ export default function BuilderTest({
   async function onSubmit(values: BuilderFormType) {
     console.log("values:", values);
 
-    const { business, global_styling, home_images, ...menuData } = values;
+    const {
+      frontend_only, // opt out
+      business,
+      global_styling,
+      home_images,
+      ...menuData
+    } = values;
 
     //destructure color_palette array of hex codes
     const [primary_color, secondary_color, tertiary_color, bg_color] =

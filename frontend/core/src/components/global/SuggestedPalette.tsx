@@ -3,33 +3,38 @@ import React, { useRef } from "react";
 //components
 import Palette from "./Palette";
 
-//hooks
-import { useColorPalette } from "@/lib/stores";
-import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
-
 //SVGs
 import { Check } from "lucide-react";
 
-const SuggestedPalette = ({ colors }: { colors: string[] }) => {
-  const changePalette = useColorPalette((state) => state.changeColorPalette);
-  const activePalette = useColorPalette((state) => state.colors);
+//types
+type SuggestedPaletteType = {
+  palette: string[];
+  value?: string[];
+  onChange?: (value: string[]) => void;
+};
 
-  const btnRef = useRef(null);
-
-  // useTactileAnimation(btnRef, { scale: 0.08 });
+const SuggestedPalette = ({
+  palette,
+  value = ["#0d3b66", "#faf0ca", "#f4d35e"],
+  onChange,
+}: SuggestedPaletteType) => {
+  //check if arrays are equal
+  function arraysEqual(a: string[], b: string[]) {
+    if (a.length !== b.length) return false;
+    return a.every((val, i) => val === b[i]);
+  }
 
   return (
     <div
       className={`relative rounded-full border-[3.5px] transition-all duration-200 ${
-        activePalette === colors
+        arraysEqual(value, palette)
           ? "pointer-events-none scale-95 border-primary"
           : "border-transparent"
       } `}
-      ref={btnRef}
-      onClick={() => changePalette(colors)}
+      onClick={() => onChange?.(palette)}
     >
-      <Palette disableOptions colors={colors}></Palette>
-      {activePalette === colors && (
+      <Palette disableOptions colors={palette}></Palette>
+      {arraysEqual(value, palette) && (
         <Check className="absolute inset-0 m-auto h-8 w-8 rounded-full bg-primary p-1 text-sad-blue"></Check>
       )}
     </div>
