@@ -19,6 +19,6 @@ export default function CategoryClientWrapper({
   categories: Category[];
   assetGroups: any[];
 }) {
-  const columns = categoryColumns(businessSlug, assetGroups);
+  const columns = categoryColumns(assetGroups);
   return <DataTable columns={columns} data={categories} />;
 }
