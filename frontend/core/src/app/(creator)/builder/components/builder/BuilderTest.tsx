@@ -194,12 +194,12 @@ export default function BuilderTest({
 
   return (
     <Form {...form}>
-      <div className="flex h-full w-full">
+      <div className="flex h-full w-full pl-10 pr-28 justify-between">
         <form
           name="builder-form"
           onSubmit={form.handleSubmit(onSubmit, onInvalid)}
           ref={ref}
-          className="basis-8/12 px-32"
+          className="w-5/12"
         >
           <Slider>
             <SliderSection title="شخصی سازی" sectionNum={1}>
@@ -219,9 +219,7 @@ export default function BuilderTest({
           </Slider>
         </form>
         {/* live menu preview */}
-        <section className="relative ml-20 flex h-screen basis-4/12 items-center justify-center">
-          <MenuPreview></MenuPreview>
-        </section>
+        <MenuPreview></MenuPreview>
       </div>
     </Form>
   );

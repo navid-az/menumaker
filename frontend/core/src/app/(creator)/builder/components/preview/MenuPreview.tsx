@@ -4,48 +4,112 @@ import React from "react";
 
 //components
 import Image from "next/image";
-import ItemsCategoryPreview from "./ItemsCategoryPreview";
+import HomePagePreview from "./HomePagePreview";
+import ItemsPagePreview from "./ItemsPagePreview";
+import { Button } from "@/components/ui/button";
 
 //libraries
 import { useFormContext } from "react-hook-form";
-import MenuItemsWrapperPreview from "./MenuItemsWrapperPreview";
+import { cn } from "@/lib/utils";
 
 export default function MenuPreview() {
+  const [activePage, setActivePage] = React.useState<
+    "home" | "items" | "order"
+  >("items");
+
   const { watch } = useFormContext();
   const colors = watch("global_styling.color_palette");
   const globalBorderRadius = watch("global_styling.border_radius");
+  const homeImages = watch("home_images");
+  const imageUrls = homeImages.map(
+    (img: { tempId: string; url: string }) => img.url
+  );
+  const homeTitle = watch("home_title");
+  const homeSubtitle = watch("home_subtitle");
+
+  const styleVars = {
+    "--primary": colors[0],
+    "--secondary": colors[1],
+    "--tertiary": colors[2],
+    "--bg": colors[3],
+    "--radius-base":
+      globalBorderRadius === "sm"
+        ? "4px"
+        : globalBorderRadius === "md"
+        ? "6px"
+        : globalBorderRadius === "lg"
+        ? "8px"
+        : "9999px", // full
+    "--radius-inner":
+      globalBorderRadius === "sm"
+        ? "2px"
+        : globalBorderRadius === "md"
+        ? "4px"
+        : globalBorderRadius === "lg"
+        ? "6px"
+        : "9999px", // full,
+    "--radius-exception":
+      globalBorderRadius === "sm"
+        ? "2px"
+        : globalBorderRadius === "md"
+        ? "4px"
+        : globalBorderRadius === "lg"
+        ? "6px"
+        : "24px", // full,
+  };
 
   return (
-    <>
-      {!colors ? (
-        <div className="relative flex h-[932px] w-[424px] scale-[70%] flex-col rounded-2xl">
-          <Image
-            src="/svgs/iphone.svg"
-            fill
-            alt="menu prototype"
-            className="pointer-events-none z-50"
-          ></Image>
-        </div>
-      ) : (
-        <div className="relative flex h-[932px] w-[424px] scale-[80%] flex-col rounded-2xl">
-          <Image
-            src="/images/form-icons/prototype.svg"
-            alt="menu prototype"
-            fill
-            className="pointer-events-none z-50"
-          ></Image>
-          <section className="hide-scrollbar relative mx-[36px] my-[85px] h-full overflow-y-scroll rounded-[30px] bg-gray-200 pb-6 pt-12">
-            <ItemsCategoryPreview
+    <div
+      style={styleVars as React.CSSProperties}
+      className="flex justify-center items-center"
+    >
+      <div className="relative w-[400px] h-[820px] scale-[85%]">
+        <Image
+          src="/svgs/iphone-frame.svg"
+          alt="iPhone frame"
+          fill
+          className="pointer-events-none z-50"
+          priority
+        />
+        <div className="absolute overflow-y-scroll hide-scrollbar inset-[20px_19px_20px_19px] rounded-[30px]">
+          {activePage === "home" ? (
+            <HomePagePreview
+              imageUrls={imageUrls}
               colors={colors}
               globalBorderRadius={globalBorderRadius}
-            ></ItemsCategoryPreview>
-            <MenuItemsWrapperPreview
+              homeTitle={homeTitle}
+              homeSubtitle={homeSubtitle}
+            />
+          ) : activePage === "items" ? (
+            <ItemsPagePreview
               colors={colors}
               globalBorderRadius={globalBorderRadius}
-            ></MenuItemsWrapperPreview>
-          </section>
+            />
+          ) : (
+            ""
+          )}
         </div>
-      )}
-    </>
+      </div>
+      <div className="flex flex-col gap-2">
+        <Button
+          onClick={() => setActivePage("home")}
+          className={cn(
+            "bg-primary text-primary",
+            activePage === "home" && "bg-black text-white"
+          )}
+        >
+          صفحه اصلی
+        </Button>
+        <Button
+          onClick={() => setActivePage("items")}
+          className={cn(
+            "bg-primary text-primary",
+            activePage === "items" && "bg-black text-white"
+          )}
+        >
+          صفحه آیتم ها
+        </Button>
+      </div>
+    </div>
   );
 }

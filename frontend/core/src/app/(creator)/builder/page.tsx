@@ -14,9 +14,5 @@ const getAssetGroups = async () => {
 export default async function Page() {
   const assetGroups = await getAssetGroups();
 
-  return (
-    <section className="container m-auto flex h-screen w-full items-center justify-between gap-12 overflow-hidden">
-      <MenuMaker assetGroups={assetGroups}></MenuMaker>
-    </section>
-  );
+  return <MenuMaker assetGroups={assetGroups}></MenuMaker>;
 }
