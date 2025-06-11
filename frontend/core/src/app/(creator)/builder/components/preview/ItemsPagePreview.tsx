@@ -12,7 +12,7 @@ export default function ItemsPagePreview({
   globalBorderRadius: "full" | "lg" | "md" | "sm";
 }) {
   return (
-    <div className="pb-6 pt-[46px]">
+    <div className="pt-12 pb-6">
       <ItemsCategoryPreview
         colors={colors}
         globalBorderRadius={globalBorderRadius}

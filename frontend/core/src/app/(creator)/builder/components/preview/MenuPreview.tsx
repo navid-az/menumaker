@@ -6,11 +6,17 @@ import React from "react";
 import Image from "next/image";
 import HomePagePreview from "./HomePagePreview";
 import ItemsPagePreview from "./ItemsPagePreview";
+import { Button } from "@/components/ui/button";
 
 //libraries
 import { useFormContext } from "react-hook-form";
+import { cn } from "@/lib/utils";
 
 export default function MenuPreview() {
+  const [activePage, setActivePage] = React.useState<
+    "home" | "items" | "order"
+  >("items");
+
   const { watch } = useFormContext();
   const colors = watch("global_styling.color_palette");
   const globalBorderRadius = watch("global_styling.border_radius");
@@ -53,25 +59,20 @@ export default function MenuPreview() {
   };
 
   return (
-    <div style={styleVars as React.CSSProperties}>
-      {!colors ? (
-        <div className="relative flex h-[932px] w-[424px] scale-[70%] flex-col rounded-2xl">
-          <Image
-            src="/svgs/iphone.svg"
-            fill
-            alt="menu prototype"
-            className="pointer-events-none z-50"
-          ></Image>
-        </div>
-      ) : (
-        <div className="relative flex h-[932px] w-[424px] scale-[80%] flex-col rounded-2xl">
-          <Image
-            src="/images/form-icons/prototype.svg"
-            alt="menu prototype"
-            fill
-            className="pointer-events-none z-50"
-          ></Image>
-          <section className="hide-scrollbar relative mx-[36px] my-[85px] h-full overflow-hidden overflow-y-scroll rounded-[30px]">
+    <div
+      style={styleVars as React.CSSProperties}
+      className="flex justify-center items-center"
+    >
+      <div className="relative w-[400px] h-[820px] scale-[85%]">
+        <Image
+          src="/svgs/iphone-frame.svg"
+          alt="iPhone frame"
+          fill
+          className="pointer-events-none z-50"
+          priority
+        />
+        <div className="absolute overflow-y-scroll hide-scrollbar inset-[20px_19px_20px_19px] rounded-[30px]">
+          {activePage === "home" ? (
             <HomePagePreview
               imageUrls={imageUrls}
               colors={colors}
@@ -79,13 +80,36 @@ export default function MenuPreview() {
               homeTitle={homeTitle}
               homeSubtitle={homeSubtitle}
             />
-            {/* <ItemsPagePreview
+          ) : activePage === "items" ? (
+            <ItemsPagePreview
               colors={colors}
               globalBorderRadius={globalBorderRadius}
-            /> */}
-          </section>
+            />
+          ) : (
+            ""
+          )}
         </div>
-      )}
+      </div>
+      <div className="flex flex-col gap-2">
+        <Button
+          onClick={() => setActivePage("home")}
+          className={cn(
+            "bg-primary text-primary",
+            activePage === "home" && "bg-black text-white"
+          )}
+        >
+          صفحه اصلی
+        </Button>
+        <Button
+          onClick={() => setActivePage("items")}
+          className={cn(
+            "bg-primary text-primary",
+            activePage === "items" && "bg-black text-white"
+          )}
+        >
+          صفحه آیتم ها
+        </Button>
+      </div>
     </div>
   );
 }

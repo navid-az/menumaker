@@ -40,7 +40,7 @@ export default function ItemsCategoryPreview({
     <div
       className={`hide-scrollbar avoid-stretch h-200px overflow-x-auto pb-4 backdrop-blur-lg ${
         isSticky && "sticky"
-      } flex ${hasBackGround && "bg-primary"} p-2 transition-all ${
+      } flex ${hasBackGround && "bg-primary"} p-2 px-3 transition-all ${
         type == "horizontal"
           ? "h-max w-full flex-row gap-2"
           : "flex-color h-full w-2/12 flex-col gap-4"
