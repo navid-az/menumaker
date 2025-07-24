@@ -15,15 +15,11 @@ import {
 //libraries
 import { useFormContext } from "react-hook-form";
 
-export default function CategoryStyleStep() {
+export default function CategoryStyleStep({ stepId }: { stepId: string }) {
   const { control } = useFormContext();
 
   return (
-    <SliderStep
-      sectionNum={3}
-      stepNum={2}
-      title="نوع نمایش دسته بندی آیتم ها را انتخاب کنید"
-    >
+    <SliderStep stepId={stepId}>
       <FormField
         control={control}
         name="categories_display_type"

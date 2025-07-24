@@ -20,18 +20,16 @@ import { useFormContext } from "react-hook-form";
 import { type AssetGroupType } from "@/components/global/AssetPicker";
 
 export default function HomeFeatureStep({
+  stepId,
   assetGroups,
 }: {
+  stepId: string;
   assetGroups: AssetGroupType[];
 }) {
   const { control } = useFormContext();
 
   return (
-    <SliderStep
-      sectionNum={2}
-      stepNum={3}
-      title="ویژگی های مورد نظر خود را انتخاب کنید"
-    >
+    <SliderStep stepId={stepId}>
       <FormField
         control={control}
         name="show_social_links"

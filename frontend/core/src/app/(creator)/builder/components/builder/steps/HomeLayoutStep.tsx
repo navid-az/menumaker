@@ -20,18 +20,16 @@ import { type AssetGroupType } from "@/components/global/AssetPicker";
 import { Input } from "@/components/ui/input";
 
 export default function HomeLayoutStep({
+  stepId,
   assetGroups,
 }: {
+  stepId: string;
   assetGroups: AssetGroupType[];
 }) {
   const { control } = useFormContext();
 
   return (
-    <SliderStep
-      sectionNum={2}
-      stepNum={1}
-      title="ویژگی های مورد نظر خود را انتخاب کنید"
-    >
+    <SliderStep stepId={stepId}>
       <FormField
         control={control}
         name="home_images"

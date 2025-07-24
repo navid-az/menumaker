@@ -32,91 +32,125 @@ export const useCurrentBusinessStore = create<businessState & businessAction>(
   })
 );
 
+// type ActiveHandler<T> = (value: T) => void;
+
+// type TabsStateType = {
+//   sectionCount: number;
+//   stepCount: number;
+//   activeSection: number;
+//   activeStepHeight: number;
+//   activeStep: number;
+//   updateHeight: ActiveHandler<number>;
+//   updateSectionCount: ActiveHandler<number>;
+//   updateActiveStepCount: ActiveHandler<number>;
+//   setActiveStep: ActiveHandler<number>;
+//   next: () => void;
+//   previous: () => void;
+//   reset: () => void;
+// };
+
+// export const useSlider = create<TabsStateType>()((set, get) => ({
+//   //sections
+//   activeSection: 1,
+//   sectionCount: 1,
+//   updateSectionCount: (sectionCount) =>
+//     set(() => ({ sectionCount: sectionCount })),
+
+//   //steps
+//   activeStep: 1,
+//   stepCount: 1,
+//   activeStepHeight: 0,
+//   updateActiveStepCount: (stepCount) => set(() => ({ stepCount: stepCount })),
+
+//   //set active step to a desired number
+//   setActiveStep: (stepNum) =>
+//     set((state) => ({
+//       activeStep:
+//         stepNum <= state.stepCount && stepNum >= 1 ? stepNum : state.activeStep,
+//     })),
+
+//   //update the height of the tabs container according to the height of active step
+//   updateHeight: (height) => set(() => ({ activeStepHeight: height })),
+
+//   // next function
+//   next: () => {
+//     const state = get(); // Use get to access the current state
+//     if (state.activeStep != state.stepCount) {
+//       set({ activeStep: state.activeStep + 1 });
+//     } else if (
+//       state.activeStep == state.stepCount &&
+//       state.activeSection != state.sectionCount
+//     ) {
+//       set({
+//         activeSection: state.activeSection + 1,
+//         activeStep: state.activeStep == state.stepCount ? 1 : state.stepCount,
+//       });
+//     }
+//   },
+//   // previous function
+//   previous: () => {
+//     const state = get(); // Use get to access the current state
+//     if (state.activeStep > 1) {
+//       set({ activeStep: state.activeStep - 1 });
+//     } else if (state.activeStep === 1 && state.activeSection !== 1) {
+//       set({
+//         activeSection: state.activeSection - 1,
+//       });
+//       setTimeout(() => {
+//         const updatedState = get(); // Re-fetch the state inside the timeout
+//         set({
+//           activeStep:
+//             updatedState.activeStep === updatedState.stepCount
+//               ? 1
+//               : updatedState.stepCount,
+//         });
+//       });
+//     }
+//   },
+
+//   reset: () =>
+//     set({
+//       activeStep: 1,
+//       activeSection: 1,
+//       sectionCount: 1,
+//       stepCount: 1,
+//       activeStepHeight: 0,
+//     }),
+// }));
+
 //~~~~Slider~~~~
-type ActiveHandler<T> = (value: T) => void;
+interface StepperStore {
+  sectionIndex: number;
+  setSectionIndex: (index: number) => void;
+  stepIndex: number;
+  setStepIndex: (index: number) => void;
+  activeStepId: string | null;
+  setActiveStepId: (id: string) => void;
 
-type TabsStateType = {
-  sectionCount: number;
-  stepCount: number;
-  activeSection: number;
   activeStepHeight: number;
-  activeStep: number;
-  updateHeight: ActiveHandler<number>;
-  updateSectionCount: ActiveHandler<number>;
-  updateActiveStepCount: ActiveHandler<number>;
-  setActiveStep: ActiveHandler<number>;
-  next: () => void;
-  previous: () => void;
+  updateHeight: (height: number) => void;
+
+  direction: 1 | -1;
+  setDirection: (dir: 1 | -1) => void;
+
   reset: () => void;
-};
+}
 
-export const useSlider = create<TabsStateType>()((set, get) => ({
-  //sections
-  activeSection: 1,
-  sectionCount: 1,
-  updateSectionCount: (sectionCount) =>
-    set(() => ({ sectionCount: sectionCount })),
+export const useSlider = create<StepperStore>((set) => ({
+  sectionIndex: 0,
+  stepIndex: 0,
+  direction: 1,
 
-  //steps
-  activeStep: 1,
-  stepCount: 1,
+  activeStepId: null,
+  setActiveStepId: (id) => set({ activeStepId: id }),
+
   activeStepHeight: 0,
-  updateActiveStepCount: (stepCount) => set(() => ({ stepCount: stepCount })),
+  updateHeight: (height) => set({ activeStepHeight: height }),
 
-  //set active step to a desired number
-  setActiveStep: (stepNum) =>
-    set((state) => ({
-      activeStep:
-        stepNum <= state.stepCount && stepNum >= 1 ? stepNum : state.activeStep,
-    })),
-
-  //update the height of the tabs container according to the height of active step
-  updateHeight: (height) => set(() => ({ activeStepHeight: height })),
-
-  // next function
-  next: () => {
-    const state = get(); // Use get to access the current state
-    if (state.activeStep != state.stepCount) {
-      set({ activeStep: state.activeStep + 1 });
-    } else if (
-      state.activeStep == state.stepCount &&
-      state.activeSection != state.sectionCount
-    ) {
-      set({
-        activeSection: state.activeSection + 1,
-        activeStep: state.activeStep == state.stepCount ? 1 : state.stepCount,
-      });
-    }
-  },
-  // previous function
-  previous: () => {
-    const state = get(); // Use get to access the current state
-    if (state.activeStep > 1) {
-      set({ activeStep: state.activeStep - 1 });
-    } else if (state.activeStep === 1 && state.activeSection !== 1) {
-      set({
-        activeSection: state.activeSection - 1,
-      });
-      setTimeout(() => {
-        const updatedState = get(); // Re-fetch the state inside the timeout
-        set({
-          activeStep:
-            updatedState.activeStep === updatedState.stepCount
-              ? 1
-              : updatedState.stepCount,
-        });
-      });
-    }
-  },
-
-  reset: () =>
-    set({
-      activeStep: 1,
-      activeSection: 1,
-      sectionCount: 1,
-      stepCount: 1,
-      activeStepHeight: 0,
-    }),
+  setSectionIndex: (index) => set({ sectionIndex: index }),
+  setStepIndex: (index) => set({ stepIndex: index }),
+  setDirection: (dir) => set({ direction: dir }),
+  reset: () => set({ sectionIndex: 0, stepIndex: 0, direction: 1 }),
 }));
 
 //~~~~slider titles & subtitles~~~~

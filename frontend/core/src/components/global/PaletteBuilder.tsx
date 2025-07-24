@@ -63,7 +63,7 @@ const PaletteBuilder = ({
           ref={addBtnRef}
           type="button"
           disabled={colors.length > 4}
-          className="flex w-10 grow-0 cursor-pointer items-center justify-center rounded-full bg-primary p-0 text-primary transition-opacity duration-300"
+          className="flex w-10 grow-0 cursor-pointer items-center justify-center rounded-md bg-primary p-0 text-primary transition-opacity duration-300"
         >
           <Plus className="text-sad-blue"></Plus>
         </Button>
@@ -77,7 +77,7 @@ const PaletteBuilder = ({
         type="button"
         onClick={() => handleColorRemove()}
         disabled={colors.length < 3}
-        className="flex w-10 grow-0 cursor-pointer items-center justify-center rounded-full bg-primary p-0 text-primary transition-opacity"
+        className="flex w-10 grow-0 cursor-pointer items-center justify-center rounded-md bg-primary p-0 text-primary transition-opacity"
       >
         <Minus className="text-sad-blue"></Minus>
       </Button>

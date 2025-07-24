@@ -15,15 +15,11 @@ import {
 //libraries
 import { useFormContext } from "react-hook-form";
 
-export default function MenuLayoutStep() {
+export default function MenuLayoutStep({ stepId }: { stepId: string }) {
   const { control } = useFormContext();
 
   return (
-    <SliderStep
-      sectionNum={3}
-      stepNum={1}
-      title="نوع قالب مورد نظر خود را انتخاب کنید"
-    >
+    <SliderStep stepId={stepId}>
       <FormField
         control={control}
         name="items_page_layout"

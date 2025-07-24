@@ -20,18 +20,16 @@ import { useFormContext } from "react-hook-form";
 import { type AssetGroupType } from "@/components/global/AssetPicker";
 
 export default function MenuSectionStep({
+  stepId,
   assetGroups,
 }: {
+  stepId: string;
   assetGroups: AssetGroupType[];
 }) {
   const { control } = useFormContext();
 
   return (
-    <SliderStep
-      sectionNum={2}
-      stepNum={2}
-      title="تعداد بخش های منو خود را مشخص کنید"
-    >
+    <SliderStep stepId={stepId}>
       <FormField
         control={control}
         name="welcome_page_layout"

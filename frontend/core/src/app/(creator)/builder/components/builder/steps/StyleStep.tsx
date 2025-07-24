@@ -17,15 +17,11 @@ import AnimationSelector from "@/components/global/itemAdderButtons/AnimationSel
 //libraries
 import { useFormContext } from "react-hook-form";
 
-export default function StyleStep() {
+export default function StyleStep({ stepId }: { stepId: string }) {
   const { control } = useFormContext();
 
   return (
-    <SliderStep
-      sectionNum={1}
-      stepNum={2}
-      title="رنگ بندی و ویژگی های ظاهری مورد نظر خود را انتخاب کنید"
-    >
+    <SliderStep stepId={stepId}>
       <FormField
         control={control}
         name="global_styling.border_radius"

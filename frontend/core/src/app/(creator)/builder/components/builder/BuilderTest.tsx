@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useMemo } from "react";
 
 //components
 import { Form } from "@/components/ui/form";
 import { toast } from "sonner";
-import { Slider, SliderSection } from "@/components/global/slider/Slider";
+import { Slider } from "@/components/global/slider/Slider";
 import { AssetGroupType } from "@/components/global/AssetPicker";
 import ThemeStep from "./steps/ThemeStep";
 import StyleStep from "./steps/StyleStep";
@@ -28,6 +28,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { slugify } from "@/lib/slugify";
 import MenuFeatureStep from "./steps/MenuFeatureStep";
+import { motion, AnimatePresence } from "motion/react";
 
 //zod schemas
 const InstanceSchema = z.array(
@@ -124,11 +125,102 @@ export default function BuilderTest({
     },
   });
 
-  const { updateSectionCount } = useSlider();
+  const sections = [
+    {
+      id: "customization",
+      title: "شخصی سازی",
+      steps: [
+        {
+          id: "theme",
+          subtitle: "رنگ بندی و تم مورد نظرت رو انتخاب کن",
+          component: <ThemeStep stepId={"theme"} />,
+          show: true,
+        },
+        {
+          id: "style",
+          subtitle: "ویژگی های ظاهری مورد نظر خودت رو انتخاب کن",
+          component: <StyleStep stepId={"style"} />,
+          show: true,
+        },
+      ],
+    },
+    {
+      id: "welcomePage",
+      title: "صفحه اصلی",
+      steps: [
+        {
+          id: "menuSection",
+          subtitle: "تنظیمات بخش های منو",
+          component: (
+            <MenuSectionStep stepId={"menuSection"} assetGroups={assetGroups} />
+          ),
+          show: true,
+        },
+        {
+          id: "homeLayout",
+          subtitle: "شخصی سازی صفحه خوش‌آمدگویی",
+          component: (
+            <HomeLayoutStep stepId={"homeLayout"} assetGroups={assetGroups} />
+          ),
+          show:
+            form.watch("welcome_page_layout") === "single" ||
+            form.watch("welcome_page_layout") === "couple",
+        },
+        {
+          id: "homeFeatures",
+          subtitle: "ویژگی های صفحه خوش‌آمدگویی",
+          component: (
+            <HomeFeatureStep
+              stepId={"homeFeatures"}
+              assetGroups={assetGroups}
+            />
+          ),
+          show:
+            form.watch("welcome_page_layout") === "single" ||
+            form.watch("welcome_page_layout") === "couple",
+        },
+      ],
+    },
+    {
+      id: "itemsPage",
+      title: "صفحه آیتم ها",
+      steps: [
+        {
+          id: "menuLayout",
+          subtitle: "نوع چیدمان آیتم ها چطوری باشه؟",
+          component: <MenuLayoutStep stepId={"menuLayout"} />,
+          show: true,
+        },
+        {
+          id: "categoryStyle",
+          subtitle: "تنظیمات ظاهری دسته بندی ها",
+          component: <CategoryStyleStep stepId={"categoryStyle"} />,
+          show: true,
+        },
+        {
+          id: "menuFeatures",
+          subtitle: "ویژگی های صفحه آیتم ها",
+          component: <MenuFeatureStep stepId={"menuFeatures"} />,
+          show: true,
+        },
+      ],
+    },
+  ];
 
-  useEffect(() => {
-    updateSectionCount(3);
-  }, []);
+  // Filter out sections and steps that are not shown based on the form state
+  const validSections = useMemo(() => {
+    return sections
+      .map((section) => ({
+        ...section,
+        steps: section.steps.filter((step) => step.show),
+      }))
+      .filter((section) => section.steps.length > 0);
+  }, [form.watch()]);
+
+  const { sectionIndex, stepIndex, direction } = useSlider();
+
+  const activeSection = validSections[sectionIndex];
+  const activeStep = activeSection.steps[stepIndex];
 
   async function onSubmit(values: BuilderFormType) {
     console.log("values:", values);
@@ -165,13 +257,9 @@ export default function BuilderTest({
     const res = await createMenu(businessSlug, data);
 
     if (res.success) {
-      toast.success("Menu created successfully!", {
-        cancel: { label: "باشه" },
-      });
+      toast.success("Menu created successfully!");
     } else {
-      toast.error(res.error, {
-        cancel: { label: "باشه" },
-      });
+      toast.error(res.error);
     }
   }
 
@@ -192,6 +280,22 @@ export default function BuilderTest({
     // }
   };
 
+  // Animation variants for the step transitions
+  const variants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? 200 : -200,
+      opacity: 0,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+    },
+    exit: (direction: number) => ({
+      x: direction > 0 ? -200 : 200,
+      opacity: 0,
+    }),
+  };
+
   return (
     <Form {...form}>
       <div className="flex h-full w-full pl-10 pr-28 justify-between">
@@ -201,23 +305,24 @@ export default function BuilderTest({
           ref={ref}
           className="w-5/12"
         >
-          <Slider>
-            <SliderSection title="شخصی سازی" sectionNum={1}>
-              <ThemeStep></ThemeStep>
-              <StyleStep></StyleStep>
-            </SliderSection>
-            <SliderSection title="صفحه اصلی" sectionNum={2}>
-              <HomeLayoutStep assetGroups={assetGroups}></HomeLayoutStep>
-              <MenuSectionStep assetGroups={assetGroups}></MenuSectionStep>
-              <HomeFeatureStep assetGroups={assetGroups}></HomeFeatureStep>
-            </SliderSection>
-            <SliderSection title="صفحه آیتم ها" sectionNum={3}>
-              <MenuLayoutStep></MenuLayoutStep>
-              <CategoryStyleStep></CategoryStyleStep>
-              <MenuFeatureStep></MenuFeatureStep>
-            </SliderSection>
+          <Slider validSections={validSections}>
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={activeStep.id}
+                variants={variants}
+                custom={direction}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.2 }}
+                className="absolute w-full"
+              >
+                {activeStep.component}
+              </motion.div>
+            </AnimatePresence>
           </Slider>
         </form>
+        <div className="flex gap-2 bg-red-300"></div>
         {/* live menu preview */}
         <MenuPreview></MenuPreview>
       </div>

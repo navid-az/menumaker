@@ -17,14 +17,35 @@ type disabledStateType = "nextDisabled" | "prevDisabled" | "";
 type SliderNavigatorType = {
   disableSubmitBtn?: boolean;
   submitBtnText?: string;
+  validSections: {
+    title: string;
+    steps: {
+      id: string;
+      subtitle: string;
+      component: React.JSX.Element;
+      show: boolean;
+    }[];
+  }[];
 };
 
 export function SliderNavigator({
   disableSubmitBtn = false,
   submitBtnText,
+  validSections,
 }: SliderNavigatorType) {
-  const { activeSection, sectionCount, activeStep, stepCount, next, previous } =
-    useSlider();
+  const {
+    sectionIndex,
+    stepIndex,
+    setSectionIndex,
+    setStepIndex,
+    setDirection,
+  } = useSlider();
+
+  const activeSection = validSections[sectionIndex];
+  const sectionCount = validSections.length;
+
+  const activeStep = activeSection.steps[stepIndex];
+  const stepCount = activeSection.steps.length;
 
   // next/prev disability
   const [disabled, setDisabled] = useState<disabledStateType>("prevDisabled");
@@ -34,23 +55,23 @@ export function SliderNavigator({
   const submitBtnRef = useRef<HTMLButtonElement>(null);
   const buttonsContainerRef = useRef<HTMLDivElement>(null);
 
-  //next/prev buttons animation
+  // next/prev buttons animation
   useTactileAnimation(nextBtnRef, {});
   useTactileAnimation(prevBtnRef, {});
   useTactileAnimation(submitBtnRef, {});
 
-  //disable buttons if it's the first/last step of all the steps
+  // disable buttons if it's the first/last step of all the steps
   useEffect(() => {
-    if (activeStep == stepCount && activeSection == sectionCount) {
+    if (stepIndex == stepCount - 1 && sectionIndex == sectionCount - 1) {
       setDisabled("nextDisabled");
-    } else if (activeStep == 1 && activeSection == 1) {
+    } else if (stepIndex == 0 && sectionIndex == 0) {
       setDisabled("prevDisabled");
     } else {
       setDisabled("");
     }
   }, [activeStep, sectionCount, stepCount]);
 
-  //animate next/submit buttons according to disabled state
+  // animate next/submit buttons according to disabled state
   useEffect(() => {
     if (!disableSubmitBtn) {
       if (disabled === "nextDisabled") {
@@ -81,6 +102,36 @@ export function SliderNavigator({
     }
   }, [disabled]);
 
+  // go to next step
+  const goNext = () => {
+    const isLastStepInSection = stepIndex === stepCount - 1;
+    const isLastSection = sectionIndex === sectionCount - 1;
+
+    setDirection(1);
+
+    if (!isLastStepInSection) {
+      setStepIndex(stepIndex + 1);
+    } else if (!isLastSection) {
+      setSectionIndex(sectionIndex + 1);
+      setStepIndex(0);
+    }
+  };
+
+  //go to previous step
+  const goBack = () => {
+    const isFirstStepInSection = stepIndex === 0;
+    const isFirstSection = sectionIndex === 0;
+
+    setDirection(-1);
+
+    if (!isFirstStepInSection) {
+      setStepIndex(stepIndex - 1);
+    } else if (!isFirstSection) {
+      setSectionIndex(sectionIndex - 1);
+      setStepIndex(validSections[sectionIndex - 1].steps.length - 1);
+    }
+  };
+
   return (
     <div className="flex w-full items-center justify-between rtl:flex-row-reverse">
       <div className="flex basis-6/12 justify-end">
@@ -88,7 +139,7 @@ export function SliderNavigator({
           ref={prevBtnRef}
           type="button"
           disabled={disabled == "prevDisabled"}
-          onClick={previous}
+          onClick={goBack}
           className="h-9 select-none rounded-full px-5 transition-opacity duration-300 sm:h-10 sm:px-6"
         >
           قبلی
@@ -99,7 +150,7 @@ export function SliderNavigator({
           <SliderNavigatorDot
             index={index}
             key={index}
-            active={activeStep == index + 1}
+            active={stepIndex == index}
           ></SliderNavigatorDot>
         ))}
       </div>
@@ -119,7 +170,7 @@ export function SliderNavigator({
           ref={nextBtnRef}
           type="button"
           disabled={disabled == "nextDisabled"}
-          onClick={next}
+          onClick={goNext}
           className="h-9 select-none rounded-full px-5 transition-opacity duration-300 sm:h-10 sm:px-6"
         >
           بعدی
@@ -135,16 +186,12 @@ type SliderNavigatorDot = {
 };
 
 function SliderNavigatorDot({ active, index }: SliderNavigatorDot) {
-  const { setActiveStep } = useSlider();
-
-  const handleClick = () => {
-    setActiveStep(index + 1);
-  };
+  const { setStepIndex } = useSlider();
 
   return (
     <button
       type="button"
-      onClick={handleClick}
+      onClick={() => setStepIndex(index)}
       className={`scale-pro h-3 w-3 cursor-pointer rounded-full transition-all duration-300 hover:bg-primary/50 sm:h-3.5 sm:w-3.5 ${
         active ? "scale-110 !bg-primary" : "scale-90 bg-sad-blue"
       }`}

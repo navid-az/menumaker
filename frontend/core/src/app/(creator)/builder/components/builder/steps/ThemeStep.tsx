@@ -17,15 +17,11 @@ import PaletteBuilder from "@/components/global/PaletteBuilder";
 //libraries
 import { useFormContext } from "react-hook-form";
 
-export default function ThemeStep() {
+export default function ThemeStep({ stepId }: { stepId: string }) {
   const { control } = useFormContext();
 
   return (
-    <SliderStep
-      sectionNum={1}
-      stepNum={1}
-      title="رنگ بندی و ویژگی های ظاهری مورد نظر خود را انتخاب کنید"
-    >
+    <SliderStep stepId={stepId}>
       <FormField
         control={control}
         name="frontend_only.suggested_palette_enabled"

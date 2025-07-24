@@ -14,15 +14,11 @@ import {
 //libraries
 import { useFormContext } from "react-hook-form";
 
-export default function MenuFeatureStep() {
+export default function MenuFeatureStep({ stepId }: { stepId: string }) {
   const { control } = useFormContext();
 
   return (
-    <SliderStep
-      sectionNum={3}
-      stepNum={3}
-      title="ویژگی های مورد نظر خود را انتخاب کنید"
-    >
+    <SliderStep stepId={stepId}>
       <FormField
         control={control}
         name="call_waiter_enabled"
