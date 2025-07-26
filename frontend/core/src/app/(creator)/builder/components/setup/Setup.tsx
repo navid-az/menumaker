@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useActionState, useEffect } from "react";
+import React, { useActionState, useEffect, useMemo } from "react";
 
 //libraries
 import * as z from "zod";
@@ -17,11 +17,7 @@ import {
 } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Input } from "@/components/ui/input";
-import {
-  Slider,
-  SliderSection,
-  SliderStep,
-} from "@/components/global/slider/Slider";
+import { Slider, SliderStep } from "@/components/global/slider/Slider";
 import Tile from "./Tile";
 import { toast } from "sonner";
 
@@ -30,6 +26,9 @@ import { useSlider } from "@/lib/stores";
 
 //actions and functions
 import { createBusiness } from "@/app/actions";
+
+//libraries
+import { motion, AnimatePresence, steps } from "motion/react";
 
 //types
 export type SetupSchemaType = z.infer<typeof SetupSchema>;
@@ -46,7 +45,7 @@ const SetupSchema = z.object({
     message: "Username must be at least 2 characters.",
   }),
   service_type: z.enum(["in_person", "online", "both"]),
-  primary_service_type: z.enum(["in_person", "online"]),
+  primary_service_type: z.enum(["in_person", "online"]).optional(),
   // restaurant_type: z.enum(["single", "multiple"]),
   // menuType: z.enum(["custom", "pre-made"]),
 });
@@ -71,34 +70,22 @@ export default function Setup({
     },
   });
 
-  const { updateSectionCount } = useSlider();
-
   //monitor the state of the form onSubmit
   const [formState, action, idPending] = useActionState(createBusiness, {
     success: false,
     error: "",
   });
 
-  //set the correct section count on mount
-  //the given number should reflect form's number of sections
-  useEffect(() => {
-    updateSectionCount(3);
-  }, []);
-
   //inform user by the result of the form submission
   useEffect(() => {
     if (formState.error) {
-      toast.error(formState.error, {
-        cancel: { label: "باشه" },
-      });
+      toast.error(formState.error);
     } else if (formState.success) {
       //provide businessSlug value to builder form
       const businessSlug = form.watch("name_en");
       setBusinessSlug(businessSlug);
 
-      toast.success("Business registered successfully!", {
-        cancel: { label: "باشه" },
-      });
+      toast.success("Business registered successfully!");
     }
   }, [formState]);
 
@@ -108,11 +95,7 @@ export default function Setup({
 
   //if given data is not valid
   const onInvalid = () => {
-    toast.error("لطفا به همه سوالات را پاسخ دهید", {
-      cancel: {
-        label: "باشه",
-      },
-    });
+    toast.error("لطفا به همه سوالات را پاسخ دهید");
   };
 
   //submit form and proceed to the next step
@@ -137,24 +120,23 @@ export default function Setup({
     }
   };
 
-  return (
-    <Form {...form}>
-      <form
-        name="setup-form"
-        ref={ref}
-        onSubmit={form.handleSubmit(onSubmit, onInvalid)}
-        className="hidden w-full px-52"
-      >
-        <Slider disableSubmitBtn>
-          <SliderSection sectionNum={1} title="آشنایی با شما">
-            <SliderStep sectionNum={1} stepNum={1} title="نام مدیر مجموعه">
+  const sections = [
+    {
+      id: "business_info",
+      title: "آشنایی با شما",
+      steps: [
+        {
+          id: "ownerInfo",
+          subtitle: "",
+          component: (
+            <SliderStep stepId="ownerInfo">
               <FormField
                 control={form.control}
                 name="owner_name"
                 render={({ field }) => (
                   <FormControl>
                     <FormItem>
-                      <FormLabel>نام مدیر</FormLabel>
+                      <FormLabel>نام مدیر مجموعه</FormLabel>
                       <Input
                         type="text"
                         placeholder="نام و نام خانوادگی مدیر"
@@ -166,12 +148,14 @@ export default function Setup({
                 )}
               />
             </SliderStep>
-            <SliderStep sectionNum={1} stepNum={2} title="نام مدیر مجموعه">
-              Yo
-            </SliderStep>
-          </SliderSection>
-          <SliderSection sectionNum={2} title="آشنایی با مجموعه شما">
-            <SliderStep sectionNum={2} stepNum={1} title="نام مجموعه شما">
+          ),
+          show: true,
+        },
+        {
+          id: "businessInfo",
+          subtitle: "نام مجموعه و برند",
+          component: (
+            <SliderStep stepId="businessInfo">
               <FormField
                 control={form.control}
                 name="name"
@@ -207,11 +191,20 @@ export default function Setup({
                 )}
               />
             </SliderStep>
-            <SliderStep
-              sectionNum={2}
-              stepNum={2}
-              title="نوع خدمات دهی مجموعه شما چگونه است؟"
-            >
+          ),
+          show: true,
+        },
+      ],
+    },
+    {
+      id: "welcomePage",
+      title: "آشنایی با مجموعه شما",
+      steps: [
+        {
+          id: "serviceType",
+          subtitle: "روش ارائه خدمات مجموعه چجوریه؟",
+          component: (
+            <SliderStep stepId="serviceType">
               <FormField
                 control={form.control}
                 name="service_type"
@@ -258,11 +251,14 @@ export default function Setup({
                 )}
               />
             </SliderStep>
-            <SliderStep
-              sectionNum={2}
-              stepNum={3}
-              title="تمرکز مجموعه بیشتر روی کدام نوع خدمات دهی می باشد؟"
-            >
+          ),
+          show: true,
+        },
+        {
+          id: "primary_service_type",
+          subtitle: "معمولاً مشتری‌هاتون چطور سفارش میدن؟",
+          component: (
+            <SliderStep stepId="primary_service_type">
               <FormField
                 control={form.control}
                 name="primary_service_type"
@@ -275,7 +271,7 @@ export default function Setup({
                       className="flex h-80 w-full gap-4"
                     >
                       <Tile
-                        title="بیشتر فروش حضوری داریم"
+                        title="بیشتر سفارش حضوری"
                         isActive={field.value === "in_person"}
                       >
                         <FormItem>
@@ -285,7 +281,7 @@ export default function Setup({
                         </FormItem>
                       </Tile>
                       <Tile
-                        title="بیشتر فروش آنلاین داریم"
+                        title="بیشتر سفارش آنلاین"
                         isActive={field.value === "online"}
                       >
                         <FormItem>
@@ -299,53 +295,63 @@ export default function Setup({
                 )}
               />
             </SliderStep>
-            {/* <SliderStep
-              sectionNum={2}
-              stepNum={4}
-              title="مقیاس مجموعه شما چقدر است؟"
-              className="h-80 flex-row"
-            >
-              <FormField
-                control={form.control}
-                name="restaurant_type"
-                render={({ field }) => (
-                  <FormControl>
-                    <RadioGroup
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      dir="rtl"
-                      className="flex h-80 w-full gap-4"
-                    >
-                      <Tile title="یک شعبه" isActive={field.value === "single"}>
-                        <FormItem>
-                          <FormControl>
-                            <RadioGroupItem value="single"></RadioGroupItem>
-                          </FormControl>
-                        </FormItem>
-                      </Tile>
-                      <Tile
-                        title="زنجیره ای"
-                        isActive={field.value === "multiple"}
-                      >
-                        <FormItem>
-                          <FormControl>
-                            <RadioGroupItem value="multiple"></RadioGroupItem>
-                          </FormControl>
-                        </FormItem>
-                      </Tile>
-                    </RadioGroup>
-                  </FormControl>
-                )}
-              />
-            </SliderStep> */}
-          </SliderSection>
-          <SliderSection title="منو مجموعه" sectionNum={3}>
-            <SliderStep
-              sectionNum={3}
-              stepNum={1}
-              title="منو مجموعتان همانطور که می خواهید"
-              className="flex h-80 flex-row"
-            >
+          ),
+          show:
+            form.watch("service_type") === "online" ||
+            form.watch("service_type") === "both",
+        },
+        // {
+        //   id: "business_size",
+        //   subtitle: "مقیاس مجموعه شما چقدره؟",
+        //   component: (
+        //     <SliderStep stepId="business_size" className="h-80 flex-row">
+        //       <FormField
+        //         control={form.control}
+        //         name="restaurant_type"
+        //         render={({ field }) => (
+        //           <FormControl>
+        //             <RadioGroup
+        //               onValueChange={field.onChange}
+        //               defaultValue={field.value}
+        //               dir="rtl"
+        //               className="flex h-80 w-full gap-4"
+        //             >
+        //               <Tile title="یک شعبه" isActive={field.value === "single"}>
+        //                 <FormItem>
+        //                   <FormControl>
+        //                     <RadioGroupItem value="single"></RadioGroupItem>
+        //                   </FormControl>
+        //                 </FormItem>
+        //               </Tile>
+        //               <Tile
+        //                 title="زنجیره ای"
+        //                 isActive={field.value === "multiple"}
+        //               >
+        //                 <FormItem>
+        //                   <FormControl>
+        //                     <RadioGroupItem value="multiple"></RadioGroupItem>
+        //                   </FormControl>
+        //                 </FormItem>
+        //               </Tile>
+        //             </RadioGroup>
+        //           </FormControl>
+        //         )}
+        //       />
+        //     </SliderStep>
+        //   ),
+        //   show: true,
+        // },
+      ],
+    },
+    {
+      id: "menu_prefrence",
+      title: "ساخت منو دیجیتال",
+      steps: [
+        {
+          id: "menu_preference",
+          subtitle: "دوست دارید چطور منو دیجیتال شما ساخته بشه؟",
+          component: (
+            <SliderStep stepId="menu_preference" className="flex h-80 flex-row">
               <Tile
                 isButton
                 title="شخصی سازی منو"
@@ -357,7 +363,66 @@ export default function Setup({
                 onClick={() => handleSubmit("pre-built")}
               ></Tile>
             </SliderStep>
-          </SliderSection>
+          ),
+          show: true,
+        },
+      ],
+    },
+  ];
+
+  const validSections = useMemo(() => {
+    return sections
+      .map((section) => ({
+        ...section,
+        steps: section.steps.filter((step) => step.show),
+      }))
+      .filter((section) => section.steps.length > 0);
+  }, [form.watch()]);
+
+  const { sectionIndex, stepIndex, direction } = useSlider();
+
+  const activeSection = validSections[sectionIndex];
+  const activeStep = activeSection.steps[stepIndex];
+
+  // Animation variants for the step transitions
+  const variants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? 200 : -200,
+      opacity: 0,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+    },
+    exit: (direction: number) => ({
+      x: direction > 0 ? -200 : 200,
+      opacity: 0,
+    }),
+  };
+
+  return (
+    <Form {...form}>
+      <form
+        name="setup-form"
+        ref={ref}
+        onSubmit={form.handleSubmit(onSubmit, onInvalid)}
+        className="hidden w-full px-52"
+      >
+        <Slider validSections={validSections} disableSubmitBtn>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={activeStep.id}
+              variants={variants}
+              custom={direction}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.2 }}
+              className="absolute w-full"
+            >
+              {activeStep.component}
+            </motion.div>
+          </AnimatePresence>
         </Slider>
       </form>
     </Form>
