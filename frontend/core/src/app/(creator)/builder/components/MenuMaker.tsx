@@ -127,11 +127,20 @@ export default function MenuMaker({
 
   return (
     <section className="container m-auto flex h-screen w-full items-center justify-between gap-12 overflow-hidden">
-      <BuilderTest
-        ref={builderFormRef}
-        businessName={businessSlug}
-        assetGroups={assetGroups}
-      ></BuilderTest>
+      {showBuilder ? (
+        <BuilderTest
+          ref={builderFormRef}
+          businessName={businessSlug}
+          assetGroups={assetGroups}
+        ></BuilderTest>
+      ) : (
+        <Setup
+          handleCustomMenu={handleToggleForm}
+          handlePreBuiltMenu={handleToggleForm}
+          ref={setupFormRef}
+          setBusinessSlug={setBusinessSlug}
+        ></Setup>
+      )}
     </section>
   );
 }
