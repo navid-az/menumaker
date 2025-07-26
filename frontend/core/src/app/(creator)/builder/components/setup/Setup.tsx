@@ -28,7 +28,7 @@ import { useSlider } from "@/lib/stores";
 import { createBusiness } from "@/app/actions";
 
 //libraries
-import { motion, AnimatePresence, steps } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 
 //types
 export type SetupSchemaType = z.infer<typeof SetupSchema>;
@@ -46,7 +46,7 @@ const SetupSchema = z.object({
   }),
   service_type: z.enum(["in_person", "online", "both"]),
   primary_service_type: z.enum(["in_person", "online"]).optional(),
-  // restaurant_type: z.enum(["single", "multiple"]),
+  branch_structure: z.enum(["single", "multiple"]),
   // menuType: z.enum(["custom", "pre-made"]),
 });
 
@@ -110,6 +110,8 @@ export default function Setup({
 
     //proceed if form is valid
     const formValues = form.getValues();
+    console.log(formValues);
+
     onSubmit(formValues);
 
     // Handle user choice
@@ -300,47 +302,47 @@ export default function Setup({
             form.watch("service_type") === "online" ||
             form.watch("service_type") === "both",
         },
-        // {
-        //   id: "business_size",
-        //   subtitle: "مقیاس مجموعه شما چقدره؟",
-        //   component: (
-        //     <SliderStep stepId="business_size" className="h-80 flex-row">
-        //       <FormField
-        //         control={form.control}
-        //         name="restaurant_type"
-        //         render={({ field }) => (
-        //           <FormControl>
-        //             <RadioGroup
-        //               onValueChange={field.onChange}
-        //               defaultValue={field.value}
-        //               dir="rtl"
-        //               className="flex h-80 w-full gap-4"
-        //             >
-        //               <Tile title="یک شعبه" isActive={field.value === "single"}>
-        //                 <FormItem>
-        //                   <FormControl>
-        //                     <RadioGroupItem value="single"></RadioGroupItem>
-        //                   </FormControl>
-        //                 </FormItem>
-        //               </Tile>
-        //               <Tile
-        //                 title="زنجیره ای"
-        //                 isActive={field.value === "multiple"}
-        //               >
-        //                 <FormItem>
-        //                   <FormControl>
-        //                     <RadioGroupItem value="multiple"></RadioGroupItem>
-        //                   </FormControl>
-        //                 </FormItem>
-        //               </Tile>
-        //             </RadioGroup>
-        //           </FormControl>
-        //         )}
-        //       />
-        //     </SliderStep>
-        //   ),
-        //   show: true,
-        // },
+        {
+          id: "business_size",
+          subtitle: "مقیاس مجموعه شما چقدره؟",
+          component: (
+            <SliderStep stepId="business_size" className="h-80 flex-row">
+              <FormField
+                control={form.control}
+                name="branch_structure"
+                render={({ field }) => (
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      dir="rtl"
+                      className="flex h-80 w-full gap-4"
+                    >
+                      <Tile title="یک شعبه" isActive={field.value === "single"}>
+                        <FormItem>
+                          <FormControl>
+                            <RadioGroupItem value="single"></RadioGroupItem>
+                          </FormControl>
+                        </FormItem>
+                      </Tile>
+                      <Tile
+                        title="زنجیره ای"
+                        isActive={field.value === "multiple"}
+                      >
+                        <FormItem>
+                          <FormControl>
+                            <RadioGroupItem value="multiple"></RadioGroupItem>
+                          </FormControl>
+                        </FormItem>
+                      </Tile>
+                    </RadioGroup>
+                  </FormControl>
+                )}
+              />
+            </SliderStep>
+          ),
+          show: true,
+        },
       ],
     },
     {

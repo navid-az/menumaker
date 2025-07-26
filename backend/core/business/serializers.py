@@ -9,7 +9,7 @@ class BusinessCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Business
         fields = ['name', 'name_en', 'slug',
-                  'service_type', 'primary_service_type']
+                  'service_type', 'primary_service_type', 'branch_structure']
 
     def validate(self, data):
         # Generate the slug from the English name

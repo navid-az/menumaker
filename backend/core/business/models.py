@@ -27,6 +27,8 @@ class Business(models.Model):
                  ('in_person', 'In-Person Only')],
         null=True, blank=True
     )
+    branch_structure = models.CharField(max_length=20, choices=[(
+        'single', 'single'), ('multiple', 'multiple')], null=True, blank=True)
     branch_count = models.PositiveIntegerField(default=1)
     # ex: [{"Telegram":"[telegram link]", "Instagram":"[instagram link]", ...}]
     social_links = models.JSONField(default=dict, blank=True)
