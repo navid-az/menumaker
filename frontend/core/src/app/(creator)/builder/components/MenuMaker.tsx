@@ -2,26 +2,28 @@
 
 import React, { useEffect, useRef, useState } from "react";
 
-//libraries
-import gsap from "gsap";
-
 //components
-import Builder from "./builder/Builder";
 import Setup from "./setup/Setup";
+import BuilderTest from "./builder/BuilderTest";
+import SuccessPage from "./success/SuccessPage";
 
 //types
 import { type AssetGroupType } from "@/components/global/AssetPicker";
 
 //hooks
 import { useSlider } from "@/lib/stores";
-import BuilderTest from "./builder/BuilderTest";
+
+//libraries
+import { motion, AnimatePresence } from "motion/react";
 
 export default function MenuMaker({
   assetGroups,
 }: {
   assetGroups: AssetGroupType[];
 }) {
-  const [showBuilder, setShowBuilder] = useState(false);
+  const [activeForm, setActiveForm] = useState<"setup" | "builder" | "qr">(
+    "setup"
+  );
   const [businessSlug, setBusinessSlug] = useState("");
 
   const { reset } = useSlider();
@@ -29,118 +31,90 @@ export default function MenuMaker({
   const setupFormRef = useRef(null);
   const builderFormRef = useRef(null);
 
-  const hideSetupFormTl = gsap.timeline({
-    paused: true,
-  });
-
+  //reset slider states on form change and on initial mount
   useEffect(() => {
-    const setupForm = setupFormRef.current;
+    reset();
+  }, [activeForm]);
 
-    // Ensure initial styles are set
-    gsap.set(setupForm, {
-      x: 0,
-      opacity: 1,
-      filter: "blur(0px)",
-    });
-
-    const tl = gsap.timeline();
-    tl.set(setupForm, { display: "flex" })
-      .from(setupForm, {
-        x: 150,
-        opacity: 0,
-        ease: "power3.out",
-        duration: 0.45,
-        delay: 0.5,
-      })
-      .from(
-        setupForm,
-        {
-          filter: "blur(4px)",
-          duration: 0.45,
-          ease: "power3.out",
-        },
-        "<0.1"
-      );
-
-    return () => {
-      tl.kill(); // Stop and clear the timeline
-    };
-  }, []);
-
-  useEffect(() => {
-    if (showBuilder) {
-      const showBuilderFormTl = gsap.timeline();
-
-      showBuilderFormTl
-        .set(builderFormRef.current, { display: "flex" })
-        .from(builderFormRef.current, {
-          x: 150,
-          opacity: 0,
-          duration: 0.45,
-          delay: 0.5,
-          ease: "power3.out",
-        })
-        .from(
-          builderFormRef.current,
-          {
-            filter: "blur(4px)",
-            duration: 0.45,
-            ease: "power3.out",
-          },
-          "<0.1"
-        );
-      return () => {
-        showBuilderFormTl.kill(); // Stop and clear the timeline
-      };
-    }
-  }, [showBuilder]);
-
-  const handleToggleForm = () => {
-    hideSetupFormTl
-      .to(setupFormRef.current, {
-        filter: "blur(4px)",
-        duration: 0.45,
-        ease: "power3.out",
-      })
-      .to(
-        setupFormRef.current,
-        {
-          opacity: 0,
-          x: -150,
-          duration: 0.45,
-          ease: "power3.out",
-        },
-        "<0.1"
-      )
-      .set(setupFormRef.current, {
-        display: "none",
-      })
-      //reset useSlider store onComplete
-      //render builder form onComplete
-      .eventCallback("onComplete", () => {
-        setShowBuilder(true);
-        reset();
-      });
-
-    hideSetupFormTl.play(); // Trigger the timeline manually
+  const onBuilderSuccess = () => {
+    setActiveForm("qr");
   };
 
   return (
     <section className="container m-auto flex h-screen w-full items-center justify-between gap-12 overflow-hidden">
-      {showBuilder ? (
-        <BuilderTest
-          ref={builderFormRef}
-          businessName={businessSlug}
-          assetGroups={assetGroups}
-        ></BuilderTest>
-      ) : (
-        <Setup
-          handleCustomMenu={handleToggleForm}
-          handlePreBuiltMenu={handleToggleForm}
-          ref={setupFormRef}
-          setBusinessSlug={setBusinessSlug}
-        ></Setup>
-      )}
+      <AnimatePresence mode="wait">
+        {activeForm === "setup" && (
+          <motion.div
+            className="w-full"
+            key="setup"
+            initial={{ opacity: 0, x: 200, filter: "blur(4px)" }}
+            animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+            exit={{
+              opacity: 0,
+              x: -200,
+              filter: "blur(4px)",
+              transition: {
+                duration: 0.3,
+                ease: [0.25, 0.1, 0.25, 1],
+              },
+            }}
+            transition={{
+              duration: 0.6,
+              delay: 0.8,
+              ease: [0.25, 0.1, 0.25, 1],
+            }}
+          >
+            <Setup
+              ref={setupFormRef}
+              handleCustomMenu={() => setActiveForm("builder")}
+              handlePreBuiltMenu={() => setActiveForm("builder")}
+              setBusinessSlug={setBusinessSlug}
+            ></Setup>
+          </motion.div>
+        )}
+
+        {activeForm === "builder" && (
+          <motion.div
+            className="w-full"
+            key="builder"
+            initial={{
+              opacity: 0,
+              x: 200,
+              filter: "blur(4px)",
+              transition: { delay: 0.8 },
+            }}
+            animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+            exit={{ opacity: 0, x: -200, filter: "blur(4px)" }}
+            transition={{
+              duration: 0.6,
+              ease: [0.25, 0.1, 0.25, 1],
+            }}
+          >
+            <BuilderTest
+              ref={builderFormRef}
+              businessSlug={businessSlug}
+              assetGroups={assetGroups}
+              onSuccess={() => onBuilderSuccess()}
+            ></BuilderTest>
+          </motion.div>
+        )}
+
+        {activeForm === "qr" && (
+          <motion.div
+            key="qr"
+            initial={{ opacity: 0, x: 200, filter: "blur(4px)" }}
+            animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+            exit={{ opacity: 0, x: -200, filter: "blur(4px)" }}
+            transition={{
+              duration: 0.6,
+              ease: [0.25, 0.1, 0.25, 1],
+            }}
+            className="w-screen"
+          >
+            <SuccessPage businessSlug={businessSlug}></SuccessPage>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

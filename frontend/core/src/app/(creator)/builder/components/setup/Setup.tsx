@@ -26,6 +26,7 @@ import { useSlider } from "@/lib/stores";
 
 //actions and functions
 import { createBusiness } from "@/app/actions";
+import { slugify } from "@/lib/slugify";
 
 //libraries
 import { motion, AnimatePresence } from "motion/react";
@@ -76,51 +77,7 @@ export default function Setup({
     error: "",
   });
 
-  //inform user by the result of the form submission
-  useEffect(() => {
-    if (formState.error) {
-      toast.error(formState.error);
-    } else if (formState.success) {
-      //provide businessSlug value to builder form
-      const businessSlug = form.watch("name_en");
-      setBusinessSlug(businessSlug);
-
-      toast.success("Business registered successfully!");
-    }
-  }, [formState]);
-
-  function onSubmit(values: SetupSchemaType) {
-    action(values);
-  }
-
-  //if given data is not valid
-  const onInvalid = () => {
-    toast.error("لطفا به همه سوالات را پاسخ دهید");
-  };
-
-  //submit form and proceed to the next step
-  const handleSubmit = async (userChoice: "custom" | "pre-built") => {
-    const isValid = await form.trigger();
-
-    //opt out if form is invalid
-    if (!isValid) {
-      onInvalid();
-      return;
-    }
-
-    //proceed if form is valid
-    const formValues = form.getValues();
-    console.log(formValues);
-
-    onSubmit(formValues);
-
-    // Handle user choice
-    if (userChoice === "custom") {
-      handleCustomMenu();
-    } else if (userChoice === "pre-built") {
-      handlePreBuiltMenu();
-    }
-  };
+  const { sectionIndex, stepIndex, direction } = useSlider();
 
   const sections = [
     {
@@ -381,10 +338,55 @@ export default function Setup({
       .filter((section) => section.steps.length > 0);
   }, [form.watch()]);
 
-  const { sectionIndex, stepIndex, direction } = useSlider();
-
   const activeSection = validSections[sectionIndex];
   const activeStep = activeSection.steps[stepIndex];
+
+  //inform user by the result of the form submission
+  useEffect(() => {
+    if (formState.error) {
+      toast.error(formState.error);
+    } else if (formState.success) {
+      //provide businessSlug value to builder form
+      const businessName = form.watch("name_en");
+      const businessSlug = slugify(businessName);
+      setBusinessSlug(businessSlug);
+
+      toast.success("Business registered successfully!");
+    }
+  }, [formState]);
+
+  function onSubmit(values: SetupSchemaType) {
+    action(values);
+  }
+
+  //if given data is not valid
+  const onInvalid = () => {
+    toast.error("لطفا به همه سوالات را پاسخ دهید");
+  };
+
+  //submit form and proceed to the next step
+  const handleSubmit = async (userChoice: "custom" | "pre-built") => {
+    const isValid = await form.trigger();
+
+    //opt out if form is invalid
+    if (!isValid) {
+      onInvalid();
+      return;
+    }
+
+    //proceed if form is valid
+    const formValues = form.getValues();
+    console.log(formValues);
+
+    onSubmit(formValues);
+
+    // Handle user choice
+    if (userChoice === "custom") {
+      handleCustomMenu();
+    } else if (userChoice === "pre-built") {
+      handlePreBuiltMenu();
+    }
+  };
 
   // Animation variants for the step transitions
   const variants = {
@@ -408,7 +410,7 @@ export default function Setup({
         name="setup-form"
         ref={ref}
         onSubmit={form.handleSubmit(onSubmit, onInvalid)}
-        className="hidden w-full px-52"
+        className="w-full px-52"
       >
         <Slider validSections={validSections} disableSubmitBtn>
           <AnimatePresence mode="wait" initial={false}>

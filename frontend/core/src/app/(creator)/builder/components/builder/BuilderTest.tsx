@@ -26,7 +26,6 @@ import { createMenu } from "@/app/actions";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { slugify } from "@/lib/slugify";
 import MenuFeatureStep from "./steps/MenuFeatureStep";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -103,12 +102,14 @@ export type keyOfGlobalStylingSchemaType = keyof GlobalStylingType;
 
 export default function BuilderTest({
   ref,
-  businessName,
+  businessSlug,
   assetGroups,
+  onSuccess,
 }: {
   ref: React.RefObject<HTMLFormElement | null>;
-  businessName: string;
+  businessSlug: string;
   assetGroups: AssetGroupType[];
+  onSuccess: () => void;
 }) {
   const form = useForm<BuilderFormType>({
     resolver: zodResolver(BuilderSchema),
@@ -251,13 +252,13 @@ export default function BuilderTest({
         bg_color,
       },
     };
-    const businessSlug = slugify(businessName);
 
     //call server action
     const res = await createMenu(businessSlug, data);
 
     if (res.success) {
       toast.success("Menu created successfully!");
+      onSuccess();
     } else {
       toast.error(res.error);
     }
@@ -303,7 +304,7 @@ export default function BuilderTest({
           name="builder-form"
           onSubmit={form.handleSubmit(onSubmit, onInvalid)}
           ref={ref}
-          className="w-5/12"
+          className="w-5/12 flex items-center"
         >
           <Slider validSections={validSections}>
             <AnimatePresence mode="wait" initial={false}>
@@ -322,7 +323,6 @@ export default function BuilderTest({
             </AnimatePresence>
           </Slider>
         </form>
-        <div className="flex gap-2 bg-red-300"></div>
         {/* live menu preview */}
         <MenuPreview></MenuPreview>
       </div>
