@@ -1,6 +1,6 @@
-from .serializers import (BusinessCreateSerializer, CategoriesSerializer,
+from .serializers import (BusinessCreateSerializer, BranchesSerializer, BranchCreateUpdateSerializer, CategoriesSerializer,
                           CategoryCreateUpdateSerializer, ItemsSerializer, ItemCreateUpdateSerializer)
-from .models import Business, Category, Item
+from .models import Business, Branch, Category, Item
 
 from django.shortcuts import get_object_or_404
 
@@ -22,6 +22,81 @@ class BusinessCreateView(APIView):
             ser_data.save(owner=request.user)
             return Response({"message": "business registered successfully"}, status=status.HTTP_201_CREATED)
         return Response(ser_data.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class BranchesView(APIView):
+    def get(self, request, slug):
+        # check business availability
+        try:
+            business = Business.objects.get(slug=slug)
+        except Business.DoesNotExist:
+            return Response({'error': 'business with this ID does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+        branches = Branch.objects.filter(business=business)
+        ser_data = BranchesSerializer(instance=branches, many=True)
+        return Response(ser_data.data)
+
+
+class BranchCreateView(APIView):
+    permission_classes = [IsAuthenticated, IsOwner]
+
+    def post(self, request, slug):
+        ser_data = BranchCreateUpdateSerializer(data=request.data)
+
+        # check business availability
+        try:
+            business = Business.objects.get(slug=slug)
+            # check business ownership
+            self.check_object_permissions(request, business)
+        except Business.DoesNotExist:
+            return Response({"error": "business with this ID does not exist"}, status.HTTP_404_NOT_FOUND)
+
+        if ser_data.is_valid():
+            ser_data.validated_data['business'] = business
+            ser_data.save()
+            return Response(ser_data.data)
+        return Response(ser_data.errors, status.HTTP_400_BAD_REQUEST)
+
+
+class BranchUpdateView(APIView):
+    permission_classes = [IsAuthenticated, IsOwner]
+
+    def put(self, request, slug, branch_id):
+        # check branch availability
+        branch = get_object_or_404(Branch, pk=branch_id)
+
+        # check branch ownership
+        if branch.business.slug != slug:
+            return Response({"error": "branch with this ID does not belong to the provided business"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+        ser_data = BranchCreateUpdateSerializer(
+            instance=branch, data=request.data, partial=True)
+
+        if ser_data.is_valid():
+            # check business ownership
+            self.check_object_permissions(request, branch.business)
+
+            ser_data.save()
+            return Response(ser_data.data)
+        return Response(ser_data.errors, status.HTTP_400_BAD_REQUEST)
+
+
+class BranchDeleteView(APIView):
+    permission_classes = [IsAuthenticated, IsOwner]
+
+    def delete(self, request, slug, branch_id):
+        # check branch availability
+        branch = get_object_or_404(Branch, pk=branch_id)
+
+        # check branch ownership
+        if branch.business.slug != slug:
+            return Response({"error": "branch with this ID does not belong to the provided business"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+        # check business ownership
+        self.check_object_permissions(request, branch.business)
+
+        branch.delete()
+        return Response({'message': 'branch has been deleted'}, status.HTTP_204_NO_CONTENT)
 
 
 # category CRUD views

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Business, Category, Item
+from .models import Business, Branch, Category, Item
 from pickers.models import Asset
 from django.utils.text import slugify
 
@@ -26,6 +26,20 @@ class BusinessCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return super().create(validated_data)
+
+# branch serializers
+
+
+class BranchesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Branch
+        fields = '__all__'
+
+
+class BranchCreateUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Branch
+        exclude = ['business']
 
 
 # item serializers

@@ -1,12 +1,22 @@
 from django.urls import path
 from business.views import (CategoriesView, CategoryCreateView, CategoryUpdateView, CategoryDeleteView,
-                            ItemsView, ItemCreateView, ItemUpdateView, ItemDeleteView, BusinessCreateView)
+                            ItemsView, ItemCreateView, ItemUpdateView, ItemDeleteView, BusinessCreateView,
+                            BranchesView, BranchCreateView, BranchUpdateView, BranchDeleteView)
 app_name = 'business'
 
 urlpatterns = [
     # register business
     path('create/', BusinessCreateView.as_view(),
          name='register business'),
+
+    # branch endpoints
+    path('<str:slug>/branches/', BranchesView.as_view(), name='business-branches'),
+    path('<str:slug>/branches/create/',
+         BranchCreateView.as_view(), name='create-branch'),
+    path('<str:slug>/branches/<int:branch_id>/update/',
+         BranchUpdateView.as_view(), name='update-branch'),
+    path('<str:slug>/branches/<int:branch_id>/delete/',
+         BranchDeleteView.as_view(), name='delete-branch'),
 
     # category endpoints
     path('<str:slug>/categories/',

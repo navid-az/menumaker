@@ -34,7 +34,6 @@ class Business(models.Model):
     social_links = models.JSONField(default=dict, blank=True)
     phone_numbers = models.JSONField(default=list, blank=True)
     # ex: [{"number_1":[number], "number_2":[number], ...}]
-    branches = models.JSONField(default=list, blank=True)
     # ex: [{"branch-1":"[address]", "branch_2":"[address]", ...}]
 
     updated = models.DateTimeField(auto_now=True)
@@ -42,6 +41,19 @@ class Business(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.slug})"
+
+
+class Branch(models.Model):
+    business = models.ForeignKey(
+        Business, on_delete=models.CASCADE, related_name="branches")
+    name = models.CharField(max_length=50, blank=True, null=True)
+    address = models.CharField(max_length=255, blank=True, null=True)
+    phone_number = models.CharField(max_length=20, blank=True, null=True)
+    updated = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name} - {self.business.name}"
 
 
 class Category(models.Model):
