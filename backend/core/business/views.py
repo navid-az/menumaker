@@ -1,8 +1,9 @@
-from .serializers import (BusinessCreateSerializer, BranchesSerializer, BranchCreateUpdateSerializer, CategoriesSerializer,
+from .serializers import (BusinessesSerializer, BusinessCreateSerializer, BranchesSerializer, BranchCreateUpdateSerializer, CategoriesSerializer,
                           CategoryCreateUpdateSerializer, ItemsSerializer, ItemCreateUpdateSerializer)
 from .models import Business, Branch, Category, Item
 
 from django.shortcuts import get_object_or_404
+from django.contrib.auth import get_user_model
 
 # rest_framework dependencies
 from rest_framework.views import APIView
@@ -12,8 +13,19 @@ from rest_framework.response import Response
 from rest_framework import status
 
 
-class BusinessCreateView(APIView):
+class BusinessesView(APIView):
     permission_classes = [IsAuthenticated, IsOwner]
+
+    def get(self, request, id):
+        user = get_user_model().objects.get(pk=id)
+        owned_businesses = user.businesses.all()
+        ser_data = BusinessesSerializer(
+            instance=owned_businesses, many=True)
+        return Response(data=ser_data.data)
+
+
+class BusinessCreateView(APIView):
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         ser_data = BusinessCreateSerializer(data=request.data)

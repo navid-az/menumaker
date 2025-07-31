@@ -17,7 +17,6 @@ from .serializers import (
     validateCredentialSerializer,
     CodeSerializer,
     getUserDataSerializer,
-    getUserBusinessesSerializer
 )
 from .models import OtpCode, User
 
@@ -189,15 +188,4 @@ class getUserDataView(APIView):
     def get(self, request, id):
         user = get_user_model().objects.get(pk=id)
         ser_data = getUserDataSerializer(instance=user)
-        return Response(data=ser_data.data)
-
-
-class getUserBusinessesView(APIView):
-    def get(self, request, id):
-        user = get_user_model().objects.get(pk=id)
-        owned_businesses = user.businesses.all()
-        # businesses = user.businesses.all()
-        # all_businesses = owned_businesses.union(businesses)
-        ser_data = getUserBusinessesSerializer(
-            instance=owned_businesses, many=True)
         return Response(data=ser_data.data)

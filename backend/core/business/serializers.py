@@ -3,8 +3,30 @@ from .models import Business, Branch, Category, Item
 from pickers.models import Asset
 from django.utils.text import slugify
 
+# branch serializers
+
+
+class BranchesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Branch
+        fields = '__all__'
+
+
+class BranchCreateUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Branch
+        exclude = ['business']
+
 
 # business serializers
+class BusinessesSerializer(serializers.ModelSerializer):
+    branches = BranchesSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Business
+        fields = '__all__'
+
+
 class BusinessCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Business
@@ -26,20 +48,6 @@ class BusinessCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return super().create(validated_data)
-
-# branch serializers
-
-
-class BranchesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Branch
-        fields = '__all__'
-
-
-class BranchCreateUpdateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Branch
-        exclude = ['business']
 
 
 # item serializers

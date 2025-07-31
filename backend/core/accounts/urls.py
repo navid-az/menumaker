@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import validateCredentialView, ValidateOtpCodeView, CustomTokenObtainPairView, getUserDataView, getUserBusinessesView
+from .views import validateCredentialView, ValidateOtpCodeView, CustomTokenObtainPairView, getUserDataView
 
 
 # JWT dependencies
@@ -17,8 +17,6 @@ urlpatterns = [
     path("validate-code", ValidateOtpCodeView.as_view(), name="validate otp code"),
     path("user/<int:id>",
          getUserDataView.as_view(), name="user-data"),
-    path('user/<int:id>/businesses', getUserBusinessesView.as_view(),
-         name="business-user-list"),
 
     # JWT paths
     path("token/", CustomTokenObtainPairView.as_view(), name="token_obtain_pair"),
