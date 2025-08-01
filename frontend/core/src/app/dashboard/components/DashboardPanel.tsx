@@ -3,10 +3,7 @@ import { ResizablePanel } from "@/components/ui/resizable";
 
 function DashboardPanel({ children }: { children: React.ReactNode }) {
   return (
-    <ResizablePanel
-      className="relative h-full !overflow-y-auto rounded-tr-3xl bg-white p-4"
-      defaultSize={80}
-    >
+    <ResizablePanel className="relative bg-primary" defaultSize={80}>
       {children}
     </ResizablePanel>
   );

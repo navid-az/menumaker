@@ -3,13 +3,19 @@ import {
   ResizablePanelGroup,
   ResizableHandle,
 } from "@/components/ui/resizable";
-import { DashboardHeader } from "./components/DashboardHeader";
-import DashboardNavbar from "./components/DashboardSidebar";
+import DashboardSidebar from "./components/DashboardSidebar";
 import DashboardPanel from "./components/DashboardPanel";
 
 //functions
 import { getUserData } from "@/lib/getUserData";
 import { getUserBusinesses } from "@/lib/getUserBusinesses";
+
+export type BranchType = {
+  id: number;
+  name: string;
+  address?: string;
+  phone_number?: number;
+};
 
 //types
 export type BusinessType = {
@@ -19,45 +25,29 @@ export type BusinessType = {
   name: string;
   name_en: string;
   service_type: "online" | "in_person" | "both";
-  primary_service_type: "online" | "in_person";
+  primary_service_type?: "online" | "in_person";
   branch_count: number;
-  social_links: {};
-  phone_numbers: {};
-  locations: {};
-}[];
+  social_links?: {};
+  phone_numbers?: {};
+  locations?: {};
+  branches: BranchType[];
+};
 
-// get user's restaurants/cafes info
-// const getUserBusinesses = async (userId: number) => {
-//   const res = await fetch(
-//     `http://127.0.0.1:8000/accounts/user/${userId}/businesses`
-//   );
-//   return res.json();
-// };
-
-// const getMenuData = async (menu_id: string) => {
-//   const res = await fetch(`${menu_id}/items/`);
-//   return res.json();
-// };
-
-export default async function DashboardLayout(props: {
+export default async function DashboardLayout({
+  children,
+}: {
   children: React.ReactNode;
-  params: Promise<{ slug: string }>;
 }) {
-  const params = await props.params;
-
-  const { children } = props;
-
   const user = await getUserData();
-  const businesses: BusinessType = await getUserBusinesses(user.pk);
+  const businesses: BusinessType[] = await getUserBusinesses(user.pk);
   return (
     <div className="flex h-screen flex-col bg-primary">
-      <DashboardHeader menu_id={params.slug}></DashboardHeader>
       <ResizablePanelGroup
         autoSaveId="dashboard-size"
         direction="horizontal"
         className="flex flex-1"
       >
-        <DashboardNavbar businesses={businesses}></DashboardNavbar>
+        <DashboardSidebar businesses={businesses}></DashboardSidebar>
         <ResizableHandle withHandle></ResizableHandle>
         <DashboardPanel>{children}</DashboardPanel>
       </ResizablePanelGroup>

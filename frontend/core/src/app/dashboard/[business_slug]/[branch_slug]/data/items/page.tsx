@@ -8,10 +8,13 @@ import { Item } from "@/app/dashboard/items/columns";
 import { Category } from "@/app/dashboard/categories/columns";
 
 //menu items data
-async function getMenuItemsData(menu_id: string): Promise<Item[]> {
-  const data = await fetch(`http://127.0.0.1:8000/business/${menu_id}/items/`, {
-    next: { tags: ["items"] },
-  });
+async function getMenuItemsData(business_slug: string): Promise<Item[]> {
+  const data = await fetch(
+    `http://127.0.0.1:8000/business/${business_slug}/items/`,
+    {
+      next: { tags: ["items"] },
+    }
+  );
   if (!data.ok) {
     throw new Error("Failed to fetch data");
   }
@@ -19,9 +22,11 @@ async function getMenuItemsData(menu_id: string): Promise<Item[]> {
 }
 
 //menu categories data
-async function getMenuCategoriesData(menu_id: string): Promise<Category[]> {
+async function getMenuCategoriesData(
+  business_slug: string
+): Promise<Category[]> {
   const data = await fetch(
-    `http://127.0.0.1:8000/business/${menu_id}/categories/`,
+    `http://127.0.0.1:8000/business/${business_slug}/categories/`,
     {
       next: { tags: ["categories"] },
     }
@@ -34,17 +39,17 @@ async function getMenuCategoriesData(menu_id: string): Promise<Category[]> {
 }
 
 export default async function Page(props: {
-  params: Promise<{ menu_id: string }>;
+  params: Promise<{ business_slug: string }>;
 }) {
   const params = await props.params;
-  const itemsData = await getMenuItemsData(params.menu_id);
-  const categoriesData = await getMenuCategoriesData(params.menu_id);
+  const itemsData = await getMenuItemsData(params.business_slug);
+  const categoriesData = await getMenuCategoriesData(params.business_slug);
 
   return (
     <div className="flex flex-col gap-4">
       <h2 className="text-xl">آیتم ها</h2>
       <ItemClientWrapper
-        businessSlug={params.menu_id}
+        businessSlug={params.business_slug}
         categories={categoriesData}
         items={itemsData}
       ></ItemClientWrapper>

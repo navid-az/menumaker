@@ -1,6 +1,8 @@
 "use client";
 
-import * as React from "react";
+import React, { useEffect } from "react";
+
+import { useParams, usePathname, useRouter } from "next/navigation";
 
 //libraries
 import { cn } from "@/lib/utils";
@@ -22,20 +24,31 @@ import {
 } from "@/components/ui/popover";
 
 //SVGs
-import { ChevronsUpDown, Plus } from "lucide-react";
+import { ChevronsUpDown, MapPin, Plus } from "lucide-react";
 
-export function BranchSelector({
-  branches,
-}: {
-  branches: {
-    id: number;
-    name: string;
-    address: string;
-    phone_number: number;
-  }[];
-}) {
+//types
+import { BranchType } from "../layout";
+
+export function BranchSelector({ branches }: { branches: BranchType[] }) {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("");
+
+  const router = useRouter();
+  const pathname = usePathname();
+  const params = useParams<{ business_slug: string; branch_slug: string }>();
+  // Decode the branch slug to handle special characters
+  const decodedBranchSlug = decodeURIComponent(params.branch_slug);
+  const [value, setValue] = React.useState(decodedBranchSlug);
+
+  // change pathname when branch is changed
+  useEffect(() => {
+    const segments = pathname.split("/");
+    segments[3] = value;
+    const newPath = segments.join("/");
+    setOpen(false);
+    setTimeout(() => {
+      router.push(newPath);
+    }, 200);
+  }, [value]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -44,12 +57,15 @@ export function BranchSelector({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="min-w-72 justify-between bg-soft-blue border-sad-blue"
+          className="group min-w-72 justify-between transition-colors duration-300 bg-soft-blue border-sad-blue"
         >
-          {value
-            ? branches.find((branch) => branch.name === value)?.name
-            : "شعبه را انتخاب کنید..."}
-          <ChevronsUpDown className="opacity-50" />
+          <div className="flex gap-2">
+            <MapPin className="w-5 h-5"></MapPin>
+            {value
+              ? branches.find((branch) => branch.name === value)?.name
+              : "شعبه را انتخاب کنید..."}
+          </div>
+          <ChevronsUpDown className="opacity-50 group-hover:opacity-100 transition-opacity duration-300" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="min-w-72 p-0">
@@ -67,7 +83,6 @@ export function BranchSelector({
                   value={branch.name}
                   onSelect={(currentValue) => {
                     setValue(currentValue === value ? "" : currentValue);
-                    setOpen(false);
                   }}
                   className="flex justify-between flex-row items-center"
                 >
@@ -79,12 +94,10 @@ export function BranchSelector({
                   >
                     فعال
                   </span>
-                  {branch.name}
-                  {/* <Check
-                    className={cn(
-                      value === framework.value ? "opacity-100" : "opacity-0"
-                    )}
-                  /> */}
+                  <div className="flex items-center gap-2">
+                    {branch.name}
+                    <MapPin className="w-5 h-5"></MapPin>
+                  </div>
                 </CommandItem>
               ))}
             </CommandGroup>

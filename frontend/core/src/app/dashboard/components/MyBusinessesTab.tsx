@@ -2,26 +2,26 @@
 
 import React, { useState, useRef, useEffect } from "react";
 
+import { usePathname, useRouter } from "next/navigation";
+
 //components
 import AnimateHeight from "react-animate-height";
 import { Button } from "@/components/ui/button";
 
 //hooks
+import { useCurrentBusinessStore } from "@/lib/stores";
 import useClickOutside from "@/app/hooks/useClickOutside";
 
 //SVGs
 import { Building } from "./svg";
 import { ArrowLeft } from "lucide-react";
 
-//hooks
-import { usePathname, useRouter } from "next/navigation";
-import { useCurrentBusinessStore } from "@/lib/stores";
-
 //types
 import { BusinessType } from "../layout";
+
 type MyBusinessesTabType = {
   position: string;
-  businesses: BusinessType;
+  businesses: BusinessType[];
   isCollapsed: boolean;
   collapsePanel: () => void;
   //   venueType: "restaurant" | "cafe" | "buffet" | "food truck";
@@ -65,10 +65,16 @@ export default function MyBusinessesTab({
   };
 
   // change path on business select
-  const handleClick = (name: string, menu_id: string) => {
+  const handleClick = (
+    name: string,
+    business_slug: string,
+    branch_slug: string
+  ) => {
     const pathSegments = pathname.split("/");
-    // update current path with new menu_id
-    pathSegments[2] = menu_id;
+    // update current path with new business_slug
+    pathSegments[2] = business_slug;
+    // update current path with new branch_slug
+    pathSegments[3] = branch_slug;
 
     // Reconstruct the new path
     const newPath = pathSegments.join("/");
@@ -127,7 +133,13 @@ export default function MyBusinessesTab({
               {businesses.map((business) => (
                 <Button
                   key={business.id}
-                  onClick={() => handleClick(business.name, business.slug)}
+                  onClick={() =>
+                    handleClick(
+                      business.name,
+                      business.slug,
+                      business.branches[0].name
+                    )
+                  }
                   className={`${
                     (currentBusiness || businesses[0].name) === business.name
                       ? "hidden"

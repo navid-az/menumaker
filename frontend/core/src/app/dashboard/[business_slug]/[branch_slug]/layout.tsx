@@ -1,7 +1,8 @@
 import React from "react";
 
 //components
-import ToolBar from "../components/ToolBar";
+import { DashboardHeader } from "../../components/DashboardHeader";
+import ToolBar from "../../components/ToolBar";
 
 const getAssetGroups = async () => {
   const res = await fetch("http://127.0.0.1:8000/pickers/icon-pickers");
@@ -27,18 +28,24 @@ const getCategories = async (businessSlug: string) => {
 
 export default async function DashboardPanelLayout(props: {
   children: React.ReactNode;
-  params: Promise<{ menu_id: string }>;
+  params: Promise<{ business_slug: string; branch_slug: string }>;
 }) {
   const params = await props.params;
   const { children } = props;
 
   const assetGroups = await getAssetGroups();
-  const categories = await getCategories(params.menu_id);
+  const categories = await getCategories(params.business_slug);
 
   return (
-    <>
-      <ToolBar categories={categories} assetGroups={assetGroups}></ToolBar>
-      {children}
-    </>
+    <div className="h-screen flex flex-col">
+      <DashboardHeader
+        business_slug={params.business_slug}
+        branch_slug={params.branch_slug}
+      ></DashboardHeader>
+      <div className="bg-white p-4 flex-1 !overflow-y-auto rounded-tr-3xl">
+        <ToolBar categories={categories} assetGroups={assetGroups}></ToolBar>
+        {children}
+      </div>
+    </div>
   );
 }

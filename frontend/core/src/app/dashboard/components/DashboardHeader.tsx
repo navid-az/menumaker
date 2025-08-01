@@ -1,11 +1,12 @@
 //components
+import { BusinessType } from "../layout";
 import { BranchSelector } from "./BranchSelector";
 import { UserProfile } from "@/components/global/UserProfile";
 
 // get all branches of active business
-async function getBranches(menu_id: string) {
+async function getBranches(business_slug: string) {
   const data = await fetch(
-    `http://127.0.0.1:8000/business/${menu_id}/branches/`,
+    `http://127.0.0.1:8000/business/${business_slug}/branches/`,
     {
       next: { tags: ["branches"] },
     }
@@ -16,18 +17,19 @@ async function getBranches(menu_id: string) {
   return data.json();
 }
 
-export async function DashboardHeader() {
+export async function DashboardHeader({
+  business_slug,
+  branch_slug,
+}: {
+  business_slug: string;
+  branch_slug: string;
+}) {
   //hard codded for now
-  const branches = await getBranches("venhan");
+  const branches = await getBranches(business_slug);
 
   return (
-    <header className="flex h-max w-screen justify-between bg-primary p-4 lg:p-8">
-      <section className="flex bg-ping-200 justify-between gap-2">
-        <h2 className="font-extrabold text-primary-foreground lg:text-2xl">
-          داشبورد مدیریت
-        </h2>
-      </section>
-      <section className="flex mr-24 justify-between items-center flex-1">
+    <header className="flex flex-none justify-between bg-primary px-6 py-8">
+      <section className="flex justify-between items-center flex-1">
         <BranchSelector branches={branches}></BranchSelector>
         <UserProfile></UserProfile>
       </section>

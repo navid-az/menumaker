@@ -37,7 +37,9 @@ async function Navbar() {
 
       {isAuthenticated ? (
         businesses.length ? (
-          <Link href={`/dashboard/${businesses[0].slug}/insights`}>
+          <Link
+            href={`/dashboard/${businesses[0].slug}/${businesses[0].branches[0].name}/insights`}
+          >
             داشبورد
           </Link>
         ) : (
