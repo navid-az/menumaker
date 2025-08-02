@@ -1,15 +1,16 @@
 from django.urls import path
 from business.views import (CategoriesView, CategoryCreateView, CategoryUpdateView, CategoryDeleteView,
-                            ItemsView, ItemCreateView, ItemUpdateView, ItemDeleteView, BusinessesView, BusinessCreateView,
+                            ItemsView, ItemCreateView, ItemUpdateView, ItemDeleteView, BusinessView, BusinessesView, BusinessCreateView,
                             BranchesView, BranchCreateView, BranchUpdateView, BranchDeleteView)
 app_name = 'business'
 
 urlpatterns = [
     # business endpoints
+    path('<str:slug>/detail/', BusinessView.as_view(), name='business-detail'),
     path('<int:id>/businesses', BusinessesView.as_view(),
          name="businesses"),
     path('create/', BusinessCreateView.as_view(),
-         name='register business'),
+         name='register-business'),
 
     # branch endpoints
     path('<str:slug>/branches/', BranchesView.as_view(), name='business-branches'),

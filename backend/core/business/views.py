@@ -13,6 +13,16 @@ from rest_framework.response import Response
 from rest_framework import status
 
 
+class BusinessView(APIView):
+    permission_classes = [IsAuthenticated, IsOwner]
+
+    def get(self, request, slug):
+        business = Business.objects.get(slug=slug)
+        ser_data = BusinessesSerializer(
+            instance=business)
+        return Response(data=ser_data.data)
+
+
 class BusinessesView(APIView):
     permission_classes = [IsAuthenticated, IsOwner]
 
@@ -31,8 +41,12 @@ class BusinessCreateView(APIView):
         ser_data = BusinessCreateSerializer(data=request.data)
 
         if ser_data.is_valid():
-            ser_data.save(owner=request.user)
-            return Response({"message": "business registered successfully"}, status=status.HTTP_201_CREATED)
+            business = ser_data.save(owner=request.user)
+
+            # create a default branch for the business
+            Branch.objects.create(business=business, name=business.name)
+
+            return Response(ser_data.data, status=status.HTTP_201_CREATED)
         return Response(ser_data.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

@@ -3,6 +3,7 @@ from .models import Business, Branch, Category, Item
 from pickers.models import Asset
 from django.utils.text import slugify
 
+
 # branch serializers
 
 
@@ -28,10 +29,12 @@ class BusinessesSerializer(serializers.ModelSerializer):
 
 
 class BusinessCreateSerializer(serializers.ModelSerializer):
+    branches = BranchesSerializer(many=True, read_only=True)
+
     class Meta:
         model = Business
         fields = ['name', 'name_en', 'slug',
-                  'service_type', 'primary_service_type', 'branch_structure']
+                  'service_type', 'primary_service_type', 'branch_structure', 'branches']
 
     def validate(self, data):
         # Generate the slug from the English name

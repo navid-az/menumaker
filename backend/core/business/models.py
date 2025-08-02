@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.utils.text import slugify
 from pickers.models import Asset
 
 # external dependencies
@@ -46,11 +47,26 @@ class Business(models.Model):
 class Branch(models.Model):
     business = models.ForeignKey(
         Business, on_delete=models.CASCADE, related_name="branches")
+    slug = models.SlugField(
+        max_length=100, unique=True, null=True, blank=True)
     name = models.CharField(max_length=50, blank=True, null=True)
     address = models.CharField(max_length=255, blank=True, null=True)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
+
+    # Automatically generate a unique slug if not provided
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_name = self.name if self.name else 'branch'
+            base_slug = slugify(base_name)
+            # Ensure base_slug is not empty
+            if not base_slug:
+                base_slug = 'branch'
+            # Generate a unique slug
+            unique_slug = f"{base_slug}-{self.business.id}-{Branch.objects.filter(business=self.business).count() + 1}"
+            self.slug = unique_slug
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.name} - {self.business.name}"
