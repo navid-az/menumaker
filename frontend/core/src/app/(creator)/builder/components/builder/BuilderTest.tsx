@@ -15,6 +15,7 @@ import MenuLayoutStep from "./steps/MenuLayoutStep";
 import CategoryStyleStep from "./steps/CategoryStyleStep";
 import HomeLayoutStep from "./steps/HomeLayoutStep";
 import MenuPreview from "../preview/MenuPreview";
+import MenuFeatureStep from "./steps/MenuFeatureStep";
 
 //hooks
 import { useSlider } from "@/lib/stores";
@@ -22,12 +23,14 @@ import { useSlider } from "@/lib/stores";
 //actions
 import { createMenu } from "@/app/actions";
 
-//functions libraries
+//libraries
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import MenuFeatureStep from "./steps/MenuFeatureStep";
 import { motion, AnimatePresence } from "motion/react";
+
+//types
+import { BusinessType } from "@/app/dashboard/layout";
 
 //zod schemas
 const InstanceSchema = z.array(
@@ -102,12 +105,12 @@ export type keyOfGlobalStylingSchemaType = keyof GlobalStylingType;
 
 export default function BuilderTest({
   ref,
-  businessSlug,
+  businessData,
   assetGroups,
   onSuccess,
 }: {
   ref: React.RefObject<HTMLFormElement | null>;
-  businessSlug: string;
+  businessData: BusinessType | null;
   assetGroups: AssetGroupType[];
   onSuccess: () => void;
 }) {
@@ -254,13 +257,14 @@ export default function BuilderTest({
     };
 
     //call server action
-    const res = await createMenu(businessSlug, data);
-
-    if (res.success) {
-      toast.success("Menu created successfully!");
-      onSuccess();
-    } else {
-      toast.error(res.error);
+    if (businessData?.slug) {
+      const res = await createMenu(businessData.slug, data);
+      if (res.success) {
+        toast.success("Menu created successfully!");
+        onSuccess();
+      } else {
+        toast.error(res.error);
+      }
     }
   }
 

@@ -10,10 +10,13 @@ import QrCodeGenerator from "@/components/global/QrCodeGenerator";
 //SVGs
 import { LoaderCircle } from "lucide-react";
 
+//types
+import { BusinessType } from "@/app/dashboard/layout";
+
 export default function SuccessPage({
-  businessSlug,
+  businessData,
 }: {
-  businessSlug: string;
+  businessData: BusinessType | null;
 }) {
   return (
     <div className="w-full h-full flex flex-col items-center justify-center">
@@ -28,20 +31,24 @@ export default function SuccessPage({
             تا مشتری‌ها بتونن منوی شما رو ببینن.
           </p>
         </div>
-        {businessSlug ? (
+        {businessData?.slug ? (
           <QrCodeGenerator
-            url={`http://localhost:3000/${businessSlug}/menu`}
+            url={`http://localhost:3000/${businessData.slug}/menu`}
           ></QrCodeGenerator>
         ) : (
           <LoaderCircle className="animate-spin w-14 h-14"></LoaderCircle>
         )}
         <div className="flex gap-4 justify-between w-full">
           <Button
-            disabled={!businessSlug}
+            disabled={!businessData?.slug}
             className="flex-1 transition-all font-normal hover:scale-105 scale-pro duration-300 border-2 bg-royal-green border-royal-green text-soft-blue"
             asChild
           >
-            <Link href={`/dashboard/${businessSlug}/data/items`}>ادامه</Link>
+            <Link
+              href={`/dashboard/${businessData?.slug}/${businessData?.branches[0].slug}/data/items`}
+            >
+              ادامه
+            </Link>
           </Button>
           <Button
             disabled

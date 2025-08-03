@@ -346,7 +346,7 @@ export async function createMenu(businessSlug: string, data: MenuType) {
 }
 
 //create business
-export async function createBusiness(prevState: any, data: SetupSchemaType) {
+export async function createBusiness(data: SetupSchemaType) {
   const accessToken = (await cookies()).get("access");
 
   try {

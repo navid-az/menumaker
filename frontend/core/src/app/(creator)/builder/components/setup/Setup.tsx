@@ -24,14 +24,17 @@ import { toast } from "sonner";
 //hooks
 import { useSlider } from "@/lib/stores";
 
-//actions and functions
+//actions
 import { createBusiness } from "@/app/actions";
+
+// functions
 import { slugify } from "@/lib/slugify";
 
 //libraries
 import { motion, AnimatePresence } from "motion/react";
 
 //types
+import { BusinessType } from "@/app/dashboard/layout";
 export type SetupSchemaType = z.infer<typeof SetupSchema>;
 
 //zod schema
@@ -55,12 +58,12 @@ export default function Setup({
   handleCustomMenu,
   handlePreBuiltMenu,
   ref,
-  setBusinessSlug,
+  setBusinessData,
 }: {
   handleCustomMenu: () => void;
   handlePreBuiltMenu: () => void;
   ref: React.RefObject<HTMLFormElement | null>;
-  setBusinessSlug: React.Dispatch<React.SetStateAction<string>>;
+  setBusinessData: React.Dispatch<React.SetStateAction<BusinessType | null>>;
 }) {
   const form = useForm<SetupSchemaType>({
     resolver: zodResolver(SetupSchema),
@@ -69,12 +72,6 @@ export default function Setup({
       name: "",
       name_en: "",
     },
-  });
-
-  //monitor the state of the form onSubmit
-  const [formState, action, idPending] = useActionState(createBusiness, {
-    success: false,
-    error: "",
   });
 
   const { sectionIndex, stepIndex, direction } = useSlider();
@@ -341,22 +338,16 @@ export default function Setup({
   const activeSection = validSections[sectionIndex];
   const activeStep = activeSection.steps[stepIndex];
 
-  //inform user by the result of the form submission
-  useEffect(() => {
-    if (formState.error) {
-      toast.error(formState.error);
-    } else if (formState.success) {
-      //provide businessSlug value to builder form
-      const businessName = form.watch("name_en");
-      const businessSlug = slugify(businessName);
-      setBusinessSlug(businessSlug);
+  async function onSubmit(values: SetupSchemaType) {
+    const res = await createBusiness(values);
+    if (res.error) {
+      toast.error(res.error);
+    } else {
+      // pass newly made business data to parent state
+      setBusinessData(res.data);
 
-      toast.success("Business registered successfully!");
+      toast.success("مجموعه شما با موفقیت ثبت شد!");
     }
-  }, [formState]);
-
-  function onSubmit(values: SetupSchemaType) {
-    action(values);
   }
 
   //if given data is not valid

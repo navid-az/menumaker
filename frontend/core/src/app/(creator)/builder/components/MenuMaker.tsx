@@ -7,14 +7,15 @@ import Setup from "./setup/Setup";
 import BuilderTest from "./builder/BuilderTest";
 import SuccessPage from "./success/SuccessPage";
 
-//types
-import { type AssetGroupType } from "@/components/global/AssetPicker";
-
 //hooks
 import { useSlider } from "@/lib/stores";
 
 //libraries
 import { motion, AnimatePresence } from "motion/react";
+
+//types
+import { type AssetGroupType } from "@/components/global/AssetPicker";
+import { BusinessType } from "@/app/dashboard/layout";
 
 export default function MenuMaker({
   assetGroups,
@@ -24,7 +25,7 @@ export default function MenuMaker({
   const [activeForm, setActiveForm] = useState<"setup" | "builder" | "qr">(
     "setup"
   );
-  const [businessSlug, setBusinessSlug] = useState("");
+  const [businessData, setBusinessData] = useState<BusinessType | null>(null);
 
   const { reset } = useSlider();
 
@@ -68,7 +69,7 @@ export default function MenuMaker({
               ref={setupFormRef}
               handleCustomMenu={() => setActiveForm("builder")}
               handlePreBuiltMenu={() => setActiveForm("builder")}
-              setBusinessSlug={setBusinessSlug}
+              setBusinessData={setBusinessData}
             ></Setup>
           </motion.div>
         )}
@@ -92,7 +93,7 @@ export default function MenuMaker({
           >
             <BuilderTest
               ref={builderFormRef}
-              businessSlug={businessSlug}
+              businessData={businessData}
               assetGroups={assetGroups}
               onSuccess={() => onBuilderSuccess()}
             ></BuilderTest>
@@ -111,7 +112,7 @@ export default function MenuMaker({
             }}
             className="w-screen"
           >
-            <SuccessPage businessSlug={businessSlug}></SuccessPage>
+            <SuccessPage businessData={businessData}></SuccessPage>
           </motion.div>
         )}
       </AnimatePresence>

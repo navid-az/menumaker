@@ -65,21 +65,17 @@ export default function MyBusinessesTab({
   };
 
   // change path on business select
-  const handleClick = (
-    name: string,
-    business_slug: string,
-    branch_slug: string
-  ) => {
+  const handleClick = (business: BusinessType) => {
     const pathSegments = pathname.split("/");
     // update current path with new business_slug
-    pathSegments[2] = business_slug;
+    pathSegments[2] = business.slug;
     // update current path with new branch_slug
-    pathSegments[3] = branch_slug;
+    pathSegments[3] = business.branches[0].slug;
 
     // Reconstruct the new path
     const newPath = pathSegments.join("/");
 
-    setCurrentBusiness(name);
+    setCurrentBusiness(business.name);
     router.push(newPath);
     setIsOpen(!isOpen);
   };
@@ -133,15 +129,9 @@ export default function MyBusinessesTab({
               {businesses.map((business) => (
                 <Button
                   key={business.id}
-                  onClick={() =>
-                    handleClick(
-                      business.name,
-                      business.slug,
-                      business.branches[0].name
-                    )
-                  }
+                  onClick={() => handleClick(business)}
                   className={`${
-                    (currentBusiness || businesses[0].name) === business.name
+                    (currentBusiness || businesses[0].slug) === business.name
                       ? "hidden"
                       : "flex"
                   } scale-pro justify-start gap-2 border border-sad-blue bg-sad-blue px-2 py-3 text-base font-normal text-primary transition-all duration-300 hover:scale-105 hover:border-primary hover:bg-white`}

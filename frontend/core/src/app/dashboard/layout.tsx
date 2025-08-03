@@ -12,6 +12,7 @@ import { getUserBusinesses } from "@/lib/getUserBusinesses";
 
 export type BranchType = {
   id: number;
+  slug: string;
   name: string;
   address?: string;
   phone_number?: number;
