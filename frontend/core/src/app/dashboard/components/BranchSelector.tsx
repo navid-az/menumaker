@@ -35,9 +35,8 @@ export function BranchSelector({ branches }: { branches: BranchType[] }) {
   const router = useRouter();
   const pathname = usePathname();
   const params = useParams<{ business_slug: string; branch_slug: string }>();
-  // Decode the branch slug to handle special characters
-  const decodedBranchSlug = decodeURIComponent(params.branch_slug);
-  const [value, setValue] = React.useState(decodedBranchSlug);
+
+  const [value, setValue] = React.useState(params.branch_slug);
 
   // change pathname when branch is changed
   useEffect(() => {
@@ -62,7 +61,7 @@ export function BranchSelector({ branches }: { branches: BranchType[] }) {
           <div className="flex gap-2">
             <MapPin className="w-5 h-5"></MapPin>
             {value
-              ? branches.find((branch) => branch.name === value)?.name
+              ? branches.find((branch) => branch.slug === value)?.name
               : "شعبه را انتخاب کنید..."}
           </div>
           <ChevronsUpDown className="opacity-50 group-hover:opacity-100 transition-opacity duration-300" />
@@ -80,16 +79,16 @@ export function BranchSelector({ branches }: { branches: BranchType[] }) {
               {branches.map((branch) => (
                 <CommandItem
                   key={branch.id}
-                  value={branch.name}
+                  value={branch.slug}
                   onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue);
+                    setValue(currentValue);
                   }}
                   className="flex justify-between flex-row items-center"
                 >
                   <span
                     className={cn(
                       "bg-sad-blue text-royal-green px-4 text-xs rounded-full py-1 border-2 border-royal-green",
-                      value === branch.name ? "opacity-100" : "opacity-0"
+                      value === branch.slug ? "opacity-100" : "opacity-0"
                     )}
                   >
                     فعال
