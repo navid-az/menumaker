@@ -2,14 +2,13 @@
 
 import React, { useState, useRef, useEffect } from "react";
 
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useParams } from "next/navigation";
 
 //components
 import AnimateHeight from "react-animate-height";
 import { Button } from "@/components/ui/button";
 
 //hooks
-import { useCurrentBusinessStore } from "@/lib/stores";
 import useClickOutside from "@/app/hooks/useClickOutside";
 
 //SVGs
@@ -35,14 +34,12 @@ export default function MyBusinessesTab({
 }: MyBusinessesTabType) {
   const router = useRouter();
   const tab = useRef(null);
-
+  const params = useParams<{ business_slug: string; branch_slug: string }>();
+  const businessName = businesses.find(
+    (business) => business.slug === params.business_slug
+  )?.name;
   const [isOpen, setIsOpen] = useState(false);
-  const currentBusiness = useCurrentBusinessStore(
-    (state) => state.currentBusiness
-  );
-  const setCurrentBusiness = useCurrentBusinessStore(
-    (state) => state.updateCurrentBusiness
-  );
+  const [name, setName] = useState(businessName);
 
   const outsideClick = useClickOutside(tab);
   const pathname = usePathname();
@@ -67,6 +64,7 @@ export default function MyBusinessesTab({
   // change path on business select
   const handleClick = (business: BusinessType) => {
     const pathSegments = pathname.split("/");
+
     // update current path with new business_slug
     pathSegments[2] = business.slug;
     // update current path with new branch_slug
@@ -75,7 +73,7 @@ export default function MyBusinessesTab({
     // Reconstruct the new path
     const newPath = pathSegments.join("/");
 
-    setCurrentBusiness(business.name);
+    setName(business.name);
     router.push(newPath);
     setIsOpen(!isOpen);
   };
@@ -101,7 +99,7 @@ export default function MyBusinessesTab({
           <div className="flex items-center gap-2">
             <Building className="h-6 w-6"></Building>
             <p className={`text-xl ${isCollapsed ? "hidden" : "flex"}`}>
-              مجموعه {currentBusiness || businesses[0].name}
+              مجموعه {name || businesses[0].name}
             </p>
           </div>
           <ArrowLeft
@@ -131,7 +129,7 @@ export default function MyBusinessesTab({
                   key={business.id}
                   onClick={() => handleClick(business)}
                   className={`${
-                    (currentBusiness || businesses[0].slug) === business.name
+                    (name || businesses[0].name) === business.name
                       ? "hidden"
                       : "flex"
                   } scale-pro justify-start gap-2 border border-sad-blue bg-sad-blue px-2 py-3 text-base font-normal text-primary transition-all duration-300 hover:scale-105 hover:border-primary hover:bg-white`}

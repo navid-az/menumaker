@@ -15,23 +15,6 @@ export const usePhoneNumberStore = create<State & Action>()((set) => ({
   updatePhoneNumber: (phoneNumber) => set(() => ({ phoneNumber: phoneNumber })),
 }));
 
-//~~~~myBusinessesTab~~~~
-type businessState = {
-  currentBusiness: string;
-};
-type businessAction = {
-  updateCurrentBusiness: (
-    currentBusiness: businessState["currentBusiness"]
-  ) => void;
-};
-export const useCurrentBusinessStore = create<businessState & businessAction>(
-  (set) => ({
-    currentBusiness: "",
-    updateCurrentBusiness: (currentBusiness: string) =>
-      set(() => ({ currentBusiness: currentBusiness })),
-  })
-);
-
 // type ActiveHandler<T> = (value: T) => void;
 
 // type TabsStateType = {
