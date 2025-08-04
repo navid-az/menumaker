@@ -157,7 +157,15 @@ export function BranchSelector({
         </Button>
       </PopoverTrigger>
       <PopoverContent className="min-w-72 p-0">
-        <Command className="p-1">
+        <Command
+          filter={(value, search) => {
+            const item = branches.find((branch) => branch.slug === value);
+            return item?.name.toLowerCase().includes(search.toLowerCase())
+              ? 1
+              : 0;
+          }}
+          className="p-1"
+        >
           <CommandInput placeholder="جستوجو شعبه..." className="h-9" />
           <CommandList>
             <CommandEmpty>هیچ شعبه ای یافت نشد</CommandEmpty>
