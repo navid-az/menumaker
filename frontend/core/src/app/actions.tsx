@@ -7,7 +7,7 @@ import { revalidatePath, revalidateTag } from "next/cache";
 //types
 import { SetupSchemaType } from "./(creator)/builder/components/setup/Setup";
 import { BuilderFormType } from "./(creator)/builder/components/builder/Builder";
-import { BranchFormType } from "./dashboard/components/BranchSelector";
+import { BranchFormType } from "./dashboard/components/CreateBranchForm";
 
 // import jwtDecoder from "@/lib/jwtDecoder";
 // type DecodedJwtType = {
