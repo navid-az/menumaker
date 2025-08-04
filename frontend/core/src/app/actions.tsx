@@ -7,6 +7,7 @@ import { revalidatePath, revalidateTag } from "next/cache";
 //types
 import { SetupSchemaType } from "./(creator)/builder/components/setup/Setup";
 import { BuilderFormType } from "./(creator)/builder/components/builder/Builder";
+import { BranchFormType } from "./dashboard/components/BranchSelector";
 
 // import jwtDecoder from "@/lib/jwtDecoder";
 // type DecodedJwtType = {
@@ -370,6 +371,45 @@ export async function createBusiness(data: SetupSchemaType) {
     }
 
     const responseData = await res.json();
+    return { success: true, data: responseData };
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.message || "An unexpected error occurred",
+    };
+  }
+}
+
+// create branch
+export async function createBranch(
+  data: BranchFormType,
+  business_slug: string
+) {
+  const accessToken = (await cookies()).get("access");
+
+  try {
+    const res = await fetch(
+      `http://localhost:8000/business/${business_slug}/branches/create/`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken?.value}`,
+        },
+        body: JSON.stringify(data),
+      }
+    );
+    if (!res.ok) {
+      const errorData = await res.json();
+      console.log(errorData);
+
+      return {
+        success: false,
+        error: errorData.error || "Failed to create branch",
+      };
+    }
+    const responseData = await res.json();
+    revalidateTag("branches");
     return { success: true, data: responseData };
   } catch (error: any) {
     return {
