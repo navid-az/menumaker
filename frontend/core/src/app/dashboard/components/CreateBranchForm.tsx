@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 //components
 import { Button } from "@/components/ui/button";
@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/dialog";
 
 //SVGs
-import { Loader2, Plus } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 //libraries
 import { z } from "zod";
@@ -33,13 +33,15 @@ import { useForm } from "react-hook-form";
 import { type FieldErrors } from "react-hook-form";
 
 //server actions
-import { createBranch } from "@/app/actions";
+import { createBranch, updateBranch } from "@/app/actions";
 
 //types
 export type BranchFormType = z.infer<typeof FormSchema>;
 type CreateBranchFormType = {
   business_slug: string;
   defaultValues?: BranchFormType;
+  branchId?: number;
+  children: React.ReactNode;
 };
 
 //zod schema
@@ -49,12 +51,18 @@ const FormSchema = z.object({
   }),
   slug: z.string().optional(),
   address: z.string().optional(),
-  phone_number: z.string().max(15).optional(),
+  phone_number: z
+    .string()
+    .max(15)
+    .regex(/^\d+$/, { message: "فقط عدد وارد کنید" })
+    .optional(),
 });
 
 export default function CreateBranchForm({
   defaultValues,
   business_slug,
+  branchId,
+  children,
 }: CreateBranchFormType) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -75,17 +83,36 @@ export default function CreateBranchForm({
 
   const [open, setOpen] = React.useState(false);
 
+  useEffect(() => {
+    if (defaultValues) {
+      form.reset(defaultValues);
+    }
+  }, [defaultValues]);
+
   async function onSubmit(data: BranchFormType) {
-    const res = await createBranch(data, business_slug);
-    if (res?.success) {
-      //wait for route revalidation to happen first
-      setTimeout(() => {
-        setOpen(false);
-      }, 300);
-      toast.success("شعبه با موفقیت ایجاد شد");
-      form.reset();
+    if (defaultValues && branchId) {
+      const res = await updateBranch(branchId, business_slug, data);
+      if (res?.success) {
+        //wait for route revalidation to happen first
+        setTimeout(() => {
+          setOpen(false);
+        }, 300);
+        toast.success("شعبه با موفقیت ایجاد شد");
+      } else {
+        toast.error(res?.error || "خطایی در ایجاد شعبه رخ داد.");
+      }
     } else {
-      toast.error(res?.error || "خطایی در ایجاد شعبه رخ داد.");
+      const res = await createBranch(data, business_slug);
+      if (res?.success) {
+        //wait for route revalidation to happen first
+        setTimeout(() => {
+          setOpen(false);
+        }, 300);
+        toast.success("شعبه با موفقیت ایجاد شد");
+        form.reset();
+      } else {
+        toast.error(res?.error || "خطایی در ایجاد شعبه رخ داد.");
+      }
     }
   }
 
@@ -97,12 +124,7 @@ export default function CreateBranchForm({
   };
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="scale-pro rounded-lg mt-2 border-2 border-primary bg-soft-blue px-4 font-semibold text-primary transition-all duration-200 hover:bg-primary hover:text-primary-foreground data-[state=open]:scale-95 data-[state=open]:bg-primary data-[state=open]:text-primary-foreground">
-          <Plus className="ml-2 h-5 w-5"></Plus>
-          <p>ایجاد شعبه جدید</p>
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader className="items-start">
           <DialogTitle>ایجاد شعبه جدید</DialogTitle>

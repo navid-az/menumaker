@@ -15,7 +15,7 @@ export type BranchType = {
   slug: string;
   name: string;
   address?: string;
-  phone_number?: number;
+  phone_number?: string;
 };
 
 //types

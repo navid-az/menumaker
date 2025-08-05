@@ -5,7 +5,7 @@ import React, { useEffect } from "react";
 import { useParams, usePathname, useRouter } from "next/navigation";
 
 //SVGs
-import { ChevronsUpDown, MapPin, Edit2 } from "lucide-react";
+import { ChevronsUpDown, MapPin, Edit2, Plus } from "lucide-react";
 
 //libraries
 import { cn } from "@/lib/utils";
@@ -75,6 +75,7 @@ export function BranchSelector({
         >
           <div className="flex gap-2">
             <MapPin className="w-5 h-5"></MapPin>
+
             {value
               ? branches.find((branch) => branch.slug === value)?.name
               : "شعبه را انتخاب کنید..."}
@@ -108,7 +109,10 @@ export function BranchSelector({
                   }}
                   className="group flex h-9 justify-between flex-row items-center"
                 >
-                  <div className="flex gap-1 items-center">
+                  <div
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex gap-1 items-center"
+                  >
                     <span
                       className={cn(
                         "bg-sad-blue text-royal-green px-4 text-xs rounded-full py-1 border-2 border-royal-green",
@@ -117,9 +121,15 @@ export function BranchSelector({
                     >
                       فعال
                     </span>
-                    <Button className="group-hover:flex hidden h-7 w-8 rounded-full bg-transparent border-2 border-royal-green text-royal-green hover:bg-sad-blue transition-colors">
-                      <Edit2></Edit2>
-                    </Button>
+                    <CreateBranchForm
+                      branchId={branch.id}
+                      defaultValues={branch}
+                      business_slug={params.business_slug}
+                    >
+                      <Button className="group-hover:flex hidden h-7 w-8 rounded-full bg-transparent text-royal-green hover:border-royal-green border-2 border-transparent hover:bg-sad-blue transition-colors">
+                        <Edit2></Edit2>
+                      </Button>
+                    </CreateBranchForm>
                   </div>
                   <div className="flex items-center gap-2">
                     {branch.name}
@@ -129,9 +139,12 @@ export function BranchSelector({
               ))}
             </CommandGroup>
           </CommandList>
-          <CreateBranchForm
-            business_slug={params.business_slug}
-          ></CreateBranchForm>
+          <CreateBranchForm business_slug={params.business_slug}>
+            <Button className="scale-pro mt-2 border-2 border-primary bg-soft-blue px-4 font-semibold text-primary transition-all duration-200 hover:bg-primary hover:text-primary-foreground data-[state=open]:scale-95 data-[state=open]:bg-primary data-[state=open]:text-primary-foreground">
+              <Plus className="ml-1 h-5 w-5"></Plus>
+              <p>ایجاد شعبه جدید</p>
+            </Button>
+          </CreateBranchForm>
         </Command>
       </PopoverContent>
     </Popover>
