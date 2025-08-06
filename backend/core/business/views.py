@@ -1,6 +1,7 @@
-from .serializers import (BusinessesSerializer, BusinessCreateSerializer, BranchesSerializer, BranchCreateUpdateSerializer, CategoriesSerializer,
+from .serializers import (BusinessesSerializer, BusinessCreateSerializer, BranchesSerializer, BranchCreateUpdateSerializer,
+                          TablesSerializer, TableCreateUpdateSerializer, CategoriesSerializer,
                           CategoryCreateUpdateSerializer, ItemsSerializer, ItemCreateUpdateSerializer)
-from .models import Business, Branch, Category, Item
+from .models import Business, Branch, Table, Category, Item
 
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
@@ -123,6 +124,63 @@ class BranchDeleteView(APIView):
 
         branch.delete()
         return Response({'message': 'branch has been deleted'}, status.HTTP_204_NO_CONTENT)
+
+
+class TablesView(APIView):
+    def get(self, request, branch_id):
+        # check branch availability
+        try:
+            branch = Branch.objects.get(pk=branch_id)
+        except Branch.DoesNotExist:
+            return Response({"error": "branch with this ID does not exist"}, status.HTTP_404_NOT_FOUND)
+
+        tables = Table.objects.filter(branch=branch)
+        ser_data = TablesSerializer(instance=tables, many=True)
+        return Response(ser_data.data)
+
+
+class TableCreateView(APIView):
+    permission_classes = [IsAuthenticated, IsOwner]
+
+    def post(self, request, branch_id):
+        ser_data = TableCreateUpdateSerializer(data=request.data)
+        # check business availability
+        try:
+            branch = Branch.objects.get(pk=branch_id)
+        except Branch.DoesNotExist:
+            return Response({"error": "branch with this ID does not exist"}, status.HTTP_404_NOT_FOUND)
+
+        if ser_data.is_valid():
+            ser_data.validated_data['branch'] = branch
+            ser_data.save()
+            return Response(ser_data.data)
+        return Response(ser_data.errors, status.HTTP_400_BAD_REQUEST)
+
+
+class TableUpdateView(APIView):
+    def put(self, request, branch_id, table_id):
+        # check table availability
+        table = get_object_or_404(Table, pk=table_id)
+
+        # check branch ownership
+        if table.branch.pk != branch_id:
+            return Response({"error": "table with this ID does not belong to the provided branch"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+        ser_data = TableCreateUpdateSerializer(
+            instance=table, data=request.data, partial=True)
+
+        if ser_data.is_valid():
+            # check business ownership
+            self.check_object_permissions(request, table.branch.business)
+
+            ser_data.save()
+            return Response(ser_data.data)
+        return Response(ser_data.errors, status.HTTP_400_BAD_REQUEST)
+
+
+class TableDeleteView(APIView):
+    def put(request, self, table_id):
+        pass
 
 
 # category CRUD views

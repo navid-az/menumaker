@@ -1,12 +1,23 @@
 from rest_framework import serializers
-from .models import Business, Branch, Category, Item
+from .models import Business, Branch, Table, Category, Item
 from pickers.models import Asset
 from django.utils.text import slugify
 
 
+# table serializers
+class TablesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Table
+        fields = '__all__'
+
+
+class TableCreateUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Table
+        exclude = ['branch', 'created', 'updated']
+
+
 # branch serializers
-
-
 class BranchesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Branch

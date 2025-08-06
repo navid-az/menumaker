@@ -72,6 +72,26 @@ class Branch(models.Model):
         return f"{self.name} - {self.business.name}"
 
 
+class Table(models.Model):
+    branch = models.ForeignKey(
+        Branch, on_delete=models.CASCADE, related_name='tables')
+    name = models.CharField(max_length=20)  # Example: "A1", "VIP-3"
+    seats = models.PositiveSmallIntegerField()
+    location_description = models.CharField(max_length=255, blank=True)
+
+    # Table Status
+    is_active = models.BooleanField(default=True)
+    is_occupied = models.BooleanField(default=False)
+    is_reserved = models.BooleanField(default=False)
+    is_requesting_assistance = models.BooleanField(default=False)
+
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.branch.name} - {self.name}"
+
+
 class Category(models.Model):
     business = models.ForeignKey(
         Business, on_delete=models.CASCADE, related_name="categories")
