@@ -6,6 +6,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { DashboardTabs, DashboardTabsTrigger } from "./DashboardTabs";
 import { CreateItemForm } from "./CreateItemForm";
+import { CreateTableForm } from "./CreateTableForm";
 import FormDialog from "./FormDialog";
 
 //hooks
@@ -58,20 +59,16 @@ export default function ToolBar({
             title="هزینه های مازاد"
           ></DashboardTabsTrigger>
         </DashboardTabs>
-      ) : parentSection === "insights" ? (
+      ) : parentSection === "liveManagement" && childSection === "all" ? (
         <DashboardTabs>
+          <DashboardTabsTrigger path="all" title="همه"></DashboardTabsTrigger>
           <DashboardTabsTrigger
-            path="items"
-            title="سفارشات آنلاین"
+            path="in-person"
+            title="بر روی میز"
           ></DashboardTabsTrigger>
           <DashboardTabsTrigger
-            path="categories"
-            title="سفارشات حضوری"
-          ></DashboardTabsTrigger>
-          <DashboardTabsTrigger
-            disabled
-            path="offers"
-            title="بررسی کلی"
+            path="online"
+            title="سفارش آنلاین"
           ></DashboardTabsTrigger>
         </DashboardTabs>
       ) : (
@@ -101,6 +98,14 @@ export default function ToolBar({
           title="ایجاد دسته بندی"
           description="با انتخاب گزینه های مورد نظر دسته بندی جدید به منو اضافه کنید"
         ></CreateCategoryForm>
+      )}
+      {parentSection === "liveManagement" && childSection === "all" && (
+        <CreateTableForm
+          businessSlug={businessSlug}
+          assetGroups={assetGroups}
+          title="ایجاد میز"
+          description="با انتخاب گزینه های مورد نظر دسته بندی جدید به منو اضافه کنید"
+        ></CreateTableForm>
       )}
       {/* add more here if needed */}
     </div>

@@ -89,7 +89,7 @@ export default function DashboardSidebar({
           <DashboardNavbarBtn
             text="مدیریت زنده"
             isCollapsed={isCollapsed}
-            basePath={`/dashboard/${params.business_slug}/${decodedBranchSlug}/liveManagement`}
+            basePath={`/dashboard/${params.business_slug}/${decodedBranchSlug}/liveManagement/all`}
           >
             <Radar className={`${!isCollapsed && "ml-3"} h-6 w-6`}></Radar>
           </DashboardNavbarBtn>
