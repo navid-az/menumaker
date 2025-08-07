@@ -381,7 +381,7 @@ export async function createBusiness(data: SetupSchemaType) {
   }
 }
 
-// create branch
+// branch actions
 export async function createBranch(
   data: BranchFormType,
   business_slug: string
@@ -449,6 +449,42 @@ export async function updateBranch(
     }
     const responseData = await res.json();
     revalidateTag("branches");
+    return { success: true, data: responseData };
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.message || "An unexpected error occurred",
+    };
+  }
+}
+
+// table actions
+export async function createTable(data: any, branch_slug: string) {
+  const accessToken = (await cookies()).get("access");
+
+  try {
+    const res = await fetch(
+      `http://localhost:8000/business/${branch_slug}/tables/create/`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken?.value}`,
+        },
+        body: JSON.stringify(data),
+      }
+    );
+    if (!res.ok) {
+      const errorData = await res.json();
+      console.log(errorData);
+
+      return {
+        success: false,
+        error: errorData.error || "Failed to create table",
+      };
+    }
+    const responseData = await res.json();
+    revalidateTag("tables");
     return { success: true, data: responseData };
   } catch (error: any) {
     return {

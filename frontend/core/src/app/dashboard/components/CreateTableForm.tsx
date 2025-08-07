@@ -35,68 +35,46 @@ import { Edit2, Loader2, Plus } from "lucide-react";
 
 // hooks
 import { useForm } from "react-hook-form";
+import { Textarea } from "@/components/ui/textarea";
+import { createTable } from "@/app/actions";
 
 // types
-import { type AssetGroupType } from "@/components/global/AssetPicker";
-type CreateCategoryFormType = {
-  businessSlug: string;
-  assetGroups: AssetGroupType[];
+type CreateTableFormType = {
+  branchSlug: string;
   title: string;
   description: string;
   defaultValues?: z.infer<typeof FormSchema>;
-  categoryId?: number;
+  tableId?: number;
 };
 
 //actions
-import { createCategory, updateCategory } from "@/app/actions";
+// import { createTable, updateTable } from "@/app/actions";
 
-// zod schema
-const IconSchema = z.object({
-  id: z.number(),
+const FormSchema = z.object({
   name: z.string(),
-  image: z.string(),
-});
-
-const NameRequired = z.object({
-  name: z.string(),
-  icon: IconSchema.optional().nullable(),
-});
-
-const IconRequired = z.object({
-  name: z.string().optional(),
-  icon: IconSchema,
-});
-
-const RawFormSchema = z.union([NameRequired, IconRequired]);
-
-const FormSchema = RawFormSchema.superRefine((data, ctx) => {
-  if (!data.name && !data.icon) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "لطفاً حداقل نام یا آیکون را وارد کنید.",
-      path: [""],
-    });
-  }
+  seats: z.number(),
+  location_description: z.string().optional(),
 });
 
 export function CreateTableForm({
-  businessSlug,
-  assetGroups,
+  branchSlug,
   title,
   description,
   defaultValues,
-  categoryId,
-}: CreateCategoryFormType) {
+  tableId,
+}: CreateTableFormType) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: defaultValues
       ? {
           name: defaultValues.name || "",
-          icon: defaultValues.icon || null,
+          seats: defaultValues.seats || 2,
+          location_description: defaultValues.location_description || "",
         }
       : {
           name: "",
-          icon: null,
+          seats: 2,
+          location_description: "",
         },
   });
 
@@ -105,44 +83,26 @@ export function CreateTableForm({
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
-      if (!defaultValues && !categoryId) {
+      if (!defaultValues && !tableId) {
         // Create new category
-        const res = await createCategory(businessSlug, data);
+        const res = await createTable(data, branchSlug);
         if (res?.success) {
           setTimeout(() => {
             setOpen(false);
           }, 300);
-          toast.success("دسته بندی با موفقیت ایجاد شد");
+          toast.success("مییز با موفقیت ایجاد شد");
           form.reset();
         } else {
-          toast.error(res?.error || "خطایی در ایجاد دسته بندی رخ داد.");
+          toast.error(res?.error || "خطایی در ایجاد میز رخ داد.");
         }
-      } else if (defaultValues && categoryId) {
-        const res = await updateCategory(businessSlug, categoryId, {
-          name: data.name,
-          icon: data.icon ? data.icon.id : null, // Explicitly send null if icon is null
-        });
-
-        if (res?.success) {
-          setTimeout(() => {
-            setOpen(false);
-          }, 300);
-          toast.success("دسته بندی با موفقیت ویرایش شد");
-        } else {
-          toast.error(res?.error || "خطایی در ویرایش دسته بندی رخ داد.");
-        }
+      } else if (defaultValues && tableId) {
       }
     } catch (error) {
       toast.error("خطایی در پردازش درخواست رخ داد. لطفاً دوباره تلاش کنید.");
     }
   }
 
-  const onError = (errors: FieldErrors<any>) => {
-    form.setError("root", {
-      type: "required",
-      message: "لطفاً حداقل نام یا آیکون را وارد کنید",
-    });
-  };
+  const onError = (errors: FieldErrors<any>) => {};
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -169,20 +129,17 @@ export function CreateTableForm({
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit, onError)}
-            id="category-form"
-          >
-            <section className="flex w-full items-end gap-2 space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit, onError)} id="table-form">
+            <section className="flex w-full items-end gap-2">
               <FormField
                 control={form.control}
                 name="name"
                 render={({ field }) => (
                   <FormItem className="w-full">
-                    <FormLabel>نام دسته</FormLabel>
+                    <FormLabel>نام میز</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="پیتزا، برگر، نوشیدنی سرد، ..."
+                        placeholder="تراس ۲، سالن غربی ۳،VIP -1"
                         type="text"
                         {...field}
                       ></Input>
@@ -193,21 +150,39 @@ export function CreateTableForm({
               />
               <FormField
                 control={form.control}
-                name="icon"
+                name="seats"
                 render={({ field }) => (
                   <FormItem>
+                    <FormLabel>تعداد صندلی</FormLabel>
                     <FormControl>
-                      <AssetPickerPopOver
-                        value={field.value}
-                        onChange={field.onChange}
-                        assetGroups={assetGroups}
-                      ></AssetPickerPopOver>
+                      <Input
+                        placeholder="تعداد صندلی"
+                        type="number"
+                        {...field}
+                      ></Input>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </section>
+            <FormField
+              control={form.control}
+              name="location_description"
+              render={({ field }) => (
+                <FormItem className="pt-6">
+                  <FormLabel>توضیجات</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      className="max-h-40"
+                      placeholder="توضیحات محل میز..."
+                      {...field}
+                    ></Textarea>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             {/* global error */}
             {form.formState.errors.root && (
               <p className="mt-3 text-sm text-red-600">
@@ -219,7 +194,7 @@ export function CreateTableForm({
         <DialogFooter className="flex w-full flex-col justify-between gap-2">
           <Button
             disabled={form.formState.isSubmitting}
-            form="category-form"
+            form="table-form"
             type="submit"
           >
             {form.formState.isSubmitting && (

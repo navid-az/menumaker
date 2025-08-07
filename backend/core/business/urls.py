@@ -22,12 +22,12 @@ urlpatterns = [
          BranchDeleteView.as_view(), name='delete-branch'),
 
     # table endpoints
-    path('<int:branch_id>/tables/', TablesView.as_view(), name='branch-tables'),
-    path('<int:branch_id>/tables/create/',
+    path('<str:branch_slug>/tables/', TablesView.as_view(), name='branch-tables'),
+    path('<str:branch_slug>/tables/create/',
          TableCreateView.as_view(), name='create-table'),
-    path('<int:branch_id>/tables/<int:table_id>/update/',
+    path('<str:branch_slug>/tables/<int:table_id>/update/',
          TableUpdateView.as_view(), name='update-table'),
-    path('<int:branch_id>/tables/<int:table_id>/delete/',
+    path('<str:branch_slug>/tables/<int:table_id>/delete/',
          TableDeleteView.as_view(), name='delete-table'),
 
     # category endpoints

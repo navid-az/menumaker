@@ -28,7 +28,7 @@ export async function DashboardHeader({
   const branches = await getBranches(business_slug);
 
   return (
-    <header className="flex flex-none justify-between bg-primary px-6 py-8">
+    <header className="flex flex-none justify-between bg-primary px-6 py-4">
       <section className="flex justify-between items-center flex-1">
         <BranchSelector branches={branches}></BranchSelector>
         <UserProfile></UserProfile>

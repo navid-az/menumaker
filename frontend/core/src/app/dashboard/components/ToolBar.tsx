@@ -2,6 +2,8 @@
 
 import React from "react";
 
+import { useParams } from "next/navigation";
+
 //components
 import { Button } from "@/components/ui/button";
 import { DashboardTabs, DashboardTabsTrigger } from "./DashboardTabs";
@@ -28,6 +30,7 @@ export default function ToolBar({
   categories: Category[];
 }) {
   const pathName = usePathname();
+  const params = useParams<{ business_slug: string; branch_slug: string }>();
 
   const sections = pathName.split("/").filter((section) => section);
   const businessSlug = sections[sections.indexOf("dashboard") + 1];
@@ -36,7 +39,7 @@ export default function ToolBar({
   const childSection = lastTwoSections[1];
 
   return (
-    <div className="sticky top-0 z-40 flex h-max w-full items-center justify-between gap-2 rounded-full bg-sad-blue p-2">
+    <div className="sticky backdrop-blur-xl bg-sad-blue/60 border border-royal-green/20 top-0 z-40 flex h-max w-full items-center justify-between gap-2 rounded-full  p-2">
       {/* section specific navigator */}
       {parentSection === "data" ? (
         <DashboardTabs>
@@ -101,8 +104,7 @@ export default function ToolBar({
       )}
       {parentSection === "liveManagement" && childSection === "all" && (
         <CreateTableForm
-          businessSlug={businessSlug}
-          assetGroups={assetGroups}
+          branchSlug={params.branch_slug}
           title="ایجاد میز"
           description="با انتخاب گزینه های مورد نظر دسته بندی جدید به منو اضافه کنید"
         ></CreateTableForm>

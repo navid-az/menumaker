@@ -127,10 +127,10 @@ class BranchDeleteView(APIView):
 
 
 class TablesView(APIView):
-    def get(self, request, branch_id):
+    def get(self, request, branch_slug):
         # check branch availability
         try:
-            branch = Branch.objects.get(pk=branch_id)
+            branch = Branch.objects.get(slug=branch_slug)
         except Branch.DoesNotExist:
             return Response({"error": "branch with this ID does not exist"}, status.HTTP_404_NOT_FOUND)
 
@@ -142,11 +142,11 @@ class TablesView(APIView):
 class TableCreateView(APIView):
     permission_classes = [IsAuthenticated, IsOwner]
 
-    def post(self, request, branch_id):
+    def post(self, request, branch_slug):
         ser_data = TableCreateUpdateSerializer(data=request.data)
         # check business availability
         try:
-            branch = Branch.objects.get(pk=branch_id)
+            branch = Branch.objects.get(slug=branch_slug)
         except Branch.DoesNotExist:
             return Response({"error": "branch with this ID does not exist"}, status.HTTP_404_NOT_FOUND)
 
@@ -158,12 +158,12 @@ class TableCreateView(APIView):
 
 
 class TableUpdateView(APIView):
-    def put(self, request, branch_id, table_id):
+    def put(self, request, branch_slug, table_id):
         # check table availability
         table = get_object_or_404(Table, pk=table_id)
 
         # check branch ownership
-        if table.branch.pk != branch_id:
+        if table.branch.slug != branch_slug:
             return Response({"error": "table with this ID does not belong to the provided branch"}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
         ser_data = TableCreateUpdateSerializer(
