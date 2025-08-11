@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 
 import { useParams } from "next/navigation";
 
@@ -52,6 +52,7 @@ import { CreateTableForm } from "./CreateTableForm";
 
 // actions
 import { deleteTable } from "@/app/actions";
+import QrCodeGenerator from "@/components/global/QrCodeGenerator";
 
 // types
 type LiveCardType = {
@@ -71,10 +72,12 @@ export default function LiveCard({
 }: LiveCardType) {
   const params = useParams<{ business_slug: string; branch_slug: string }>();
 
+  const [showCode, setShowCode] = useState(false);
+
   return (
     <div
       className={cn(
-        "border-[3px] font-normal w-60 h-[346px] transition-all duration-300 flex items-center flex-col justify-center rounded-[26px]",
+        "border-[3px] min-h-[350px] font-normal w-60 transition-all duration-300 flex items-center flex-col rounded-[26px]",
         type === "online"
           ? "bg-primary text-primary-foreground border-primary"
           : "bg-sky-blue"
@@ -82,9 +85,17 @@ export default function LiveCard({
     >
       <LiveCardBody>
         <LiveCardHeader
+          setShowCode={setShowCode}
           branchSlug={params.branch_slug}
           table={table}
         ></LiveCardHeader>
+        {showCode && (
+          <div className="flex items-center justify-center w-full h-full">
+            <QrCodeGenerator
+              url={`http://localhost:3000/${params.business_slug}/menu/${table.id}`}
+            ></QrCodeGenerator>
+          </div>
+        )}
       </LiveCardBody>
       <LiveCardFooter type={type}></LiveCardFooter>
     </div>
@@ -93,7 +104,7 @@ export default function LiveCard({
 
 export function LiveCardBody({ children }: { children: React.ReactNode }) {
   return (
-    <div className="h-full flex-1 bg-primary-foreground shadow-lg w-full rounded-3xl p-1">
+    <div className="flex flex-col flex-1 bg-primary-foreground shadow-lg w-full rounded-3xl p-2 gap-2">
       {children}
     </div>
   );
@@ -102,9 +113,11 @@ export function LiveCardBody({ children }: { children: React.ReactNode }) {
 export function LiveCardHeader({
   table,
   branchSlug,
+  setShowCode,
 }: {
   table: TableType;
   branchSlug: string;
+  setShowCode: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   async function handleTableDelete() {
     const res = await deleteTable(branchSlug, table.id);
@@ -115,8 +128,12 @@ export function LiveCardHeader({
     }
   }
 
+  const handleViewQrCode = () => {
+    setShowCode((prev) => !prev);
+  };
+
   return (
-    <div className="w-full flex justify-between items-center gap-1 p-1 rounded-full">
+    <div className="w-full flex justify-between items-center gap-1 rounded-full">
       <div className="flex gap-2">
         <DropdownMenu dir="rtl">
           <DropdownMenuTrigger asChild>
@@ -134,7 +151,7 @@ export function LiveCardHeader({
                 <Info></Info>
                 مشخصات میز
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={handleViewQrCode}>
                 <QrCode></QrCode>
                 مشاهده QR کد
               </DropdownMenuItem>
@@ -159,7 +176,7 @@ export function LiveCardHeader({
                 <AlertDialog>
                   <AlertDialogTrigger
                     asChild
-                    className="w-full h-full flex gap-1 py-1.5 px-2"
+                    className="w-full h-full flex items-center gap-2 py-1.5 px-2"
                   >
                     <div>
                       <Trash2></Trash2>
@@ -224,7 +241,7 @@ export function LiveCardFooter({
   type?: "in-person" | "on-table" | "online";
 }) {
   return (
-    <div className="w-full border-1 flex justify-between items-center border-primary px-2 py-2 rounded-full">
+    <div className="w-full flex justify-between items-center px-2 py-2 rounded-full">
       <p className=" font-semibold">سفارش روی میز</p>
       <div
         className={cn(
