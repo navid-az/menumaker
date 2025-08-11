@@ -533,6 +533,37 @@ export async function updateTable(
   }
 }
 
+export async function deleteTable(branch_slug: string, tableId: number) {
+  const accessToken = (await cookies()).get("access");
+
+  try {
+    const res = await fetch(
+      `http://localhost:8000/business/${branch_slug}/tables/${tableId}/delete/`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken?.value}`,
+        },
+      }
+    );
+    if (!res.ok) {
+      const errorData = await res.json();
+      return {
+        success: false,
+        error: errorData.error || "Failed to delete table",
+      };
+    }
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.message || "An unexpected error occurred",
+    };
+  }
+  revalidateTag("tables");
+  return { success: true };
+}
+
 // image upload
 export async function uploadImage(data: FormData) {
   try {

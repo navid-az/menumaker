@@ -147,10 +147,14 @@ class TableCreateView(APIView):
         # check business availability
         try:
             branch = Branch.objects.get(slug=branch_slug)
+
         except Branch.DoesNotExist:
             return Response({"error": "branch with this ID does not exist"}, status.HTTP_404_NOT_FOUND)
 
         if ser_data.is_valid():
+            # check business ownership
+            self.check_object_permissions(request, branch.business)
+
             ser_data.validated_data['branch'] = branch
             ser_data.save()
             return Response(ser_data.data)
@@ -179,8 +183,21 @@ class TableUpdateView(APIView):
 
 
 class TableDeleteView(APIView):
-    def put(request, self, table_id):
-        pass
+    permission_classes = [IsAuthenticated, IsOwner]
+
+    def delete(self, request, branch_slug, table_id):
+        # check table availability
+        table = get_object_or_404(Table, pk=table_id)
+
+        # check branch ownership
+        if table.branch.slug != branch_slug:
+            return Response({"error": "table with this ID does not belong to the provided branch"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+        # check business ownership
+        self.check_object_permissions(request, table.branch.business)
+
+        table.delete()
+        return Response({'message': 'table has been deleted'}, status.HTTP_204_NO_CONTENT)
 
 
 # category CRUD views

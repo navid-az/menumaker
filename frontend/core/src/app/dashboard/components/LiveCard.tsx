@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 
 //components
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,6 +21,17 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogTrigger,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogFooter,
+  AlertDialogAction,
+  AlertDialogCancel,
+} from "@/components/ui/alert-dialog";
 
 //SVGs
 import {
@@ -33,12 +45,15 @@ import {
 } from "lucide-react";
 import { TableChair } from "./svg";
 
-//types
+// types
 import { TableType } from "../[business_slug]/[branch_slug]/liveManagement/all/page";
 import { cn } from "@/lib/utils";
 import { CreateTableForm } from "./CreateTableForm";
 
-//types
+// actions
+import { deleteTable } from "@/app/actions";
+
+// types
 type LiveCardType = {
   table: TableType;
   type?: "in-person" | "on-table" | "online";
@@ -91,6 +106,15 @@ export function LiveCardHeader({
   table: TableType;
   branchSlug: string;
 }) {
+  async function handleTableDelete() {
+    const res = await deleteTable(branchSlug, table.id);
+    if (res.success) {
+      toast.success("میز با موفقیت حذف شد");
+    } else {
+      toast.error("خطایی در هنگام حذف میز رخ داد");
+    }
+  }
+
   return (
     <div className="w-full flex justify-between items-center gap-1 p-1 rounded-full">
       <div className="flex gap-2">
@@ -128,9 +152,41 @@ export function LiveCardHeader({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem className="text-red-600 focus:text-red-600 focus:bg-red-50">
-                <Trash2></Trash2>
-                حذف میز
+              <DropdownMenuItem
+                onClick={(e) => e.preventDefault()}
+                className="text-red-600 p-0 focus:text-red-600 focus:bg-red-50"
+              >
+                <AlertDialog>
+                  <AlertDialogTrigger
+                    asChild
+                    className="w-full h-full flex gap-1 py-1.5 px-2"
+                  >
+                    <div>
+                      <Trash2></Trash2>
+                      حذف میز
+                    </div>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        آیا مطمعنی که میخوای میز "{table.name}" رو حذف کنی؟
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        این عمل غیر قابل بازگشت میباشد
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="mt-8">
+                      <AlertDialogCancel>انصراف</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={(e) => {
+                          handleTableDelete();
+                        }}
+                      >
+                        حذفش کن
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </DropdownMenuItem>
               <DropdownMenuItem
                 disabled
