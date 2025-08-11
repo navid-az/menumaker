@@ -2,16 +2,41 @@
 
 import React from "react";
 
+import { useParams } from "next/navigation";
+
 //components
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 //SVGs
-import { ConciergeBell, EllipsisVertical } from "lucide-react";
+import {
+  CircleX,
+  ConciergeBell,
+  EllipsisVertical,
+  Info,
+  Pen,
+  QrCode,
+  Trash2,
+} from "lucide-react";
 import { TableChair } from "./svg";
 
 //types
 import { TableType } from "../[business_slug]/[branch_slug]/liveManagement/all/page";
 import { cn } from "@/lib/utils";
+import { CreateTableForm } from "./CreateTableForm";
 
 //types
 type LiveCardType = {
@@ -21,9 +46,6 @@ type LiveCardType = {
   seats?: number;
   hasSession?: boolean;
 };
-const styles = {
-  type: { online: "#5263FF", inPerson: "sky-blue", onTable: "sky-blue" },
-};
 
 export default function LiveCard({
   table,
@@ -32,6 +54,8 @@ export default function LiveCard({
   seats,
   hasSession,
 }: LiveCardType) {
+  const params = useParams<{ business_slug: string; branch_slug: string }>();
+
   return (
     <div
       className={cn(
@@ -42,7 +66,10 @@ export default function LiveCard({
       )}
     >
       <LiveCardBody>
-        <LiveCardHeader table={table}></LiveCardHeader>
+        <LiveCardHeader
+          branchSlug={params.branch_slug}
+          table={table}
+        ></LiveCardHeader>
       </LiveCardBody>
       <LiveCardFooter type={type}></LiveCardFooter>
     </div>
@@ -57,16 +84,64 @@ export function LiveCardBody({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function LiveCardHeader({ table }: { table: TableType }) {
+export function LiveCardHeader({
+  table,
+  branchSlug,
+}: {
+  table: TableType;
+  branchSlug: string;
+}) {
   return (
     <div className="w-full flex justify-between items-center gap-1 p-1 rounded-full">
       <div className="flex gap-2">
-        <Button
-          size="icon"
-          className="rounded-full border-yellow-950/20 border hover:border-yellow-950 bg-soft-blue text-royal-green"
-        >
-          <EllipsisVertical></EllipsisVertical>
-        </Button>
+        <DropdownMenu dir="rtl">
+          <DropdownMenuTrigger asChild>
+            <Button
+              size="icon"
+              className="rounded-full border-yellow-950/20 border hover:border-yellow-950 bg-soft-blue text-royal-green"
+            >
+              <EllipsisVertical></EllipsisVertical>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="rounded-xl w-44">
+            <DropdownMenuLabel>{table.name}</DropdownMenuLabel>
+            <DropdownMenuGroup>
+              <DropdownMenuItem>
+                <Info></Info>
+                مشخصات میز
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <QrCode></QrCode>
+                مشاهده QR کد
+              </DropdownMenuItem>
+              <CreateTableForm
+                branchSlug={branchSlug}
+                defaultValues={table}
+                tableId={table.id}
+                title="ویرایش میز"
+              >
+                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                  <Pen></Pen>
+                  ویرایش میز
+                </DropdownMenuItem>
+              </CreateTableForm>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem className="text-red-600 focus:text-red-600 focus:bg-red-50">
+                <Trash2></Trash2>
+                حذف میز
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                disabled
+                className="text-red-600 focus:text-red-600 focus:bg-red-50"
+              >
+                <CircleX></CircleX>
+                لغو سفارش
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
         <Button
           size="icon"
           className="rounded-full border-yellow-950/20 border hover:border-yellow-950 bg-soft-blue text-royal-green"
@@ -108,4 +183,3 @@ export function LiveCardFooter({
     </div>
   );
 }
-// #EEE486

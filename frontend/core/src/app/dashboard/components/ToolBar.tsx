@@ -15,7 +15,7 @@ import FormDialog from "./FormDialog";
 import { usePathname } from "next/navigation";
 
 //SVGs
-import { Filter } from "lucide-react";
+import { Filter, Plus } from "lucide-react";
 import { CreateCategoryForm } from "./CreateCategoryForm";
 
 //types
@@ -107,7 +107,15 @@ export default function ToolBar({
           branchSlug={params.branch_slug}
           title="ایجاد میز"
           description="با انتخاب گزینه های مورد نظر دسته بندی جدید به منو اضافه کنید"
-        ></CreateTableForm>
+        >
+          <Button
+            size="lg"
+            className="scale-pro rounded-full border-2 border-primary bg-soft-blue px-4 font-semibold text-primary transition-all duration-200 hover:scale-95 hover:bg-primary hover:text-primary-foreground data-[state=open]:scale-95 data-[state=open]:bg-primary data-[state=open]:text-primary-foreground"
+          >
+            <Plus className="ml-2 h-5 w-5"></Plus>
+            <p>ایجاد میز</p>
+          </Button>
+        </CreateTableForm>
       )}
       {/* add more here if needed */}
     </div>

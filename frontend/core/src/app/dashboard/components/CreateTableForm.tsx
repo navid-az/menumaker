@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 
 // zod validator
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,7 +8,9 @@ import { z } from "zod";
 import { FieldErrors } from "react-hook-form";
 
 // components
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 import {
   Form,
   FormControl,
@@ -26,25 +28,25 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
-import { AssetPickerPopOver } from "@/components/global/itemAdderButtons/AssetPickerPopOver";
 
 // SVGs
-import { Edit2, Loader2, Plus } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 // hooks
 import { useForm } from "react-hook-form";
 import { Textarea } from "@/components/ui/textarea";
-import { createTable } from "@/app/actions";
+
+// actions
+import { createTable, updateTable } from "@/app/actions";
 
 // types
 type CreateTableFormType = {
   branchSlug: string;
   title: string;
-  description: string;
+  description?: string;
   defaultValues?: z.infer<typeof FormSchema>;
   tableId?: number;
+  children: React.ReactNode;
 };
 
 //actions
@@ -62,6 +64,7 @@ export function CreateTableForm({
   description,
   defaultValues,
   tableId,
+  children,
 }: CreateTableFormType) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -84,7 +87,7 @@ export function CreateTableForm({
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
       if (!defaultValues && !tableId) {
-        // Create new category
+        // Create new table
         const res = await createTable(data, branchSlug);
         if (res?.success) {
           setTimeout(() => {
@@ -96,31 +99,30 @@ export function CreateTableForm({
           toast.error(res?.error || "خطایی در ایجاد میز رخ داد.");
         }
       } else if (defaultValues && tableId) {
+        // Update table
+        const res = await updateTable(data, branchSlug, tableId);
+        if (res?.success) {
+          setTimeout(() => {
+            setOpen(false);
+          }, 300);
+          toast.success("میز با موفقیت ویرایش شد");
+          form.reset();
+        } else {
+          toast.error(res?.error || "خطایی در ویرایش میز رخ داد.");
+        }
       }
     } catch (error) {
       toast.error("خطایی در پردازش درخواست رخ داد. لطفاً دوباره تلاش کنید.");
     }
   }
 
-  const onError = (errors: FieldErrors<any>) => {};
+  const onError = (errors: FieldErrors<any>) => {
+    alert(errors);
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {!defaultValues ? (
-          <Button
-            size="lg"
-            className="scale-pro rounded-full border-2 border-primary bg-soft-blue px-4 font-semibold text-primary transition-all duration-200 hover:scale-95 hover:bg-primary hover:text-primary-foreground data-[state=open]:scale-95 data-[state=open]:bg-primary data-[state=open]:text-primary-foreground"
-          >
-            <Plus className="ml-2 h-5 w-5"></Plus>
-            <p>{title}</p>
-          </Button>
-        ) : (
-          <Button size="icon" variant="ghost" className="rounded-full">
-            <Edit2 className="h-5 w-5"></Edit2>
-          </Button>
-        )}
-      </DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="gap-8">
         <DialogHeader className="items-start">
           <DialogTitle>{title}</DialogTitle>

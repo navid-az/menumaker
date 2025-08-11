@@ -494,6 +494,45 @@ export async function createTable(data: any, branch_slug: string) {
   }
 }
 
+export async function updateTable(
+  data: any,
+  branch_slug: string,
+  tableId: number
+) {
+  const accessToken = (await cookies()).get("access");
+
+  try {
+    const res = await fetch(
+      `http://localhost:8000/business/${branch_slug}/tables/${tableId}/update/`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken?.value}`,
+        },
+        body: JSON.stringify(data),
+      }
+    );
+    if (!res.ok) {
+      const errorData = await res.json();
+      console.log(errorData);
+
+      return {
+        success: false,
+        error: errorData.error || "Failed to update table",
+      };
+    }
+    const responseData = await res.json();
+    revalidateTag("tables");
+    return { success: true, data: responseData };
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.message || "An unexpected error occurred",
+    };
+  }
+}
+
 // image upload
 export async function uploadImage(data: FormData) {
   try {
