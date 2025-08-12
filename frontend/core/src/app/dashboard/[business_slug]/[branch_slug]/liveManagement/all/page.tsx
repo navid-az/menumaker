@@ -11,6 +11,7 @@ import { Item } from "@/app/dashboard/items/columns";
 import { Category } from "@/app/dashboard/categories/columns";
 export type TableType = {
   id: number;
+  code: string;
   name: string;
   seats: number;
   location_description?: string;

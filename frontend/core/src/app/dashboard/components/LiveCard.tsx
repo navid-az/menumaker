@@ -92,7 +92,7 @@ export default function LiveCard({
         {showCode && (
           <div className="flex items-center justify-center w-full h-full">
             <QrCodeGenerator
-              url={`http://localhost:3000/${params.business_slug}/menu/${table.id}`}
+              url={`http://localhost:3000/${params.business_slug}/menu?t=${table.code}}`}
             ></QrCodeGenerator>
           </div>
         )}
