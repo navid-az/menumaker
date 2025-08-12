@@ -1,7 +1,9 @@
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
 from django.utils.text import slugify
 from pickers.models import Asset
+from datetime import timedelta
 import string
 import random
 
@@ -9,6 +11,15 @@ import random
 from colorfield.fields import ColorField
 
 User = settings.AUTH_USER_MODEL
+
+
+# generate a unique code
+def generate_unique_code(length=8):
+    characters = string.ascii_uppercase + string.digits  # A-Z, 0-9
+    while True:
+        code = ''.join(random.choices(characters, k=length))
+        if not Table.objects.filter(code=code).exists():
+            return code
 
 
 class Business(models.Model):
@@ -74,15 +85,6 @@ class Branch(models.Model):
         return f"{self.name} - {self.business.name}"
 
 
-# generate a unique code
-def generate_unique_code(length=8):
-    characters = string.ascii_letters + string.digits  # a-z, A-Z, 0-9
-    while True:
-        code = ''.join(random.choices(characters, k=length))
-        if not Table.objects.filter(code=code).exists():
-            return code
-
-
 class Table(models.Model):
     branch = models.ForeignKey(
         Branch, on_delete=models.CASCADE, related_name='tables')
@@ -107,6 +109,31 @@ class Table(models.Model):
 
     def __str__(self):
         return f"{self.branch.name} - {self.name}"
+
+
+def two_hours_from_now():
+    return timezone.now() + timedelta(hours=2)
+
+
+class TableSession(models.Model):
+    table = models.ForeignKey(
+        Table, on_delete=models.CASCADE, related_name='session')
+    code = models.CharField(max_length=8, blank=True, unique=True)
+    started_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField(default=two_hours_from_now())
+    last_activity = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)
+
+    def is_expired(self):
+        return self.expires_at and timezone.now() > self.expires_at
+
+    def save(self, *args, **kwargs):
+        if not self.code:
+            self.code = generate_unique_code()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.table.name} - {self.code}"
 
 
 class Category(models.Model):
