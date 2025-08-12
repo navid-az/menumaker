@@ -1,7 +1,7 @@
 from django.urls import path
 from business.views import (CategoriesView, CategoryCreateView, CategoryUpdateView, CategoryDeleteView,
                             ItemsView, ItemCreateView, ItemUpdateView, ItemDeleteView, BusinessView, BusinessesView, BusinessCreateView,
-                            BranchesView, BranchCreateView, BranchUpdateView, BranchDeleteView, TablesView, TableCreateView, TableUpdateView, TableDeleteView)
+                            BranchesView, BranchCreateView, BranchUpdateView, BranchDeleteView, TablesView, TableCreateView, TableUpdateView, TableDeleteView, CheckTableSessionView)
 app_name = 'business'
 
 urlpatterns = [
@@ -29,6 +29,10 @@ urlpatterns = [
          TableUpdateView.as_view(), name='update-table'),
     path('<str:branch_slug>/tables/<int:table_id>/delete/',
          TableDeleteView.as_view(), name='delete-table'),
+
+    # table session endpoints
+    path('tables/<str:table_code>/check-session/',
+         CheckTableSessionView.as_view(), name='check-session'),
 
     # category endpoints
     path('<str:slug>/categories/',

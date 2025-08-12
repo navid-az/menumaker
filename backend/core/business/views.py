@@ -1,8 +1,8 @@
 from .serializers import (BusinessesSerializer, BusinessCreateSerializer, BranchesSerializer, BranchCreateUpdateSerializer,
-                          TablesSerializer, TableCreateUpdateSerializer, CategoriesSerializer,
-                          CategoryCreateUpdateSerializer, ItemsSerializer, ItemCreateUpdateSerializer)
-from .models import Business, Branch, Table, Category, Item
-
+                          TablesSerializer, TableCreateUpdateSerializer, CategoriesSerializer, CategoryCreateUpdateSerializer,
+                          ItemsSerializer, ItemCreateUpdateSerializer)
+from .models import Business, Branch, Table, TableSession, Category, Item
+from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 
@@ -198,6 +198,34 @@ class TableDeleteView(APIView):
 
         table.delete()
         return Response({'message': 'table has been deleted'}, status.HTTP_204_NO_CONTENT)
+
+
+class CheckTableSessionView(APIView):
+    def post(self, request, table_code):
+        table = get_object_or_404(Table, code=table_code)
+
+        # Look for an existing active session for this table
+        session = TableSession.objects.filter(
+            table=table, is_active=True).first()
+        # If there is a session, check if it's still valid
+        if session and not session.is_expired():
+            return Response({
+                "status": "active_session",
+                "session_code": session.code,
+                "table_code": table.code
+            }, status=status.HTTP_200_OK)
+        # If no valid session, deactivate old one if exists
+        if session:
+            session.is_active = False
+            session.save()
+        # Create a new session
+        new_session = TableSession.objects.create(
+            table=table, is_active=True)
+        return Response({
+            "status": "new_session",
+            "session_code": new_session.code,
+            "table_code": table.code
+        }, status=status.HTTP_201_CREATED)
 
 
 # category CRUD views
