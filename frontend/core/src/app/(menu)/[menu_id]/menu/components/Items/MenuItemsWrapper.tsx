@@ -2,16 +2,17 @@
 
 import { useState, useEffect } from "react";
 
-//components
+// components
 import { MenuItem } from "./MenuItem";
 
-//libraries
+// libraries
 import { InView } from "react-intersection-observer";
 
-//hooks
+// hooks
+import { useSearchParams } from "next/navigation";
 import { useCategoryBtn, useSearchBar } from "@/lib/stores";
 
-//types
+// types
 import { type MenuItemType } from "./MenuItem";
 import { type MenuGlobalStyling } from "../../page";
 export type CategoriesType = {
@@ -38,6 +39,34 @@ export default function MenuItemsWrapper({
   params: { menu_id: string };
   globalStyling: MenuGlobalStyling;
 }) {
+  const searchParams = useSearchParams();
+  const tableCode = searchParams.get("t");
+
+  // check if tableCode exists and if it has a session
+  // if not, check the session for the tableCode
+  useEffect(() => {
+    if (!tableCode) return;
+    const checkSession = async () => {
+      try {
+        const res = await fetch(
+          `http://localhost:8000/business/tables/${tableCode}/check-session/`,
+          { method: "GET" }
+        );
+        const data = await res.json();
+        if (res.ok) {
+          // Store session_code in localStorage
+          localStorage.setItem("session_code", data.session_code);
+        } else {
+          console.error(data);
+        }
+      } catch (error) {
+        console.error("Error checking table session:", error);
+      }
+    };
+
+    checkSession();
+  }, [tableCode]);
+
   const { updateActiveCategory } = useCategoryBtn();
   const { searchQuery } = useSearchBar();
 

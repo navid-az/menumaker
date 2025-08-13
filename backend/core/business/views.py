@@ -201,7 +201,7 @@ class TableDeleteView(APIView):
 
 
 class CheckTableSessionView(APIView):
-    def post(self, request, table_code):
+    def get(self, request, table_code):
         table = get_object_or_404(Table, code=table_code)
 
         # Look for an existing active session for this table
