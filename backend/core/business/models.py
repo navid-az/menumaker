@@ -111,16 +111,12 @@ class Table(models.Model):
         return f"{self.branch.name} - {self.name}"
 
 
-def two_hours_from_now():
-    return timezone.now() + timedelta(hours=2)
-
-
 class TableSession(models.Model):
     table = models.ForeignKey(
         Table, on_delete=models.CASCADE, related_name='session')
     code = models.CharField(max_length=8, blank=True, unique=True)
     started_at = models.DateTimeField(auto_now_add=True)
-    expires_at = models.DateTimeField(default=two_hours_from_now())
+    expires_at = models.DateTimeField(blank=True)
     last_activity = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
 
@@ -128,8 +124,12 @@ class TableSession(models.Model):
         return self.expires_at and timezone.now() > self.expires_at
 
     def save(self, *args, **kwargs):
+        # generate 8 digit code
         if not self.code:
             self.code = generate_unique_code()
+        # set the expiration time
+        if not self.expires_at:
+            self.expires_at = timezone.now() + timedelta(hours=2)
         super().save(*args, **kwargs)
 
     def __str__(self):
