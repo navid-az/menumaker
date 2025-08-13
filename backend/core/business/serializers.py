@@ -1,14 +1,32 @@
 from rest_framework import serializers
-from .models import Business, Branch, Table, Category, Item
+from .models import Business, Branch, Table, TableSession, Category, Item
 from pickers.models import Asset
+from django.utils import timezone
 from django.utils.text import slugify
 
 
+# table session serializers
+class TableSessionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TableSession
+        fields = ['code', 'started_at', 'expires_at', 'is_active']
+
 # table serializers
+
+
 class TablesSerializer(serializers.ModelSerializer):
+    active_session = serializers.SerializerMethodField()
+
     class Meta:
         model = Table
         fields = '__all__'
+
+    def get_active_session(self, obj):
+        session = obj.session.filter(
+            is_active=True, expires_at__gt=timezone.now()).first()
+        if session:
+            return TableSessionSerializer(session).data
+        return None
 
 
 class TableCreateUpdateSerializer(serializers.ModelSerializer):

@@ -89,15 +89,25 @@ export default function LiveCard({
           branchSlug={params.branch_slug}
           table={table}
         ></LiveCardHeader>
-        {showCode && (
+
+        {showCode ? (
           <div className="flex items-center justify-center w-full h-full">
             <QrCodeGenerator
               url={`http://localhost:3000/${params.business_slug}/menu?t=${table.code}`}
             ></QrCodeGenerator>
           </div>
+        ) : (
+          table.active_session?.code && (
+            <div className="flex flex-col items-center text-primary justify-center w-full h-full gap-4">
+              <div className="w-10/12 aspect-square bg-primary rounded-full"></div>
+              <p className="animate-pulse text-sm text-secondary-foreground">
+                در حال مشاهده منو...
+              </p>
+            </div>
+          )
         )}
       </LiveCardBody>
-      <LiveCardFooter type={type}></LiveCardFooter>
+      <LiveCardFooter table={table} type={type}></LiveCardFooter>
     </div>
   );
 }
@@ -236,22 +246,25 @@ export function LiveCardHeader({
 }
 
 export function LiveCardFooter({
+  table,
   type,
 }: {
+  table: TableType;
   type?: "in-person" | "on-table" | "online";
 }) {
   return (
     <div className="w-full flex justify-between items-center px-2 py-2 rounded-full">
-      <p className=" font-semibold">سفارش روی میز</p>
+      <p className="font-semibold">سفارش روی میز</p>
       <div
         className={cn(
-          "rounded-full bg-royal-green text-xs font-medium px-4 py-1 flex items-center",
+          "rounded-full bg-royal-green text-xs font-medium px-3 py-1 flex items-center hover:scale-105 duration-300 transition-all scale-pro cursor-pointer",
           type === "online"
             ? "bg-primary-foreground text-primary"
             : "bg-sky-blue"
         )}
       >
-        <p className="pt-0.5 font-semibold"> #312</p>
+        <p className="pt-0.5 font-semibold">{table.active_session?.code}</p>
+        <p className="pt-0.5 font-semibold">#</p>
       </div>
     </div>
   );

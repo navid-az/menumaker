@@ -12,6 +12,12 @@ import { Category } from "@/app/dashboard/categories/columns";
 export type TableType = {
   id: number;
   code: string;
+  active_session?: {
+    code: string;
+    started_at: string;
+    expires_at: string;
+    is_active: boolean;
+  };
   name: string;
   seats: number;
   location_description?: string;
