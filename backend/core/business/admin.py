@@ -1,9 +1,10 @@
 from django.contrib import admin
-from .models import Business, Branch, Table, TableSession, Category, Item
+from .models import Business, Branch, Table, TableSession, CallWaiter, Category, Item
 
 admin.site.register(Branch)
 admin.site.register(Table)
 admin.site.register(TableSession)
+admin.site.register(CallWaiter)
 admin.site.register(Category)
 admin.site.register(Item)
 

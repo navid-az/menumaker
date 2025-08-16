@@ -136,6 +136,16 @@ class TableSession(models.Model):
         return f"{self.table.name} - {self.code}"
 
 
+class CallWaiter(models.Model):
+    table_session = models.ForeignKey(
+        TableSession, on_delete=models.CASCADE, related_name="waiter_calls")
+    resolved = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"session: {self.table_session.code} called waiter"
+
+
 class Category(models.Model):
     business = models.ForeignKey(
         Business, on_delete=models.CASCADE, related_name="categories")
