@@ -1,7 +1,8 @@
 from django.urls import path
 from business.views import (CategoriesView, CategoryCreateView, CategoryUpdateView, CategoryDeleteView,
                             ItemsView, ItemCreateView, ItemUpdateView, ItemDeleteView, BusinessView, BusinessesView, BusinessCreateView,
-                            BranchesView, BranchCreateView, BranchUpdateView, BranchDeleteView, TablesView, TableCreateView, TableUpdateView, TableDeleteView, CheckTableSessionView, CallWaiterCreateView)
+                            BranchesView, BranchCreateView, BranchUpdateView, BranchDeleteView, TablesView, TableCreateView, TableUpdateView, TableDeleteView, CheckTableSessionView, CallWaiterCreateView, CallWaiterResolveView)
+
 app_name = 'business'
 
 urlpatterns = [
@@ -37,6 +38,8 @@ urlpatterns = [
     # call waiter endpoints
     path('table-sessions/<str:session_code>/call-waiter/create/',
          CallWaiterCreateView.as_view(), name='call-waiter-create'),
+    path('table-sessions/<str:session_code>/call-waiter/resolve/',
+         CallWaiterResolveView.as_view(), name='call-waiter-resolve'),
 
     # category endpoints
     path('<str:slug>/categories/',

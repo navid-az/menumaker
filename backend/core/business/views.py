@@ -245,6 +245,34 @@ class CallWaiterCreateView(APIView):
         return Response({"message": "Waiter called.", "call_id": call.id}, status=status.HTTP_201_CREATED)
 
 
+class CallWaiterResolveView(APIView):
+    def post(self, request, session_code):
+        session = get_object_or_404(
+            TableSession, code=session_code, is_active=True)
+
+        call = CallWaiter.objects.filter(
+            table_session=session, resolved=False).last()
+        if not call:
+            return Response(
+                {"detail": "No active call to resolve."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        if call.is_expired():
+            return Response(
+                {"detail": "This call is already expired."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        call.resolved = True
+        call.save()
+
+        return Response(
+            {"detail": "Call resolved successfully."},
+            status=status.HTTP_200_OK
+        )
+
+
 # category CRUD views
 class CategoriesView(APIView):
     def get(self, request, slug):
