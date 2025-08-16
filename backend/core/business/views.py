@@ -1,7 +1,7 @@
 from .serializers import (BusinessesSerializer, BusinessCreateSerializer, BranchesSerializer, BranchCreateUpdateSerializer,
                           TablesSerializer, TableCreateUpdateSerializer, CategoriesSerializer, CategoryCreateUpdateSerializer,
                           ItemsSerializer, ItemCreateUpdateSerializer)
-from .models import Business, Branch, Table, TableSession, Category, Item
+from .models import Business, Branch, Table, TableSession, CallWaiter, Category, Item
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
@@ -226,6 +226,23 @@ class CheckTableSessionView(APIView):
             "session_code": new_session.code,
             "table_code": table.code
         }, status=status.HTTP_201_CREATED)
+
+
+class CallWaiterCreateView(APIView):
+    def post(self, request, session_code):
+        session = get_object_or_404(
+            TableSession, code=session_code, is_active=True)
+
+        # Check if an active call already exists (e.g. < 2 minutes old & not resolved)
+        count_down = timezone.now() - timezone.timedelta(minutes=2)
+        active_call = CallWaiter.objects.filter(
+            created_at__gte=count_down, resolved=False).first()
+
+        if active_call:
+            return Response({"message": "A call waiter request is already active for this session.", "call_id": active_call.id}, status=status.HTTP_409_CONFLICT)
+        # Otherwise, create a new call
+        call = CallWaiter.objects.create(table_session=session)
+        return Response({"message": "Waiter called.", "call_id": call.id}, status=status.HTTP_201_CREATED)
 
 
 # category CRUD views
