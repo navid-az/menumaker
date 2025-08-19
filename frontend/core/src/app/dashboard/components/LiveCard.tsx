@@ -73,6 +73,12 @@ export default function LiveCard({
   const params = useParams<{ business_slug: string; branch_slug: string }>();
 
   const [showCode, setShowCode] = useState(false);
+  const now = new Date();
+
+  const activeCallValid =
+    table.active_call &&
+    !table.active_call.resolved &&
+    new Date(table.active_call.expires_at) > now;
 
   return (
     <div
@@ -100,9 +106,15 @@ export default function LiveCard({
           table.active_session?.code && (
             <div className="flex flex-col items-center text-primary justify-center w-full h-full gap-4">
               <div className="w-10/12 aspect-square bg-primary rounded-full"></div>
-              <p className="animate-pulse text-sm text-secondary-foreground">
-                در حال مشاهده منو...
-              </p>
+              {activeCallValid ? (
+                <p className="animate-pulse text-sm text-secondary-foreground">
+                  گارسون!
+                </p>
+              ) : (
+                <p className="animate-pulse text-sm text-secondary-foreground">
+                  در حال مشاهده منو...
+                </p>
+              )}
             </div>
           )
         )}

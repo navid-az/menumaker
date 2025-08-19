@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Business, Branch, Table, TableSession, Category, Item
+from .models import Business, Branch, Table, TableSession, CallWaiter, Category, Item
 from pickers.models import Asset
 from django.utils import timezone
 from django.utils.text import slugify
@@ -11,11 +11,18 @@ class TableSessionSerializer(serializers.ModelSerializer):
         model = TableSession
         fields = ['code', 'started_at', 'expires_at', 'is_active']
 
+
+# call waiter serializers
+class CallWaiterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CallWaiter
+        fields = ['resolved', 'created_at', 'expires_at']
+
+
 # table serializers
-
-
 class TablesSerializer(serializers.ModelSerializer):
     active_session = serializers.SerializerMethodField()
+    active_call = serializers.SerializerMethodField()
 
     class Meta:
         model = Table
@@ -26,6 +33,22 @@ class TablesSerializer(serializers.ModelSerializer):
             is_active=True, expires_at__gt=timezone.now()).first()
         if session:
             return TableSessionSerializer(session).data
+        return None
+
+    def get_active_call(self, obj):
+        session = obj.session.filter(
+            is_active=True,
+            expires_at__gt=timezone.now()
+        ).first()
+        if not session:
+            return None
+
+        call = session.waiter_calls.filter(
+            resolved=False,
+            expires_at__gt=timezone.now()
+        ).first()
+        if call:
+            return CallWaiterSerializer(call).data
         return None
 
 

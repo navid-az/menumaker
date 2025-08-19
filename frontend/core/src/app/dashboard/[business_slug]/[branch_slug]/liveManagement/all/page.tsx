@@ -18,6 +18,11 @@ export type TableType = {
     expires_at: string;
     is_active: boolean;
   };
+  active_call?: {
+    resolved: boolean;
+    created_at: string;
+    expires_at: string;
+  };
   name: string;
   seats: number;
   location_description?: string;
