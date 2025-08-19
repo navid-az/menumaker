@@ -13,6 +13,10 @@ from permissions import IsOwner
 from rest_framework.response import Response
 from rest_framework import status
 
+# django channels
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+
 
 class BusinessView(APIView):
     permission_classes = [IsAuthenticated, IsOwner]
@@ -221,6 +225,20 @@ class CheckTableSessionView(APIView):
         # Create a new session
         new_session = TableSession.objects.create(
             table=table, is_active=True)
+
+        # Send data to client in-real-time
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f"dashboard_{session.table.branch.id}_{session.table.branch.business.id}", {
+                "type": "dashboard.update",
+                "event": "TABLE_SESSION_CREATED",
+                "payload": {
+                    "table_id": session.table.id,
+                    "session_id": session.id,
+                    "expires_at": session.expires_at.isoformat(),
+                },
+            },)
+
         return Response({
             "status": "new_session",
             "session_code": new_session.code,
