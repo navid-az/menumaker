@@ -1,7 +1,7 @@
 import React from "react";
 
 //components
-import LiveCard from "@/app/dashboard/components/LiveCard";
+import LiveCards from "@/app/dashboard/components/LiveCards";
 
 //SVGs
 import { Plus } from "lucide-react";
@@ -85,12 +85,12 @@ export default async function Page(props: {
 
   return (
     <div className="flex flex-col gap-4 justify-end">
-      {/* <DataTable columns={itemColumns} data={itemsData} /> */}
       <section className="flex gap-4 flex-row-reverse flex-wrap w-full">
-        {tables.map((table: TableType) => (
-          // <div key={table.id}>{table.name}</div>
-          <LiveCard type="online" table={table} key={table.id}></LiveCard>
-        ))}
+        <LiveCards
+          businessSlug={params.business_slug}
+          branchSlug={params.branch_slug}
+          tables={tables}
+        ></LiveCards>
         <div className="border-[3px] text-primary font-normal w-60 gap-2 bg-soft-blue h-[346px] border-dashed transition-all duration-300 scale-pro hover:scale-105 hover:shadow-xl border-sad-blue hover:border-royal-green flex items-center flex-col justify-center rounded-3xl p-4">
           <Plus className="w-14 h-14 text-royal-green" strokeWidth={1}></Plus>
           میز جدید

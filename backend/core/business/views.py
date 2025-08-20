@@ -229,15 +229,16 @@ class CheckTableSessionView(APIView):
         # Send data to client in-real-time
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
-            f"dashboard_{session.table.branch.id}_{session.table.branch.business.id}", {
+            f"dashboard_{new_session.table.branch.business.slug}_{new_session.table.branch.slug}", {
                 "type": "dashboard.update",
-                "event": "TABLE_SESSION_CREATED",
                 "payload": {
-                    "table_id": session.table.id,
-                    "session_id": session.id,
-                    "expires_at": session.expires_at.isoformat(),
+                    "code": new_session.table.code,
+                    "started_at": new_session.started_at.isoformat(),
+                    "expires_at": new_session.expires_at.isoformat(),
+                    "is_active": new_session.is_active,
                 },
             },)
+        print("sending group message...")
 
         return Response({
             "status": "new_session",
