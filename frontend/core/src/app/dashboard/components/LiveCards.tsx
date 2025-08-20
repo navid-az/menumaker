@@ -35,14 +35,23 @@ export default function LiveCards({
 
       // Example: update a table’s state
       console.log({ ...data.payload });
-
-      setAllTables((prev) =>
-        prev.map((table) =>
-          table.code === data.payload.code
-            ? { ...table, active_session: { ...data.payload } }
-            : table
-        )
-      );
+      if (data.event === "create_session") {
+        setAllTables((prev) =>
+          prev.map((table) =>
+            table.code === data.payload.code
+              ? { ...table, active_session: { ...data.payload } }
+              : table
+          )
+        );
+      } else if (data.event === "call_waiter") {
+        setAllTables((prev) =>
+          prev.map((table) =>
+            table.code === data.payload.code
+              ? { ...table, active_call: { ...data.payload } }
+              : table
+          )
+        );
+      }
     };
 
     return () => socket.close();

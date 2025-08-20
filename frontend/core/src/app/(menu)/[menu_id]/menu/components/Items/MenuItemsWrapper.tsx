@@ -55,7 +55,7 @@ export default function MenuItemsWrapper({
         const data = await res.json();
         if (res.ok) {
           // Store session_code in localStorage
-          localStorage.setItem("session_code", data.session_code);
+          sessionStorage.setItem("session_code", data.session_code);
         } else {
           console.error(data);
         }

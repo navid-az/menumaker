@@ -6,7 +6,14 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
 //SVGs
-import { ShoppingBag, AlignLeft, Search, Filter, Loader2 } from "lucide-react";
+import {
+  ShoppingBag,
+  AlignLeft,
+  Search,
+  Filter,
+  Loader2,
+  ConciergeBell,
+} from "lucide-react";
 import { useSearchBar } from "@/lib/stores";
 import { Input } from "@/components/ui/input";
 
@@ -28,13 +35,33 @@ export default function MenuHeader({ menuData }: { menuData: Menu }) {
     setIsLoading(false);
   }, [searchQuery]);
 
+  async function callWaiter() {
+    const sessionCode = sessionStorage.getItem("session_code");
+    const res = await fetch(
+      `http://127.0.0.1:8000/business/table-sessions/${sessionCode}/call-waiter/create/`,
+      { method: "POST" }
+    );
+    if (!res.ok) {
+      console.error("wtf just happened");
+    }
+  }
+
   return (
     <section className="flex w-full flex-col gap-4 rounded px-4 pt-4">
       <section className="flex items-center justify-between">
-        <Button className="flex w-max items-center justify-between gap-2 rounded-[var(--radius-base)] bg-[color:var(--secondary)] px-4 text-[color:var(--primary)]">
-          <ShoppingBag className="h-5 w-5"></ShoppingBag>
-          <p className="mt-1 text-lg">2</p>
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            onClick={() => callWaiter()}
+            size="icon"
+            className="rounded-[var(--radius-base)] bg-[color:var(--secondary)] text-[color:var(--primary)]"
+          >
+            <ConciergeBell></ConciergeBell>
+          </Button>
+          <Button className="flex w-max items-center justify-between gap-2 rounded-[var(--radius-base)] bg-[color:var(--secondary)] px-4 text-[color:var(--primary)]">
+            <ShoppingBag className="h-5 w-5"></ShoppingBag>
+            <p className="mt-1 text-lg">2</p>
+          </Button>
+        </div>
         <AlignLeft className="ml-2 text-[color:var(--primary)]"></AlignLeft>
       </section>
       <div className="flex gap-2">

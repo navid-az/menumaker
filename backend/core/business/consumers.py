@@ -31,7 +31,11 @@ class DashboardConsumer(AsyncWebsocketConsumer):
 
    # Called when a message is received from group
     async def dashboard_update(self, event):
-        await self.send(text_data=json.dumps({
-            "type": "dashboard_update",
-            "payload": event["payload"]
-        }))
+        if event['event'] == 'create_session':
+            await self.send(text_data=json.dumps({
+                "type": "dashboard_update", "event": event["event"],
+                "payload": event["payload"]
+            }))
+        elif event['event'] == 'call_waiter':
+            await self.send(text_data=json.dumps({"type": "dashboard_update", "event": event["event"],
+                                                  "payload": event["payload"]}))

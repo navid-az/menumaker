@@ -231,6 +231,7 @@ class CheckTableSessionView(APIView):
         async_to_sync(channel_layer.group_send)(
             f"dashboard_{new_session.table.branch.business.slug}_{new_session.table.branch.slug}", {
                 "type": "dashboard.update",
+                "event": "create_session",
                 "payload": {
                     "code": new_session.table.code,
                     "started_at": new_session.started_at.isoformat(),
@@ -238,7 +239,6 @@ class CheckTableSessionView(APIView):
                     "is_active": new_session.is_active,
                 },
             },)
-        print("sending group message...")
 
         return Response({
             "status": "new_session",
@@ -254,13 +254,27 @@ class CallWaiterCreateView(APIView):
 
         # Check if an active call already exists (e.g. < 2 minutes old & not resolved)
         count_down = timezone.now() - timezone.timedelta(minutes=2)
-        active_call = CallWaiter.objects.filter(
-            created_at__gte=count_down, resolved=False).first()
+        active_call = CallWaiter.objects.filter(table_session__code=session_code,
+                                                created_at__gte=count_down, resolved=False).first()
 
         if active_call:
             return Response({"message": "A call waiter request is already active for this session.", "call_id": active_call.id}, status=status.HTTP_409_CONFLICT)
         # Otherwise, create a new call
         call = CallWaiter.objects.create(table_session=session)
+
+        # Send data to client in-real-time
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f"dashboard_{call.table_session.table.branch.business.slug}_{call.table_session.table.branch.slug}", {
+                "type": "dashboard.update",
+                "event": "call_waiter",
+                "payload": {
+                    "code": call.table_session.table.code,
+                    "resolved": call.resolved,
+                    "created_at": call.created_at.isoformat(),
+                    "expires_at": call.expires_at.isoformat()
+                },
+            },)
         return Response({"message": "Waiter called.", "call_id": call.id}, status=status.HTTP_201_CREATED)
 
 
