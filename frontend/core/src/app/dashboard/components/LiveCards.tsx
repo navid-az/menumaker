@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 
 // components
 import LiveCard from "./LiveCard";
@@ -17,7 +17,28 @@ export default function LiveCards({
   businessSlug: string;
   branchSlug: string;
 }) {
-  const [allTables, setAllTables] = useState(tables);
+  const [liveOverlay, setLiveOverlay] = useState<
+    Record<
+      string,
+      {
+        active_session?: TableType["active_session"];
+        active_call?: TableType["active_call"];
+      }
+    >
+  >({});
+
+  // merge tables with live overlay data
+  // this will overwrite the active_session and active_call fields with the latest data from liveOverlay
+  const mergedTables = useMemo(() => {
+    if (!tables) return [];
+    return tables.map((table) => {
+      const overlay = liveOverlay[table.code] || {};
+      return {
+        ...table,
+        ...overlay, // overwrite only active_session and active_call
+      };
+    });
+  }, [tables, liveOverlay]);
 
   useEffect(() => {
     const socket = new WebSocket(
@@ -28,29 +49,26 @@ export default function LiveCards({
     };
 
     socket.onmessage = (event) => {
-      console.log("onMessage");
-
       const data = JSON.parse(event.data);
-      console.log("Update from server:", data);
 
-      // Example: update a table’s state
-      console.log({ ...data.payload });
-      if (data.event === "create_session") {
-        setAllTables((prev) =>
-          prev.map((table) =>
-            table.code === data.payload.code
-              ? { ...table, active_session: { ...data.payload } }
-              : table
-          )
-        );
-      } else if (data.event === "call_waiter") {
-        setAllTables((prev) =>
-          prev.map((table) =>
-            table.code === data.payload.code
-              ? { ...table, active_call: { ...data.payload } }
-              : table
-          )
-        );
+      const { event: evt, payload } = data;
+
+      if (evt === "create_session") {
+        setLiveOverlay((prev) => ({
+          ...prev,
+          [payload.code]: {
+            ...prev[payload.code],
+            active_session: payload,
+          },
+        }));
+      } else if (evt === "call_waiter") {
+        setLiveOverlay((prev) => ({
+          ...prev,
+          [payload.code]: {
+            ...prev[payload.code],
+            active_call: payload,
+          },
+        }));
       }
     };
 
@@ -59,7 +77,7 @@ export default function LiveCards({
 
   return (
     <div className="flex gap-4">
-      {allTables.map((table: TableType) => (
+      {mergedTables.map((table: TableType) => (
         <LiveCard type="online" table={table} key={table.id}></LiveCard>
       ))}
     </div>
