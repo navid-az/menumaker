@@ -92,9 +92,17 @@ export default function QrCodeGenerator({ url }: { url: string }) {
     }, 1000);
   };
 
+  const handleQRclick = () => {
+    if (!qrCode) return;
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
+
   return (
     <div className="flex flex-col items-center gap-2">
-      <div className="border-2 p-1 border-sad-blue rounded-xl">
+      <div
+        onClick={handleQRclick}
+        className="border-2 p-1 border-sad-blue rounded-xl  hover:border-royal-green transition-all duration-300 cursor-pointer"
+      >
         <div ref={ref} />
       </div>
       <div className="gap-2 flex justify-between">
