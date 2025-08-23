@@ -1,10 +1,11 @@
 from .serializers import (BusinessesSerializer, BusinessCreateSerializer, BranchesSerializer, BranchCreateUpdateSerializer,
                           TablesSerializer, TableCreateUpdateSerializer, CategoriesSerializer, CategoryCreateUpdateSerializer,
                           ItemsSerializer, ItemCreateUpdateSerializer)
-from .models import Business, Branch, Table, TableSession, CallWaiter, Category, Item
+from .models import Business, Branch, Table, TableSession, CallWaiter, Category, Item, ItemBranch
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
+from django.db.models import Q
 
 # rest_framework dependencies
 from rest_framework.views import APIView
@@ -381,16 +382,45 @@ class CategoryDeleteView(APIView):
         return Response({'message': 'category has been deleted'}, status.HTTP_204_NO_CONTENT)
 
 
+def get_items_for_branch(business, branch):
+    base_qs = Item.objects.filter(business=business).filter(
+        Q(
+            # Case 1: Global items that are not explicitly disabled for this branch
+            Q(is_active=True, is_available=True)
+            & ~Q(
+                branch_overrides__branch=branch,
+                branch_overrides__is_active=False,
+                branch_overrides__is_available=False,
+            )
+        )
+        |
+        Q(
+            # Case 2: Branch-only items
+            is_active=False,
+            is_available=False,
+            branch_overrides__branch=branch,
+            branch_overrides__is_active=True,
+            branch_overrides__is_available=True,
+        )
+    )
+
+    return base_qs
+
+
 # item CRUD views
 class ItemsView(APIView):
     def get(self, request, slug):
+        branch_slug = request.query_params.get('branch_slug')
+
         # check if business exists
         try:
             business = Business.objects.get(slug=slug)
         except Business.DoesNotExist:
             return Response({'error': 'business with this ID does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
-        items = Item.objects.filter(business=business)
+        if branch_slug:
+            branch = Branch.objects.get(business=business, slug=branch_slug)
+            items = get_items_for_branch(business, branch)
         ser_data = ItemsSerializer(instance=items, many=True)
         return Response(ser_data.data)
 

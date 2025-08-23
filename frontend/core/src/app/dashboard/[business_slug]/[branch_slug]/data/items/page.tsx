@@ -8,9 +8,12 @@ import { Item } from "@/app/dashboard/items/columns";
 import { Category } from "@/app/dashboard/categories/columns";
 
 //menu items data
-async function getMenuItemsData(business_slug: string): Promise<Item[]> {
+async function getMenuItemsData(
+  business_slug: string,
+  branch_slug: string
+): Promise<Item[]> {
   const data = await fetch(
-    `http://127.0.0.1:8000/business/${business_slug}/items/`,
+    `http://127.0.0.1:8000/business/${business_slug}/items/?branch_slug=${branch_slug}`,
     {
       next: { tags: ["items"] },
     }
@@ -39,10 +42,13 @@ async function getMenuCategoriesData(
 }
 
 export default async function Page(props: {
-  params: Promise<{ business_slug: string }>;
+  params: Promise<{ business_slug: string; branch_slug: string }>;
 }) {
   const params = await props.params;
-  const itemsData = await getMenuItemsData(params.business_slug);
+  const itemsData = await getMenuItemsData(
+    params.business_slug,
+    params.branch_slug
+  );
   const categoriesData = await getMenuCategoriesData(params.business_slug);
 
   return (

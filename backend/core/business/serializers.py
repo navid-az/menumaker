@@ -123,14 +123,10 @@ class ItemCreateUpdateSerializer(serializers.ModelSerializer):
     # forbids changing business updates
     business = serializers.PrimaryKeyRelatedField(read_only=True)
 
-    # sets them to True by default if not provided
-    is_available = serializers.BooleanField(default=True, required=False)
-    is_active = serializers.BooleanField(default=True, required=False)
-
     class Meta:
         model = Item
         fields = ['business', 'category', 'name', 'description',
-                  'image', 'price', 'is_available', 'is_active', 'scope', 'branch_slug']
+                  'image', 'price', 'scope', 'branch_slug']
 
     def validate(self, attrs):
         scope = attrs.get('scope', 'all')
@@ -147,40 +143,27 @@ class ItemCreateUpdateSerializer(serializers.ModelSerializer):
         scope = validated_data.pop('scope', 'all')
         branch_slug = validated_data.pop('branch_slug', None)
 
-        # Always create Item
-        item = Item.objects.create(**validated_data)
-
         # Handle branch-specific scope
-        if scope in ['only', 'except']:
+        if scope not in ['only', 'except']:
+            item = Item.objects.create(
+                **validated_data, is_available=True, is_active=True)
+        else:
             try:
                 branch = Branch.objects.get(slug=branch_slug)
                 if scope == 'only':
+                    item = Item.objects.create(
+                        **validated_data, is_available=False, is_active=False)
                     ItemBranch.objects.create(
                         item=item, branch=branch, is_available=True, is_active=True)
                 elif scope == 'except':
+                    item = Item.objects.create(
+                        **validated_data, is_available=True, is_active=True)
                     ItemBranch.objects.create(
                         item=item, branch=branch, is_available=False, is_active=False)
             except Branch.DoesNotExist:
                 raise serializers.ValidationError(
                     {"branch_slug": "Branch not found."})
         return item
-
-        # def validate(self, data):
-        #     scope = data.get('scope')
-        #     branch_slug = data.get('branch_slug')
-        #     business = data.get('business')
-        #     if scope in ['except', 'only'] and not branch_slug:
-        #         raise serializers.ValidationError(
-        #             "branch_slug is required for scope 'except' or 'only'.")
-        #     if branch_slug:
-        #         try:
-        #             branch = Branch.objects.get(
-        #                 business=9, slug=branch_slug)
-        #             data['current_branch'] = branch
-        #         except Branch.DoesNotExist:
-        #             raise serializers.ValidationError(
-        #                 "Invalid branch_slug or branch does not belong to the business.")
-        #     return data
 
 
 class IconsSerializer(serializers.ModelSerializer):
