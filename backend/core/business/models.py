@@ -190,8 +190,23 @@ class Item(models.Model):
     image = models.ImageField(
         upload_to=f"menu/items/images/", blank=True, null=True)
     price = models.PositiveIntegerField(default=0)
-    is_available = models.BooleanField(default=True)
-    is_active = models.BooleanField(default=True)
+
+    is_available = models.BooleanField(default=True)  # globally available
+    is_active = models.BooleanField(default=True)  # globally active
 
     def __str__(self) -> str:
         return f"{self.name} - {self.business}"
+
+
+class ItemBranch(models.Model):
+    item = models.ForeignKey(
+        Item, on_delete=models.CASCADE, related_name='branch_overrides')
+    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
+    is_available = models.BooleanField(default=True)
+    # Override value for availability
+    is_active = models.BooleanField(default=True)
+    # Override value for hidden status
+
+    class Meta:
+        # Ensures no duplicate overrides per item-branch pair
+        unique_together = ('item', 'branch')

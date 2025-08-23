@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Business, Branch, Table, TableSession, CallWaiter, Category, Item
+from .models import Business, Branch, Table, TableSession, CallWaiter, Category, Item, ItemBranch
 from pickers.models import Asset
 from django.utils import timezone
 from django.utils.text import slugify
@@ -115,6 +115,11 @@ class ItemsSerializer(serializers.ModelSerializer):
 
 
 class ItemCreateUpdateSerializer(serializers.ModelSerializer):
+    # needed for making exceptional items(only for a branch OR for all branches EXCEPT branch with the given branch_slug)
+    scope = serializers.ChoiceField(
+        choices=['all', 'except', 'only'], write_only=True, required=False, default='all')
+    branch_slug = serializers.CharField(write_only=True, required=False)
+
     # forbids changing business updates
     business = serializers.PrimaryKeyRelatedField(read_only=True)
 
@@ -124,7 +129,58 @@ class ItemCreateUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Item
-        fields = '__all__'
+        fields = ['business', 'category', 'name', 'description',
+                  'image', 'price', 'is_available', 'is_active', 'scope', 'branch_slug']
+
+    def validate(self, attrs):
+        scope = attrs.get('scope', 'all')
+        branch_slug = attrs.get('branch_slug')
+
+        if scope in ['only', 'except'] and not branch_slug:
+            raise serializers.ValidationError({
+                "branch_slug": "This field is required when scope is 'only' or 'except'."
+            })
+
+        return attrs
+
+    def create(self, validated_data):
+        scope = validated_data.pop('scope', 'all')
+        branch_slug = validated_data.pop('branch_slug', None)
+
+        # Always create Item
+        item = Item.objects.create(**validated_data)
+
+        # Handle branch-specific scope
+        if scope in ['only', 'except']:
+            try:
+                branch = Branch.objects.get(slug=branch_slug)
+                if scope == 'only':
+                    ItemBranch.objects.create(
+                        item=item, branch=branch, is_available=True, is_active=True)
+                elif scope == 'except':
+                    ItemBranch.objects.create(
+                        item=item, branch=branch, is_available=False, is_active=False)
+            except Branch.DoesNotExist:
+                raise serializers.ValidationError(
+                    {"branch_slug": "Branch not found."})
+        return item
+
+        # def validate(self, data):
+        #     scope = data.get('scope')
+        #     branch_slug = data.get('branch_slug')
+        #     business = data.get('business')
+        #     if scope in ['except', 'only'] and not branch_slug:
+        #         raise serializers.ValidationError(
+        #             "branch_slug is required for scope 'except' or 'only'.")
+        #     if branch_slug:
+        #         try:
+        #             branch = Branch.objects.get(
+        #                 business=9, slug=branch_slug)
+        #             data['current_branch'] = branch
+        #         except Branch.DoesNotExist:
+        #             raise serializers.ValidationError(
+        #                 "Invalid branch_slug or branch does not belong to the business.")
+        #     return data
 
 
 class IconsSerializer(serializers.ModelSerializer):
