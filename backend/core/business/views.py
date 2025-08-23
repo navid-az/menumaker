@@ -382,8 +382,8 @@ class CategoryDeleteView(APIView):
         return Response({'message': 'category has been deleted'}, status.HTTP_204_NO_CONTENT)
 
 
-def get_items_for_branch(business, branch):
-    base_qs = Item.objects.filter(business=business).filter(
+def get_items_for_branch(items, branch):
+    filtered = items.filter(
         Q(
             # Case 1: Global items that are not explicitly disabled for this branch
             Q(is_active=True, is_available=True)
@@ -403,8 +403,7 @@ def get_items_for_branch(business, branch):
             branch_overrides__is_available=True,
         )
     )
-
-    return base_qs
+    return filtered
 
 
 # item CRUD views
@@ -418,10 +417,13 @@ class ItemsView(APIView):
         except Business.DoesNotExist:
             return Response({'error': 'business with this ID does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
+        items = Item.objects.filter(business=business)
         if branch_slug:
             branch = Branch.objects.get(business=business, slug=branch_slug)
-            items = get_items_for_branch(business, branch)
-        ser_data = ItemsSerializer(instance=items, many=True)
+            filtered_items = get_items_for_branch(items, branch)
+            ser_data = ItemsSerializer(instance=filtered_items, many=True)
+        else:
+            ser_data = ItemsSerializer(instance=items, many=True)
         return Response(ser_data.data)
 
 
