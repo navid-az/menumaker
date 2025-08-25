@@ -382,31 +382,29 @@ class CategoryDeleteView(APIView):
         return Response({'message': 'category has been deleted'}, status.HTTP_204_NO_CONTENT)
 
 
+# item CRUD views
+
+# filter out items and only return items relevant to the branch
 def get_items_for_branch(items, branch):
     filtered = items.filter(
         Q(
-            # Case 1: Global items that are not explicitly disabled for this branch
-            Q(is_active=True, is_available=True)
+            # Case 1: Global active items, not explicitly disabled for this branch
+            Q(is_active=True)
             & ~Q(
                 branch_overrides__branch=branch,
                 branch_overrides__is_active=False,
-                branch_overrides__is_available=False,
             )
         )
         |
         Q(
-            # Case 2: Branch-only items
-            is_active=False,
-            is_available=False,
+            # Case 2: Branch-specific override enables it
             branch_overrides__branch=branch,
-            branch_overrides__is_active=True,
-            branch_overrides__is_available=True,
+            branch_overrides__is_active=True
         )
     )
-    return filtered
+    return filtered.distinct()
 
 
-# item CRUD views
 class ItemsView(APIView):
     def get(self, request, slug):
         branch_slug = request.query_params.get('branch_slug')
@@ -417,13 +415,18 @@ class ItemsView(APIView):
         except Business.DoesNotExist:
             return Response({'error': 'business with this ID does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
+        # all business's items
         items = Item.objects.filter(business=business)
+
+        # if branch_slug is provided, return items relevant to the branch. else, return all business's items
         if branch_slug:
             branch = Branch.objects.get(business=business, slug=branch_slug)
             filtered_items = get_items_for_branch(items, branch)
-            ser_data = ItemsSerializer(instance=filtered_items, many=True)
+            ser_data = ItemsSerializer(instance=filtered_items, many=True, context={
+                                       "branch_slug": branch_slug})
         else:
-            ser_data = ItemsSerializer(instance=items, many=True)
+            ser_data = ItemsSerializer(
+                instance=items, many=True)
         return Response(ser_data.data)
 
 
@@ -459,6 +462,7 @@ class ItemUpdateView(APIView):
     permission_classes = [IsAuthenticated, IsOwner]
 
     def put(self, request, slug, item_id):
+        branch_slug = request.query_params.get('branch_slug')
         # check item availability
         item = get_object_or_404(Item, pk=item_id)
 
@@ -481,7 +485,35 @@ class ItemUpdateView(APIView):
                         {"error": "category with this ID does not belong to the provided business"},
                         status=status.HTTP_406_NOT_ACCEPTABLE
                     )
-            ser_data.save()
+
+            if branch_slug:
+                ga = item.is_active  # globally active
+                lav = ser_data.validated_data.get(
+                    'is_available', True)  # locally available
+                la = ser_data.validated_data.get(
+                    'is_active', True)  # locally active
+
+                branch = Branch.objects.get(
+                    business=item.business, slug=branch_slug)
+                if (ga == la):
+                    # matches global → remove override
+                    item_branch = ItemBranch.objects.filter(
+                        item=item, branch=branch)
+                    if item_branch.exists():
+                        item_branch.delete()
+                    else:
+                        ItemBranch.objects.create(
+                            item=item, branch=branch, is_available=lav, is_active=la)
+                else:
+                    # differs from global → create/update override
+                    ItemBranch.objects.update_or_create(
+                        item=item,
+                        branch=branch,
+                        defaults={"is_active": la, "is_available": lav}
+                    )
+
+            else:
+                ser_data.save()
             return Response(ser_data.data)
         return Response(ser_data.errors, status.HTTP_400_BAD_REQUEST)
 

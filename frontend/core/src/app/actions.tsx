@@ -223,13 +223,16 @@ export async function createItem(businessSlug: string, data: FormData) {
 export async function updateItem(
   businessSlug: string,
   itemId: number,
-  data: FormData
+  data: FormData,
+  branchSlug?: string
 ) {
   const accessToken = (await cookies()).get("access");
 
   try {
     const res = await fetch(
-      `http://127.0.0.1:8000/business/${businessSlug}/items/${itemId}/update/`,
+      `http://127.0.0.1:8000/business/${businessSlug}/items/${itemId}/update/${
+        branchSlug ? `?branch_slug=${branchSlug}` : ""
+      }`,
       {
         method: "PUT",
         headers: {

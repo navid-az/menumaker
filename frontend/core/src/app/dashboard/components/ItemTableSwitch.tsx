@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useParams } from "next/navigation";
 
 //components
 import { Switch } from "@/components/ui/switch";
@@ -27,6 +28,8 @@ export default function ItemTableSwitch({
   const [checked, setChecked] = useState(initial);
   const [isPending, startTransition] = useTransition();
 
+  const params = useParams<{ business_slug: string; branch_slug: string }>();
+
   const handleToggle = (checked: boolean) => {
     setChecked(checked);
 
@@ -37,7 +40,8 @@ export default function ItemTableSwitch({
       const isUpdated = await updateItem(
         row.original.business,
         row.original.id,
-        formData
+        formData,
+        params.branch_slug
       );
 
       if (!isUpdated) {

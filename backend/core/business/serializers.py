@@ -106,16 +106,41 @@ class BusinessCreateSerializer(serializers.ModelSerializer):
 
 
 # item serializers
+class ItemBranchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ItemBranch
+        fields = ["branch", "is_active", "is_available"]
+
+
 class ItemsSerializer(serializers.ModelSerializer):
     business = serializers.SlugRelatedField(slug_field='slug', read_only=True)
+    branch_exceptions = serializers.SerializerMethodField()
 
     class Meta:
         model = Item
         fields = '__all__'
 
+    # return item branches if available
+    def get_branch_exceptions(self, obj):
+        # Retrieve branch_slug from context
+        branch_slug = self.context.get("branch_slug")
+        if branch_slug:
+            try:
+                item_branch = ItemBranch.objects.get(
+                    branch__slug=branch_slug, item=obj.pk)
+                return ItemBranchSerializer(item_branch).data
+            except ItemBranch.DoesNotExist:
+                return None
+        return None
+
 
 class ItemCreateUpdateSerializer(serializers.ModelSerializer):
-    # needed for making exceptional items(only for a branch OR for all branches EXCEPT branch with the given branch_slug)
+    # needed for making exceptional items
+    # for all branches (default)
+    # ONLY for the branch with the given branch_slug
+    # ALL branches EXCEPT branch with the given branch_slug
+
+    # note: if branch_slug isn't provided, we assume item is being created globally (scope='all')
     scope = serializers.ChoiceField(
         choices=['all', 'except', 'only'], write_only=True, required=False, default='all')
     branch_slug = serializers.CharField(write_only=True, required=False)
@@ -123,15 +148,19 @@ class ItemCreateUpdateSerializer(serializers.ModelSerializer):
     # forbids changing business updates
     business = serializers.PrimaryKeyRelatedField(read_only=True)
 
+    is_active = serializers.BooleanField(default=True, required=False)
+    is_available = serializers.BooleanField(default=True, required=False)
+
     class Meta:
         model = Item
         fields = ['business', 'category', 'name', 'description',
-                  'image', 'price', 'scope', 'branch_slug']
+                  'image', 'price', 'scope', 'branch_slug', 'is_available', 'is_active']
 
     def validate(self, attrs):
         scope = attrs.get('scope', 'all')
         branch_slug = attrs.get('branch_slug')
 
+        # validate scope and branch_slug (branch_slug is not needed when scope is not provided or 'all')
         if scope in ['only', 'except'] and not branch_slug:
             raise serializers.ValidationError({
                 "branch_slug": "This field is required when scope is 'only' or 'except'."
@@ -146,10 +175,12 @@ class ItemCreateUpdateSerializer(serializers.ModelSerializer):
         # Handle branch-specific scope
         if scope not in ['only', 'except']:
             item = Item.objects.create(
-                **validated_data, is_available=True, is_active=True)
+                **validated_data)
         else:
             try:
                 branch = Branch.objects.get(slug=branch_slug)
+                validated_data.pop('is_available')
+                validated_data.pop('is_active')
                 if scope == 'only':
                     item = Item.objects.create(
                         **validated_data, is_available=False, is_active=False)

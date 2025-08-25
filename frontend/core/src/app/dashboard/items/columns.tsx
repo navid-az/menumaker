@@ -40,6 +40,11 @@ export type Item = {
   price: number;
   is_available: boolean;
   is_active: boolean;
+  branch_exceptions?: {
+    branch: string;
+    is_available: boolean;
+    is_active: boolean;
+  };
 };
 
 const handleDelete = async (props: CellContext<Item, unknown>) => {
@@ -117,26 +122,36 @@ export const itemColumns = (
     },
   },
   {
-    accessorKey: "is_available",
+    accessorKey: "branch_exceptions.is_available",
     header: "موجود",
-    cell: (props) => (
-      <ItemTableSwitch
-        initial={props.cell.getValue() as boolean}
-        row={props.row}
-        fieldName="is_available"
-      ></ItemTableSwitch>
-    ),
+    cell: (props) => {
+      const branchExceptions = props.row.original.branch_exceptions;
+      const value = branchExceptions ? branchExceptions.is_available : true;
+
+      return (
+        <ItemTableSwitch
+          initial={value}
+          row={props.row}
+          fieldName="is_available"
+        ></ItemTableSwitch>
+      );
+    },
   },
   {
-    accessorKey: "is_active",
+    accessorKey: "branch_exceptions.is_active",
     header: "فعال",
-    cell: (props) => (
-      <ItemTableSwitch
-        initial={props.cell.getValue() as boolean}
-        row={props.row}
-        fieldName="is_active"
-      ></ItemTableSwitch>
-    ),
+    cell: (props) => {
+      const branchExceptions = props.row.original.branch_exceptions;
+      const value = branchExceptions ? branchExceptions.is_active : true;
+
+      return (
+        <ItemTableSwitch
+          initial={value}
+          row={props.row}
+          fieldName="is_active"
+        ></ItemTableSwitch>
+      );
+    },
   },
   {
     id: "row-options",
