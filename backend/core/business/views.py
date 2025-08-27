@@ -406,7 +406,7 @@ def get_items_for_branch(items, branch):
 
 
 class ItemsView(APIView):
-    def get(self, request, slug):
+    def get(self, request, slug, scope=None):
         branch_slug = request.query_params.get('branch_slug')
 
         # check if business exists
@@ -421,9 +421,18 @@ class ItemsView(APIView):
         # if branch_slug is provided, return items relevant to the branch. else, return all business's items
         if branch_slug:
             branch = Branch.objects.get(business=business, slug=branch_slug)
-            filtered_items = get_items_for_branch(items, branch)
-            ser_data = ItemsSerializer(instance=filtered_items, many=True, context={
-                                       "branch_slug": branch_slug})
+            visible_items = get_items_for_branch(
+                items, branch)  # items visible to this branch
+            hidden_items = items.exclude(
+                pk__in=visible_items.values_list("pk", flat=True))  # items hidden from this branch
+
+            if scope == 'visible':
+                ser_data = ItemsSerializer(instance=visible_items, many=True, context={
+                                           "branch_slug": branch_slug})
+            else:
+                ser_data = ItemsSerializer(instance=hidden_items, many=True, context={
+                                           "branch_slug": branch_slug})
+
         else:
             ser_data = ItemsSerializer(
                 instance=items, many=True)
@@ -477,42 +486,45 @@ class ItemUpdateView(APIView):
             instance=item, data=request.data, partial=True)
 
         if ser_data.is_valid():
-            # Check if the new category belongs to the business which this item is associated with
-            new_category = ser_data.validated_data.get('category')
-            if new_category:  # Only check if category is being updated
-                if new_category.business != item.business:
-                    return Response(
-                        {"error": "category with this ID does not belong to the provided business"},
-                        status=status.HTTP_406_NOT_ACCEPTABLE
-                    )
-
+            # Branch specific update if branch_slug provided. If not, global update
             if branch_slug:
-                ga = item.is_active  # globally active
-                lav = ser_data.validated_data.get(
-                    'is_available', True)  # locally available
-                la = ser_data.validated_data.get(
-                    'is_active', True)  # locally active
-
                 branch = Branch.objects.get(
                     business=item.business, slug=branch_slug)
-                if (ga == la):
-                    # matches global → remove override
-                    item_branch = ItemBranch.objects.filter(
-                        item=item, branch=branch)
-                    if item_branch.exists():
-                        item_branch.delete()
-                    else:
-                        ItemBranch.objects.create(
-                            item=item, branch=branch, is_available=lav, is_active=la)
+                override = ItemBranch.objects.filter(
+                    item=item, branch=branch).first()
+
+                # Current effective values
+                current_la = override.is_active if override else item.is_active
+                current_lav = override.is_available if override else item.is_available
+
+                # Get new values – fall back to current if not provided
+                la = ser_data.validated_data.get("is_active", current_la)
+                lav = ser_data.validated_data.get("is_available", current_lav)
+
+                # Compare against global values
+                ga = item.is_active
+                gav = item.is_available
+
+                if la == ga and lav == gav:
+                    # matches global => remove override if exists
+                    if override:
+                        override.delete()
                 else:
-                    # differs from global → create/update override
+                    # differs from global => create or update override
                     ItemBranch.objects.update_or_create(
                         item=item,
                         branch=branch,
-                        defaults={"is_active": la, "is_available": lav}
+                        defaults={"is_active": la, "is_available": lav},
                     )
-
             else:
+                # Check if the category belongs to the business which this item is associated with
+                new_category = ser_data.validated_data.get('category')
+                if new_category:  # Only check if category is being updated
+                    if new_category.business != item.business:
+                        return Response(
+                            {"error": "category with this ID does not belong to the provided business"},
+                            status=status.HTTP_406_NOT_ACCEPTABLE
+                        )
                 ser_data.save()
             return Response(ser_data.data)
         return Response(ser_data.errors, status.HTTP_400_BAD_REQUEST)

@@ -52,7 +52,14 @@ urlpatterns = [
          CategoryDeleteView.as_view(), name='delete-category'),
 
     # item endpoints
-    path('<str:slug>/items/', ItemsView.as_view(), name='menu-items'),
+    # Items endpoint has 3 variants depending on query params:
+    # 1. /business/{slug}/items/ → all items (ignores branches)
+    # 2. /business/{slug}/items/visible/?branch_slug=foo → visible items for branch foo
+    # 3. /business/{slug}/items/hidden/?branch_slug=foo → hidden items for branch foo
+    path('<str:slug>/items/', ItemsView.as_view(), name='items-all'),
+    path('<str:slug>/items/<str:scope>/',
+         ItemsView.as_view(), name='items-scoped'),
+
     path('<str:slug>/items/create/',
          ItemCreateView.as_view(), name='create-item'),
     path('<str:slug>/items/<int:item_id>/update/',

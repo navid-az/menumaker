@@ -46,7 +46,7 @@ export function DataTable<TData, TValue>({
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow className="hover:bg-gray-200" key={headerGroup.id}>
+            <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
                   //text-align should change depending on rtl/ltr *************
@@ -67,7 +67,6 @@ export function DataTable<TData, TValue>({
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
-                className=" hover:bg-gray-200"
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
               >
