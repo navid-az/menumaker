@@ -87,7 +87,8 @@ export default function ToolBar({
             <Filter className="h-5 w-5"></Filter>
           </Button>
           <CreateItemForm
-            businessSlug={businessSlug}
+            businessSlug={params.business_slug}
+            branchSlug={params.branch_slug}
             categories={categories}
             title="ایجاد آیتم"
             description="با انتخاب گزینه های مورد نظر آیتم جدید به منو اضافه کنید"

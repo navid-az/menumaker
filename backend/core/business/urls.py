@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, re_path
 from business.views import (CategoriesView, CategoryCreateView, CategoryUpdateView, CategoryDeleteView,
                             ItemsView, ItemCreateView, ItemUpdateView, ItemDeleteView, BusinessView, BusinessesView, BusinessCreateView,
                             BranchesView, BranchCreateView, BranchUpdateView, BranchDeleteView, TablesView, TableCreateView, TableUpdateView, TableDeleteView, CheckTableSessionView, CallWaiterCreateView, CallWaiterResolveView)
@@ -57,8 +57,9 @@ urlpatterns = [
     # 2. /business/{slug}/items/visible/?branch_slug=foo → visible items for branch foo
     # 3. /business/{slug}/items/hidden/?branch_slug=foo → hidden items for branch foo
     path('<str:slug>/items/', ItemsView.as_view(), name='items-all'),
-    path('<str:slug>/items/<str:scope>/',
-         ItemsView.as_view(), name='items-scoped'),
+    re_path(r"^(?P<slug>[^/]+)/items/(?P<scope>hidden|visible)/$",
+            ItemsView.as_view(), name="items-scoped"),
+
 
     path('<str:slug>/items/create/',
          ItemCreateView.as_view(), name='create-item'),

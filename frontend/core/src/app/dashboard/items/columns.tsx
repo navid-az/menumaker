@@ -61,7 +61,8 @@ const handleDelete = async (props: CellContext<Item, unknown>) => {
 
 export const itemColumns = (
   businessSlug: string,
-  categories: Category[]
+  categories: Category[],
+  scope: "visible" | "hidden"
 ): ColumnDef<Item>[] => [
   {
     accessorKey: "image",
@@ -126,7 +127,11 @@ export const itemColumns = (
     header: "موجود",
     cell: (props) => {
       const branchExceptions = props.row.original.branch_exceptions;
-      const value = branchExceptions ? branchExceptions.is_available : true;
+      const value = branchExceptions
+        ? branchExceptions.is_available
+        : scope === "visible"
+        ? true
+        : false;
 
       return (
         <ItemTableSwitch
@@ -142,7 +147,11 @@ export const itemColumns = (
     header: "فعال",
     cell: (props) => {
       const branchExceptions = props.row.original.branch_exceptions;
-      const value = branchExceptions ? branchExceptions.is_active : true;
+      const value = branchExceptions
+        ? branchExceptions.is_active
+        : scope === "visible"
+        ? true
+        : false;
 
       return (
         <ItemTableSwitch

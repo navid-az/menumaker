@@ -25,7 +25,8 @@ export default function ItemClientWrapper({
   visibleItems: Item[];
   hiddenItems: Item[];
 }) {
-  const columns = itemColumns(businessSlug, categories);
+  const visibleItemColumns = itemColumns(businessSlug, categories, "visible");
+  const hiddenItemColumns = itemColumns(businessSlug, categories, "hidden");
   const [isCollapsed, setIsCollapsed] = useState(true);
 
   useEffect(() => {
@@ -44,7 +45,7 @@ export default function ItemClientWrapper({
             <p className="text-muted-foreground text-base">آیتم های شعبه</p>
           </Button>
         </div>
-        <DataTable columns={columns} data={visibleItems} />
+        <DataTable columns={visibleItemColumns} data={visibleItems} />
       </div>
 
       {hiddenItems.length > 0 && (
@@ -68,7 +69,9 @@ export default function ItemClientWrapper({
               )}
             ></ArrowLeft>
           </Button>
-          {!isCollapsed && <DataTable columns={columns} data={hiddenItems} />}
+          {!isCollapsed && (
+            <DataTable columns={hiddenItemColumns} data={hiddenItems} />
+          )}
         </div>
       )}
     </div>

@@ -6,6 +6,9 @@ import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
+//libraries
+import { cn } from "@/lib/utils";
+
 //components
 import Image from "next/image";
 import {
@@ -37,6 +40,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 import Uploader from "./Uploader";
 
 //SVGs
@@ -56,10 +61,12 @@ import { type Category } from "../categories/columns";
 
 type CreateItemFormType = {
   businessSlug: string;
+  branchSlug?: string;
   categories: Category[];
   title: string;
   description: string;
   defaultValues?: {
+    scope?: string;
     name?: string;
     description?: string;
     category: number;
@@ -70,6 +77,7 @@ type CreateItemFormType = {
 };
 
 const FormSchema = z.object({
+  scope: z.enum(["all", "only", "except"]).optional(),
   image: z
     .instanceof(File)
     .refine((file) => file.size <= 5 * 1024 * 1024, {
@@ -94,6 +102,7 @@ const FormSchema = z.object({
 
 export function CreateItemForm({
   businessSlug,
+  branchSlug,
   categories,
   title,
   description,
@@ -104,6 +113,7 @@ export function CreateItemForm({
     resolver: zodResolver(FormSchema),
     defaultValues: defaultValues
       ? {
+          scope: "all",
           name: defaultValues.name || "",
           description: defaultValues.description || "",
           category: defaultValues.category,
@@ -111,6 +121,7 @@ export function CreateItemForm({
           image: undefined,
         }
       : {
+          scope: "all",
           name: "",
           description: "",
           price: 0,
@@ -139,6 +150,10 @@ export function CreateItemForm({
     if (data.image instanceof File) {
       formData.append("image", data.image);
     }
+    if (branchSlug) {
+      formData.append("branch_slug", branchSlug);
+    }
+    formData.append("scope", data.scope || "all");
     formData.append("name", data.name);
     formData.append("description", data.description || "");
     formData.append("category", data.category?.toString());
@@ -199,7 +214,7 @@ export function CreateItemForm({
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="gap-8">
+      <DialogContent className="gap-8 max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-thumb-muted-foreground scrollbar-track-transparent">
         <DialogHeader className="items-start">
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription className="font-normal">
@@ -212,6 +227,85 @@ export function CreateItemForm({
             id="item-form"
             className="w-full space-y-6"
           >
+            {branchSlug && (
+              <FormField
+                control={form.control}
+                name="scope"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormControl>
+                      <RadioGroup
+                        defaultValue={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <div className="flex flex-col gap-3 w-full">
+                          <div
+                            className={cn(
+                              "flex items-center gap-2 rounded-lg border-2 flex-row-reverse transition-colors duration-200",
+                              field.value === "all" && "border-primary"
+                            )}
+                          >
+                            <Label
+                              htmlFor="all"
+                              className="flex gap-2 p-3 items-center flex-row-reverse font-medium w-full"
+                            >
+                              <RadioGroupItem value="all" id="all" />
+                              <div className="flex flex-col items-end gap-2">
+                                <p>همه شعبه ‌ها</p>
+
+                                <p className="text-sm text-muted-foreground">
+                                  این آیتم در تمام شعب نمایش داده خواهد شد
+                                </p>
+                              </div>
+                            </Label>
+                          </div>
+                          <div
+                            className={cn(
+                              "flex items-center gap-2 rounded-lg border-2 flex-row-reverse transition-colors duration-200",
+                              field.value === "only" && "border-primary"
+                            )}
+                          >
+                            <Label
+                              htmlFor="only"
+                              className="flex gap-2 p-3 items-center flex-row-reverse font-medium w-full"
+                            >
+                              <RadioGroupItem value="only" id="only" />
+                              <div className="flex flex-col items-end gap-2">
+                                <p>فقط این شعبه</p>
+                                <p className="text-sm text-muted-foreground">
+                                  این آیتم فقط در همین شعبه نمایش داده می‌شود
+                                </p>
+                              </div>
+                            </Label>
+                          </div>
+                          <div
+                            className={cn(
+                              "flex items-center gap-2 rounded-lg border-2 flex-row-reverse transition-colors duration-200",
+                              field.value === "except" && "border-primary"
+                            )}
+                          >
+                            <Label
+                              htmlFor="except"
+                              className="flex gap-2 p-3 items-center flex-row-reverse font-medium w-full"
+                            >
+                              <RadioGroupItem value="except" id="except" />
+                              <div className="flex flex-col items-end gap-2">
+                                <p>همه به‌ جز این شعبه</p>
+                                <p className="text-sm text-muted-foreground">
+                                  این آیتم در همه‌ی شعب نمایش داده می‌شود، به‌جز
+                                  شعبه‌ی فعلی
+                                </p>
+                              </div>
+                            </Label>
+                          </div>
+                        </div>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage className="font-normal" />
+                  </FormItem>
+                )}
+              />
+            )}
             <FormField
               control={form.control}
               name="image"
@@ -232,7 +326,7 @@ export function CreateItemForm({
                       {...rest}
                     />
                   </FormControl>
-                  <div className=" relative h-20 w-20">
+                  {/* <div className=" relative h-20 w-20">
                     {previewUrl && (
                       <Image
                         fill
@@ -245,7 +339,7 @@ export function CreateItemForm({
                         className="mt-2 h-20 rounded-md"
                       />
                     )}
-                  </div>
+                  </div> */}
                   <FormMessage className="font-normal" />
                 </FormItem>
               )}
