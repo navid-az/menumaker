@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "business",
     "menu",
     "pickers",
+    "personnel",
     # "dashboard",
 
     # 3rd party packages

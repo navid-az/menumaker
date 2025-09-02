@@ -9,7 +9,8 @@ urlpatterns = [
     path("pickers/", include("pickers.urls", namespace="pickers")),
     path("business/", include("business.urls", namespace="business")),
     path("menu/", include("menu.urls", namespace="menu")),
-    path("dashboard/", include("dashboard.urls", namespace="dashboard")),
+    path('personnel/', include('personnel.urls', namespace='personnel'))
+    # path("dashboard/", include("dashboard.urls", namespace="dashboard")),
 ]
 
 if settings.DEBUG:
