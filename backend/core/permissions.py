@@ -12,7 +12,7 @@ class IsOwner(BasePermission):
         return obj.owner == request.user
 
 
-class HasBranchAccess(BasePermission):
+class HasBusinessBranchAccess(BasePermission):
     def has_permission(self, request, view):
         # Extract business_slug from URL kwargs
         business_slug = view.kwargs.get('slug')
@@ -48,42 +48,13 @@ class HasBranchAccess(BasePermission):
         assignment_query = request.user.assignments.filter(
             business=business)
         if branch:
-            assignment_query = assignment_query.filter(branch=branch)
+            assignment_query = assignment_query.filter(branches=branch)
         if not assignment_query.exists():
             raise PermissionDenied("No access to this business/branch.")
 
-        # Get required permission(s)
-        required_perms = getattr(view, 'required_permission', None)
-        if not required_perms:
-            raise PermissionDenied(
-                "View does not specify required permission.")
-
-        personnel = assignment_query.first()
-        if not personnel.role:
-            return False  # No role assigned
-
-        # Validate and check permissions
-        for perm in required_perms:
-            # Each perm is consist of app label and a code name
-            perm_parts = perm.split('.')
-            app_label, codename = perm_parts
-
-            perm_exists = Permission.objects.filter(
-                codename=codename, content_type__app_label=app_label
-            ).exists()
-
-            if not perm_exists:
-                return False  # Invalid permission
-
-            # Check if role has the permission
-            has_perm = personnel.role.permissions.filter(
-                codename=codename,
-                content_type__app_label=app_label
-            ).exists()
-            if has_perm:
-                return True  # At least one required permission is present
-
-        return False  # No required permissions found in role
+        # Store Personnel instance for HasMethodAccess
+        request.personnel = assignment_query.first()
+        return True
 
     def has_object_permission(self, request, view, obj):
         # Extract business_slug from URL kwargs
@@ -118,11 +89,34 @@ class HasBranchAccess(BasePermission):
         assignment_query = request.user.assignments.filter(
             business=business)
         if branch:
-            assignment_query = assignment_query.filter(branch=branch)
+            assignment_query = assignment_query.filter(branches=branch)
             if not hasattr(obj, 'branch') or obj.branch != branch:
                 return False
         return assignment_query.exists()
 
 
-class HasMethodPermission(BasePermission):
-    pass
+class HasMethodAccess(BasePermission):
+    def has_permission(self, request, view):
+        # Get required permission(s)
+        required_perms = getattr(view, 'required_permission', None)
+        if not required_perms:
+            raise PermissionDenied(
+                "View does not specify required permission.")
+
+        # Get Personnel from request (set by HasBusinessBranchAccess)
+        personnel = getattr(request, 'personnel', None)
+        if not personnel or not personnel.role:
+            return False  # No personnel or role assigned
+
+        # Check permissions
+        for perm in required_perms:
+            app_label, codename = perm.split('.')
+            # Check if role has the permission
+            has_perm = personnel.role.permissions.filter(
+                codename=codename,
+                content_type__app_label=app_label
+            ).exists()
+            if has_perm:
+                return True  # At least one required permission is present
+
+        return False  # No required permissions found in role
