@@ -1,12 +1,12 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from .managers import UserManager
 from rest_framework_simplejwt.models import TokenUser
 from django.utils.functional import cached_property
 
 
 # change the default user model
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
     phone_number = models.CharField(
         max_length=11, unique=True, null=True, blank=True)
     email = models.EmailField(
@@ -16,22 +16,13 @@ class User(AbstractBaseUser):
     last_name = models.CharField(max_length=100, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
 
     # objects = UserManager()
     objects: UserManager = UserManager()
 
     USERNAME_FIELD = "phone_number"
     REQUIRED_FIELDS = ["email", "full_name"]
-
-    def has_perm(self, perm, obj=None):
-        return True
-
-    def has_module_perms(self, app_label):
-        return True
-
-    @property
-    def is_staff(self):
-        return self.is_admin
 
     def __str__(self):
         return self.phone_number if self.phone_number else self.email
