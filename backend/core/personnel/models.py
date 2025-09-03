@@ -10,7 +10,7 @@ User = settings.AUTH_USER_MODEL
 
 class Personnel(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='personnel')
+        User, on_delete=models.CASCADE, related_name='assignments')
     business = models.ForeignKey(Business, on_delete=models.CASCADE)
     branches = models.ManyToManyField(Branch, blank=True, null=True)
     role = models.ForeignKey(Group, on_delete=models.SET_NULL, null=True)
