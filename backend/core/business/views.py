@@ -10,7 +10,7 @@ from django.db.models import Q
 # rest_framework dependencies
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from permissions import IsOwner
+from permissions import IsOwner, HasBusinessBranchAccess, HasMethodAccess
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -20,7 +20,9 @@ from channels.layers import get_channel_layer
 
 
 class BusinessView(APIView):
-    permission_classes = [IsAuthenticated, IsOwner]
+    permission_classes = [IsAuthenticated, IsOwner |
+                          (HasBusinessBranchAccess & HasMethodAccess)]
+    required_permission = ['business.view_business']
 
     def get(self, request, slug):
         business = Business.objects.get(slug=slug)
@@ -30,7 +32,9 @@ class BusinessView(APIView):
 
 
 class BusinessesView(APIView):
-    permission_classes = [IsAuthenticated, IsOwner]
+    permission_classes = [IsAuthenticated, IsOwner |
+                          (HasBusinessBranchAccess & HasMethodAccess)]
+    required_permission = ['business.view_business']
 
     def get(self, request, id):
         user = get_user_model().objects.get(pk=id)
@@ -56,6 +60,7 @@ class BusinessCreateView(APIView):
         return Response(ser_data.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# Branch CRUD views
 class BranchesView(APIView):
     def get(self, request, slug):
         # check business availability
@@ -70,7 +75,9 @@ class BranchesView(APIView):
 
 
 class BranchCreateView(APIView):
-    permission_classes = [IsAuthenticated, IsOwner]
+    permission_classes = [IsAuthenticated, IsOwner |
+                          (HasBusinessBranchAccess & HasMethodAccess)]
+    required_permission = ['business.add_branch']
 
     def post(self, request, slug):
         ser_data = BranchCreateUpdateSerializer(data=request.data)
@@ -91,7 +98,9 @@ class BranchCreateView(APIView):
 
 
 class BranchUpdateView(APIView):
-    permission_classes = [IsAuthenticated, IsOwner]
+    permission_classes = [IsAuthenticated, IsOwner |
+                          (HasBusinessBranchAccess & HasMethodAccess)]
+    required_permission = ['business.change_branch']
 
     def put(self, request, slug, branch_id):
         # check branch availability
@@ -114,7 +123,9 @@ class BranchUpdateView(APIView):
 
 
 class BranchDeleteView(APIView):
-    permission_classes = [IsAuthenticated, IsOwner]
+    permission_classes = [IsAuthenticated, IsOwner |
+                          (HasBusinessBranchAccess & HasMethodAccess)]
+    required_permission = ['business.delete_branch']
 
     def delete(self, request, slug, branch_id):
         # check branch availability
@@ -131,6 +142,7 @@ class BranchDeleteView(APIView):
         return Response({'message': 'branch has been deleted'}, status.HTTP_204_NO_CONTENT)
 
 
+# Table CRUD views
 class TablesView(APIView):
     def get(self, request, branch_slug):
         # check branch availability
@@ -145,7 +157,9 @@ class TablesView(APIView):
 
 
 class TableCreateView(APIView):
-    permission_classes = [IsAuthenticated, IsOwner]
+    permission_classes = [IsAuthenticated, IsOwner |
+                          (HasBusinessBranchAccess & HasMethodAccess)]
+    required_permission = ['business.add_table']
 
     def post(self, request, branch_slug):
         ser_data = TableCreateUpdateSerializer(data=request.data)
@@ -167,6 +181,10 @@ class TableCreateView(APIView):
 
 
 class TableUpdateView(APIView):
+    permission_classes = [IsAuthenticated, IsOwner |
+                          (HasBusinessBranchAccess & HasMethodAccess)]
+    required_permission = ['business.change_table']
+
     def put(self, request, branch_slug, table_id):
         # check table availability
         table = get_object_or_404(Table, pk=table_id)
@@ -188,7 +206,9 @@ class TableUpdateView(APIView):
 
 
 class TableDeleteView(APIView):
-    permission_classes = [IsAuthenticated, IsOwner]
+    permission_classes = [IsAuthenticated, IsOwner |
+                          (HasBusinessBranchAccess & HasMethodAccess)]
+    required_permission = ['business.delete_table']
 
     def delete(self, request, branch_slug, table_id):
         # check table availability
@@ -307,7 +327,7 @@ class CallWaiterResolveView(APIView):
         )
 
 
-# category CRUD views
+# Category CRUD views
 class CategoriesView(APIView):
     def get(self, request, slug):
         # check business availability
@@ -322,7 +342,9 @@ class CategoriesView(APIView):
 
 
 class CategoryCreateView(APIView):
-    permission_classes = [IsAuthenticated, IsOwner]
+    permission_classes = [IsAuthenticated, IsOwner |
+                          (HasBusinessBranchAccess & HasMethodAccess)]
+    required_permission = ['business.add_category']
 
     def post(self, request, slug):
         ser_data = CategoryCreateUpdateSerializer(data=request.data)
@@ -342,7 +364,9 @@ class CategoryCreateView(APIView):
 
 
 class CategoryUpdateView(APIView):
-    permission_classes = [IsAuthenticated, IsOwner]
+    permission_classes = [IsAuthenticated, IsOwner |
+                          (HasBusinessBranchAccess & HasMethodAccess)]
+    required_permission = ['business.change_category']
 
     def put(self, request, slug, category_id):
         # check category availability
@@ -365,7 +389,9 @@ class CategoryUpdateView(APIView):
 
 
 class CategoryDeleteView(APIView):
-    permission_classes = [IsAuthenticated, IsOwner]
+    permission_classes = [IsAuthenticated, IsOwner |
+                          (HasBusinessBranchAccess & HasMethodAccess)]
+    required_permission = ['business.delete_category']
 
     def delete(self, request, slug, category_id):
         # check item availability
@@ -382,9 +408,9 @@ class CategoryDeleteView(APIView):
         return Response({'message': 'category has been deleted'}, status.HTTP_204_NO_CONTENT)
 
 
-# item CRUD views
+# Item CRUD views
 
-# filter out items and only return items relevant to the branch
+# Filter out items and only return items relevant to the branch
 def get_items_for_branch(items, branch):
     filtered = items.filter(
         Q(
@@ -440,7 +466,9 @@ class ItemsView(APIView):
 
 
 class ItemCreateView(APIView):
-    permission_classes = [IsAuthenticated, IsOwner]
+    permission_classes = [IsAuthenticated, IsOwner |
+                          (HasBusinessBranchAccess & HasMethodAccess)]
+    required_permission = ['business.add_item']
 
     def post(self, request, slug):
         ser_data = ItemCreateUpdateSerializer(data=request.data)
@@ -459,7 +487,7 @@ class ItemCreateView(APIView):
                 business.categories.get(
                     pk=category_pk)
             except:
-                return Response({"message": "item with this ID does not belong to the provided business"}, status.HTTP_406_NOT_ACCEPTABLE)
+                return Response({"message": "category with this ID does not belong to the provided business"}, status.HTTP_406_NOT_ACCEPTABLE)
 
             ser_data.validated_data['business'] = business
             ser_data.save()
@@ -468,7 +496,9 @@ class ItemCreateView(APIView):
 
 
 class ItemUpdateView(APIView):
-    permission_classes = [IsAuthenticated, IsOwner]
+    permission_classes = [IsAuthenticated, IsOwner |
+                          (HasBusinessBranchAccess & HasMethodAccess)]
+    required_permission = ['business.change_item']
 
     def put(self, request, slug, item_id):
         branch_slug = request.query_params.get('branch_slug')
@@ -531,7 +561,9 @@ class ItemUpdateView(APIView):
 
 
 class ItemDeleteView(APIView):
-    permission_classes = [IsAuthenticated, IsOwner]
+    permission_classes = [IsAuthenticated, IsOwner |
+                          (HasBusinessBranchAccess & HasMethodAccess)]
+    required_permission = ['business.delete_item']
 
     def delete(self, request, slug, item_id):
         # check item availability
