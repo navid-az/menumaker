@@ -1,7 +1,7 @@
 from django.urls import path, re_path
 from business.views import (CategoriesView, CategoryCreateView, CategoryUpdateView, CategoryDeleteView,
                             ItemsView, ItemCreateView, ItemUpdateView, ItemDeleteView, BusinessView, BusinessesView, BusinessCreateView,
-                            BranchesView, BranchCreateView, BranchUpdateView, BranchDeleteView, TablesView, TableCreateView, TableUpdateView, TableDeleteView, CheckTableSessionView, CallWaiterCreateView, CallWaiterResolveView)
+                            BranchesView, BranchCreateView, BranchUpdateView, BranchDeleteView, TablesView, TableCreateView, TableUpdateView, TableDeleteView, CheckTableSessionView, CallWaiterCreateView, CallWaiterResolveView, RoleView)
 
 app_name = 'business'
 
@@ -67,4 +67,8 @@ urlpatterns = [
          ItemUpdateView.as_view(), name='update-item'),
     path('<str:slug>/items/<int:item_id>/delete/',
          ItemDeleteView.as_view(), name='delete-item'),
+
+    # get user's role/permissions
+    path('<str:slug>/staff/role/',
+         RoleView.as_view(), name='staff-role'),
 ]

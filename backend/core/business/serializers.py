@@ -1,11 +1,14 @@
 from rest_framework import serializers
-from .models import Business, Branch, Table, TableSession, CallWaiter, Category, Item, ItemBranch
-from pickers.models import Asset
 from django.utils import timezone
 from django.utils.text import slugify
 
+from .models import Business, Branch, Table, TableSession, CallWaiter, Category, Item, ItemBranch
+from pickers.models import Asset
+from personnel.models import Personnel
 
 # table session serializers
+
+
 class TableSessionSerializer(serializers.ModelSerializer):
     class Meta:
         model = TableSession
@@ -221,3 +224,18 @@ class CategoryCreateUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = '__all__'
+
+
+# return user's role and permissions
+class RoleSerializer(serializers.ModelSerializer):
+    role = serializers.CharField(source="role.name")
+    permissions = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Personnel
+        fields = ['user', 'role', 'business', 'branches', 'permissions']
+
+    def get_permissions(self, obj):
+        return list(
+            obj.role.permissions.values_list("codename", flat=True)
+        )

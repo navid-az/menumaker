@@ -1,11 +1,13 @@
-from .serializers import (BusinessesSerializer, BusinessCreateSerializer, BranchesSerializer, BranchCreateUpdateSerializer,
-                          TablesSerializer, TableCreateUpdateSerializer, CategoriesSerializer, CategoryCreateUpdateSerializer,
-                          ItemsSerializer, ItemCreateUpdateSerializer)
-from .models import Business, Branch, Table, TableSession, CallWaiter, Category, Item, ItemBranch
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from django.db.models import Q
+
+from .serializers import (BusinessesSerializer, BusinessCreateSerializer, BranchesSerializer, BranchCreateUpdateSerializer,
+                          TablesSerializer, TableCreateUpdateSerializer, CategoriesSerializer, CategoryCreateUpdateSerializer,
+                          ItemsSerializer, ItemCreateUpdateSerializer, RoleSerializer)
+from .models import Business, Branch, Table, TableSession, CallWaiter, Category, Item, ItemBranch
+from personnel.models import Personnel
 
 # rest_framework dependencies
 from rest_framework.views import APIView
@@ -17,6 +19,8 @@ from rest_framework import status
 # django channels
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+
+User = get_user_model()
 
 
 class BusinessView(APIView):
@@ -37,7 +41,7 @@ class BusinessesView(APIView):
     required_permission = ['business.view_business']
 
     def get(self, request, id):
-        user = get_user_model().objects.get(pk=id)
+        user = User.objects.get(pk=id)
         owned_businesses = user.businesses.all()
         ser_data = BusinessesSerializer(
             instance=owned_businesses, many=True)
@@ -578,3 +582,29 @@ class ItemDeleteView(APIView):
 
         item.delete()
         return Response({'message': 'item has been deleted'}, status.HTTP_204_NO_CONTENT)
+
+
+# check user role
+class RoleView(APIView):
+    def get(self, request, slug):
+        user = get_object_or_404(User, pk=request.user.id)
+        business = get_object_or_404(Business, slug=slug)
+
+        # Check if this user is the owner of the business
+        if business.owner == user:
+            return Response(
+                {"role": "Owner"},
+                status=status.HTTP_200_OK
+            )
+
+        # Try to find a Personnel assignment
+        personnel = Personnel.objects.filter(
+            user=user, business=business).first()
+        if not personnel:
+            return Response(
+                {"error": "User has no role assigned under this business"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        ser_data = RoleSerializer(personnel)
+        return Response(ser_data.data, status=status.HTTP_200_OK)

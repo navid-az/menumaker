@@ -8,8 +8,6 @@ from django.shortcuts import get_object_or_404
 
 User = get_user_model()
 
-# Create your views here.
-
 
 class RoleAssignView(APIView):
     def post(self, request, user_id, business_slug):
