@@ -3,13 +3,12 @@ from django.contrib.auth import authenticate, login, get_user_model
 
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
+from rest_framework_simplejwt.views import TokenViewBase
 
 # rest dependencies
 from rest_framework.views import APIView
 from rest_framework.response import Response
-# from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
-# from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .serializers import (
@@ -132,53 +131,8 @@ class ValidateOtpCodeView(APIView):
 
 
 # jwt token generator
-class CustomTokenObtainPairView(APIView):
-    def post(self, request):
-        ser_data = CustomTokenObtainPairSerializer(data=request.data)
-        if ser_data.is_valid():
-            phone_number = ser_data.data["phone_number"]
-            email = ser_data.data["email"]
-            ser_otp = ser_data.data["otp"]
-            password = ser_data.data["password"]
-
-            if phone_number:  # phone_number auth
-                otp = OtpCode.objects.get(phone_number=phone_number)
-
-                if ser_otp == otp.password:
-                    user = User.objects.filter(
-                        phone_number=phone_number).first()
-                    if user is not None:
-                        refresh = RefreshToken.for_user(user)
-                    else:
-                        new_user = User.objects.create_user(
-                            phone_number=phone_number,
-                            email=email,
-                            password="123456",
-                            full_name="",
-                        )
-                        refresh = RefreshToken.for_user(new_user)
-                    otp.delete()
-                    return Response(
-                        {
-                            "refresh": str(refresh),
-                            "access": str(refresh.access_token),
-                        }
-                    )
-                return Response(
-                    "the given otp is not correct", status.HTTP_400_BAD_REQUEST
-                )
-            else:  # email auth (~~~NEED ATTENTION~~~)
-                user, created = get_user_model().objects.get_or_create(
-                    email=email, password=password
-                )
-                refresh = RefreshToken.for_user(user)
-                return Response(
-                    {
-                        "refresh": str(refresh),
-                        "access": str(refresh.access_token),
-                    }
-                )
-        return Response(ser_data.errors, status.HTTP_400_BAD_REQUEST)
+class CustomTokenObtainPairView(TokenViewBase):
+    serializer_class = CustomTokenObtainPairSerializer
 
 
 # gets user data
