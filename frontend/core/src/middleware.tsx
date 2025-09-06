@@ -1,63 +1,103 @@
-//functions
+// functions
 import { NextResponse } from "next/server";
-// import { getUserData } from "./lib/getUserData";
-// import { getUserPlaces } from "./lib/getUserPlaces";
 
-//server actions
-import { verifyToken } from "./app/actions";
+// libraries
+import * as jose from "jose";
 
-//types
+// types
 import type { NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
-  let access = request.cookies.get("access");
-  let refresh = request.cookies.get("refresh");
+  const { pathname, searchParams } = request.nextUrl;
+  const business_slug = pathname.split("/dashboard/")[1]?.split("/")[0];
+  const branch_slug = searchParams.get("branch_slug") || "";
 
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set("Authorization", "Bearer " + access?.value);
+  if (pathname.startsWith("/dashboard/") && business_slug) {
+    let token = request.cookies.get("access")?.value;
+    if (!token) {
+      console.log("NO ACCESS TOKEN FOUND");
+      return NextResponse.redirect(new URL("/register", request.url));
+    }
 
-  //routes which users need to be authenticated to gain access
-  if (request.nextUrl.pathname.includes("/dashboard")) {
-    const isAuthenticated = await verifyToken();
+    const secret = new TextEncoder().encode(
+      "django-insecure-&@-4_u6z^b7xaq)l=7a@dh*3b%ac)$7d$5t0lkf3f#2@ky2&6e"
+    );
+    let payload;
+
+    // Verify access token
     try {
-      // if the access token is not valid anymore create a new one
-      if (!isAuthenticated) {
-        const getNewToken = await fetch(
-          "http://127.0.0.1:8000/accounts/token/refresh/",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ refresh: refresh?.value }),
+      const { payload: jwtPayload } = await jose.jwtVerify(token, secret);
+      payload = jwtPayload;
+    } catch (error: any) {
+      // Handle expired token
+      if (error.code === "ERR_JWT_EXPIRED") {
+        // Attempt token refresh
+        try {
+          const refreshToken = request.cookies.get("refresh")?.value;
+          if (!refreshToken) {
+            console.log("NO REFRESH TOKENS FOUND");
+            return NextResponse.redirect(new URL("/register", request.url));
           }
-        );
-        // if the refresh token is not valid anymore send user to register route
-        if (!getNewToken.ok) {
+
+          // Fetch new access token
+          const response = await fetch(
+            "http://localhost:8000/accounts/token/refresh/",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ refresh: refreshToken }),
+            }
+          );
+          if (!response.ok) {
+            console.log("UNSUCCESSFUL RESPONSE FROM REFRESH ENDPOINT");
+            return NextResponse.redirect(new URL("/register", request.url));
+          }
+
+          // Update token
+          const data = await response.json();
+          const refreshedToken = data.access;
+
+          const responseWithNewToken = NextResponse.next();
+          responseWithNewToken.cookies.set({
+            httpOnly: true,
+            name: "access",
+            value: refreshedToken,
+          });
+
+          // Verify new access token
+          try {
+            console.log("new access token:", token);
+
+            const { payload: jwtPayload } = await jose.jwtVerify(
+              refreshedToken,
+              secret
+            );
+            payload = jwtPayload;
+          } catch {
+            console.log("VERIFY NEW ACCESS TOKEN FAILED");
+
+            return NextResponse.redirect(new URL("/register", request.url));
+          }
+
+          return responseWithNewToken;
+        } catch {
+          console.log("REFRESH TOKEN EXPIRED OR INVALID");
+
           return NextResponse.redirect(new URL("/register", request.url));
         }
-        const newAccessToken = await getNewToken.json();
-
-        const response = NextResponse.next();
-        response.cookies.set({
-          name: "access",
-          value: newAccessToken.access,
-          httpOnly: true,
-        });
-        return response;
       }
-      //here user should be checked to see if they can access the specific route they've requested
-      // else {
-      //   const { pk } = await getUserData();
-      //   const userPlaces = await getUserPlaces(pk);
-      //   userPlaces.map((place) => {
-      //     if (!request.nextUrl.pathname.startsWith(`/venhan`)) {
-      //       return NextResponse.redirect("/");
-      //     }
-      //   });
-      // }
-    } catch (error) {
-      return NextResponse.redirect(new URL("/", request.url));
+      // If token is expired
+      return NextResponse.redirect(
+        new URL("/login?error=invalid_token", request.url)
+      );
     }
+
+    return NextResponse.next();
   }
+
+  return NextResponse.next();
 }
+
+export const config = {
+  matcher: ["/dashboard/:path*"],
+};
