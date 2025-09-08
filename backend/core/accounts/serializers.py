@@ -1,9 +1,8 @@
-from django.contrib.auth import authenticate, get_user_model
-from rest_framework import serializers, exceptions
-from django.contrib.auth import authenticate
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from .models import User
+from rest_framework_simplejwt.tokens import RefreshToken
+from .models import User, OtpCode
 
 User = get_user_model()
 
@@ -33,112 +32,56 @@ class CodeSerializer(serializers.Serializer):
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
-    phone_number = serializers.CharField(required=False)
-    otp = serializers.CharField(required=False, write_only=True)
-    email = serializers.EmailField(required=False)
-    password = serializers.CharField(required=False, write_only=True)
+    username_field = "phone_number"
+    phone_number = serializers.CharField()
+    otp = serializers.CharField()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Remove password field entirely
+        if "password" in self.fields:
+            self.fields.pop("password")
 
     def validate(self, attrs):
         phone_number = attrs.get("phone_number")
         otp = attrs.get("otp")
-        email = attrs.get("email")
-        password = attrs.get("password")
 
-        user = None
+        # Fetch OTP from DB
+        try:
+            saved_otp = OtpCode.objects.get(phone_number=phone_number)
+        except OtpCode.DoesNotExist:
+            raise serializers.ValidationError("OTP not found")
 
-        # Case 1: phone + otp
-        if phone_number:
-            if not otp:
-                raise exceptions.AuthenticationFailed(
-                    "OTP is required with phone number")
-            try:
-                user = User.objects.get(phone_number=phone_number)
-            except User.DoesNotExist:
-                raise exceptions.AuthenticationFailed(
-                    "No user found with this phone number")
+        # Compare OTPs
+        if str(otp) != str(saved_otp.password):
+            raise serializers.ValidationError("Invalid OTP")
 
-            # TODO: Replace with your actual OTP verification logic
-            if otp != "795527":
-                raise exceptions.AuthenticationFailed("Invalid OTP")
-
-        # Case 2: email + password
-        elif email:
-            if not password:
-                raise exceptions.AuthenticationFailed(
-                    "Password is required with email")
-            user = authenticate(email=email, password=password)
-            if not user:
-                raise exceptions.AuthenticationFailed(
-                    "Invalid email or password")
-
-        else:
-            raise exceptions.AuthenticationFailed(
-                "Either phone_number or email is required")
-
-        if not user.is_active:
-            raise exceptions.AuthenticationFailed("User account is disabled")
+        # Fetch or create user
+        user = User.objects.filter(phone_number=phone_number).first()
+        if not user:
+            user = User.objects.create_user(phone_number=phone_number)
+            user.set_unusable_password()
+            user.save()
 
         # Generate tokens
-        refresh = self.get_token(user)
-
-        return {
-            "refresh": str(refresh),
-            "access": str(refresh.access_token),
-        }
-
-    @classmethod
-    def get_token(cls, user):
-        token = super().get_token(user)
+        refresh = RefreshToken.for_user(user)
 
         permissions = []
-        # Owner businesses
-        for business in user.businesses.all():  # assuming FK on Business
-            permissions.append({
-                "business": business.slug,
-                "isOwner": True,
-            })
-
-        # Personnel businesses
+        for business in user.businesses.all():
+            permissions.append({"business": business.slug, "isOwner": True})
         for personnel in user.assignments.all():
             permissions.append({
                 "business": personnel.business.slug,
                 "isOwner": False,
                 "branches": [b.slug for b in personnel.branches.all()]
             })
+        refresh["permissions"] = permissions
+        saved_otp.delete()
 
-        token["permissions"] = permissions
-
-        return token
-
-
-# class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
-#     phone_number = serializers.CharField(
-#         max_length=11, required=False, default=None)
-#     email = serializers.EmailField(required=False, default=None)
-#     otp = serializers.IntegerField(required=False, default=None)
-#     password = serializers.IntegerField(required=False, default=None)
-
-#     def get_token(cls, user):
-#         token = super().get_token(user)
-#         token['businesses'] = [b.slug for b in user.businesses.all()]
-#         token['branches'] = [b.id for b in user.businesses.branches.all()]
-#         return token
-
-#     def validate(self, data):
-#         if data["email"] and data["phone_number"]:
-#             raise serializers.ValidationError(
-#                 "specifying both email and phone_number is not allowed"
-#             )
-#         elif not data["email"] and not data["phone_number"]:
-#             raise serializers.ValidationError(
-#                 "specifying a phone_number or an email is a must"
-#             )
-#         elif data["phone_number"] and not data["otp"]:
-#             raise serializers.ValidationError(
-#                 "otp is required for phone_number")
-#         elif data["email"] and not data["password"]:
-#             raise serializers.ValidationError("password is required for email")
-#         return data
+        return {
+            "refresh": str(refresh),
+            "access": str(refresh.access_token),
+        }
 
 
 class CheckUserCredentialSerializer(serializers.Serializer):

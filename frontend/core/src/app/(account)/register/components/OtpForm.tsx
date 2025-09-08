@@ -4,6 +4,9 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
+//actions
+import { signInUser } from "@/app/actions";
+
 //components
 import {
   Form,
@@ -15,7 +18,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { useMutation } from "@tanstack/react-query";
 import RegisterBtn from "./RegisterBtn";
 
 //SVGs
@@ -23,7 +25,6 @@ import { Cross } from "@/app/components/svgs";
 
 //utilities and functions
 import { createCookie } from "@/app/actions";
-import createToken from "../utils/createToken";
 import { usePhoneNumberStore } from "@/lib/stores";
 import Link from "next/link";
 
@@ -49,40 +50,23 @@ export function OtpForm({ length = 6 }: { length: number | undefined }) {
   });
 
   //form submitter
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
     console.log(data);
-
-    createOtp.mutate(data);
+    const res = await signInUser(data);
+    createCookie("access", res.access);
+    createCookie("refresh", res.refresh);
+    toast.success("ورود با موفقیت انجام شد");
   }
-
-  const createOtp = useMutation({
-    mutationFn: createToken,
-    onSuccess: (data) => {
-      const accessToken: string = data["data"]["access"];
-      const refreshToken: string = data["data"]["refresh"];
-
-      // create pair of new JWT tokens for the authenticated user
-      createCookie("access", accessToken);
-      createCookie("refresh", refreshToken);
-
-      toast("خوش آمدی!", {
-        cancel: {
-          label: "باشه",
-        },
-      });
-    },
-    onError: () => {
-      toast.error("کد نامعتبر میباشد", {
-        cancel: {
-          label: "باشه",
-        },
-      });
-    },
-  });
+  function onInvalid(error: any) {
+    toast.error("لطفا کد را به درستی وارد کنید");
+  }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full gap-4">
+      <form
+        onSubmit={form.handleSubmit(onSubmit, onInvalid)}
+        className="w-full gap-4"
+      >
         <FormField
           control={form.control}
           name="phone_number"
@@ -131,7 +115,7 @@ export function OtpForm({ length = 6 }: { length: number | undefined }) {
           </div>
           <RegisterBtn
             text="دریافت کد"
-            isLoading={createOtp.isLoading}
+            isLoading={form.formState.isSubmitting}
           ></RegisterBtn>
         </div>
       </form>

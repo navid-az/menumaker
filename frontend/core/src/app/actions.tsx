@@ -33,6 +33,25 @@ type ItemType = {
   category: number;
 };
 
+export async function signInUser(data: { phone_number: string; otp: string }) {
+  try {
+    const res = await fetch("http://localhost:8000/accounts/token/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    const resData = await res.json();
+    if (!res.ok) {
+      console.error("Server error:", resData);
+      throw new Error("Failed to fetch data");
+    }
+    return resData;
+  } catch (err: any) {
+    console.error("Fetch error:", err);
+    throw new Error(err.detail || "Failed to fetch data");
+  }
+}
+
 //logOut user
 export async function logOut() {
   (await cookies()).delete("access");
