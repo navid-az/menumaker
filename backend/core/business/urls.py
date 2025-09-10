@@ -3,6 +3,8 @@ from business.views import (CategoriesView, CategoryCreateView, CategoryUpdateVi
                             ItemsView, ItemCreateView, ItemUpdateView, ItemDeleteView, BusinessView, BusinessesView, BusinessCreateView,
                             BranchesView, BranchCreateView, BranchUpdateView, BranchDeleteView, TablesView, TableCreateView, TableUpdateView, TableDeleteView, CheckTableSessionView, CallWaiterCreateView, CallWaiterResolveView, RoleView)
 
+from personnel.views import PersonnelUpdateView, PersonnelDeleteView
+
 app_name = 'business'
 
 urlpatterns = [
@@ -67,6 +69,12 @@ urlpatterns = [
          ItemUpdateView.as_view(), name='update-item'),
     path('<str:slug>/items/<int:item_id>/delete/',
          ItemDeleteView.as_view(), name='delete-item'),
+
+    # Personnel
+    path('<str:slug>/personnel/<int:personnel_id>/update/',
+         PersonnelUpdateView.as_view(), name='update-personnel'),
+    path('<str:slug>/personnel/<int:personnel_id>/delete/',
+         PersonnelDeleteView.as_view(), name='update-personnel'),
 
     # get user's role/permissions
     path('<str:slug>/staff/role/',

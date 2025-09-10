@@ -2,11 +2,15 @@ from rest_framework import serializers
 from .models import Personnel
 
 
-class RoleAssignSerializer(serializers.ModelSerializer):
+class PersonnelAssignSerializer(serializers.ModelSerializer):
     branches = serializers.ListField(
         child=serializers.IntegerField(),
         required=False
     )
+
+    class Meta:
+        model = Personnel
+        fields = ['branches', 'role']
 
     def validate(self, data):
         user_id = self.context.get("user_id")
@@ -30,6 +34,9 @@ class RoleAssignSerializer(serializers.ModelSerializer):
                 "This user is already assigned as a personnel"
             )
         return data
+
+
+class PersonnelUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Personnel
