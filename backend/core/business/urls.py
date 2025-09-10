@@ -3,7 +3,7 @@ from business.views import (CategoriesView, CategoryCreateView, CategoryUpdateVi
                             ItemsView, ItemCreateView, ItemUpdateView, ItemDeleteView, BusinessView, BusinessesView, BusinessCreateView,
                             BranchesView, BranchCreateView, BranchUpdateView, BranchDeleteView, TablesView, TableCreateView, TableUpdateView, TableDeleteView, CheckTableSessionView, CallWaiterCreateView, CallWaiterResolveView, RoleView)
 
-from personnel.views import PersonnelUpdateView, PersonnelDeleteView
+from personnel.views import PersonnelListView, PersonnelUpdateView, PersonnelDeleteView
 
 app_name = 'business'
 
@@ -71,6 +71,8 @@ urlpatterns = [
          ItemDeleteView.as_view(), name='delete-item'),
 
     # Personnel
+    path('<str:slug>/personnel/all/',
+         PersonnelListView.as_view(), name='personnel-list'),
     path('<str:slug>/personnel/<int:personnel_id>/update/',
          PersonnelUpdateView.as_view(), name='update-personnel'),
     path('<str:slug>/personnel/<int:personnel_id>/delete/',

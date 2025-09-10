@@ -2,6 +2,19 @@ from rest_framework import serializers
 from .models import Personnel
 
 
+class PersonnelListSerializer(serializers.ModelSerializer):
+    is_owner = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Personnel
+        fields = ['user', 'branches', 'role', 'is_active', 'is_owner']
+
+    def get_is_owner(self, obj):
+        if obj.role.name == 'Owner':
+            return True
+        return False
+
+
 class PersonnelAssignSerializer(serializers.ModelSerializer):
     branches = serializers.ListField(
         child=serializers.IntegerField(),

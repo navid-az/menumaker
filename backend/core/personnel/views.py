@@ -3,12 +3,39 @@ from rest_framework.permissions import IsAuthenticated
 from permissions import IsOwner, HasBusinessBranchAccess, HasMethodAccess
 from django.contrib.auth import get_user_model
 from .models import Personnel
-from .serializers import PersonnelAssignSerializer, PersonnelUpdateSerializer
+from .serializers import PersonnelListSerializer, PersonnelAssignSerializer, PersonnelUpdateSerializer
 from business.models import Business, Branch
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 
 User = get_user_model()
+
+
+class PersonnelListView(APIView):
+    permission_classes = [IsAuthenticated, IsOwner |
+                          (HasBusinessBranchAccess & HasMethodAccess)]
+    required_permission = ['personnel.change_personnel']
+
+    def get(self, request, slug):
+        branch_slug = request.query_params.get('branch_slug')
+        business = get_object_or_404(Business, slug=slug)
+
+        # Check object permissions
+        self.check_object_permissions(request, business)
+
+        business_personnel = Personnel.objects.filter(business=business)
+
+        # If branch_slug is provided, filter personnel by branch
+        if branch_slug:
+            branch = get_object_or_404(business.branches, slug=branch_slug)
+            branch_personnel = business_personnel.filter(
+                branches=branch.pk)
+            ser_data = PersonnelListSerializer(
+                instance=branch_personnel, many=True, context={"business_slug": self.kwargs.get("slug")})
+        else:
+            ser_data = PersonnelListSerializer(
+                instance=business_personnel, many=True, context={"business_slug": self.kwargs.get("slug")})
+        return Response(ser_data.data)
 
 
 class PersonnelAssignView(APIView):
@@ -18,9 +45,9 @@ class PersonnelAssignView(APIView):
 
     def post(self, request, user_id, slug):
         user = get_object_or_404(User, pk=user_id)
-        business = get_object_or_404(Business, slug=business_slug)
+        business = get_object_or_404(Business, slug=slug)
 
-        # check object permissions
+        # Check object permissions
         self.check_object_permissions(request, business)
 
         serializer = PersonnelAssignSerializer(
@@ -61,7 +88,7 @@ class PersonnelUpdateView(APIView):
     def put(self, request, personnel_id, *args, **kwargs):
         personnel = get_object_or_404(Personnel, pk=personnel_id)
 
-        # check object permissions
+        # Check object permissions
         self.check_object_permissions(request, personnel.business)
 
         ser_data = PersonnelUpdateSerializer(
@@ -89,10 +116,10 @@ class PersonnelDeleteView(APIView):
     required_permission = ['personnel.delete_personnel']
 
     def delete(self, request, personnel_id, *args, **kwargs):
-        # check personnel availability
+        # Check personnel availability
         personnel = get_object_or_404(Personnel, pk=personnel_id)
 
-        # check object permissions
+        # Check object permissions
         self.check_object_permissions(request, personnel.business)
 
         personnel.delete()
