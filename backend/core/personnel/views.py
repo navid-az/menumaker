@@ -14,7 +14,7 @@ User = get_user_model()
 class PersonnelListView(APIView):
     permission_classes = [IsAuthenticated, IsOwner |
                           (HasBusinessBranchAccess & HasMethodAccess)]
-    required_permission = ['personnel.change_personnel']
+    required_permission = ['personnel.view_personnel']
 
     def get(self, request, slug):
         branch_slug = request.query_params.get('branch_slug')

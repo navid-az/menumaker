@@ -103,7 +103,11 @@ export default function DashboardSidebar({
               className={`${!isCollapsed && "ml-3"} h-6 w-6`}
             ></ScrollText>
           </DashboardNavbarBtn>
-          <DashboardNavbarBtn text="پرسنل" isCollapsed={isCollapsed}>
+          <DashboardNavbarBtn
+            text="پرسنل"
+            isCollapsed={isCollapsed}
+            basePath={`/dashboard/${params.business_slug}/${decodedBranchSlug}/personnel/all`}
+          >
             <Users className={`${!isCollapsed && "ml-3"} h-6 w-6`}></Users>
           </DashboardNavbarBtn>
           <DashboardNavbarBtn text="تنظیمات" isCollapsed={isCollapsed}>

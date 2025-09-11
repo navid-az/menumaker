@@ -4,6 +4,9 @@ from .models import Personnel
 
 class PersonnelListSerializer(serializers.ModelSerializer):
     is_owner = serializers.SerializerMethodField()
+    user = serializers.SerializerMethodField()
+    role = serializers.SerializerMethodField()
+    branches = serializers.SerializerMethodField()
 
     class Meta:
         model = Personnel
@@ -13,6 +16,23 @@ class PersonnelListSerializer(serializers.ModelSerializer):
         if obj.role.name == 'Owner':
             return True
         return False
+
+    def get_user(self, obj):
+        # prefer name, fallback to phone_number, fallback to id
+        if hasattr(obj.user, "name") and obj.user.name:
+            return obj.user.name
+        elif hasattr(obj.user, "phone_number") and obj.user.phone_number:
+            return obj.user.phone_number
+        return obj.user.id
+
+    def get_role(self, obj):
+        return getattr(obj.role, "name", obj.role.id)
+
+    def get_branches(self, obj):
+        branch_names = []
+        for branch in obj.branches.all():
+            branch_names.append(branch.name)
+        return branch_names
 
 
 class PersonnelAssignSerializer(serializers.ModelSerializer):
