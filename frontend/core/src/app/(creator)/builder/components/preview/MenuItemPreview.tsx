@@ -81,7 +81,7 @@ export function MenuItemPreview({
         </div>
         <Image
           className="absolute rounded-3xl object-cover"
-          src={`http://127.0.0.1:8000/${image}`}
+          src={`http://127.0.0.1:8000${image}`}
           alt={name}
           fill
         ></Image>
@@ -104,7 +104,7 @@ export function MenuItemPreview({
           </Button>
           <Image
             className="object-cover transition-all duration-300"
-            src={`http://127.0.0.1:8000/${image}`}
+            src={`http://127.0.0.1:8000${image}`}
             alt={name}
             fill
             style={{

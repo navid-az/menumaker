@@ -372,9 +372,9 @@ export function CreateItemForm({
                                 <Image
                                   width={25}
                                   height={25}
-                                  alt={category.name}
+                                  alt={category.name || "category-icon"}
                                   src={
-                                    "http://localhost:8000/" +
+                                    "http://localhost:8000" +
                                     category.icon.image
                                   }
                                 ></Image>

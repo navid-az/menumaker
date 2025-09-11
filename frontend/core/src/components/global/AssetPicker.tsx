@@ -158,7 +158,7 @@ function AssetTab({
                       className="rounded-md"
                       fill
                       alt={asset.name}
-                      src={`http://127.0.0.1:8000/${asset.image}`}
+                      src={`http://127.0.0.1:8000${asset.image}`}
                     />
                   </div>
                 </AssetTile>
@@ -203,7 +203,7 @@ function AssetGroupImage({ itemGroup }: { itemGroup: AssetGroupType }) {
             className="rounded-md"
             fill
             alt={instances[1].name}
-            src={`http://127.0.0.1:8000/${instances[1].image}`}
+            src={`http://127.0.0.1:8000${instances[1].image}`}
           />
         </div>
       )}
@@ -213,7 +213,7 @@ function AssetGroupImage({ itemGroup }: { itemGroup: AssetGroupType }) {
             className="rounded-md"
             fill
             alt={instances[0].name}
-            src={`http://127.0.0.1:8000/${instances[0].image}`}
+            src={`http://127.0.0.1:8000${instances[0].image}`}
           />
         </div>
       )}
@@ -223,7 +223,7 @@ function AssetGroupImage({ itemGroup }: { itemGroup: AssetGroupType }) {
             className="rounded-md"
             fill
             alt={instances[2].name}
-            src={`http://127.0.0.1:8000/${instances[2].image}`}
+            src={`http://127.0.0.1:8000${instances[2].image}`}
           />
         </div>
       )}

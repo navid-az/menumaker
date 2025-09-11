@@ -56,7 +56,7 @@ export default function HomePagePreview({
           {imageUrls[1] ? (
             <div className="relative h-[22vh] w-6/12">
               <Image
-                src={`http://127.0.0.1:8000/${imageUrls[1]}`}
+                src={`http://127.0.0.1:8000${imageUrls[1]}`}
                 fill
                 alt="secondary_image"
                 className={`${
@@ -126,7 +126,7 @@ export default function HomePagePreview({
       {imageUrls[2] ? (
         <div className="absolute left-0 top-[16vh] h-[24vh] w-[100px]">
           <Image
-            src={`http://127.0.0.1:8000/${imageUrls[2]}`}
+            src={`http://127.0.0.1:8000${imageUrls[2]}`}
             fill
             alt="tertiary_image"
             className={`${
@@ -161,7 +161,7 @@ export default function HomePagePreview({
           <Image
             width={300}
             height={200}
-            src={`http://127.0.0.1:8000/${imageUrls[0]}`}
+            src={`http://127.0.0.1:8000${imageUrls[0]}`}
             alt="primary_image"
             className={`${
               globalBorderRadius === "full"

@@ -129,7 +129,7 @@ export default function CartBtn({
               >
                 <Image
                   fill
-                  src={"http://127.0.0.1:8000/" + item.item.image}
+                  src={"http://127.0.0.1:8000" + item.item.image}
                   alt={item.item.name}
                   className="rounded-[var(--radius-base)] object-cover"
                 ></Image>

@@ -72,7 +72,7 @@ export function AssetPickerPopOver({
                   className="rounded-md"
                   fill
                   alt={value.name}
-                  src={`http://127.0.0.1:8000/${value.image}`}
+                  src={`http://127.0.0.1:8000${value.image}`}
                 />
               </div>
             </div>

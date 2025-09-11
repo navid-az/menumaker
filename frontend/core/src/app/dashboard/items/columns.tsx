@@ -74,7 +74,7 @@ export const itemColumns = (
             className="rounded-md"
             fill
             alt={props.row.getValue("name")}
-            src={`http://127.0.0.1:8000/${props.row.getValue("image")}`}
+            src={`http://127.0.0.1:8000${props.row.getValue("image")}`}
           ></Image>
         ) : (
           <ImageIcon

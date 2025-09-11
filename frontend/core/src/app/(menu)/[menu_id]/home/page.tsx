@@ -84,7 +84,7 @@ export default async function page(props: {
           {menuData.secondary_image && (
             <div className="relative h-[22vh] w-6/12">
               <Image
-                src={`http://127.0.0.1:8000/${menuData.secondary_image}`}
+                src={`http://127.0.0.1:8000${menuData.secondary_image}`}
                 fill
                 alt="secondary_image"
                 className={`${
@@ -141,7 +141,7 @@ export default async function page(props: {
       {menuData.tertiary_image && (
         <div className="absolute left-0 top-[12vh] h-[24vh] w-[110px]">
           <Image
-            src={`http://127.0.0.1:8000/${menuData.tertiary_image}`}
+            src={`http://127.0.0.1:8000${menuData.tertiary_image}`}
             fill
             alt="tertiary_image"
             className={`${
@@ -166,7 +166,7 @@ export default async function page(props: {
         </Button>
         <div className="relative h-full w-full">
           <Image
-            src={`http://127.0.0.1:8000/${menuData.primary_image}`}
+            src={`http://127.0.0.1:8000${menuData.primary_image}`}
             fill
             alt="primary_image"
             className={`${

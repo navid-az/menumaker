@@ -290,7 +290,7 @@ function ListItem({ item, handleEdit, handleDelete, isActive }: ListItemType) {
               className="rounded-md"
               fill
               alt={item.asset.name}
-              src={`http://127.0.0.1:8000/${item.asset.image}`}
+              src={`http://127.0.0.1:8000${item.asset.image}`}
             ></Image>
           ) : (
             <ImageOff

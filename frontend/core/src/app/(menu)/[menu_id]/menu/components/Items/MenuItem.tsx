@@ -111,7 +111,7 @@ export function MenuItem({
             <div className="relative flex h-full w-full">
               <Image
                 className="rounded-[var(--radius-base)] object-cover"
-                src={`http://127.0.0.1:8000/${image}`}
+                src={`http://127.0.0.1:8000${image}`}
                 alt={name}
                 fill
               ></Image>
@@ -141,7 +141,7 @@ export function MenuItem({
             <div className="relative flex h-full w-full">
               <Image
                 className="rounded-[var(--radius-exception)] object-cover"
-                src={`http://127.0.0.1:8000/${image}`}
+                src={`http://127.0.0.1:8000${image}`}
                 alt={name}
                 fill
               ></Image>
@@ -171,7 +171,7 @@ export function MenuItem({
         <div className="relative h-56 w-full xss:h-64 sm:h-[300px]">
           <Image
             className="rounded-3xl object-cover px-1.5 "
-            src={`http://127.0.0.1:8000/${image}`}
+            src={`http://127.0.0.1:8000${image}`}
             alt={name}
             fill
           ></Image>
