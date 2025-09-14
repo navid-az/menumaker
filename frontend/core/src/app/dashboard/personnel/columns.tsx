@@ -16,11 +16,15 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 import { RoleBadge } from "../[business_slug]/[branch_slug]/personnel/all/components/RoleBadge";
 
 //SVGs
 import { Trash2 } from "lucide-react";
 import { BranchCell } from "../[business_slug]/[branch_slug]/personnel/all/components/BranchCell";
+
+//actions
+import { deletePersonnel } from "@/app/actions/dashboard/personnel";
 
 //types
 export type Personnel = {
@@ -29,6 +33,17 @@ export type Personnel = {
   branches: number[];
   is_active: boolean;
   is_owner: boolean;
+};
+
+const handleDelete = async (props: any) => {
+  const business_slug = props.table.options.meta?.business_slug;
+  const personnel_id = props.row.original.id;
+  const res = await deletePersonnel(business_slug, personnel_id);
+  if (res.success) {
+    toast.success(res.detail);
+  } else {
+    toast.error(res.detail);
+  }
 };
 
 export const personnelColumns = (
@@ -76,7 +91,7 @@ export const personnelColumns = (
                 <AlertDialogCancel>انصراف</AlertDialogCancel>
                 <AlertDialogAction asChild>
                   <Button
-                    // onClick={() => handleDelete(props)}
+                    onClick={() => handleDelete(props)}
                     variant="destructive"
                   >
                     حذف کن
