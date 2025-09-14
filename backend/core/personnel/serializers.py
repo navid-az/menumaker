@@ -10,7 +10,7 @@ class PersonnelListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Personnel
-        fields = ['user', 'branches', 'role', 'is_active', 'is_owner']
+        fields = ['id', 'user', 'branches', 'role', 'is_active', 'is_owner']
 
     def get_is_owner(self, obj):
         if obj.role.name == 'Owner':
