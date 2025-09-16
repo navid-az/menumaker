@@ -1,3 +1,4 @@
+from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from rest_framework.views import APIView, Response, status
 from rest_framework.permissions import IsAuthenticated
 from permissions import IsOwner, HasBusinessBranchAccess, HasMethodAccess
@@ -7,6 +8,8 @@ from .serializers import PersonnelListSerializer, PersonnelAssignSerializer, Per
 from business.models import Business, Branch
 from django.db import transaction
 from django.shortcuts import get_object_or_404
+from django.core.mail import send_mail
+from datetime import timedelta
 
 User = get_user_model()
 
@@ -38,13 +41,23 @@ class PersonnelListView(APIView):
         return Response(ser_data.data)
 
 
+# generate a JWT token for personnel invitation
+def generate_invite_token(personnel):
+    token = RefreshToken()  # not linked to a user
+    token["type"] = "invite"
+    token["personnel_id"] = personnel.id
+    token["email"] = personnel.invited_email
+    token.set_exp(lifetime=timedelta(hours=48))
+    return str(token)
+
+
 class PersonnelAssignView(APIView):
     permission_classes = [IsAuthenticated, IsOwner |
                           (HasBusinessBranchAccess & HasMethodAccess)]
     required_permission = ['personnel.add_personnel']
 
     def post(self, request, user_id, slug):
-        user = get_object_or_404(User, pk=user_id)
+        # user = get_object_or_404(User, pk=user_id)
         business = get_object_or_404(Business, slug=slug)
 
         # Check object permissions
@@ -52,7 +65,7 @@ class PersonnelAssignView(APIView):
 
         serializer = PersonnelAssignSerializer(
             data=request.data,
-            context={"user_id": user.id, "business_slug": business.slug}
+            context={"business_slug": business.slug}
         )
         serializer.is_valid(raise_exception=True)
 
@@ -69,14 +82,36 @@ class PersonnelAssignView(APIView):
             )
 
         # Create personnel atomically
+        validated_data = serializer.validated_data
+        validated_data.pop('branches')
         with transaction.atomic():
             personnel = Personnel.objects.create(
-                user=user,
-                business=business,
-                role=role
+                **validated_data, business=business
             )
             personnel.branches.set(branches)
 
+        # Send an email with an invitation link
+        token = generate_invite_token(personnel)
+        invite_link = f"http://localhost:3000/register/?token={token}"
+
+        subject = f"You're invited to join {personnel.business} team!"
+        message = f"""
+        Hi {personnel.first_name or 'there'},
+
+        You've been invited to join our staff.
+        Click the link below to accept the invitation and register:
+
+        {invite_link}
+
+        This link will expire in 48 hours.
+        """
+
+        send_mail(
+            subject,
+            message,
+            "no-reply@example.com",
+            [personnel.invited_email],
+        )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
