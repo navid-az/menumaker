@@ -23,17 +23,17 @@ export async function middleware(request: NextRequest) {
   const businessSlug = segments[1];
   const branchSlug = segments[2];
 
+  // Secret key for verifying the JWT ~~~~NEEDS CHANGE~~~~
+  const secret = new TextEncoder().encode(
+    "django-insecure-&@-4_u6z^b7xaq)l=7a@dh*3b%ac)$7d$5t0lkf3f#2@ky2&6e"
+  );
+
   if (pathname.startsWith("/dashboard/") && businessSlug) {
     let token = request.cookies.get("access")?.value;
     if (!token) {
       console.log("NO ACCESS TOKEN FOUND");
       return NextResponse.redirect(new URL("/register", request.url));
     }
-
-    // Secret key for verifying the JWT ~~~~NEEDS CHANGE~~~~
-    const secret = new TextEncoder().encode(
-      "django-insecure-&@-4_u6z^b7xaq)l=7a@dh*3b%ac)$7d$5t0lkf3f#2@ky2&6e"
-    );
 
     let jwtPayload: jwtPayloadType;
 
@@ -110,10 +110,20 @@ export async function middleware(request: NextRequest) {
       // If token is expired
       return NextResponse.redirect(new URL("/register", request.url));
     }
+  } else if (pathname.startsWith("/register") && searchParams.has("token")) {
+    // Handle invitation token
+    const invitationToken = searchParams.get("token");
+    if (invitationToken) {
+      try {
+        await jose.jwtVerify(invitationToken, secret);
+      } catch (error: any) {
+        if (error.code === "ERR_JWT_EXPIRED") {
+          return NextResponse.redirect(
+            new URL("/invitation-expired", request.url)
+          );
+        }
+      }
+    }
   }
   return NextResponse.next();
 }
-
-export const config = {
-  matcher: ["/dashboard/:path*"],
-};
