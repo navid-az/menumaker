@@ -43,10 +43,12 @@ class PersonnelListView(APIView):
 
 # generate a JWT token for personnel invitation
 def generate_invite_token(personnel):
-    token = RefreshToken()  # not linked to a user
+    token = RefreshToken()
     token["type"] = "invite"
     token["personnel_id"] = personnel.id
     token["email"] = personnel.invited_email
+    token['first_name'] = personnel.first_name
+    token['last_name'] = personnel.last_name
     token.set_exp(lifetime=timedelta(hours=48))
     return str(token)
 

@@ -25,6 +25,9 @@ import RegisterBtn from "./RegisterBtn";
 //hooks
 import { usePhoneNumberStore } from "@/lib/stores";
 
+//types
+import { InviteData } from "../page";
+
 //schemas
 const FormSchema = z.object({
   credential: z.union([
@@ -36,7 +39,7 @@ const FormSchema = z.object({
 });
 const EmailSchema = z.string().email();
 
-export function CredentialForm() {
+export function CredentialForm({ inviteData }: { inviteData?: InviteData }) {
   const updatePhoneNumber = usePhoneNumberStore(
     (state) => state.updatePhoneNumber
   );
@@ -54,11 +57,7 @@ export function CredentialForm() {
       router.push("/register/otp");
     },
     onError: (error) => {
-      toast.error("کد نامعتبر میباشد", {
-        cancel: {
-          label: "باشه",
-        },
-      });
+      toast.error("کد نامعتبر میباشد", {});
     },
   });
 
@@ -94,6 +93,7 @@ export function CredentialForm() {
                   className="h-max border-2 border-sad-blue py-4 outline-none transition-all focus:border-primary focus-visible:ring-0"
                   placeholder="شماره همراه یا ایمیل"
                   {...field}
+                  value={inviteData?.email && inviteData.email}
                 />
               </FormControl>
               <FormMessage />
@@ -102,7 +102,7 @@ export function CredentialForm() {
         />
         <RegisterBtn
           text="بعدی"
-          isLoading={postUserCredential.isLoading}
+          isLoading={postUserCredential.isPending}
         ></RegisterBtn>
       </form>
     </Form>
