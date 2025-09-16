@@ -43,7 +43,8 @@ class PersonnelAssignSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Personnel
-        fields = ['branches', 'role', 'invited_email']
+        fields = ['branches', 'role', 'invited_email',
+                  'first_name', 'last_name']
 
     def validate(self, data):
         business_slug = self.context.get("business_slug")
