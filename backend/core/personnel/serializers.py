@@ -43,28 +43,28 @@ class PersonnelAssignSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Personnel
-        fields = ['branches', 'role']
+        fields = ['branches', 'role', 'invited_email']
 
     def validate(self, data):
-        user_id = self.context.get("user_id")
         business_slug = self.context.get("business_slug")
+        email = data.get('invited_email')
         branches = data.get('branches')
 
         # make sure both are provided
-        if not user_id or not business_slug:
+        if not business_slug:
             raise serializers.ValidationError(
-                "Missing user or business in context.")
+                "Missing business in context.")
 
-        # check if the same user is already assigned to one of the branches under the same business
+        # Check if there is a personnel already with the same email in this business and slug
         overlapping = Personnel.objects.filter(
-            user__pk=user_id,
+            invited_email=email,
             business__slug=business_slug,
             branches__pk__in=branches
         ).distinct()
 
         if overlapping.exists():
             raise serializers.ValidationError(
-                "This user is already assigned as a personnel"
+                "This email is used by another personnel"
             )
         return data
 
