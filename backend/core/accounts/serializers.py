@@ -1,8 +1,12 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import User, OtpCode
+from personnel.models import Personnel
+import jwt
+from django.conf import settings
 
 User = get_user_model()
 
@@ -35,6 +39,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     username_field = "phone_number"
     phone_number = serializers.CharField()
     otp = serializers.CharField()
+    invitation_token = serializers.CharField(required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -44,6 +49,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
     def validate(self, attrs):
         phone_number = attrs.get("phone_number")
+        invitation_token = attrs.get("invitation_token")
         otp = attrs.get("otp")
 
         # Fetch OTP from DB
@@ -62,6 +68,36 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             user = User.objects.create_user(phone_number=phone_number)
             user.set_unusable_password()
             user.save()
+
+        # Validate invitation token if provided
+        if invitation_token:
+            try:
+                # decode JWT
+                payload = jwt.decode(
+                    invitation_token,
+                    settings.SECRET_KEY, algorithms=["HS256"]
+                )
+            except jwt.ExpiredSignatureError:
+                raise ValidationError({"detail": "Invitation link expired"})
+            except jwt.InvalidTokenError:
+                raise ValidationError({"detail": "Invalid invitation token"})
+
+            # get personnel_id from token payload
+            personnel_id = payload.get("personnel_id")
+            if not personnel_id:
+                raise ValidationError({"detail": "Malformed invitation token"})
+
+            try:
+                personnel = Personnel.objects.get(id=personnel_id)
+            except Personnel.DoesNotExist:
+                raise ValidationError(
+                    {"detail": "No personnel found for this token"})
+
+            # attach this user to the personnel and activate it
+            if not personnel.user:
+                personnel.user = user
+                personnel.is_active = True
+                personnel.save()
 
         # Generate tokens
         refresh = RefreshToken.for_user(user)

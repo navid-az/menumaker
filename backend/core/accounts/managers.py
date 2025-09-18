@@ -2,7 +2,7 @@ from django.contrib.auth.models import BaseUserManager
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, phone_number, email, full_name, password):
+    def create_user(self, phone_number=None, email=None, full_name=None, password=None):
         if not phone_number and email:
             user = self.model(
                 phone_number=None,
