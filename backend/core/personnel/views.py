@@ -58,7 +58,7 @@ class PersonnelAssignView(APIView):
                           (HasBusinessBranchAccess & HasMethodAccess)]
     required_permission = ['personnel.add_personnel']
 
-    def post(self, request, user_id, slug):
+    def post(self, request, slug):
         # user = get_object_or_404(User, pk=user_id)
         business = get_object_or_404(Business, slug=slug)
 
