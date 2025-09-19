@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import User, OtpCode
 from personnel.models import Personnel
@@ -35,11 +35,44 @@ class CodeSerializer(serializers.Serializer):
     password = serializers.IntegerField()
 
 
+# Get user business/branch permissions
+def get_user_permissions(user):
+    permissions = []
+    for business in user.businesses.all():
+        permissions.append({"business": business.slug, "isOwner": True})
+    for personnel in user.assignments.all():
+        permissions.append({
+            "business": personnel.business.slug,
+            "isOwner": False,
+            "branches": [b.slug for b in personnel.branches.all()]
+        })
+    return permissions
+
+
+class CustomTokenRefreshSerializer(TokenRefreshSerializer):
+    def validate(self, attrs):
+        # Validate the incoming refresh token first
+        refresh = RefreshToken(attrs['refresh'])
+        # Get the user from token
+        user_id = refresh['user_id']
+        user = User.objects.get(id=user_id)
+
+        permissions = get_user_permissions(user)
+
+        # Create new access token and inject permissions
+        access = refresh.access_token
+        access['permissions'] = permissions
+        return {
+            'access': str(access),
+            'refresh': str(refresh),  # optionally return same refresh token
+        }
+
+
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     username_field = "phone_number"
     phone_number = serializers.CharField()
-    otp = serializers.CharField()
     invitation_token = serializers.CharField(required=False)
+    otp = serializers.CharField()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -99,24 +132,17 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
                 personnel.is_active = True
                 personnel.save()
 
-        # Generate tokens
         refresh = RefreshToken.for_user(user)
 
-        permissions = []
-        for business in user.businesses.all():
-            permissions.append({"business": business.slug, "isOwner": True})
-        for personnel in user.assignments.all():
-            permissions.append({
-                "business": personnel.business.slug,
-                "isOwner": False,
-                "branches": [b.slug for b in personnel.branches.all()]
-            })
-        refresh["permissions"] = permissions
+        permissions = get_user_permissions(user)
+
+        access = refresh.access_token
+        access["permissions"] = permissions
         saved_otp.delete()
 
         return {
             "refresh": str(refresh),
-            "access": str(refresh.access_token),
+            "access": str(access),
         }
 
 

@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, get_user_model
 
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
-from rest_framework_simplejwt.views import TokenViewBase
+from rest_framework_simplejwt.views import TokenViewBase, TokenRefreshView
 
 # rest dependencies
 from rest_framework.views import APIView
@@ -13,6 +13,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from .serializers import (
     CustomTokenObtainPairSerializer,
+    CustomTokenRefreshSerializer,
     validateCredentialSerializer,
     CodeSerializer,
     getUserDataSerializer,
@@ -130,9 +131,15 @@ class ValidateOtpCodeView(APIView):
         return Response(srz_code.errors)
 
 
-# jwt token generator
+# Token pair generator
 class CustomTokenObtainPairView(TokenViewBase):
     serializer_class = CustomTokenObtainPairSerializer
+
+# Token refresher
+
+
+class CustomTokenRefreshView(TokenRefreshView):
+    serializer_class = CustomTokenRefreshSerializer
 
 
 # gets user data
