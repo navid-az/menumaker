@@ -11,9 +11,9 @@ import { cn } from "@/lib/utils";
 export type Tag = { id: number; name: string };
 type TagSelector = {
   data: Tag[];
-  value?: Tag[];
-  onChange?: (value: Tag[]) => void;
-  defaultValues?: Tag[];
+  value?: number[];
+  onChange?: (value: number[]) => void;
+  defaultValues?: number[];
 };
 
 export default function TagSelector({
@@ -27,17 +27,18 @@ export default function TagSelector({
   const currentValue = isControlled ? value : state;
 
   const handleSelect = (tag: Tag) => {
-    const newState = currentValue.some((t) => t.id === tag.id)
-      ? currentValue.filter((t) => t.id !== tag.id)
-      : [...currentValue, tag];
+    const newIds = currentValue.includes(tag.id)
+      ? currentValue.filter((id) => id !== tag.id)
+      : [...currentValue, tag.id];
 
     if (isControlled) {
-      onChange?.(newState);
+      onChange?.(newIds);
     } else {
-      setState(newState);
+      setState(newIds);
+      onChange?.(newIds);
     }
   };
-  const updateState = (tag: Tag[]) => {
+  const updateState = (tag: number[]) => {
     if (!isControlled) {
       setState(tag);
     }
@@ -50,7 +51,7 @@ export default function TagSelector({
     if (allToggled) {
       updateState([]);
     } else {
-      updateState(data);
+      updateState(data.map((tag) => tag.id));
     }
   };
 
@@ -68,7 +69,7 @@ export default function TagSelector({
         <CheckCheck className="h-5 w-5"></CheckCheck>
       </Button>
       {data.map((tag) => {
-        const isSelected = currentValue.some((t) => t.id === tag.id);
+        const isSelected = currentValue.some((t) => t === tag.id);
         return (
           <Button
             type="button"
