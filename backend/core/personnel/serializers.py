@@ -10,7 +10,8 @@ class PersonnelListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Personnel
-        fields = ['id', 'user', 'branches', 'role', 'is_active', 'is_owner']
+        fields = ['id', 'user', 'first_name', 'last_name',
+                  'branches', 'role', 'is_active', 'is_owner']
 
     def get_is_owner(self, obj):
         if obj.role.name == 'Owner':
@@ -19,11 +20,12 @@ class PersonnelListSerializer(serializers.ModelSerializer):
 
     def get_user(self, obj):
         # prefer name, fallback to phone_number, fallback to id
-        if hasattr(obj.user, "name") and obj.user.name:
-            return obj.user.name
-        elif hasattr(obj.user, "phone_number") and obj.user.phone_number:
-            return obj.user.phone_number
-        return obj.user.id
+        if (obj.user):
+            if hasattr(obj.user, "name") and obj.user.name:
+                return obj.user.name
+            elif hasattr(obj.user, "phone_number") and obj.user.phone_number:
+                return obj.user.phone_number
+            return obj.user.id
 
     def get_role(self, obj):
         return getattr(obj.role, "name", obj.role.id)

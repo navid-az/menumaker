@@ -28,11 +28,13 @@ import { deletePersonnel } from "@/app/actions/dashboard/personnel";
 
 //types
 export type Personnel = {
-  user: string;
-  role: string;
-  branches: number[];
-  is_active: boolean;
-  is_owner: boolean;
+  user?: string;
+  first_name?: string;
+  last_name?: string;
+  invited_email?: string;
+  role: number;
+  branches?: number[];
+  is_active?: boolean;
 };
 
 const handleDelete = async (props: any) => {
@@ -52,7 +54,17 @@ export const personnelColumns = (
   {
     accessorKey: "user",
     header: "پرسنل",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("user")}</div>,
+    cell: ({ row }) => {
+      const { first_name, last_name, user } = row.original as {
+        first_name?: string;
+        last_name?: string;
+        user?: string;
+      };
+
+      const fullName = [first_name, last_name].filter(Boolean).join(" ").trim();
+
+      return <div className="capitalize">{fullName || user || "دعوت شده"}</div>;
+    },
   },
   {
     accessorKey: "role",
@@ -69,6 +81,7 @@ export const personnelColumns = (
       <BranchCell branches={row.getValue("branches")}></BranchCell>
     ),
   },
+
   {
     id: "row-options",
     cell: (props) => {
