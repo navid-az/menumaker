@@ -283,7 +283,7 @@ function ListItem({ item, handleEdit, handleDelete, isActive }: ListItemType) {
       key={item.id}
       className="flex cursor-default items-center justify-between p-1"
     >
-      <section className="flex !items-center gap-2">
+      <section className="flex items-center! gap-2">
         <div className="relative h-8 w-8 rounded-md">
           {item.asset ? (
             <Image

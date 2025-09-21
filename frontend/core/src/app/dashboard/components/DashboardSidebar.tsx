@@ -145,14 +145,14 @@ function DashboardNavbarBtn({
     <Button
       asChild
       className={cn(
-        "scale-pro relative h-14 w-full justify-end py-3 text-lg opacity-60 transition-all duration-300 after:absolute after:right-0 after:h-4/6 after:w-1 after:rounded-full after:bg-sky-blue/50 after:opacity-0 after:transition-all after:duration-300 hover:opacity-90 hover:after:opacity-100 md:text-sm lg:text-lg",
+        "scale-pro relative h-14 w-full py-3 text-lg opacity-60 transition-all duration-300 after:absolute after:right-0 after:h-4/6 after:w-1 after:rounded-full after:bg-sky-blue/50 after:opacity-0 after:transition-all after:duration-300 hover:opacity-90 hover:after:opacity-100 md:text-sm lg:text-lg",
         (encodedBasePath == pathName ||
           dynamicPaths.includes(lastPathNamePart)) &&
-          "scale-105 pr-6 text-sad-blue !opacity-100 after:bg-sky-blue after:opacity-100",
+          "scale-105 pr-6 text-sad-blue opacity-100! after:bg-sky-blue after:opacity-100",
         isCollapsed &&
           (encodedBasePath == pathName ||
             dynamicPaths.includes(lastPathNamePart)) &&
-          "scale-125 px-4"
+          "scale-125 px-4", isCollapsed?' justify-center':'justify-start'
       )}
     >
       <Link

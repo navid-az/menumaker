@@ -110,14 +110,14 @@ export function MenuItem({
           <div className="relative col-span-2 flex h-[300px] flex-none flex-col">
             <div className="relative flex h-full w-full">
               <Image
-                className="rounded-[var(--radius-base)] object-cover"
+                className="rounded-(--radius-base) object-cover"
                 src={`http://127.0.0.1:8000${image}`}
                 alt={name}
                 fill
               ></Image>
             </div>
             <div
-              className={`absolute  bottom-0 flex w-full flex-none shrink-0 basis-5/12 flex-col justify-between rounded-b-[var(--radius-base)] bg-[color:var(--primary)] p-3 text-[color:var(--secondary)]`}
+              className={`absolute  bottom-0 flex w-full flex-none shrink-0 basis-5/12 flex-col justify-between rounded-b-(--radius-base) bg-(--primary) p-3 text-(--secondary)`}
             >
               <div className="flex flex-col">
                 <p className="text-lg font-semibold">{name}</p>
@@ -140,14 +140,14 @@ export function MenuItem({
           <div className="relative flex h-[300px] flex-none flex-col xss:col-span-1">
             <div className="relative flex h-full w-full">
               <Image
-                className="rounded-[var(--radius-exception)] object-cover"
+                className="rounded-(--radius-exception) object-cover"
                 src={`http://127.0.0.1:8000${image}`}
                 alt={name}
                 fill
               ></Image>
             </div>
             <div
-              className={`absolute bottom-0 flex w-full flex-none shrink-0 basis-5/12 flex-col justify-between gap-3 rounded-b-[var(--radius-exception)] bg-[color:var(--secondary)] p-2 text-[color:var(--primary)]`}
+              className={`absolute bottom-0 flex w-full flex-none shrink-0 basis-5/12 flex-col justify-between gap-3 rounded-b-(--radius-exception) bg-(--secondary) p-2 text-(--primary)`}
             >
               <div className="space-y-0.5">
                 <p className="text-lg font-semibold">{name}</p>
@@ -166,7 +166,7 @@ export function MenuItem({
         className="rounded-t-3xl border-0 bg-white pt-1.5"
       >
         {/* drawer handle */}
-        <div className="mx-auto mb-1.5 h-2 w-[100px] rounded-full bg-[color:var(--primary)]"></div>
+        <div className="mx-auto mb-1.5 h-2 w-[100px] rounded-full bg-(--primary)"></div>
 
         <div className="relative h-56 w-full xss:h-64 sm:h-[300px]">
           <Image
@@ -177,7 +177,7 @@ export function MenuItem({
           ></Image>
         </div>
         <DrawerHeader className="flex flex-col text-right">
-          <div className="flex w-full items-center justify-between text-[color:var(--primary)]">
+          <div className="flex w-full items-center justify-between text-(--primary)">
             <DrawerTitle className="text-xl xss:text-2xl">{name}</DrawerTitle>
             <PriceTag
               size="lg"
@@ -185,7 +185,7 @@ export function MenuItem({
               unitDisplayType="compact"
             ></PriceTag>
           </div>
-          <DrawerDescription className="text-right font-light text-[color:var(--primary)] ltr:text-left">
+          <DrawerDescription className="text-right font-light text-(--primary) ltr:text-left">
             {description}
           </DrawerDescription>
         </DrawerHeader>

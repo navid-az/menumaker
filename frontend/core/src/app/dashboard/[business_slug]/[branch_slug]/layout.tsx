@@ -42,7 +42,7 @@ export default async function DashboardPanelLayout(props: {
         business_slug={params.business_slug}
         branch_slug={params.branch_slug}
       ></DashboardHeader>
-      <div className="bg-white p-4 flex-1 !overflow-y-auto rounded-tr-3xl">
+      <div className="bg-white p-4 flex-1 overflow-y-auto! rounded-tr-3xl">
         <ToolBar categories={categories} assetGroups={assetGroups}></ToolBar>
         {children}
       </div>

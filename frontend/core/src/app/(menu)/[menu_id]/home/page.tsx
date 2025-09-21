@@ -51,11 +51,11 @@ export default async function page(props: {
   );
 
   return (
-    <div className="relative flex h-screen w-screen flex-col justify-between overflow-x-hidden bg-[color:var(--secondary)]">
+    <div className="relative flex h-screen w-screen flex-col justify-between overflow-x-hidden bg-(--secondary)">
       <section className="flex flex-col gap-4">
         <header className="flex justify-between">
           <svg
-            className="absolute -right-20 top-[6vh] text-[color:var(--primary)]"
+            className="absolute -right-20 top-[6vh] text-(--primary)"
             width="200"
             height="298"
             viewBox="0 0 200 298"
@@ -90,16 +90,16 @@ export default async function page(props: {
                 className={`${
                   globalStyling.border_radius === "full"
                     ? "rounded-bl-[100px]"
-                    : "rounded-bl-[var(--radius-exception)]"
+                    : "rounded-bl-(--radius-exception)"
                 } object-cover`}
               ></Image>
             </div>
           )}
-          <Button size="icon" className="ml-4 mt-4 text-[color:--primary]">
+          <Button size="icon" className="ml-4 mt-4 text-(--primary)">
             <AlignLeft></AlignLeft>
           </Button>
           <svg
-            className="absolute -left-1 top-[20vh] text-[color:var(--primary)]"
+            className="absolute -left-1 top-[20vh] text-(--primary)"
             width="200"
             height="298"
             viewBox="0 0 200 298"
@@ -126,7 +126,7 @@ export default async function page(props: {
             />
           </svg>
         </header>
-        <div className="flex flex-col gap-2 px-4 text-[color:var(--primary)]">
+        <div className="flex flex-col gap-2 px-4 text-(--primary)">
           <h1
             className={cn(
               "font-semibold",
@@ -147,7 +147,7 @@ export default async function page(props: {
             className={`${
               globalStyling.border_radius === "full"
                 ? "rounded-r-[40px]"
-                : "rounded-r-[var(--radius-exception)]"
+                : "rounded-r-(--radius-exception)"
             } object-cover`}
           ></Image>
         </div>
@@ -155,7 +155,7 @@ export default async function page(props: {
       <footer className="flex h-[52vh] w-screen">
         <Button
           asChild
-          className="group flex h-full w-20 flex-col gap-20 rounded-none bg-[color:var(--secondary)] pt-20 text-[color:var(--primary)]"
+          className="group flex h-full w-20 flex-col gap-20 rounded-none bg-(--secondary) pt-20 text-(--primary)"
         >
           <Link href={`/${params.menu_id}/menu`}>
             <span className="-rotate-90 transform text-xl">
@@ -172,7 +172,7 @@ export default async function page(props: {
             className={`${
               globalStyling.border_radius === "full"
                 ? "rounded-tr-[120px]"
-                : "rounded-tr-[var(--radius-exception)]"
+                : "rounded-tr-(--radius-exception)"
             } object-cover`}
           ></Image>
         </div>

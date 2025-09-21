@@ -41,7 +41,7 @@ const ItemsCategoryTitle = ({
         style={{ justifyContent: direction }}
       >
         {showLines("right") && (
-          <span className="h-1 flex-1 rounded-full bg-gradient-to-r from-orange-300 from-30%"></span>
+          <span className="h-1 flex-1 rounded-full bg-linear-to-r from-orange-300 from-30%"></span>
         )}
         {categoryIcon && (
           <div className="relative h-6 w-6 flex-none">
@@ -58,7 +58,7 @@ const ItemsCategoryTitle = ({
           </p>
         )}
         {showLines("left") && (
-          <span className="h-1 flex-1 rotate-180 rounded-full bg-gradient-to-r from-orange-300 from-30%"></span>
+          <span className="h-1 flex-1 rotate-180 rounded-full bg-linear-to-r from-orange-300 from-30%"></span>
         )}
       </span>
     );

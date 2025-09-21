@@ -80,7 +80,7 @@ export default function ImageUploader({
         onDrop={handleDrop}
         data-dragging={isDragging || undefined}
         data-files={files.length > 0 || undefined}
-        className="has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 min-h-52 not-data-[files]:justify-center has-[input:focus]:ring-[3px] relative flex flex-col items-center overflow-hidden rounded-xl border border-dashed border-primary/60 p-4 transition-colors data-[dragging=true]:bg-accent/50"
+        className="has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 min-h-52 not-data-files:justify-center has-[input:focus]:ring-[3px] relative flex flex-col items-center overflow-hidden rounded-xl border border-dashed border-primary/60 p-4 transition-colors data-[dragging=true]:bg-accent/50"
       >
         <input
           {...getInputProps()}

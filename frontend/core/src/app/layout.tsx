@@ -6,11 +6,11 @@ import React from "react";
 import { Toaster } from "@/components/ui/sonner";
 
 // Font files can be collocated inside of `app`
-const vazir = localFont({
-  src: "/fonts/Vazirmatn-RD[wght].woff2",
-  display: "swap",
-  variable: "--font-vazir",
-});
+// const vazir = localFont({
+//   src: "/fonts/Vazirmatn-RD[wght].woff2",
+//   display: "swap",
+//   variable: "--font-vazir",
+// });
 
 export const metadata = {
   title: "menumaker | home",
@@ -26,8 +26,7 @@ export default function RootLayout({
     <html lang="en" dir="rtl">
       <body
         className={cn(
-          "overflow-x-hidden bg-white font-vazir font-medium",
-          vazir.variable
+          "overflow-x-hidden bg-white font-vazir font-medium"
         )}
       >
         <main data-vaul-drawer-wrapper>

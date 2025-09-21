@@ -11,7 +11,7 @@ export default function Home() {
         width={465}
         height={390}
         alt="two square"
-        className="absolute -right-72 top-32 rotate-[170deg]"
+        className="absolute -right-72 top-32 rotate-170"
       ></Image>
       <Image
         src="/images/two-square.svg"
@@ -21,7 +21,7 @@ export default function Home() {
         className=" absolute -left-28 top-48 -z-10 -rotate-[11.92deg]"
       ></Image> */}
       <div className="container m-auto">
-        <div className=" mt-[15rem] flex flex-col gap-2 py-20">
+        <div className=" mt-60 flex flex-col gap-2 py-20">
           <h1 className="h-auto text-right text-5xl font-bold leading-normal text-royal-green">
             منو کسب و کار خود را تنها با <br /> چند کلیک ایجاد کنید
           </h1>

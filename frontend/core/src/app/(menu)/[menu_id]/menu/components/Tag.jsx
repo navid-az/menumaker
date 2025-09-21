@@ -25,7 +25,7 @@ export default function Tag({
   return (
     <>
       {isLoading ? (
-        <Skeleton width={40} className="!rounded-full" />
+        <Skeleton width={40} className="rounded-full!" />
       ) : (
         <div
           className={`flex bg-${color.secondary} h-full w-max items-center gap-1 rounded-full px-2 py-1`}

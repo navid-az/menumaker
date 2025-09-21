@@ -39,7 +39,7 @@ const Palette = ({
               <Button
                 type="button"
                 onClick={() => handleRemoveColor && handleRemoveColor(index)}
-                className="w-auto bg-transparent opacity-0 transition-all duration-200 hover:scale-125 hover:!opacity-100 group-hover:opacity-80"
+                className="w-auto bg-transparent opacity-0 transition-all duration-200 hover:scale-125 hover:opacity-100! group-hover:opacity-80"
                 size="icon"
               >
                 <X

@@ -43,9 +43,9 @@ export default function ColorPicker({
     <Popover>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
       <PopoverContent asChild>
-        <div className="flex h-full flex-col gap-4 !rounded-xl border-2 border-primary bg-soft-blue !p-4">
+        <div className="flex h-full flex-col gap-4 rounded-xl! border-2 border-primary bg-soft-blue p-4!">
           <HexColorPicker
-            className="custom-color-picker !h-44 !w-full"
+            className="custom-color-picker h-44! w-full!"
             color={tempColor}
             onChange={setTempColor}
           ></HexColorPicker>

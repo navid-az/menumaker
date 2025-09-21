@@ -23,11 +23,11 @@ export default function HomePagePreview({
   homeSubtitle: string;
 }) {
   return (
-    <div className="relative flex h-full w-full flex-col justify-between overflow-x-hidden rounded-[30px] bg-[color:var(--secondary)] pt-[60px] transition-colors duration-300">
+    <div className="relative flex h-full w-full flex-col justify-between overflow-x-hidden rounded-[30px] bg-(--secondary) pt-[60px] transition-colors duration-300">
       <section className="flex flex-col gap-4">
         <header className="flex justify-between">
           <svg
-            className="absolute -right-20 top-[10vh] text-[color:var(--primary)] transition-colors duration-300"
+            className="absolute -right-20 top-[10vh] text-(--primary) transition-colors duration-300"
             width="200"
             height="298"
             viewBox="0 0 200 298"
@@ -62,27 +62,27 @@ export default function HomePagePreview({
                 className={`${
                   globalBorderRadius === "full"
                     ? "rounded-bl-[100px]"
-                    : "rounded-bl-[var(--radius-exception)]"
+                    : "rounded-bl-(--radius-exception)"
                 } object-cover`}
               ></Image>
             </div>
           ) : (
             <div
               className={cn(
-                "relative flex h-[22vh] w-6/12 animate-pulse items-center justify-center bg-[color:var(--primary)] text-xl text-[color:var(--secondary)] transition-colors",
+                "relative flex h-[22vh] w-6/12 animate-pulse items-center justify-center bg-(--primary) text-xl text-(--secondary) transition-colors",
                 globalBorderRadius === "full"
                   ? "rounded-bl-[100px]"
-                  : "rounded-bl-[var(--radius-exception)]"
+                  : "rounded-bl-(--radius-exception)"
               )}
             >
               تصویر ۲
             </div>
           )}
-          <Button size="icon" className="ml-2 text-[color:--primary]">
+          <Button size="icon" className="ml-2 text-(--primary)">
             <AlignLeft></AlignLeft>
           </Button>
           <svg
-            className="absolute -left-1 top-[18vh] text-[color:var(--primary)] transition-colors duration-300"
+            className="absolute -left-1 top-[18vh] text-(--primary) transition-colors duration-300"
             width="200"
             height="298"
             viewBox="0 0 200 298"
@@ -109,7 +109,7 @@ export default function HomePagePreview({
             />
           </svg>
         </header>
-        <div className="flex flex-col gap-2 px-4 text-[color:var(--primary)] transition-colors duration-300">
+        <div className="flex flex-col gap-2 px-4 text-(--primary) transition-colors duration-300">
           <h1
             className={cn(
               "font-semibold",
@@ -132,24 +132,24 @@ export default function HomePagePreview({
             className={`${
               globalBorderRadius === "full"
                 ? "rounded-r-[40px]"
-                : "rounded-r-[var(--radius-exception)]"
+                : "rounded-r-(--radius-exception)"
             } object-cover`}
           ></Image>
         </div>
       ) : (
         <div
           className={cn(
-            "absolute left-0 top-[16vh] flex h-[24vh] w-[100px] animate-pulse items-center justify-center bg-[color:var(--primary)] text-[color:var(--secondary)] transition-colors",
+            "absolute left-0 top-[16vh] flex h-[24vh] w-[100px] animate-pulse items-center justify-center bg-(--primary) text-(--secondary) transition-colors",
             globalBorderRadius === "full"
               ? "rounded-r-[40px]"
-              : "rounded-r-[var(--radius-exception)]"
+              : "rounded-r-(--radius-exception)"
           )}
         >
           تصویر ۲
         </div>
       )}
       <footer className="flex h-[52vh] w-screen">
-        <Button className="group flex h-full w-20 flex-col gap-20 rounded-none bg-[color:var(--secondary)] pt-20 text-[color:var(--primary)] transition-colors duration-300">
+        <Button className="group flex h-full w-20 flex-col gap-20 rounded-none bg-(--secondary) pt-20 text-(--primary) transition-colors duration-300">
           <span className="-rotate-90 transform text-xl">
             ورود به منو آیتم ها
           </span>
@@ -166,16 +166,16 @@ export default function HomePagePreview({
             className={`${
               globalBorderRadius === "full"
                 ? "rounded-tr-[120px]"
-                : "rounded-tr-[var(--radius-exception)]"
+                : "rounded-tr-(--radius-exception)"
             } rounded-bl-[100px] object-cover`}
           ></Image>
         ) : (
           <div
             className={cn(
-              "flex h-full w-[300px] animate-pulse items-center justify-center bg-[color:var(--primary)] text-2xl text-[color:var(--secondary)] transition-colors",
+              "flex h-full w-[300px] animate-pulse items-center justify-center bg-(--primary) text-2xl text-(--secondary) transition-colors",
               globalBorderRadius === "full"
                 ? "rounded-tr-[120px]"
-                : "rounded-tr-[var(--radius-exception)]"
+                : "rounded-tr-(--radius-exception)"
             )}
           >
             تصویر ۱

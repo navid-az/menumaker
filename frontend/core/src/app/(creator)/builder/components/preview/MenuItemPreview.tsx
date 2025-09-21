@@ -43,7 +43,7 @@ export function MenuItemPreview({
   if (is_available) {
     return (
       <div className="relative col-span-2 h-[250px]">
-        {/* <div className="absolute z-20 h-full w-full rounded-3xl bg-gradient-to-t from-purple-900 to-70%"></div>
+        {/* <div className="absolute z-20 h-full w-full rounded-3xl bg-linear-to-t from-purple-900 to-70%"></div>
         <Button
           onClick={(e) => e.stopPropagation()}
           className="absolute left-3 top-3 flex h-10 w-10 items-center justify-center rounded-3xl bg-inherit p-0 backdrop-blur-lg"
@@ -90,7 +90,7 @@ export function MenuItemPreview({
   } else
     return (
       <div className="col-span-1 flex h-60 flex-none flex-col rounded-3xl border">
-        {/* <div className="absolute inset-0 -z-10 rounded-2xl bg-gradient-to-t from-orange-200 from-25% to-60%"></div> */}
+        {/* <div className="absolute inset-0 -z-10 rounded-2xl bg-linear-to-t from-orange-200 from-25% to-60%"></div> */}
         <div className="relative flex w-full basis-7/12 justify-end p-2">
           <Button
             size="icon"

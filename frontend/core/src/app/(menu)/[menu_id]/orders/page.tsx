@@ -51,11 +51,11 @@ export default async function Page(props: {
   return (
     <div className="container flex h-screen flex-col justify-between gap-8 p-4">
       <header className="flex items-center justify-between">
-        <h3 className="text-lg text-[color:var(--primary)]">لیست سفارشات</h3>
+        <h3 className="text-lg text-(--primary)">لیست سفارشات</h3>
         <Button
           size="icon"
           variant="ghost"
-          className="rounded-[var(--radius-base)] text-[color:var(--primary)]"
+          className="rounded-(--radius-base) text-(--primary)"
           asChild
         >
           <Link href={`/${params.menu_id}/menu`}>
@@ -67,13 +67,13 @@ export default async function Page(props: {
       <footer className="flex gap-4">
         <Button
           disabled
-          className="h-12 basis-9/12 rounded-[var(--radius-base)] bg-[color:var(--primary)] text-base text-[color:var(--secondary)]"
+          className="h-12 basis-9/12 rounded-(--radius-base) bg-(--primary) text-base text-(--secondary)"
         >
           ثبت سفارش
         </Button>
         <Button
           size="icon"
-          className="h-12 basis-3/12 rounded-[var(--radius-base)] bg-[color:var(--primary)] text-[color:var(--secondary)]"
+          className="h-12 basis-3/12 rounded-(--radius-base) bg-(--primary) text-(--secondary)"
         >
           <ConciergeBell />
         </Button>
