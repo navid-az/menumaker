@@ -21,7 +21,7 @@ const switchVariants = cva(
   }
 );
 const thumbVariants = cva(
-  "pointer-events-none block rounded-full shadow-lg ring-0 transition-all data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-[1.27px] data-[state=checked]:bg-primary-foreground data-[state=unchecked]:bg-primary",
+  "pointer-events-none block rounded-full shadow-lg ring-0 transition-all data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-[0.4px] data-[state=checked]:bg-primary-foreground data-[state=unchecked]:bg-primary",
   {
     variants: {
       size: {
