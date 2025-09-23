@@ -39,7 +39,13 @@ const FormSchema = z.object({
 });
 const EmailSchema = z.string().email();
 
-export function CredentialForm({ inviteData }: { inviteData?: InviteData }) {
+export function CredentialForm({
+  inviteToken,
+  inviteData,
+}: {
+  inviteToken?: string;
+  inviteData?: InviteData;
+}) {
   const updatePhoneNumber = usePhoneNumberStore(
     (state) => state.updatePhoneNumber
   );
@@ -54,7 +60,11 @@ export function CredentialForm({ inviteData }: { inviteData?: InviteData }) {
     },
     mutationKey: ["credential"],
     onSuccess: (data) => {
-      router.push("/register/otp");
+      if (inviteToken && inviteData) {
+        router.push(`/register/otp/?token=${inviteToken}`);
+      } else {
+        router.push("/register/otp");
+      }
     },
     onError: (error) => {
       toast.error("کد نامعتبر میباشد", {});
@@ -63,7 +73,7 @@ export function CredentialForm({ inviteData }: { inviteData?: InviteData }) {
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-    defaultValues: {},
+    defaultValues: { credential: inviteData?.email },
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
@@ -93,7 +103,6 @@ export function CredentialForm({ inviteData }: { inviteData?: InviteData }) {
                   className="h-max border-2 border-sad-blue py-4 outline-none transition-all focus:border-primary focus-visible:ring-0"
                   placeholder="شماره همراه یا ایمیل"
                   {...field}
-                  value={inviteData?.email && inviteData.email}
                 />
               </FormControl>
               <FormMessage />

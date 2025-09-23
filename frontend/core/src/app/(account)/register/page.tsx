@@ -47,7 +47,7 @@ export default async function Page({
               لطفا ایمیل یا شماره تلفن خودت رو وارد کن
             </p>
           </div>
-          <CredentialForm inviteData={inviteData}></CredentialForm>
+          <CredentialForm inviteToken={token} inviteData={inviteData}></CredentialForm>
         </section>
       );
     } catch (err) {

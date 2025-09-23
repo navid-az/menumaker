@@ -20,6 +20,9 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import RegisterBtn from "./RegisterBtn";
 
+//hooks
+import { useSearchParams } from "next/navigation";
+
 //SVGs
 import { Cross } from "@/app/components/svgs";
 
@@ -39,14 +42,21 @@ export const FormSchema = z.object({
     z.string().email(),
   ]),
   otp: z.string().max(6).min(6),
+  invitation_token: z.string().optional(),
 });
 
 export function OtpForm({ length = 6 }: { length: number | undefined }) {
   const phone_number = usePhoneNumberStore((state) => state.phoneNumber);
+  const searchParams = useSearchParams();
+  const invitation_token = searchParams.get("token");
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-    defaultValues: { phone_number: phone_number, otp: "" },
+    defaultValues: {
+      phone_number: phone_number,
+      otp: "",
+      invitation_token: invitation_token || undefined,
+    },
   });
 
   //form submitter
@@ -67,6 +77,19 @@ export function OtpForm({ length = 6 }: { length: number | undefined }) {
         onSubmit={form.handleSubmit(onSubmit, onInvalid)}
         className="w-full gap-4"
       >
+        {invitation_token && (
+          <FormField
+            control={form.control}
+            name="invitation_token"
+            render={({ field }) => (
+              <FormItem className="space-y-0">
+                <FormControl>
+                  <Input type="hidden" value={invitation_token} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        )}
         <FormField
           control={form.control}
           name="phone_number"

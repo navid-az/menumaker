@@ -33,7 +33,11 @@ type ItemType = {
   category: number;
 };
 
-export async function signInUser(data: { phone_number: string; otp: string }) {
+export async function signInUser(data: {
+  phone_number: string;
+  otp: string;
+  invitation_token?: string;
+}) {
   try {
     const res = await fetch("http://localhost:8000/accounts/token/", {
       method: "POST",
