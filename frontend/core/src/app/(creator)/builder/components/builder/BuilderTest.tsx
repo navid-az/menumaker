@@ -303,12 +303,12 @@ export default function BuilderTest({
 
   return (
     <Form {...form}>
-      <div className="flex h-full w-full pl-10 pr-28 justify-between">
+      <div className="flex px-4 sm:px-12 md:px-16 lg:px-24 mx-auto gap-24 lg:gap-20 2xl:gap-40 xl:gap-30 h-full w-full justify-center">
         <form
           name="builder-form"
           onSubmit={form.handleSubmit(onSubmit, onInvalid)}
           ref={ref}
-          className="w-5/12 flex items-center"
+          className="max-w-lg w-full flex items-center"
         >
           <Slider validSections={validSections}>
             <AnimatePresence mode="wait" initial={false}>

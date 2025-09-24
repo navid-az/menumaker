@@ -170,7 +170,7 @@ export default function Setup({
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                       dir="rtl"
-                      className="flex h-80 w-full gap-4"
+                      className="flex flex-col sm:flex-row h-80 w-full gap-4"
                     >
                       <Tile
                         title="فقط حضوری"
@@ -224,7 +224,7 @@ export default function Setup({
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                       dir="rtl"
-                      className="flex h-80 w-full gap-4"
+                      className="flex flex-col sm:flex-row h-80 w-full gap-4"
                     >
                       <Tile
                         title="بیشتر سفارش حضوری"
@@ -270,7 +270,7 @@ export default function Setup({
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                       dir="rtl"
-                      className="flex h-80 w-full gap-4"
+                      className="flex flex-col sm:flex-row h-80 w-full gap-4"
                     >
                       <Tile title="یک شعبه" isActive={field.value === "single"}>
                         <FormItem>
@@ -307,7 +307,10 @@ export default function Setup({
           id: "menu_preference",
           subtitle: "دوست دارید چطور منو دیجیتال شما ساخته بشه؟",
           component: (
-            <SliderStep stepId="menu_preference" className="flex h-80 flex-row">
+            <SliderStep
+              stepId="menu_preference"
+              className="flex flex-col sm:flex-row h-80"
+            >
               <Tile
                 isButton
                 title="شخصی سازی منو"
@@ -401,7 +404,7 @@ export default function Setup({
         name="setup-form"
         ref={ref}
         onSubmit={form.handleSubmit(onSubmit, onInvalid)}
-        className="w-full px-52"
+        className="px-4 max-w-3xl w-full sm:px-12 md:px-16 lg:px-0 mx-auto"
       >
         <Slider validSections={validSections} disableSubmitBtn>
           <AnimatePresence mode="wait" initial={false}>

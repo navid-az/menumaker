@@ -45,7 +45,7 @@ function Tile({
         {children}
       </div>
       <section className="flex flex-1 items-center">
-        <p className="text-2xl">{title}</p>
+        <p className="text-xl sm:text-2xl">{title}</p>
         <p className="text-xl">{description}</p>
       </section>
     </Label>

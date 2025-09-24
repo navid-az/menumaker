@@ -42,7 +42,7 @@ export default function MenuMaker({
   };
 
   return (
-    <section className="container m-auto flex h-screen w-full items-center justify-between gap-12 overflow-hidden">
+    <section className="flex h-screen w-full items-center justify-between gap-12 overflow-hidden">
       <AnimatePresence mode="wait">
         {activeForm === "setup" && (
           <motion.div
