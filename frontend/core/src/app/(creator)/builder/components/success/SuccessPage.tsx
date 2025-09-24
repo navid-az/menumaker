@@ -20,13 +20,17 @@ export default function SuccessPage({
 }) {
   return (
     <div className="w-full h-full flex flex-col items-center justify-center">
-      <div className=" w-[700px] h-[700px] absolute -z-10 border-sad-blue border-2 rounded-full"></div>
-      <div className=" w-[1000px] h-[1000px] absolute -z-10 border-sad-blue border-2 rounded-full"></div>
-      <div className=" w-[1300px] h-[1300px] absolute -z-10 border-sad-blue border-2 rounded-full"></div>
-      <div className="flex flex-col items-center justify-center gap-9">
+      <div className="absolute inset-0 flex items-center justify-center -z-10">
+        <div className="aspect-square w-[clamp(400px,40vw,700px)] border-sad-blue border-2 rounded-full"></div>
+        <div className="aspect-square w-[clamp(600px,60vw,1000px)] border-sad-blue border-2 rounded-full absolute"></div>
+        <div className="aspect-square w-[clamp(800px,80vw,1300px)] border-sad-blue border-2 rounded-full absolute"></div>
+      </div>
+      <div className="flex w-full flex-col items-center justify-center gap-9 px-4 max-w-sm">
         <div className="flex flex-col items-center gap-1.5">
-          <h2 className="font-bold text-3xl">منو شما با موفقیت ایجاد شد!</h2>
-          <p className="font-normal text-base text-center">
+          <h2 className="text-xl font-bold sm:text-3xl">
+            منو شما با موفقیت ایجاد شد!
+          </h2>
+          <p className="font-normal text-xs sm:text-base text-center">
             کافیه QR کد زیر رو روی میزها یا هرجای دیگه قرار بدید <br />
             تا مشتری‌ها بتونن منوی شما رو ببینن.
           </p>
