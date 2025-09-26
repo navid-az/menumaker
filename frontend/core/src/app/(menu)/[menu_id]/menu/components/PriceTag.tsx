@@ -2,7 +2,11 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
 //utilities
-import { formatCurrency } from "../../utilities/formatCurrency";
+import {
+  toPersianDigits,
+  addCommas,
+  roundToThousands,
+} from "../../utilities/formatCurrency";
 
 //libraries
 import { cva } from "class-variance-authority";
@@ -16,6 +20,7 @@ type PriceTagType = {
   price: number;
   unitDisplayType?: "default" | "minimal" | "compact" | "engMinimal";
   size?: "default" | "sm" | "lg";
+  persianDigits?: boolean;
   removeZeroes?: boolean;
   isLoading?: boolean;
   isFree?: boolean;
@@ -25,6 +30,7 @@ export default function PriceTag({
   price,
   unitDisplayType = "default",
   size,
+  persianDigits = true,
   removeZeroes = false,
   isLoading,
   isFree = false,
@@ -32,41 +38,34 @@ export default function PriceTag({
   const secondaryColor = "#FFFF";
   const [validatedPrice, setValidatedPrice] = useState<string | number>(price);
 
+  // Format price according to props
   useEffect(() => {
+    let formattedPrice: string | number = price; // start with number
+
+    // Round if needed → still a number
     if (removeZeroes || unitDisplayType === "compact") {
-      setValidatedPrice(removeTrailingZeros(price));
-    } else {
-      setValidatedPrice(formatCurrency(price));
-    }
-  }, [removeZeroes, price]);
-
-  function removeTrailingZeros(number: number) {
-    // Convert the number to a string
-    const numberString = number.toString();
-
-    // Find the index of the first non-zero digit from the right
-    let nonZeroIndex = numberString.length - 1;
-    while (nonZeroIndex >= 0 && numberString[nonZeroIndex] === "0") {
-      nonZeroIndex--;
+      formattedPrice = roundToThousands(formattedPrice as number);
     }
 
-    // Extract the non-zero portion of the string
-    const trimmedNumberString = numberString.slice(0, nonZeroIndex + 1);
+    // Add commas → now it's a string
+    formattedPrice = addCommas(formattedPrice as number);
 
-    // Convert the trimmed string back to a number
-    const trimmedNumber = parseInt(trimmedNumberString, 10);
+    // Convert to Persian digits → still string
+    if (persianDigits) {
+      formattedPrice = toPersianDigits(formattedPrice);
+    }
 
-    return trimmedNumber;
-  }
+    setValidatedPrice(formattedPrice as string);
+  }, [removeZeroes, price, persianDigits, unitDisplayType]);
 
   return (
     <span className={`flex w-max items-center justify-between gap-1`}>
       {!isLoading ? (
         <div className="flex items-center gap-1">
           <p
-            className={`text-${secondaryColor} mt-1 font-semibold ${
+            className={`text-${secondaryColor} mt-1 ${
               size === "sm"
-                ? "text-xl"
+                ? "text-md font-medium"
                 : size === "lg"
                 ? "text-3xl"
                 : "text-2xl"
