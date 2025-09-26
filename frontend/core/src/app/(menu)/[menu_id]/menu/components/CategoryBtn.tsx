@@ -142,9 +142,7 @@ export default function CategoryBtn({
       onClick={moveToCat}
       className={cn(
         "h-10 flex-none select-none rounded-(--radius-base) border-2 bg-(--secondary) px-4 py-2 text-(--primary) transition-colors duration-500",
-        activeCategory === id
-          ? "border-(--primary)"
-          : "border-transparent",
+        activeCategory === id ? "border-(--primary)" : "border-transparent",
         className
       )}
       ref={buttonRef}

@@ -90,7 +90,7 @@ export default async function Page(props: {
     params.menu_id
   );
   const categories = await getMenuCategories(params.menu_id);
-  const businessSlug = await params.menu_id;
+  const businessSlug = params.menu_id;
 
   return (
     <div className="relative flex flex-col bg-white">

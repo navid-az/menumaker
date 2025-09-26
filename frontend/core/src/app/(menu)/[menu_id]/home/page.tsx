@@ -11,7 +11,6 @@ import { cn } from "@/lib/utils";
 
 //types
 import { type Menu } from "../menu/page";
-import { type MenuGlobalStyling } from "../menu/page";
 
 // GET menu data
 export async function getMenuData(menu_id: string) {
@@ -46,9 +45,6 @@ export default async function page(props: {
   const params = await props.params;
 
   const menuData: Menu = await getMenuData(params.menu_id);
-  const globalStyling: MenuGlobalStyling = await getGlobalStyling(
-    params.menu_id
-  );
 
   return (
     <div className="relative flex h-screen w-screen flex-col justify-between overflow-x-hidden bg-(--secondary)">
@@ -87,15 +83,14 @@ export default async function page(props: {
                 src={`http://127.0.0.1:8000${menuData.secondary_image}`}
                 fill
                 alt="secondary_image"
-                className={`${
-                  globalStyling.border_radius === "full"
-                    ? "rounded-bl-[100px]"
-                    : "rounded-bl-(--radius-exception)"
-                } object-cover`}
+                className="rounded-bl-(--radius-md) object-cover"
               ></Image>
             </div>
           )}
-          <Button size="icon" className="ml-4 mt-4 text-(--primary)">
+          <Button
+            size="icon"
+            className="ml-4 mt-4 bg-(--secondary) text-(--primary)"
+          >
             <AlignLeft></AlignLeft>
           </Button>
           <svg
@@ -144,11 +139,7 @@ export default async function page(props: {
             src={`http://127.0.0.1:8000${menuData.tertiary_image}`}
             fill
             alt="tertiary_image"
-            className={`${
-              globalStyling.border_radius === "full"
-                ? "rounded-r-[40px]"
-                : "rounded-r-(--radius-exception)"
-            } object-cover`}
+            className="rounded-r-(--radius-sm) object-cover"
           ></Image>
         </div>
       )}
@@ -169,11 +160,7 @@ export default async function page(props: {
             src={`http://127.0.0.1:8000${menuData.primary_image}`}
             fill
             alt="primary_image"
-            className={`${
-              globalStyling.border_radius === "full"
-                ? "rounded-tr-[120px]"
-                : "rounded-tr-(--radius-exception)"
-            } object-cover`}
+            className="rounded-tr-(--radius-lg) object-cover"
           ></Image>
         </div>
       </footer>
