@@ -30,7 +30,7 @@ export default function MenuHeader({ menuData }: { menuData: Menu }) {
         <div className="flex gap-2">
           <Button
             onClick={() => callWaiter()}
-            className="rounded-(--radius-base) bg-(--secondary) text-(--primary)"
+            className="rounded-(--radius-base) bg-(--primary) text-(--secondary)"
           >
             <ConciergeBell></ConciergeBell>
             سالن دار

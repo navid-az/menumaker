@@ -70,7 +70,7 @@ export default function AddToCartBtn({
     <div
       onClick={(e) => e.stopPropagation()}
       className={cn(
-        "flex h-10 w-full justify-center gap-2 rounded-(--radius-base) bg-(--primary)",
+        "flex h-10 w-full justify-center gap-2 rounded-(--radius-base) bg-(--secondary)",
         className
       )}
     >
@@ -82,7 +82,7 @@ export default function AddToCartBtn({
             iconSrc="plus"
             globalStyling={globalStyling}
           ></StepperBtn>
-          <span className="mt-1 flex-initial basis-2/12 text-center text-lg text-(--secondary)">
+          <span className="mt-1 flex-initial basis-2/12 text-center text-lg text-(--primary)">
             <p className="text-xl">{quantity}</p>
           </span>
           <StepperBtn
@@ -94,7 +94,7 @@ export default function AddToCartBtn({
         </div>
       ) : (
         <Button
-          className="h-full w-full rounded-full bg-(--primary) text-(--secondary)"
+          className="h-full w-full rounded-full bg-(--secondary) text-(--primary)"
           onClick={handleAdd}
         >
           <Plus className="h-6 w-6 ltr:mr-2 rtl:ml-2" />
@@ -134,7 +134,7 @@ const StepperBtn = ({
       onClick={action}
       size="icon"
       className={cn(
-        `h-full w-24 flex-initial rounded-(--radius-inner) bg-(--secondary) text-(--primary)`,
+        `h-full w-24 flex-initial rounded-(--radius-inner) bg-(--primary) text-(--secondary)`,
         className
       )}
     >

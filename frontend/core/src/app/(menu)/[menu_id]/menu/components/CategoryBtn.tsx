@@ -18,7 +18,7 @@ import mapAnimationsToConfigs from "@/lib/mapAnimationsToConfigs";
 import { type MenuGlobalStyling } from "../page";
 import { type AnimationConfigType } from "@/components/global/InteractiveWrapper";
 type CategoryBtnType = {
-  icon: string;
+  icon: { name: string; image: string };
   parentType?: string;
   globalStyling: MenuGlobalStyling;
 };
@@ -141,8 +141,8 @@ export default function CategoryBtn({
       id={`category-${id}`}
       onClick={moveToCat}
       className={cn(
-        "h-10 flex-none select-none rounded-(--radius-base) border-2 bg-(--secondary) px-4 py-2 text-(--primary) transition-colors duration-500",
-        activeCategory === id ? "border-(--primary)" : "border-transparent",
+        "h-10 flex-none select-none rounded-(--radius-base) border-3 bg-(--primary) px-4 py-2 text-(--secondary) transition-colors duration-500",
+        activeCategory === id ? "border-(--secondary)" : "border-(--primary)",
         className
       )}
       ref={buttonRef}

@@ -9,6 +9,7 @@ import {
 } from "../../utilities/formatCurrency";
 
 //libraries
+import { cn } from "@/lib/utils";
 import { cva } from "class-variance-authority";
 
 //SVGs
@@ -24,6 +25,7 @@ type PriceTagType = {
   removeZeroes?: boolean;
   isLoading?: boolean;
   isFree?: boolean;
+  className?: string;
 };
 
 export default function PriceTag({
@@ -34,6 +36,7 @@ export default function PriceTag({
   removeZeroes = false,
   isLoading,
   isFree = false,
+  className,
 }: PriceTagType) {
   const secondaryColor = "#FFFF";
   const [validatedPrice, setValidatedPrice] = useState<string | number>(price);
@@ -59,7 +62,9 @@ export default function PriceTag({
   }, [removeZeroes, price, persianDigits, unitDisplayType]);
 
   return (
-    <span className={`flex w-max items-center justify-between gap-1`}>
+    <span
+      className={cn("flex w-max items-center justify-between gap-1", className)}
+    >
       {!isLoading ? (
         <div className="flex items-center gap-1">
           <p

@@ -84,7 +84,7 @@ export default async function ItemsCategory({
               id={category.id.toString()}
               name={category.name}
               parentType={type}
-              icon={category.icon.image}
+              icon={category.icon}
               globalStyling={globalStyling}
             ></CategoryBtn>
           )

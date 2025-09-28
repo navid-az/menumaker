@@ -45,22 +45,22 @@ export default function SearchBar() {
   }, [searchQuery]);
 
   return (
-    <div className="flex h-max flex-1 items-center justify-between rounded-(--radius-base) bg-(--secondary) p-1">
+    <div className="flex h-max flex-1 items-center justify-between rounded-(--radius-base) bg-(--primary) p-1">
       <Button
         ref={searchBtnRef}
         size="icon"
-        className="h-8 aspect-square rounded-full bg-(--primary) text-(--secondary)"
+        className="h-8 aspect-square rounded-full bg-(--secondary) text-(--primary)"
       >
         {isLoading ? (
           <Loader2 className="h-4 w-4 animate-spin"></Loader2>
         ) : (
-          <Search className="h-4 w-4 text-(--secondary)" />
+          <Search className="h-4 w-4 text-(--primary)" />
         )}
       </Button>
       <section className="flex h-full flex-1 items-center justify-between">
         <input
           ref={inputRef}
-          className="h-full flex-1 rounded-full bg-inherit px-2 text-right text-xs font-normal text-(--primary) caret-(--primary) outline-none placeholder:text-(--primary)/80"
+          className="h-full flex-1 rounded-full bg-inherit px-2 text-right text-xs font-normal text-(--secondary) caret-(--secondary) outline-none placeholder:text-(--secondary)/80"
           placeholder="جستجو آیتم"
           type="text"
           value={searchQuery}
@@ -75,7 +75,7 @@ export default function SearchBar() {
             size="icon"
             className="-mr-2 h-full bg-inherit text-inherit"
           >
-            <X className="h-4 w-4 text-(--primary)"></X>
+            <X className="h-4 w-4 text-(--secondary)"></X>
           </Button>
         )}
       </section>
