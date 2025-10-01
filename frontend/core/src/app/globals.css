@@ -161,7 +161,7 @@
 /* ripple animation effect */
 .effect-container {
   overflow: hidden;
-  position: relative;
+  /* position: relative; */
   --effect-name: ripple;
   --effect-duration: 800ms;
   --effect-top: 0;

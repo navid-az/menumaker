@@ -74,7 +74,27 @@ export default function CategoryBtn({
   globalStyling,
 }: ButtonProps) {
   const [isIconOnly, setIsIconOnly] = useState(false);
+  const [lastChangeByClick, setLastChangeByClick] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const rippleRef = useRef<HTMLDivElement>(null);
+
+  //component specific animation settings
+  const AddToCartBtnAnimationConfigs: AnimationConfigType = {
+    ripple: { duration: 1200, size: 100, color: globalStyling.secondary_color },
+    tactile: {},
+  };
+  const ripple = useRippleAnimation(
+    rippleRef,
+    AddToCartBtnAnimationConfigs.ripple,
+    globalStyling.click_animation_enabled &&
+      globalStyling.click_animation_type.includes("ripple")
+  );
+  const tactile = useTactileAnimation(
+    buttonRef,
+    AddToCartBtnAnimationConfigs.tactile,
+    globalStyling.click_animation_enabled &&
+      globalStyling.click_animation_type.includes("tactile")
+  );
 
   const { activeCategory, updateActiveCategory, updateIsAutoScrolling } =
     useCategoryBtn();
@@ -84,6 +104,7 @@ export default function CategoryBtn({
     (state) => state.updateShouldAutoAnimate
   );
 
+  // Change style depending on icon/name availability
   useEffect(() => {
     if (!name && icon) {
       setIsIconOnly(true);
@@ -108,12 +129,24 @@ export default function CategoryBtn({
         });
       }
 
+      // Only auto animate if category changed via scrolling
+      if (!lastChangeByClick) {
+        ripple();
+        tactile();
+      }
+
+      setLastChangeByClick(false); // reset flag
       updateShouldAutoAnimate(true);
     }
   }, [activeCategory]);
 
+  const handleClick = () => {
+    setLastChangeByClick(true);
+  };
+
   //move to the related items on click
   const moveToCat = () => {
+    handleClick();
     updateShouldAutoAnimate(false);
     updateIsAutoScrolling(true); // <--- lock observer
 
@@ -131,22 +164,29 @@ export default function CategoryBtn({
           behavior: "smooth",
         });
 
-        updateIsAutoScrolling(false);
+        setTimeout(() => {
+          updateIsAutoScrolling(false);
+        }, 600);
       }
     }
   };
 
   return (
     <Button
-      id={`category-${id}`}
       onClick={moveToCat}
+      ref={buttonRef}
+      id={`category-${id}`}
       className={cn(
-        "h-10 flex-none select-none rounded-(--radius-base) border-3 bg-(--primary) px-4 py-2 text-(--secondary) transition-colors duration-500",
+        "h-10 flex-none relative select-none rounded-(--radius-base) border-3 bg-(--primary) px-4 py-2 text-(--secondary) transition-colors duration-500",
         activeCategory === id ? "border-(--secondary)" : "border-(--primary)",
         className
       )}
-      ref={buttonRef}
     >
+      <div
+        onClick={handleClick}
+        ref={rippleRef}
+        className="absolute w-full h-full scale-pro rounded-(--radius-base)"
+      ></div>
       {icon && (
         <Image
           priority

@@ -40,7 +40,7 @@ export type MenuGlobalStyling = {
 // GET menu data
 export async function getMenuData(menu_id: string) {
   try {
-    let res = await fetch(`http://127.0.0.1:8000/menu/venhan`);
+    let res = await fetch(`http://127.0.0.1:8000/menu/${menu_id}/`);
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
     }
@@ -93,7 +93,7 @@ export default async function Page(props: {
   const businessSlug = params.menu_id;
 
   return (
-    <div className="relative flex flex-col bg-white">
+    <div className="relative flex flex-col bg-(--bg)">
       <MenuHeader menuData={menuData}></MenuHeader>
       <ItemsCategory params={params}></ItemsCategory>
       <MenuItemsWrapper
@@ -102,6 +102,7 @@ export default async function Page(props: {
         globalStyling={globalStyling}
       ></MenuItemsWrapper>
       <CartBtn
+        type="compact"
         businessSlug={businessSlug}
         categories={categories}
         globalStyling={globalStyling}

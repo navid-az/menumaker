@@ -1,6 +1,6 @@
 "use client";
 
-import React, { CSSProperties } from "react";
+import React, { CSSProperties, useRef } from "react";
 
 //components
 import Image from "next/image";
@@ -18,6 +18,8 @@ import AddToCartBtn from "../AddToCartBtn";
 
 //hooks
 import { useMenuItemDrawer } from "@/lib/stores";
+import { useRippleAnimation } from "@/app/hooks/useRippleAnimation";
+import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
 
 //SVGs
 import mapAnimationsToConfigs from "@/lib/mapAnimationsToConfigs";
@@ -66,23 +68,41 @@ export function MenuItem({
     setDrawerIsOpen();
   };
 
+  const animationRef = useRef(null);
+
   //component specific animation settings
   const MenuItemAnimationConfigs: AnimationConfigType = {
-    ripple: { duration: 600, size: 200 },
-    tactile: {},
+    ripple: { duration: 600, size: 200, color: globalStyling.secondary_color },
+    tactile: { scale: 0.02 },
   };
+  useRippleAnimation(
+    animationRef,
+    MenuItemAnimationConfigs.ripple,
+    globalStyling.click_animation_enabled &&
+      globalStyling.click_animation_type.includes("ripple")
+  );
+  useTactileAnimation(
+    animationRef,
+    MenuItemAnimationConfigs.tactile,
+    globalStyling.click_animation_enabled &&
+      globalStyling.click_animation_type.includes("tactile")
+  );
 
   const animationConfigs = mapAnimationsToConfigs(
     MenuItemAnimationConfigs,
     globalStyling.click_animation_type
   );
 
-  const fullScreen = false;
+  const fullScreen = true;
   return (
     <Drawer setBackgroundColorOnScale={false} onOpenChange={handleDrawer}>
-      <DrawerTrigger asChild>
+      <DrawerTrigger
+        className="scale-pro rounded-(--radius-exception)"
+        ref={animationRef}
+        asChild
+      >
         {isFeatured ? (
-          <div className="relative col-span-2 flex h-[300px] flex-none flex-col">
+          <div className="col-span-2 flex h-[300px] flex-none flex-col">
             <div className="relative flex h-full w-full">
               <Image
                 className="rounded-(--radius-base) object-cover object-top"
@@ -118,17 +138,17 @@ export function MenuItem({
             </div>
           </div>
         ) : !fullScreen ? (
-          <div className="relative flex h-[300px] flex-none flex-col xss:col-span-1">
-            <div className="relative flex h-full w-full">
+          <div className="flex h-[300px] flex-none flex-col xss:col-span-1">
+            <div className="relative flex basis-6/6 w-full">
               <Image
-                className="rounded-t-(--radius-exception) object-cover"
+                className="rounded-t-(--radius-exception) object-cover absolute -z-5"
                 src={`http://127.0.0.1:8000${image}`}
                 alt={name}
                 fill
               ></Image>
             </div>
             <div
-              className={`flex w-full flex-none shrink-0 basis-5/12 flex-col justify-between gap-3 rounded-b-(--radius-exception) bg-(--primary) p-2 text-(--secondary)`}
+              className={`relative bottom-0 flex w-full flex-none shrink-0 basis-5/12 flex-col justify-between gap-3 rounded-b-(--radius-exception) bg-(--primary) p-2 text-(--secondary)`}
             >
               <div className="space-y-0.5">
                 <p
@@ -148,14 +168,14 @@ export function MenuItem({
           </div>
         ) : (
           <div className="relative flex h-[300px] flex-none flex-col xss:col-span-1">
-            <div className="relative flex h-full w-full">
-              <Image
-                className="rounded-(--radius-exception) object-cover"
-                src={`http://127.0.0.1:8000${image}`}
-                alt={name}
-                fill
-              ></Image>
-            </div>
+            {/* Removing -z-5 will apply ripple animation effect BEHIND the image
+            This only works if the element doesn't have a background(png) */}
+            <Image
+              className="rounded-(--radius-exception) absolute -z-5 object-cover"
+              src={`http://127.0.0.1:8000${image}`}
+              alt={name}
+              fill
+            ></Image>
             <div
               className={`absolute bottom-0 flex w-full h-full justify-end flex-none shrink-0 flex-col gap-3 from-20% rounded-(--radius-exception) bg-linear-to-t from-(--primary)/90 to-transparent to-60% p-2 text-(--secondary)`}
             >
@@ -188,13 +208,14 @@ export function MenuItem({
         {/* drawer handle */}
         <div className="mx-auto mb-1.5 h-2 w-[100px] rounded-full bg-(--secondary)"></div>
 
-        <div className="relative h-56 w-full xss:h-64 sm:h-[300px]">
+        <div className="w-full px-1.5 backdrop-blur-4xl flex justify-center items-center">
           <Image
-            className="rounded-3xl object-cover px-1.5 "
+            className="object-contain"
             src={`http://127.0.0.1:8000${image}`}
             alt={name}
-            fill
-          ></Image>
+            width={384}
+            height={0}
+          />
         </div>
         <DrawerHeader className="flex flex-col text-right">
           <div className="flex w-full items-center justify-between text-(--primary)">

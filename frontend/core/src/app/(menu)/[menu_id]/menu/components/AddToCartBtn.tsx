@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 //SVGs
 import { Minus, Plus, Trash } from "@/app/components/svgs";
@@ -20,6 +20,8 @@ import { useItemCart } from "@/lib/stores";
 //types
 import { type AnimationConfigType } from "@/components/global/InteractiveWrapper";
 import { type MenuGlobalStyling } from "../page";
+import { useRippleAnimation } from "@/app/hooks/useRippleAnimation";
+import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
 type AddToCartBtnType = {
   itemId: number;
   globalStyling: MenuGlobalStyling;
@@ -124,17 +126,31 @@ const StepperBtn = ({
 }: ValueChangeBtnType) => {
   //component specific animation settings
   const AddToCartBtnAnimationConfigs: AnimationConfigType = {
-    ripple: { duration: 600, size: 200 },
-    tactile: {},
+    ripple: { duration: 1200, size: 100, color: globalStyling.secondary_color },
+    tactile: { scale: 0.06 },
   };
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  useRippleAnimation(
+    buttonRef,
+    AddToCartBtnAnimationConfigs.ripple,
+    globalStyling.click_animation_enabled &&
+      globalStyling.click_animation_type.includes("ripple")
+  );
+  useTactileAnimation(
+    buttonRef,
+    AddToCartBtnAnimationConfigs.tactile,
+    globalStyling.click_animation_enabled &&
+      globalStyling.click_animation_type.includes("tactile")
+  );
 
   return (
     <Button
+      ref={buttonRef}
       name={name}
       onClick={action}
       size="icon"
       className={cn(
-        `h-full w-24 flex-initial rounded-(--radius-inner) bg-(--primary) text-(--secondary)`,
+        "scale-pro h-full w-24 flex-initial rounded-(--radius-inner) bg-(--primary) text-(--secondary)",
         className
       )}
     >
