@@ -67,7 +67,7 @@ export default function SliderTitle() {
   }, [stepTitle]);
 
   return (
-    <>
+    <div className="flex flex-col">
       <div className="flex justify-between">
         <h1
           ref={titleRef}
@@ -88,6 +88,6 @@ export default function SliderTitle() {
       >
         {subtitle}
       </h3>
-    </>
+    </div>
   );
 }

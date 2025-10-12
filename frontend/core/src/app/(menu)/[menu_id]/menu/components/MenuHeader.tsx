@@ -12,6 +12,9 @@ import { AlignLeft, ConciergeBell } from "lucide-react";
 //types
 import { type Menu } from "../page";
 
+//libraries
+import { cn } from "@/lib/utils";
+
 export default function MenuHeader({ menuData }: { menuData: Menu }) {
   async function callWaiter() {
     const sessionCode = sessionStorage.getItem("session_code");
@@ -25,16 +28,23 @@ export default function MenuHeader({ menuData }: { menuData: Menu }) {
   }
 
   return (
-    <section className="flex w-full flex-col gap-4 rounded px-4 pt-4">
-      <section className="flex items-center justify-between">
+    <section
+      className={cn(
+        "flex w-full flex-col gap-4 rounded px-4 pt-4"
+        // isPreview && "mt-12"
+      )}
+    >
+      <section className="flex items-center justify-between h-10">
         <div className="flex gap-2">
-          <Button
-            onClick={() => callWaiter()}
-            className="rounded-(--radius-base) bg-(--primary) text-(--secondary)"
-          >
-            <ConciergeBell></ConciergeBell>
-            سالن دار
-          </Button>
+          {menuData.call_waiter_enabled && (
+            <Button
+              onClick={() => callWaiter()}
+              className="rounded-(--radius-base) bg-(--primary) text-(--secondary)"
+            >
+              <ConciergeBell></ConciergeBell>
+              سالن دار
+            </Button>
+          )}
         </div>
         <AlignLeft className="ml-2 text-(--primary)"></AlignLeft>
       </section>

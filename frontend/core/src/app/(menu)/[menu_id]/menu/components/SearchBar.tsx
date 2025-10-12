@@ -49,7 +49,7 @@ export default function SearchBar() {
       <Button
         ref={searchBtnRef}
         size="icon"
-        className="h-8 aspect-square rounded-full bg-(--secondary) text-(--primary)"
+        className="h-8 aspect-square rounded-(--radius-inner) bg-(--secondary) text-(--primary)"
       >
         {isLoading ? (
           <Loader2 className="h-4 w-4 animate-spin"></Loader2>

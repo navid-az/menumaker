@@ -11,49 +11,57 @@ export function getStyleVars(config: MenuGlobalStyling): React.CSSProperties {
       config.border_radius === "sm"
         ? "4px"
         : config.border_radius === "md"
-        ? "6px"
+        ? "10px"
         : config.border_radius === "lg"
-        ? "8px"
+        ? "14px"
         : "9999px", // full
     "--radius-inner":
       config.border_radius === "sm"
+        ? "3px"
+        : config.border_radius === "md"
+        ? "6px"
+        : config.border_radius === "lg"
+        ? "10px"
+        : "9999px", // full,
+    "--radius-inner-alt":
+      config.border_radius === "sm"
         ? "2px"
         : config.border_radius === "md"
-        ? "4px"
-        : config.border_radius === "lg"
         ? "6px"
+        : config.border_radius === "lg"
+        ? "10px"
         : "9999px", // full,
     "--radius-exception":
       config.border_radius === "sm"
-        ? "2px"
-        : config.border_radius === "md"
         ? "4px"
-        : config.border_radius === "lg"
-        ? "6px"
-        : "24px", // full,
-    "--radius-sm":
-      config.border_radius === "sm"
-        ? "0.5rem"
         : config.border_radius === "md"
-        ? "1rem"
+        ? "10px"
         : config.border_radius === "lg"
-        ? "3rem"
-        : "4rem", // full,
-    "--radius-md":
-      config.border_radius === "sm"
-        ? "0.5rem"
-        : config.border_radius === "md"
-        ? "2rem"
-        : config.border_radius === "lg"
-        ? "5rem"
-        : "7rem", // full,
-    "--radius-lg":
-      config.border_radius === "sm"
-        ? "0.5rem"
-        : config.border_radius === "md"
-        ? "2rem"
-        : config.border_radius === "lg"
-        ? "6rem"
-        : "8rem", // full,
+        ? "18px"
+        : "26px", // full,
+    // "--radius-sm":
+    //   config.border_radius === "sm"
+    //     ? "0.5rem"
+    //     : config.border_radius === "md"
+    //     ? "1rem"
+    //     : config.border_radius === "lg"
+    //     ? "3rem"
+    //     : "4rem", // full,
+    // "--radius-md":
+    //   config.border_radius === "sm"
+    //     ? "0.5rem"
+    //     : config.border_radius === "md"
+    //     ? "2rem"
+    //     : config.border_radius === "lg"
+    //     ? "5rem"
+    //     : "7rem", // full,
+    // "--radius-lg":
+    //   config.border_radius === "sm"
+    //     ? "0.5rem"
+    //     : config.border_radius === "md"
+    //     ? "2rem"
+    //     : config.border_radius === "lg"
+    //     ? "6rem"
+    //     : "8rem", // full,
   } as React.CSSProperties;
 }

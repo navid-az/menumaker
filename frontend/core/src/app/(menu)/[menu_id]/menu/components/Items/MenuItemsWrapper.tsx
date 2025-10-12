@@ -32,11 +32,9 @@ export type CategoriesType = {
 
 export default function MenuItemsWrapper({
   categories,
-  params,
   globalStyling,
 }: {
   categories: CategoriesType[];
-  params: { menu_id: string };
   globalStyling: MenuGlobalStyling;
 }) {
   const searchParams = useSearchParams();

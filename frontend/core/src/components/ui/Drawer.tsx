@@ -3,17 +3,26 @@
 import * as React from "react";
 import { Drawer as DrawerPrimitive } from "vaul";
 
+import { usePreviewContainer } from "@/app/(creator)/builder/components/preview/PreviewContext";
+
 import { cn } from "@/lib/utils";
 
 const Drawer = ({
   shouldScaleBackground = true,
+  container,
   ...props
-}: React.ComponentProps<typeof DrawerPrimitive.Root>) => (
-  <DrawerPrimitive.Root
-    shouldScaleBackground={shouldScaleBackground}
-    {...props}
-  />
-);
+}: React.ComponentProps<typeof DrawerPrimitive.Root>) => {
+  const contextContainer = usePreviewContainer(); // Undefined outside PreviewProvider
+  const finalContainer = container || contextContainer || undefined; // Fallback to body if undefined
+
+  return (
+    <DrawerPrimitive.Root
+      shouldScaleBackground={shouldScaleBackground}
+      container={finalContainer}
+      {...props}
+    />
+  );
+};
 Drawer.displayName = "Drawer";
 
 const DrawerTrigger = DrawerPrimitive.Trigger;

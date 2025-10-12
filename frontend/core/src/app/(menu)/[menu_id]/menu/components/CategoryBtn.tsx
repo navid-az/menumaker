@@ -18,7 +18,7 @@ import mapAnimationsToConfigs from "@/lib/mapAnimationsToConfigs";
 import { type MenuGlobalStyling } from "../page";
 import { type AnimationConfigType } from "@/components/global/InteractiveWrapper";
 type CategoryBtnType = {
-  icon: { name: string; image: string };
+  icon?: { name: string; image: string };
   parentType?: string;
   globalStyling: MenuGlobalStyling;
 };
@@ -75,7 +75,7 @@ export default function CategoryBtn({
 }: ButtonProps) {
   const [isIconOnly, setIsIconOnly] = useState(false);
   const [lastChangeByClick, setLastChangeByClick] = useState(false);
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const buttonRef = useRef<HTMLDivElement>(null);
   const rippleRef = useRef<HTMLDivElement>(null);
 
   //component specific animation settings
@@ -172,36 +172,37 @@ export default function CategoryBtn({
   };
 
   return (
-    <Button
-      onClick={moveToCat}
-      ref={buttonRef}
-      id={`category-${id}`}
-      className={cn(
-        "h-10 flex-none relative select-none rounded-(--radius-base) border-3 bg-(--primary) px-4 py-2 text-(--secondary) transition-colors duration-500",
-        activeCategory === id ? "border-(--secondary)" : "border-(--primary)",
-        className
-      )}
-    >
-      <div
-        onClick={handleClick}
-        ref={rippleRef}
-        className="absolute w-full h-full scale-pro rounded-(--radius-base)"
-      ></div>
-      {icon && (
-        <Image
-          priority
-          className={`${isIconOnly ? "ml-0" : "ltr:mr-2 rtl:ml-2"} ${
-            !isIconOnly && size === "lg" ? "ml-4" : ""
-          }`}
-          src={"http://localhost:8000" + icon}
-          width={size === "lg" ? 28 : size === "sm" ? 22 : 24}
-          height={size === "lg" ? 28 : size === "sm" ? 22 : 24}
-          alt={name || "icon"}
-        ></Image>
-      )}
-      <p className={`${size === "lg" ? " text-lg font-bold" : "text-base"}`}>
-        {name}
-      </p>
-    </Button>
+    <div ref={buttonRef} className="w-max h-max">
+      <Button
+        onClick={moveToCat}
+        id={`category-${id}`}
+        className={cn(
+          "h-10 flex-none relative select-none rounded-(--radius-base) border-3 bg-(--primary) px-4 py-2 text-(--secondary)",
+          activeCategory === id ? "border-(--secondary)" : "border-(--primary)",
+          className
+        )}
+      >
+        <div
+          onClick={handleClick}
+          ref={rippleRef}
+          className="absolute w-full h-full scale-pro rounded-(--radius-base)"
+        ></div>
+        {icon && (
+          <Image
+            priority
+            className={`${isIconOnly ? "ml-0" : "ltr:mr-2 rtl:ml-2"} ${
+              !isIconOnly && size === "lg" ? "ml-4" : ""
+            }`}
+            src={"http://localhost:8000" + icon}
+            width={size === "lg" ? 28 : size === "sm" ? 22 : 24}
+            height={size === "lg" ? 28 : size === "sm" ? 22 : 24}
+            alt={name || "icon"}
+          ></Image>
+        )}
+        <p className={`${size === "lg" ? " text-lg font-bold" : "text-base"}`}>
+          {name}
+        </p>
+      </Button>
+    </div>
   );
 }

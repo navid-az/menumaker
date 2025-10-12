@@ -3,6 +3,7 @@
 import React, { useEffect, useRef } from "react";
 
 //components
+import { Button } from "@/components/ui/button";
 import { SliderNavigator } from "./SliderNavigator";
 import SliderTitle from "./SliderTitle";
 
@@ -11,6 +12,9 @@ import { useSliderTitle, useSlider } from "@/lib/stores";
 
 //utils
 import { cn } from "@/lib/utils";
+
+//SVGs
+import { Eye } from "lucide-react";
 
 //types
 type SliderType = {
@@ -68,8 +72,12 @@ export function Slider({
 
   return (
     <section className="flex h-screen w-full flex-col items-center justify-center gap-4 transition-all duration-300 ease-in-out sm:gap-7">
-      <header className="flex w-full flex-col gap-1">
+      <header className="flex w-full gap-1 justify-between items-center">
         <SliderTitle></SliderTitle>
+        <Button className="lg:hidden rounded-full">
+          <Eye></Eye>
+          مشاهده منو
+        </Button>
       </header>
       <div
         ref={sectionsContainerRef}

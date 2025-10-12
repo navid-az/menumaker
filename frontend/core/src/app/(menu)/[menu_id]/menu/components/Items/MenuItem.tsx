@@ -93,7 +93,7 @@ export function MenuItem({
     globalStyling.click_animation_type
   );
 
-  const fullScreen = true;
+  const fullScreen = false;
   return (
     <Drawer setBackgroundColorOnScale={false} onOpenChange={handleDrawer}>
       <DrawerTrigger
@@ -105,7 +105,7 @@ export function MenuItem({
           <div className="col-span-2 flex h-[300px] flex-none flex-col">
             <div className="relative flex h-full w-full">
               <Image
-                className="rounded-(--radius-base) object-cover object-top"
+                className="rounded-t-(--radius-exception) object-cover object-top"
                 src={`http://127.0.0.1:8000${image}`}
                 alt={name}
                 fill
@@ -114,7 +114,7 @@ export function MenuItem({
             <div
               className={`flex w-full flex-none shrink-0 gap-4 basis-5/12 flex-col justify-between rounded-b-(--radius-exception) bg-(--primary) text-(--secondary) p-2`}
             >
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col">
                 <div className="flex justify-between items-center">
                   <p className="text-lg font-semibold">{name}</p>
                   <PriceTag
@@ -171,13 +171,13 @@ export function MenuItem({
             {/* Removing -z-5 will apply ripple animation effect BEHIND the image
             This only works if the element doesn't have a background(png) */}
             <Image
-              className="rounded-(--radius-exception) absolute -z-5 object-cover"
+              className="rounded-(--radius-exception) absolute -z-5 object-cover "
               src={`http://127.0.0.1:8000${image}`}
               alt={name}
               fill
             ></Image>
             <div
-              className={`absolute bottom-0 flex w-full h-full justify-end flex-none shrink-0 flex-col gap-3 from-20% rounded-(--radius-exception) bg-linear-to-t from-(--primary)/90 to-transparent to-60% p-2 text-(--secondary)`}
+              className={`absolute bottom-0 flex w-full h-full justify-end flex-none  shrink-0 flex-col gap-3 from-20% rounded-(--radius-exception) bg-linear-to-t from-(--primary)/90 to-transparent to-60% p-2 text-(--secondary)`}
             >
               <div className="space-y-0.5">
                 <p
@@ -203,7 +203,7 @@ export function MenuItem({
       </DrawerTrigger>
       <DrawerContent
         style={styleVars as CSSProperties}
-        className="rounded-t-3xl border-0 bg-(--bg) pt-1.5"
+        className="rounded-t-3xl border-0 bg-(--bg,_#ffffff) pt-1.5"
       >
         {/* drawer handle */}
         <div className="mx-auto mb-1.5 h-2 w-[100px] rounded-full bg-(--secondary)"></div>

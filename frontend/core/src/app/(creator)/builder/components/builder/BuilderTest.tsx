@@ -121,6 +121,7 @@ export default function BuilderTest({
       global_styling: {
         color_palette: ["#0d3b66", "#faf0ca", "#f4d35e"],
         border_radius: "full",
+        click_animation_type: [],
       },
       menu_sections: [],
       home_title: "",

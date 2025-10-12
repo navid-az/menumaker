@@ -1,4 +1,5 @@
 //components
+import Menu from "./components/Menu";
 import MenuItemsWrapper from "./components/Items/MenuItemsWrapper";
 import ItemsCategory from "./components/ItemsCategory";
 import CartBtn from "./components/CartBtn";
@@ -93,16 +94,23 @@ export default async function Page(props: {
   const businessSlug = params.menu_id;
 
   return (
-    <div className="relative flex flex-col bg-(--bg)">
+    <div className="relative flex flex-col bg-(--bg) scrollbar-hide">
+      {/* <Menu
+        data={menuData}
+        businessSlug={params.menu_id}
+        globalStyling={globalStyling}
+        categories={categories}
+      ></Menu> */}
       <MenuHeader menuData={menuData}></MenuHeader>
-      <ItemsCategory params={params}></ItemsCategory>
+      <ItemsCategory
+        categories={categories}
+        globalStyling={globalStyling}
+      ></ItemsCategory>
       <MenuItemsWrapper
         categories={categories}
-        params={params}
         globalStyling={globalStyling}
       ></MenuItemsWrapper>
       <CartBtn
-        type="compact"
         businessSlug={businessSlug}
         categories={categories}
         globalStyling={globalStyling}

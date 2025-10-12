@@ -127,7 +127,7 @@ const StepperBtn = ({
   //component specific animation settings
   const AddToCartBtnAnimationConfigs: AnimationConfigType = {
     ripple: { duration: 1200, size: 100, color: globalStyling.secondary_color },
-    tactile: { scale: 0.06 },
+    tactile: { scale: 0.05 },
   };
   const buttonRef = useRef<HTMLButtonElement>(null);
   useRippleAnimation(
@@ -150,7 +150,7 @@ const StepperBtn = ({
       onClick={action}
       size="icon"
       className={cn(
-        "scale-pro h-full w-24 flex-initial rounded-(--radius-inner) bg-(--primary) text-(--secondary)",
+        "scale-pro h-full w-24 flex-initial rounded-(--radius-inner-alt) bg-(--primary) text-(--secondary)",
         className
       )}
     >

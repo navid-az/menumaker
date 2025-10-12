@@ -4,6 +4,7 @@ import CategoryBtn from "./CategoryBtn";
 //types
 import { type MenuGlobalStyling } from "../page";
 import { type MenuItemType } from "./Items/MenuItem";
+import { CategoriesType } from "./Items/MenuItemsWrapper";
 export type CategoryType = {
   id: number;
   name: string;
@@ -12,64 +13,31 @@ export type CategoryType = {
   items: MenuItemType[];
 };
 type ItemsCategoryType = {
-  params: { menu_id: string };
+  categories: CategoriesType[];
   type?: "vertical" | "horizontal";
   variant?: "minimal" | "classic";
   isSticky?: boolean;
   hasBackGround?: boolean;
   allowAnimation?: boolean;
+  globalStyling: MenuGlobalStyling;
 };
 
-// GET menu categories
-export async function getCategories(menu_id: string) {
-  try {
-    let res = await fetch(
-      `http://127.0.0.1:8000/business/${menu_id}/categories`
-    );
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
-    return await res.json();
-  } catch (error) {
-    console.error("error", error);
-  }
-}
-
-// GET menu global stylings
-export async function getGlobalStyling(menu_id: string) {
-  try {
-    let res = await fetch(
-      `http://127.0.0.1:8000/menu/${menu_id}/global-styling/`
-    );
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
-    return await res.json();
-  } catch (error) {
-    console.error("error fetching data:", error);
-  }
-}
-
-export default async function ItemsCategory({
-  params,
+export default function ItemsCategory({
+  categories,
   type = "horizontal",
   variant = "minimal",
   isSticky = true,
   hasBackGround = false,
   allowAnimation = true,
+  globalStyling,
 }: ItemsCategoryType) {
-  const categories = await getCategories(params.menu_id);
-  const globalStyling: MenuGlobalStyling = await getGlobalStyling(
-    params.menu_id
-  );
-
   return (
     <div
       className={`hide-scrollbar avoid-stretch ${
         isSticky && "sticky"
       } top-0 z-50 flex overflow-y-auto ${
         hasBackGround && "bg-primary"
-      } p-4 transition-all ${
+      } p-4 transition-all duration-300 ${
         type == "horizontal"
           ? "w-full flex-row gap-2"
           : "flex-color h-screen w-2/12 flex-col gap-4"

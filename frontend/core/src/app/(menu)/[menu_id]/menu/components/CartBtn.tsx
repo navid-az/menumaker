@@ -113,7 +113,7 @@ export default function CartBtn({
       <Button
         ref={cartBtnRef}
         asChild
-        className="!fixed bottom-[-80px] mx-4 mb-4 border-2 border-(--secondary) left-0 right-0 z-50 flex h-max items-center justify-between rounded-(--radius-base) bg-(--primary) p-2 text-(--secondary) shadow-2xl xs:p-2.5"
+        className="fixed bottom-[-80px] mx-4 mb-4 border-2 border-(--secondary) left-0 right-0 z-50 flex h-max items-center justify-between rounded-(--radius-base) bg-(--primary) p-2 text-(--secondary) shadow-2xl xs:p-2.5"
       >
         <Link href={`/${businessSlug}/orders`}>
           <div className=" flex items-center pr-2">
@@ -156,7 +156,7 @@ export default function CartBtn({
     );
   } else if (type === "compact") {
     return (
-      <div className="fixed bottom-[-80px] z-50 mb-4 flex w-screen justify-center">
+      <div className="fixed w-full bottom-[-80px] z-50 mb-4 flex justify-center">
         <Button
           ref={cartBtnRef}
           asChild
