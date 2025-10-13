@@ -15,5 +15,9 @@ export default function MenuWrapper({
 }) {
   const styleVars = getStyleVars(config);
 
-  return <div style={styleVars as React.CSSProperties}>{children}</div>;
+  return (
+    <div className="h-screen" style={styleVars as React.CSSProperties}>
+      {children}
+    </div>
+  );
 }

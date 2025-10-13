@@ -4,6 +4,7 @@ import React, { useRef } from "react";
 
 //components
 import Menu from "@/app/(menu)/[menu_id]/menu/components/Menu";
+import Home from "@/app/(menu)/[menu_id]/home/components/Home";
 import Image from "next/image";
 import HomePagePreview from "./HomePagePreview";
 import ItemsPagePreview from "./ItemsPagePreview";
@@ -207,6 +208,30 @@ export default function MenuPreview() {
         : globalBorderRadius === "lg"
         ? "18px"
         : "26px", // full,
+    "--radius-sm":
+      globalBorderRadius === "sm"
+        ? "0.5rem"
+        : globalBorderRadius === "md"
+        ? "1rem"
+        : globalBorderRadius === "lg"
+        ? "3rem"
+        : "4rem", // full,
+    "--radius-md":
+      globalBorderRadius === "sm"
+        ? "0.5rem"
+        : globalBorderRadius === "md"
+        ? "2rem"
+        : globalBorderRadius === "lg"
+        ? "5rem"
+        : "7rem", // full,
+    "--radius-lg":
+      globalBorderRadius === "sm"
+        ? "0.5rem"
+        : globalBorderRadius === "md"
+        ? "2rem"
+        : globalBorderRadius === "lg"
+        ? "6rem"
+        : "8rem", // full,
   };
 
   const screenRef = useRef<HTMLDivElement>(null);
@@ -229,6 +254,7 @@ export default function MenuPreview() {
           className="relative w-full h-full overflow-y-scroll overflow-hidden hide-scrollbar rounded-4xl border-3 border-primary/20"
         >
           <PreviewProvider container={screenRef.current}>
+            {/* <Home isPreview menuData={menu}></Home> */}
             <Menu
               isPreview={true}
               categories={mockCategories}

@@ -122,6 +122,7 @@ export default function BuilderTest({
         color_palette: ["#0d3b66", "#faf0ca", "#f4d35e"],
         border_radius: "full",
         click_animation_type: [],
+        click_animation_enabled: false,
       },
       menu_sections: [],
       home_title: "",

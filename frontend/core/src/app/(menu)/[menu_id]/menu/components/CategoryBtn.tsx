@@ -177,7 +177,7 @@ export default function CategoryBtn({
         onClick={moveToCat}
         id={`category-${id}`}
         className={cn(
-          "h-10 flex-none relative select-none rounded-(--radius-base) border-3 bg-(--primary) px-4 py-2 text-(--secondary)",
+          "h-10 flex-none relative select-none rounded-(--radius-base) border-3 bg-(--primary) px-4 py-2 text-(--secondary) transition-color duration-300",
           activeCategory === id ? "border-(--secondary)" : "border-(--primary)",
           className
         )}

@@ -1,7 +1,7 @@
 //types
-import { type MenuGlobalStyling } from "@/app/types/api/globalStyling";
+import { type MenuGlobalStylingUI } from "@/app/types/ui/menu";
 
-export function getStyleVars(config: MenuGlobalStyling): React.CSSProperties {
+export function getStyleVars(config: MenuGlobalStylingUI): React.CSSProperties {
   return {
     "--primary": config.primary_color,
     "--secondary": config.secondary_color,
@@ -39,29 +39,29 @@ export function getStyleVars(config: MenuGlobalStyling): React.CSSProperties {
         : config.border_radius === "lg"
         ? "18px"
         : "26px", // full,
-    // "--radius-sm":
-    //   config.border_radius === "sm"
-    //     ? "0.5rem"
-    //     : config.border_radius === "md"
-    //     ? "1rem"
-    //     : config.border_radius === "lg"
-    //     ? "3rem"
-    //     : "4rem", // full,
-    // "--radius-md":
-    //   config.border_radius === "sm"
-    //     ? "0.5rem"
-    //     : config.border_radius === "md"
-    //     ? "2rem"
-    //     : config.border_radius === "lg"
-    //     ? "5rem"
-    //     : "7rem", // full,
-    // "--radius-lg":
-    //   config.border_radius === "sm"
-    //     ? "0.5rem"
-    //     : config.border_radius === "md"
-    //     ? "2rem"
-    //     : config.border_radius === "lg"
-    //     ? "6rem"
-    //     : "8rem", // full,
+    "--radius-sm":
+      config.border_radius === "sm"
+        ? "0.5rem"
+        : config.border_radius === "md"
+        ? "1rem"
+        : config.border_radius === "lg"
+        ? "3rem"
+        : "4rem", // full,
+    "--radius-md":
+      config.border_radius === "sm"
+        ? "0.5rem"
+        : config.border_radius === "md"
+        ? "2rem"
+        : config.border_radius === "lg"
+        ? "5rem"
+        : "7rem", // full,
+    "--radius-lg":
+      config.border_radius === "sm"
+        ? "0.5rem"
+        : config.border_radius === "md"
+        ? "2rem"
+        : config.border_radius === "lg"
+        ? "6rem"
+        : "8rem", // full,
   } as React.CSSProperties;
 }

@@ -18,6 +18,7 @@ export const formToMenuGlobalStyling = (
     bg_color: bg,
     border_radius: form.global_styling.border_radius,
     // unit_display_type: form.unit_display_type,
+    click_animation_enabled: form.global_styling.click_animation_enabled,
     click_animation_type: form.global_styling.click_animation_type,
   };
   const menu: MenuUI = {
@@ -30,9 +31,9 @@ export const formToMenuGlobalStyling = (
     home_title: form.home_title,
     home_subtitle: form.home_subtitle,
     searchbar_enabled: form.searchbar_enabled,
-    primary_image: form.home_images?.[0].url,
-    secondary_image: form.home_images?.[1].url,
-    tertiary_image: form.home_images?.[2].url,
+    primary_image: form.home_images?.[0]?.url,
+    secondary_image: form.home_images?.[1]?.url,
+    tertiary_image: form.home_images?.[2]?.url,
   };
 
   return {

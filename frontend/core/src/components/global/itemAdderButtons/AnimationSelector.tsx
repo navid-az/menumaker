@@ -48,7 +48,7 @@ export default function AnimationSelector({
   //initial animations mount
   const triggerRippleAnimation = useRippleAnimation(
     previewBtnRef,
-    {},
+    { color: theme[0] },
     selected.includes("ripple")
   );
   const triggerTactileAnimation = useTactileAnimation(
