@@ -67,7 +67,7 @@ const GlobalStylingSchema = z.object({
 const FrontEndOnlySchema = z.object({
   suggested_palette_enabled: z.boolean().default(false),
 });
-const BuilderSchema = z.object({
+export const BuilderSchema = z.object({
   //home page
   home_images: z
     .array(

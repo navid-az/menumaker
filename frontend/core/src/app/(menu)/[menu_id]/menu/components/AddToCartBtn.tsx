@@ -19,12 +19,12 @@ import { useItemCart } from "@/lib/stores";
 
 //types
 import { type AnimationConfigType } from "@/components/global/InteractiveWrapper";
-import { type MenuGlobalStyling } from "@/app/types/api/menu";
+import { type MenuGlobalStylingUI } from "@/app/types/ui/menu";
 import { useRippleAnimation } from "@/app/hooks/useRippleAnimation";
 import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
 type AddToCartBtnType = {
   itemId: number;
-  globalStyling: MenuGlobalStyling;
+  globalStyling: MenuGlobalStylingUI;
 };
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -113,7 +113,7 @@ type ValueChangeBtnType = {
   action: () => void;
   borderRadius?: "default" | "lg" | "md" | "sm" | null;
   className?: string;
-  globalStyling: MenuGlobalStyling;
+  globalStyling: MenuGlobalStylingUI;
 };
 
 const StepperBtn = ({
@@ -134,13 +134,13 @@ const StepperBtn = ({
     buttonRef,
     AddToCartBtnAnimationConfigs.ripple,
     globalStyling.click_animation_enabled &&
-      globalStyling.click_animation_type.includes("ripple")
+      globalStyling.click_animation_type?.includes("ripple")
   );
   useTactileAnimation(
     buttonRef,
     AddToCartBtnAnimationConfigs.tactile,
     globalStyling.click_animation_enabled &&
-      globalStyling.click_animation_type.includes("tactile")
+      globalStyling.click_animation_type?.includes("tactile")
   );
 
   return (

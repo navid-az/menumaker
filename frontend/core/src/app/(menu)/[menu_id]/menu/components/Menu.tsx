@@ -15,12 +15,22 @@ import { cn } from "@/lib/utils";
 import { type Menu as MenuData } from "@/app/types/api/menu";
 import { type MenuCategory } from "@/app/types/api/menu";
 import { type MenuGlobalStyling } from "@/app/types/api/menu";
+import { type MenuGlobalStylingUI, type MenuUI } from "@/app/types/ui/menu";
+
 type MenuWrapper = {
-  data: MenuData;
-  businessSlug: string;
-  globalStyling: MenuGlobalStyling;
+  businessSlug?: string;
   categories: MenuCategory[];
   isPreview?: boolean;
+};
+
+type MenuProps = {
+  globalStyling: MenuGlobalStyling;
+  data: MenuData;
+};
+
+type MenuPreviewProps = {
+  globalStyling: MenuGlobalStylingUI;
+  data: MenuUI;
 };
 
 export default function Menu({
@@ -29,7 +39,7 @@ export default function Menu({
   globalStyling,
   categories,
   isPreview = false,
-}: MenuWrapper) {
+}: MenuWrapper & (MenuProps | MenuPreviewProps)) {
   return (
     <div className={cn("relative flex flex-col bg-(--bg) scrollbar-hide")}>
       <MenuHeader menuData={data}></MenuHeader>

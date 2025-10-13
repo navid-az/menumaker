@@ -15,12 +15,12 @@ import lightenDarkenColor from "@/lib/lightenDarkenColor";
 import mapAnimationsToConfigs from "@/lib/mapAnimationsToConfigs";
 
 //types
-import { type MenuGlobalStyling } from "@/app/types/api/menu";
+import { MenuGlobalStylingUI } from "@/app/types/ui/menu";
 import { type AnimationConfigType } from "@/components/global/InteractiveWrapper";
 type CategoryBtnType = {
   icon?: { name: string; image: string };
   parentType?: string;
-  globalStyling: MenuGlobalStyling;
+  globalStyling: MenuGlobalStylingUI;
 };
 
 //hooks
@@ -87,13 +87,13 @@ export default function CategoryBtn({
     rippleRef,
     AddToCartBtnAnimationConfigs.ripple,
     globalStyling.click_animation_enabled &&
-      globalStyling.click_animation_type.includes("ripple")
+      globalStyling.click_animation_type?.includes("ripple")
   );
   const tactile = useTactileAnimation(
     buttonRef,
     AddToCartBtnAnimationConfigs.tactile,
     globalStyling.click_animation_enabled &&
-      globalStyling.click_animation_type.includes("tactile")
+      globalStyling.click_animation_type?.includes("tactile")
   );
 
   const { activeCategory, updateActiveCategory, updateIsAutoScrolling } =

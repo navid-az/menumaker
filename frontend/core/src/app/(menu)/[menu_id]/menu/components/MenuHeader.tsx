@@ -10,12 +10,12 @@ import SearchBar from "./SearchBar";
 import { AlignLeft, ConciergeBell } from "lucide-react";
 
 //types
-import { type Menu } from "@/app/types/api/menu";
+import { type MenuUI } from "@/app/types/ui/menu";
 
 //libraries
 import { cn } from "@/lib/utils";
 
-export default function MenuHeader({ menuData }: { menuData: Menu }) {
+export default function MenuHeader({ menuData }: { menuData: MenuUI }) {
   async function callWaiter() {
     const sessionCode = sessionStorage.getItem("session_code");
     const res = await fetch(

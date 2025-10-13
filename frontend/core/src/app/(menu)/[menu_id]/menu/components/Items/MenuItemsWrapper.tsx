@@ -14,14 +14,14 @@ import { useCategoryBtn, useSearchBar } from "@/lib/stores";
 
 // types
 import { type MenuCategory } from "@/app/types/api/menu";
-import { type MenuGlobalStyling } from "@/app/types/api/menu";
+import { type MenuGlobalStylingUI } from "@/app/types/ui/menu";
 
 export default function MenuItemsWrapper({
   categories,
   globalStyling,
 }: {
   categories: MenuCategory[];
-  globalStyling: MenuGlobalStyling;
+  globalStyling: MenuGlobalStylingUI;
 }) {
   const searchParams = useSearchParams();
   const tableCode = searchParams.get("t");

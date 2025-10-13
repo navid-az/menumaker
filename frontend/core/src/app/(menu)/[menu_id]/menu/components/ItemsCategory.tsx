@@ -4,7 +4,8 @@ import CategoryBtn from "./CategoryBtn";
 //types
 import { type MenuCategory } from "@/app/types/api/menu";
 import { type MenuItem } from "@/app/types/api/menu";
-import { type MenuGlobalStyling } from "@/app/types/api/menu";
+import { type MenuGlobalStylingUI } from "@/app/types/ui/menu";
+
 export type CategoryType = {
   id: number;
   name: string;
@@ -19,7 +20,7 @@ type ItemsCategoryType = {
   isSticky?: boolean;
   hasBackGround?: boolean;
   allowAnimation?: boolean;
-  globalStyling: MenuGlobalStyling;
+  globalStyling: MenuGlobalStylingUI;
 };
 
 export default function ItemsCategory({

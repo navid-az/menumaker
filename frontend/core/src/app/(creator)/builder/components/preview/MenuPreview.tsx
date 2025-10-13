@@ -14,28 +14,30 @@ import { useFormContext } from "react-hook-form";
 import { cn } from "@/lib/utils";
 
 //types
-import { type MenuGlobalStyling } from "@/app/(menu)/[menu_id]/menu/page";
-import { CategoriesType } from "@/app/(menu)/[menu_id]/menu/components/Items/MenuItemsWrapper";
+import { BuilderFormType } from "../builder/BuilderTest";
+import { type MenuGlobalStyling } from "@/app/types/api/menu";
+import { type MenuCategory } from "@/app/types/api/menu";
 import { PreviewProvider } from "./PreviewContext";
+import { formToMenuGlobalStyling } from "../../utils/formToMenuGlobalStyling";
 
 export default function MenuPreview() {
   const [activePage, setActivePage] = React.useState<
     "home" | "items" | "order"
   >("items");
 
-  const { watch } = useFormContext();
+  const { watch } = useFormContext<BuilderFormType>();
   const colors = watch("global_styling.color_palette");
   const data = watch();
-  const { business, global_styling, frontend_only, ...menuData } = data;
-  const globalStyling = watch("global_styling");
+  // const { business, global_styling, frontend_only, ...menuData } = data;
+  const { globalStyling, menu } = formToMenuGlobalStyling(data);
   const globalBorderRadius = watch("global_styling.border_radius");
-  const homeImages = watch("home_images");
-  const imageUrls = homeImages.map(
-    (img: { tempId: string; url: string }) => img.url
-  );
-  const homeTitle = watch("home_title");
-  const homeSubtitle = watch("home_subtitle");
-  const mockCategories: CategoriesType[] = [
+  // const homeImages = watch("home_images");
+  // const imageUrls = homeImages.map(
+  //   (img: { tempId: string; url: string }) => img.url
+  // );
+  // const homeTitle = watch("home_title");
+  // const homeSubtitle = watch("home_subtitle");
+  const mockCategories: MenuCategory[] = [
     {
       id: 265,
       business: "lamiz",
@@ -43,7 +45,7 @@ export default function MenuPreview() {
         {
           id: 225,
           business: "lamiz",
-          branch_exceptions: null,
+          // branch_exceptions: null,
           name: "پن شکلاتی",
           description: "خمیر هزار لایه، کره نیوزلندی، شکلات میله ای",
           image: "/media/menu/items/images/PAIN-AU-CHOCOLAT-LAMIZ.webp",
@@ -54,9 +56,6 @@ export default function MenuPreview() {
         },
       ],
       name: "کیک ها",
-      text_color: "#FFFFFF",
-      child_bg: "#FFFFFF",
-      parent_bg: "#FFFFFF",
       is_active: true,
     },
     {
@@ -77,9 +76,6 @@ export default function MenuPreview() {
         },
       ],
       name: "نوشیدنی سرد",
-      text_color: "#FFFFFF",
-      child_bg: "#FFFFFF",
-      parent_bg: "#FFFFFF",
       is_active: true,
     },
     {
@@ -112,9 +108,6 @@ export default function MenuPreview() {
         },
       ],
       name: "نوشیدنی گرم",
-      text_color: "#FFFFFF",
-      child_bg: "#FFFFFF",
-      parent_bg: "#FFFFFF",
       is_active: true,
     },
     {
@@ -122,9 +115,6 @@ export default function MenuPreview() {
       business: "lamiz",
       items: [],
       name: "قهوه دمی",
-      text_color: "#FFFFFF",
-      child_bg: "#FFFFFF",
-      parent_bg: "#FFFFFF",
       is_active: true,
     },
     {
@@ -169,9 +159,6 @@ export default function MenuPreview() {
         },
       ],
       name: "نوشیدنی فصلی",
-      text_color: "#FFFFFF",
-      child_bg: "#FFFFFF",
-      parent_bg: "#FFFFFF",
       is_active: true,
     },
     {
@@ -179,9 +166,6 @@ export default function MenuPreview() {
       business: "lamiz",
       items: [],
       name: "میان وعده",
-      text_color: "#FFFFFF",
-      child_bg: "#FFFFFF",
-      parent_bg: "#FFFFFF",
       is_active: true,
     },
   ];
@@ -248,8 +232,8 @@ export default function MenuPreview() {
             <Menu
               isPreview={true}
               categories={mockCategories}
-              data={menuData}
-              globalStyling={globalStyling as MenuGlobalStyling}
+              data={menu}
+              globalStyling={globalStyling}
             ></Menu>
           </PreviewProvider>
         </div>

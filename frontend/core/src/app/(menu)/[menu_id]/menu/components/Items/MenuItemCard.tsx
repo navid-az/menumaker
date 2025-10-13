@@ -29,10 +29,10 @@ import {
   type AnimationConfigType,
   type AnimationVariantType,
 } from "@/components/global/InteractiveWrapper";
-import { MenuGlobalStyling } from "@/app/types/api/menu";
+import { type MenuGlobalStylingUI } from "@/app/types/ui/menu";
 import { type MenuItem } from "@/app/types/api/menu";
 export type MenuItemCardProps = MenuItem & {
-  globalStyling: MenuGlobalStyling;
+  globalStyling: MenuGlobalStylingUI;
 };
 
 //utils
@@ -67,13 +67,13 @@ export function MenuItemCard({
     animationRef,
     MenuItemAnimationConfigs.ripple,
     globalStyling.click_animation_enabled &&
-      globalStyling.click_animation_type.includes("ripple")
+      globalStyling.click_animation_type?.includes("ripple")
   );
   useTactileAnimation(
     animationRef,
     MenuItemAnimationConfigs.tactile,
     globalStyling.click_animation_enabled &&
-      globalStyling.click_animation_type.includes("tactile")
+      globalStyling.click_animation_type?.includes("tactile")
   );
 
   const animationConfigs = mapAnimationsToConfigs(

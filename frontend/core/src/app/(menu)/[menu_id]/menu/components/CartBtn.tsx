@@ -22,12 +22,12 @@ import { ShoppingBag } from "lucide-react";
 //types
 import { type MenuCategory } from "@/app/types/api/menu";
 import { type MenuItem } from "@/app/types/api/menu";
-import { type MenuGlobalStyling } from "@/app/types/api/menu";
+import { type MenuGlobalStylingUI } from "@/app/types/ui/menu";
 type CartBtnType = {
   type?: "default" | "compact";
-  businessSlug: string;
+  businessSlug?: string;
   categories: MenuCategory[];
-  globalStyling: MenuGlobalStyling;
+  globalStyling: MenuGlobalStylingUI;
 };
 
 export default function CartBtn({
