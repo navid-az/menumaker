@@ -84,18 +84,19 @@ export async function verifyToken() {
 
 //~~~~dashboard table mutation-related actions~~~
 
-//CATEGORY ACTIONS
-type IconType = {
-  id: number;
-  name: string;
-  image: string;
-};
-
 export async function createCategory(
   businessSlug: string,
-  data:
-    | { name: string; icon?: IconType | null }
-    | { name?: string; icon: IconType }
+  data: {
+    name?: string | undefined;
+    icon?:
+      | {
+          name: string;
+          id: number;
+          image: string;
+        }
+      | null
+      | undefined;
+  }
 ) {
   const accessToken = (await cookies()).get("access");
 

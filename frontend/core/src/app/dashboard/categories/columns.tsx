@@ -38,15 +38,11 @@ import {
 } from "lucide-react";
 
 import { AssetGroupType } from "@/components/global/AssetPicker";
-export type Category = {
-  id: number;
-  business: string;
-  name: string;
-  icon: { id: number; name: string; image: string };
-  is_active: boolean;
-};
 
-const handleDelete = async (props: CellContext<Category, unknown>) => {
+//types
+import { MenuCategory } from "@/app/types/api/menu";
+
+const handleDelete = async (props: CellContext<MenuCategory, unknown>) => {
   const res = await deleteCategory(
     props.row.original.business,
     props.row.original.id
@@ -60,7 +56,7 @@ const handleDelete = async (props: CellContext<Category, unknown>) => {
 
 export const categoryColumns = (
   assetGroups: AssetGroupType[]
-): ColumnDef<Category>[] => [
+): ColumnDef<MenuCategory>[] => [
   {
     accessorKey: "icon",
     header: "آیکون",
@@ -171,7 +167,7 @@ export const categoryColumns = (
             description="با تغییر موارد زیر دسته بندی را ویرایش کنید"
             defaultValues={{
               name: props.row.original.name,
-              icon: props.row.original.icon,
+              icon: props.row.original.icon || undefined,
             }}
             categoryId={props.row.original.id}
           />

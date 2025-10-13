@@ -1,21 +1,25 @@
 "use client";
 
-import React, { useRef } from "react";
+import React from "react";
 
 //components
 import MenuHeader from "./MenuHeader";
-import MenuItemsWrapper, { CategoriesType } from "./Items/MenuItemsWrapper";
+import MenuItemsWrapper from "./Items/MenuItemsWrapper";
 import ItemsCategory from "./ItemsCategory";
 import CartBtn from "./CartBtn";
 
-//types
-import { type Menu, type MenuGlobalStyling } from "../page";
+//libraries
 import { cn } from "@/lib/utils";
+
+//types
+import { type Menu as MenuData } from "@/app/types/api/menu";
+import { type MenuCategory } from "@/app/types/api/menu";
+import { type MenuGlobalStyling } from "@/app/types/api/menu";
 type MenuWrapper = {
-  data: Menu;
+  data: MenuData;
   businessSlug: string;
   globalStyling: MenuGlobalStyling;
-  categories: CategoriesType[];
+  categories: MenuCategory[];
   isPreview?: boolean;
 };
 

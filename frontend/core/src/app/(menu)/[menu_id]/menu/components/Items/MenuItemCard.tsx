@@ -29,27 +29,15 @@ import {
   type AnimationConfigType,
   type AnimationVariantType,
 } from "@/components/global/InteractiveWrapper";
-import { type MenuGlobalStyling } from "../../page";
-
-//utils
-import { getStyleVars } from "../../../utilities/styleVars";
-
-export type MenuItemType = {
-  id: number;
-  menu?: string;
-  category?: number;
-  name: string;
-  description: string;
-  image: string;
-  price: number;
-  is_available?: boolean;
-  is_active?: boolean;
-  isFeatured?: boolean;
-  animations?: AnimationVariantType[];
+import { MenuGlobalStyling } from "@/app/types/api/menu";
+import { type MenuItem } from "@/app/types/api/menu";
+export type MenuItemCardProps = MenuItem & {
   globalStyling: MenuGlobalStyling;
 };
 
-export function MenuItem({
+//utils
+import { getStyleVars } from "../../../utilities/styleVars";
+export function MenuItemCard({
   id,
   name,
   description,
@@ -57,9 +45,9 @@ export function MenuItem({
   price,
   is_active = true,
   is_available = false,
-  isFeatured = false,
+  is_featured = false,
   globalStyling,
-}: MenuItemType) {
+}: MenuItemCardProps) {
   const styleVars = getStyleVars(globalStyling);
 
   //change the value of drawerIsOpen global state
@@ -101,7 +89,7 @@ export function MenuItem({
         ref={animationRef}
         asChild
       >
-        {isFeatured ? (
+        {is_featured ? (
           <div className="col-span-2 flex h-[300px] flex-none flex-col">
             <div className="relative flex h-full w-full">
               <Image

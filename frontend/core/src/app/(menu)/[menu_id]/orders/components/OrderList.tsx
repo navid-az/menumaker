@@ -13,15 +13,15 @@ import { useItemCart } from "@/lib/stores";
 import { ShoppingBag } from "lucide-react";
 
 //types
-import { type MenuItemType } from "../../menu/components/Items/MenuItem";
-import { type MenuGlobalStyling } from "../../menu/page";
-export type ValidItemType = { item: MenuItemType; count?: number };
+import { MenuItem } from "@/app/types/api/menu";
+import { MenuGlobalStyling } from "@/app/types/api/menu";
+export type ValidItemType = { item: MenuItem; count?: number };
 
 export default function OrderList({
   data,
   globalStyling,
 }: {
-  data: MenuItemType[];
+  data: MenuItem[];
   globalStyling: MenuGlobalStyling;
 }) {
   const cartItems = useItemCart((state) => state.items);

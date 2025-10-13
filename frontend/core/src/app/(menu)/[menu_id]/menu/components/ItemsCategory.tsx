@@ -2,18 +2,18 @@
 import CategoryBtn from "./CategoryBtn";
 
 //types
-import { type MenuGlobalStyling } from "../page";
-import { type MenuItemType } from "./Items/MenuItem";
-import { CategoriesType } from "./Items/MenuItemsWrapper";
+import { type MenuCategory } from "@/app/types/api/menu";
+import { type MenuItem } from "@/app/types/api/menu";
+import { type MenuGlobalStyling } from "@/app/types/api/menu";
 export type CategoryType = {
   id: number;
   name: string;
   icon: { name: string; image: string };
   is_active: boolean;
-  items: MenuItemType[];
+  items: MenuItem[];
 };
 type ItemsCategoryType = {
-  categories: CategoriesType[];
+  categories: MenuCategory[];
   type?: "vertical" | "horizontal";
   variant?: "minimal" | "classic";
   isSticky?: boolean;
@@ -44,7 +44,7 @@ export default function ItemsCategory({
       }`}
     >
       {categories.map(
-        (category: CategoryType) =>
+        (category: MenuCategory) =>
           category.is_active &&
           category["items"].length > 0 && (
             <CategoryBtn

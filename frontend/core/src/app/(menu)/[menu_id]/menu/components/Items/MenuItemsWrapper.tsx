@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 
 // components
-import { MenuItem } from "./MenuItem";
+import { MenuItemCard } from "./MenuItemCard";
 
 // libraries
 import { InView } from "react-intersection-observer";
@@ -13,28 +13,14 @@ import { useSearchParams } from "next/navigation";
 import { useCategoryBtn, useSearchBar } from "@/lib/stores";
 
 // types
-import { type MenuItemType } from "./MenuItem";
-import { type MenuGlobalStyling } from "../../page";
-export type CategoriesType = {
-  id: number;
-  menu: string;
-  items: MenuItemType[];
-  icon: {
-    name: string;
-    image: string;
-  };
-  name: string;
-  text_color: string;
-  child_bg: string;
-  parent_bg: string;
-  is_active: boolean;
-};
+import { type MenuCategory } from "@/app/types/api/menu";
+import { type MenuGlobalStyling } from "@/app/types/api/menu";
 
 export default function MenuItemsWrapper({
   categories,
   globalStyling,
 }: {
-  categories: CategoriesType[];
+  categories: MenuCategory[];
   globalStyling: MenuGlobalStyling;
 }) {
   const searchParams = useSearchParams();
@@ -111,11 +97,11 @@ export default function MenuItemsWrapper({
                     className="grid h-auto grid-cols-2 gap-4 px-4"
                   >
                     {category.items.map((item) => (
-                      <MenuItem
+                      <MenuItemCard
                         key={item.id}
                         {...item}
                         globalStyling={globalStyling}
-                      ></MenuItem>
+                      ></MenuItemCard>
                     ))}
                   </section>
                 );

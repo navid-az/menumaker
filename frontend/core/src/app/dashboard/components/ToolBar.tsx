@@ -20,7 +20,7 @@ import { Filter, Plus } from "lucide-react";
 
 //types
 import { type AssetGroupType } from "@/components/global/AssetPicker";
-import { type Category } from "../categories/columns";
+import { MenuCategory } from "@/app/types/api/category";
 import { type Tag } from "@/components/global/TagSelector";
 
 export default function ToolBar({
@@ -29,7 +29,7 @@ export default function ToolBar({
   branches,
 }: {
   assetGroups: AssetGroupType[];
-  categories: Category[];
+  categories: MenuCategory[];
   branches: Tag[];
 }) {
   const pathName = usePathname();

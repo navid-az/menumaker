@@ -7,8 +7,9 @@ import { Button } from "@/components/ui/button";
 import { DataTable } from "@/app/dashboard/categories/data-table";
 
 //types
-import { type Item, itemColumns } from "@/app/dashboard/items/columns";
-import { type Category } from "@/app/dashboard/categories/columns";
+import { itemColumns } from "@/app/dashboard/items/columns";
+import { MenuCategory } from "@/app/types/api/menu";
+import { MenuItem } from "@/app/types/api/menu";
 
 //SVGs
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
@@ -21,9 +22,9 @@ export default function ItemClientWrapper({
   hiddenItems,
 }: {
   businessSlug: string;
-  categories: Category[];
-  visibleItems: Item[];
-  hiddenItems: Item[];
+  categories: MenuCategory[];
+  visibleItems: MenuItem[];
+  hiddenItems: MenuItem[];
 }) {
   const visibleItemColumns = itemColumns(businessSlug, categories, "visible");
   const hiddenItemColumns = itemColumns(businessSlug, categories, "hidden");

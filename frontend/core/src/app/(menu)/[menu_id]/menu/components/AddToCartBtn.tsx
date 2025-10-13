@@ -19,7 +19,7 @@ import { useItemCart } from "@/lib/stores";
 
 //types
 import { type AnimationConfigType } from "@/components/global/InteractiveWrapper";
-import { type MenuGlobalStyling } from "../page";
+import { type MenuGlobalStyling } from "@/app/types/api/menu";
 import { useRippleAnimation } from "@/app/hooks/useRippleAnimation";
 import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
 type AddToCartBtnType = {

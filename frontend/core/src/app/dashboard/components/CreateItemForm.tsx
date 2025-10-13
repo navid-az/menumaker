@@ -57,12 +57,12 @@ import { useForm } from "react-hook-form";
 import { createItem, updateItem } from "@/app/actions";
 
 //types
-import { type Category } from "../categories/columns";
+import { MenuCategory } from "@/app/types/api/menu";
 
 type CreateItemFormType = {
   businessSlug: string;
   branchSlug?: string;
-  categories: Category[];
+  categories: MenuCategory[];
   title: string;
   description: string;
   defaultValues?: {
@@ -375,7 +375,7 @@ export function CreateItemForm({
                                   alt={category.name || "category-icon"}
                                   src={
                                     "http://localhost:8000" +
-                                    category.icon.image
+                                    category.icon?.image
                                   }
                                 ></Image>
                               )}

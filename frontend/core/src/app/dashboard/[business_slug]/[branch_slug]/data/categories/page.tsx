@@ -1,12 +1,14 @@
 import React from "react";
 
-import { type Category } from "@/app/dashboard/categories/columns";
 import CategoryClientWrapper from "../components/CategoryClientWrapper";
+
+//types
+import { MenuCategory } from "@/app/types/api/menu";
 
 //menu categories data
 async function getMenuCategoriesData(
   business_slug: string
-): Promise<Category[]> {
+): Promise<MenuCategory[]> {
   const data = await fetch(
     `http://127.0.0.1:8000/business/${business_slug}/categories/`,
     {

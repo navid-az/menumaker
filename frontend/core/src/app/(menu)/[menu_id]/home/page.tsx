@@ -10,7 +10,7 @@ import { AlignLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 //types
-import { type Menu } from "../menu/page";
+import { type Menu } from "@/app/types/api/menu";
 
 // GET menu data
 export async function getMenuData(menu_id: string) {

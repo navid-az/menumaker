@@ -1,15 +1,15 @@
 //components
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import OrderList from "./components/OrderList";
 
 //SVGs
 import { ArrowLeft, ConciergeBell } from "lucide-react";
 
 //types
-import { type MenuItemType } from "../menu/components/Items/MenuItem";
-import { type MenuGlobalStyling } from "../menu/page";
-import OrderList from "./components/OrderList";
-export type ValidItemType = { item: MenuItemType; count?: number };
+import { type MenuItem } from "@/app/types/api/menu";
+import { type MenuGlobalStyling } from "@/app/types/api/menu";
+export type ValidItemType = { item: MenuItem; count?: number };
 
 // GET menu items
 async function getItems(menu_id: string) {
@@ -43,7 +43,7 @@ export default async function Page(props: {
   params: Promise<{ menu_id: string }>;
 }) {
   const params = await props.params;
-  const data: MenuItemType[] = await getItems(params.menu_id);
+  const data: MenuItem[] = await getItems(params.menu_id);
   const globalStyling: MenuGlobalStyling = await getGlobalStyling(
     params.menu_id
   );

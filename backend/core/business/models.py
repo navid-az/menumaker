@@ -167,9 +167,6 @@ class Category(models.Model):
         null=True,
         related_name="item_categories",
     )
-    text_color = ColorField()
-    child_bg = ColorField()
-    parent_bg = ColorField()
     is_active = models.BooleanField(default=True)
 
     class Meta:

@@ -6,37 +6,8 @@ import CartBtn from "./components/CartBtn";
 import MenuHeader from "./components/MenuHeader";
 
 //types
-import { type AnimationVariantType } from "@/components/global/InteractiveWrapper";
-export type Menu = {
-  id: number;
-  business: number;
-  show_social_links: boolean;
-  show_phone_numbers: boolean;
-  show_branches: boolean;
-  items_page_layout: string;
-  categories_display_type: string;
-  call_waiter_enabled: boolean;
-  searchbar_enabled: boolean;
-  home_title: string;
-  home_subtitle: string;
-  primary_image: string;
-  secondary_image: string;
-  tertiary_image: string;
-};
-export type MenuGlobalStyling = {
-  id: number;
-  primary_color: string;
-  secondary_color: string;
-  tertiary_color: string;
-  bg_color: string;
-  unit_display_type: "comp" | "simp" | "engL" | "perL";
-  border_radius: "sm" | "md" | "lg" | "full";
-  click_animation_enabled: boolean;
-  click_animation_type: AnimationVariantType[];
-  updated: string;
-  created: string;
-  menu: number;
-};
+import { type MenuGlobalStyling } from "@/app/types/api/menu";
+import { type Menu as MenuData } from "@/app/types/api/menu";
 
 // GET menu data
 export async function getMenuData(menu_id: string) {
@@ -86,7 +57,7 @@ export default async function Page(props: {
 }) {
   const params = await props.params;
 
-  const menuData: Menu = await getMenuData(params.menu_id);
+  const menuData: MenuData = await getMenuData(params.menu_id);
   const globalStyling: MenuGlobalStyling = await getGlobalStyling(
     params.menu_id
   );

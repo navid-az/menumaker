@@ -15,7 +15,7 @@ import lightenDarkenColor from "@/lib/lightenDarkenColor";
 import mapAnimationsToConfigs from "@/lib/mapAnimationsToConfigs";
 
 //types
-import { type MenuGlobalStyling } from "../page";
+import { type MenuGlobalStyling } from "@/app/types/api/menu";
 import { type AnimationConfigType } from "@/components/global/InteractiveWrapper";
 type CategoryBtnType = {
   icon?: { name: string; image: string };

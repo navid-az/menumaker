@@ -29,25 +29,10 @@ import { ColumnDef } from "@tanstack/react-table";
 import { CellContext } from "@tanstack/react-table";
 
 //types
-import { Category } from "../categories/columns";
+import { MenuCategory } from "@/app/types/api/menu";
+import { MenuItem } from "@/app/types/api/menu";
 
-export type Item = {
-  id: number;
-  image: string;
-  name: string;
-  category: number;
-  business: string; //slug
-  price: number;
-  is_available: boolean;
-  is_active: boolean;
-  branch_exceptions?: {
-    branch: string;
-    is_available: boolean;
-    is_active: boolean;
-  };
-};
-
-const handleDelete = async (props: CellContext<Item, unknown>) => {
+const handleDelete = async (props: CellContext<MenuItem, unknown>) => {
   const res = await deleteItem(
     props.row.original.business,
     props.row.original.id
@@ -61,9 +46,9 @@ const handleDelete = async (props: CellContext<Item, unknown>) => {
 
 export const itemColumns = (
   businessSlug: string,
-  categories: Category[],
+  categories: MenuCategory[],
   scope: "visible" | "hidden"
-): ColumnDef<Item>[] => [
+): ColumnDef<MenuItem>[] => [
   {
     accessorKey: "image",
     header: "تصویر",

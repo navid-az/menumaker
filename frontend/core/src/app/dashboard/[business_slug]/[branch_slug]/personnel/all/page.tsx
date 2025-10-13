@@ -5,7 +5,6 @@ import { cookies } from "next/headers";
 import PersonnelClientWrapper from "./components/PersonnelClientWrapper";
 
 //types
-import { Item } from "@/app/dashboard/items/columns";
 import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 
 // Fetch personnel data of the business/branch

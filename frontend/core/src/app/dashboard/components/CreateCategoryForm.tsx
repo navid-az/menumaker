@@ -57,27 +57,14 @@ const IconSchema = z.object({
   image: z.string(),
 });
 
-const NameRequired = z.object({
-  name: z.string(),
-  icon: IconSchema.optional().nullable(),
-});
-
-const IconRequired = z.object({
-  name: z.string().optional(),
-  icon: IconSchema,
-});
-
-const RawFormSchema = z.union([NameRequired, IconRequired]);
-
-const FormSchema = RawFormSchema.superRefine((data, ctx) => {
-  if (!data.name && !data.icon) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "لطفاً حداقل نام یا آیکون را وارد کنید.",
-      path: [""],
-    });
-  }
-});
+const FormSchema = z
+  .object({
+    name: z.string().optional(),
+    icon: IconSchema.optional().nullable(),
+  })
+  .refine((data) => data.name || data.icon, {
+    message: "Either name or icon must be provided.",
+  });
 
 export function CreateCategoryForm({
   businessSlug,

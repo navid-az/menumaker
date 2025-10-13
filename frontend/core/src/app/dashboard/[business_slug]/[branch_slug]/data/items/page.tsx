@@ -4,14 +4,14 @@ import React from "react";
 import ItemClientWrapper from "../components/ItemClientWrapper";
 
 //types
-import { Item } from "@/app/dashboard/items/columns";
-import { Category } from "@/app/dashboard/categories/columns";
+import { type MenuCategory } from "@/app/types/api/menu";
+import { type MenuItem } from "@/app/types/api/menu";
 
 //menu items data
 async function getVisibleItems(
   business_slug: string,
   branch_slug: string
-): Promise<Item[]> {
+): Promise<MenuItem[]> {
   const data = await fetch(
     `http://127.0.0.1:8000/business/${business_slug}/items/visible/?branch_slug=${branch_slug}`,
     {
@@ -26,7 +26,7 @@ async function getVisibleItems(
 async function getHiddenItems(
   business_slug: string,
   branch_slug: string
-): Promise<Item[]> {
+): Promise<MenuItem[]> {
   const data = await fetch(
     `http://127.0.0.1:8000/business/${business_slug}/items/hidden/?branch_slug=${branch_slug}`,
     {
@@ -42,7 +42,7 @@ async function getHiddenItems(
 //menu categories data
 async function getMenuCategoriesData(
   business_slug: string
-): Promise<Category[]> {
+): Promise<MenuCategory[]> {
   const data = await fetch(
     `http://127.0.0.1:8000/business/${business_slug}/categories/`,
     {

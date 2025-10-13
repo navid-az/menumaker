@@ -20,14 +20,13 @@ import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
 import { ShoppingBag } from "lucide-react";
 
 //types
-import { type MenuItemType } from "./Items/MenuItem";
-import { type MenuGlobalStyling } from "../page";
-import { type CategoryType } from "./ItemsCategory";
-
+import { type MenuCategory } from "@/app/types/api/menu";
+import { type MenuItem } from "@/app/types/api/menu";
+import { type MenuGlobalStyling } from "@/app/types/api/menu";
 type CartBtnType = {
   type?: "default" | "compact";
   businessSlug: string;
-  categories: CategoryType[];
+  categories: MenuCategory[];
   globalStyling: MenuGlobalStyling;
 };
 
@@ -44,7 +43,7 @@ export default function CartBtn({
 
   //store categories of items inside cartItems
   const [matchingItems, setMatchingItems] = useState<
-    { item: MenuItemType; count: number }[]
+    { item: MenuItem; count: number }[]
   >([]);
 
   useEffect(() => {

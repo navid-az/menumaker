@@ -1,5 +1,5 @@
 //types
-import { MenuGlobalStyling } from "../menu/page";
+import { type MenuGlobalStyling } from "@/app/types/api/globalStyling";
 
 export function getStyleVars(config: MenuGlobalStyling): React.CSSProperties {
   return {

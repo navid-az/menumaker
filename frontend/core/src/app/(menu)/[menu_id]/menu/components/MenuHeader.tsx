@@ -10,7 +10,7 @@ import SearchBar from "./SearchBar";
 import { AlignLeft, ConciergeBell } from "lucide-react";
 
 //types
-import { type Menu } from "../page";
+import { type Menu } from "@/app/types/api/menu";
 
 //libraries
 import { cn } from "@/lib/utils";
