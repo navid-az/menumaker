@@ -78,7 +78,13 @@ export default function LiveCards({
   return (
     <div className="flex gap-4">
       {mergedTables.map((table: TableType) => (
-        <LiveCard type="online" table={table} key={table.id}></LiveCard>
+        <LiveCard
+          businessSlug={businessSlug}
+          branchSlug={branchSlug}
+          type="online"
+          table={table}
+          key={table.id}
+        ></LiveCard>
       ))}
     </div>
   );

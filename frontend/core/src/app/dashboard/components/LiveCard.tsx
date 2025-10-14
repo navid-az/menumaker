@@ -2,8 +2,6 @@
 
 import React, { useState } from "react";
 
-import { useParams } from "next/navigation";
-
 //components
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -32,6 +30,7 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
+import ProgressBar from "./ProgressBar";
 
 //SVGs
 import {
@@ -57,6 +56,8 @@ import QrCodeGenerator from "@/components/global/QrCodeGenerator";
 // types
 type LiveCardType = {
   table: TableType;
+  businessSlug: string;
+  branchSlug: string;
   type?: "in-person" | "on-table" | "online";
   status?: "occupied" | "reserved" | "canceled";
   seats?: number;
@@ -69,9 +70,9 @@ export default function LiveCard({
   status,
   seats,
   hasSession,
+  businessSlug,
+  branchSlug,
 }: LiveCardType) {
-  const params = useParams<{ business_slug: string; branch_slug: string }>();
-
   const [showCode, setShowCode] = useState(false);
   const now = new Date();
 
@@ -92,31 +93,34 @@ export default function LiveCard({
       <LiveCardBody>
         <LiveCardHeader
           setShowCode={setShowCode}
-          branchSlug={params.branch_slug}
+          branchSlug={branchSlug}
           table={table}
         ></LiveCardHeader>
-
         {showCode ? (
           <div className="flex items-center justify-center w-full h-full">
             <QrCodeGenerator
-              url={`http://localhost:3000/${params.business_slug}/menu?t=${table.code}`}
+              url={`http://localhost:3000/${businessSlug}/menu?t=${table.code}`}
             ></QrCodeGenerator>
           </div>
         ) : (
-          table.active_session?.code && (
-            <div className="flex flex-col items-center text-primary justify-center w-full h-full gap-4">
-              <div className="w-10/12 aspect-square bg-primary rounded-full"></div>
-              {activeCallValid ? (
-                <p className="animate-pulse text-sm text-secondary-foreground">
-                  گارسون!
-                </p>
-              ) : (
-                <p className="animate-pulse text-sm text-secondary-foreground">
-                  در حال مشاهده منو...
-                </p>
-              )}
-            </div>
-          )
+          //   table.active_session?.code && (
+          //     <div className="flex flex-col items-center text-primary justify-center w-full h-full gap-4">
+          //       <div className="w-10/12 aspect-square bg-primary rounded-full"></div>
+          //       {activeCallValid ? (
+          //         <p className="animate-pulse text-sm text-secondary-foreground">
+          //           گارسون!
+          //         </p>
+          //       ) : (
+          //         <p className="animate-pulse text-sm text-secondary-foreground">
+          //           در حال مشاهده منو...
+          //         </p>
+          //       )}
+          //     </div>
+          //   )
+          // )
+          <div className="h-full flex justify-center items-center">
+            <ProgressBar size={185} progress={20}></ProgressBar>
+          </div>
         )}
       </LiveCardBody>
       <LiveCardFooter table={table} type={type}></LiveCardFooter>
@@ -126,7 +130,7 @@ export default function LiveCard({
 
 export function LiveCardBody({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-col flex-1 bg-primary-foreground shadow-lg w-full rounded-3xl p-2 gap-2">
+    <div className="flex items-center gap-2 flex-col justify-between flex-1 bg-primary-foreground shadow-lg w-full rounded-3xl p-2">
       {children}
     </div>
   );

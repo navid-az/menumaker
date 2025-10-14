@@ -45,15 +45,15 @@ const getTables = async (branchSlug: string) => {
 export default async function Page(props: {
   params: Promise<{ business_slug: string; branch_slug: string }>;
 }) {
-  const params = await props.params;
-  const tables = await getTables(params.branch_slug);
+  const { business_slug, branch_slug } = await props.params;
+  const tables = await getTables(branch_slug);
 
   return (
     <div className="flex flex-col gap-4 justify-end">
       <section className="flex gap-4 flex-row-reverse flex-wrap w-full">
         <LiveCards
-          businessSlug={params.business_slug}
-          branchSlug={params.branch_slug}
+          businessSlug={business_slug}
+          branchSlug={branch_slug}
           tables={tables}
         ></LiveCards>
         <div className="border-[3px] text-primary font-normal w-60 gap-2 bg-soft-blue h-[346px] border-dashed transition-all duration-300 scale-pro hover:scale-105 hover:shadow-xl border-sad-blue hover:border-royal-green flex items-center flex-col justify-center rounded-3xl p-4">
