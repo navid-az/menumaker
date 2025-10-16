@@ -5,7 +5,9 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-    --royal-green:rgb(15, 44, 48);
+    --happy-yellow:#EEE486;
+    --dark-brown:#1f0e0b;
+    --royal-green:#0f2c30;
     --sky-blue:#94D9E2;
     --soft-blue:#EDFDFF;
     --sad-blue:#C5E5E9;
@@ -83,6 +85,8 @@
     --radius-md: calc(var(--radius) - 2px);
     --radius-lg: var(--radius);
     --radius-xl: calc(var(--radius) + 4px);
+    --color-happy-yellow:var(--happy-yellow);
+    --color-dark-brown:var(--dark-brown);
     --color-royal-green:var(--royal-green);
     --color-sky-blue:var(--sky-blue);
     --color-soft-blue:var(--soft-blue);
