@@ -31,13 +31,15 @@ import {
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 import ProgressBar from "./ProgressBar";
+import { CreateTableForm } from "./CreateTableForm";
+import QrCodeGenerator from "@/components/global/QrCodeGenerator";
 
 //SVGs
 import {
+  BadgeCheck,
   Bell,
   CircleAlert,
   CircleX,
-  ConciergeBell,
   EllipsisVertical,
   Info,
   Pen,
@@ -45,16 +47,18 @@ import {
   Trash2,
   User2,
 } from "lucide-react";
-import { TableChair } from "./svg";
 
-// types
+//types
 import { TableType } from "../[business_slug]/[branch_slug]/liveManagement/all/page";
-import { cn } from "@/lib/utils";
-import { CreateTableForm } from "./CreateTableForm";
 
-// actions
+//libraries
+import { cn } from "@/lib/utils";
+
+//actions
 import { deleteTable } from "@/app/actions";
-import QrCodeGenerator from "@/components/global/QrCodeGenerator";
+
+//hooks
+import { useProgress } from "@/app/hooks/useProgress";
 
 // types
 type LiveCardType = {
@@ -126,9 +130,27 @@ export default function LiveCard({
   const [showCode, setShowCode] = useState(false);
   const [state, setState] = useState<LiveCardState>("default");
   const [ServiceType, setServiceType] = useState<ServiceType | undefined>();
-  const [progress, setProgress] = useState(0);
   const [title, setTitle] = useState("");
   const now = new Date();
+
+  //calculate session progress
+  const sessionProgress = useProgress(
+    table.active_session?.started_at || "",
+    table.active_session?.expires_at || ""
+  );
+
+  //calculate waiter call progress
+  const waiterCallProgress = useProgress(
+    table.active_call?.created_at || "",
+    table.active_call?.expires_at || ""
+  );
+
+  //set back to default state when waiter call is done
+  useEffect(() => {
+    if (waiterCallProgress === 100) {
+      setState("default");
+    }
+  }, [waiterCallProgress]);
 
   const activeCallValid =
     table.active_call &&
@@ -137,23 +159,19 @@ export default function LiveCard({
 
   useEffect(() => {
     if (table.active_session?.code) {
-      setProgress(0);
       setTitle("مشاهده منو");
       if (activeCallValid) {
         setState("attention");
         setTitle("سالن دار!");
       }
     }
-  }, [activeCallValid, table.active_session?.code]);
+  }, [activeCallValid, table.active_session]);
 
   return (
     <div
       style={stateColors[state]}
       className={cn(
         "relative border-[3px] overflow-clip border-(--livecard-primary) bg-(--livecard-primary) text-(--livecard-accent) min-h-[350px] font-normal w-60 transition-all duration-300 justify-end flex items-center flex-col rounded-[26px]"
-        // activeCallValid
-        //   ? "border-happy-yellow bg-happy-yellow text-dark-brown"
-        //   : "border-royal-green bg-royal-green text-soft-blue"
       )}
     >
       <LiveCardBody table={table}>
@@ -176,7 +194,6 @@ export default function LiveCard({
                   <p
                     className={cn(
                       "absolute text-2xl font-semibold mx-auto text-(--livecard-text)"
-                      // activeCallValid ? "text-dark-brown" : "text-royal-green"
                     )}
                   >
                     {title}
@@ -185,7 +202,9 @@ export default function LiveCard({
                     outerColor="var(--livecard-secondary)"
                     innerColor="var(--livecard-primary)"
                     size={190}
-                    progress={progress}
+                    progress={
+                      activeCallValid ? waiterCallProgress : sessionProgress
+                    }
                   ></ProgressBar>
                 </>
               )}
@@ -260,8 +279,8 @@ export function LiveCardHeader({
   };
 
   return (
-    <div className="w-full flex justify-between items-center gap-1 rounded-full">
-      <div className="flex justify-between w-full gap-2">
+    <div className="relative w-full flex justify-between items-center rounded-full">
+      <div className="flex justify-between w-full transition-all duration-300">
         <DropdownMenu dir="rtl">
           <DropdownMenuTrigger asChild>
             <Button
@@ -345,30 +364,38 @@ export function LiveCardHeader({
         <div className="flex justify-between gap-2">
           <Button
             size="icon"
-            className="rounded-full border-yellow-950/20 border hover:border-yellow-950 bg-inherit hover:bg-royal-green/5 text-royal-green"
+            className="relative rounded-full border-yellow-950/20 border hover:border-yellow-950 bg-inherit hover:bg-royal-green/5 text-royal-green"
           >
-            <Bell></Bell>
+            <Bell className="z-10"></Bell>
+            <span className="absolute -bottom-0.5 -right-0.5 min-w-[1rem] h-[1rem] rounded-full pt-0.5 bg-red-500 text-[10px] font-bold text-white flex items-center justify-center ring-2 ring-white">
+              3
+            </span>
           </Button>
           <Button
             size="icon"
             className={cn(
-              "rounded-full w-13 transition-all duration-300 bg-(--livecard-secondary)",
-              false ? "opacity-0 -ml-[60px]" : "opacity-100 ml-0"
+              "rounded-full w-14 transition-all duration-300 bg-(--livecard-secondary)",
+              false ? "opacity-0 -ml-[64px]" : "opacity-100 ml-0"
             )}
           >
             <User2 className="text-(--livecard-primary)"></User2>
           </Button>
         </div>
       </div>
-      {/* <Button
-        size="sm"
-        className="rounded-full border-yellow-950/20 border hover:border-yellow-950 bg-inherit hover:bg-royal-green/5 text-royal-green"
-      >
-        <p className="flex items-center text-xs justify-center text-center leading-none">
-          {table.name}
-        </p>
-        <TableChair></TableChair>
-      </Button> */}
+
+      {/* transaction success message */}
+      {/* <div className="w-full h-full absolute flex justify-center z-20">
+        <Button className="rounded-full justify-center bg-green-950 text-green-200 group">
+          <BadgeCheck className="w-6 h-6"></BadgeCheck>
+          <p
+            className={cn(
+              "text-md font-light transition-all duration-300 -ml-[83.8px] opacity-0 group-hover:ml-0 group-hover:opacity-100"
+            )}
+          >
+            پرداخت موفق
+          </p>
+        </Button>
+      </div> */}
     </div>
   );
 }
