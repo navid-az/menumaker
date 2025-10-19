@@ -200,7 +200,7 @@ export default function LiveCard({
           </div>
         ) : table.active_session ? (
           <div className="flex flex-col justify-center h-full items-center gap-4">
-            <div className="relative flex flex-col justify-center items-center">
+            <div className="group relative flex flex-col justify-center items-center">
               {table.active_session?.code && (
                 <>
                   <div
@@ -208,8 +208,10 @@ export default function LiveCard({
                       "absolute flex gap-2 flex-col items-center justify-center text-2xl font-semibold mx-auto text-(--livecard-text)"
                     )}
                   >
-                    <p>{title}</p>
-                    <p className="text-md font-normal">
+                    <p className="line-clamp-2 text-center text-[clamp(16px,20px,24px)] block group-hover:hidden">
+                      {title}
+                    </p>
+                    <p className="text-xl font-normal hidden group-hover:block">
                       {activeCallValid
                         ? remainingWaiterDuration
                         : remainingSessionDuration}
@@ -262,11 +264,17 @@ export function LiveCardBody({
   table: TableType;
   children: React.ReactNode;
 }) {
+  const now = new Date();
+  const activeSessionValid =
+    table.active_session &&
+    table.active_session?.is_active &&
+    new Date(table.active_session.expires_at) > now;
+
   return (
     <div
       className={cn(
         "flex absolute z-10 top-0 items-center gap-2 flex-col justify-between flex-1 transition-all duration-300 bg-primary-foreground shadow-lg w-full rounded-3xl p-2",
-        table.active_session?.code ? "bottom-10" : "bottom-0"
+        activeSessionValid ? "bottom-10" : "bottom-0"
       )}
     >
       {children}
