@@ -134,20 +134,32 @@ export default function LiveCard({
   const now = new Date();
 
   //calculate session progress
-  const sessionProgress = useProgress(
+  const {
+    progress: sessionProgress,
+    formattedRemaining: remainingSessionDuration,
+    formattedElapsed: elapsedSessionDuration,
+  } = useProgress(
     table.active_session?.started_at || "",
-    table.active_session?.expires_at || ""
+    table.active_session?.expires_at || "",
+    undefined,
+    true
   );
 
   //calculate waiter call progress
-  const waiterCallProgress = useProgress(
+  const {
+    progress: waiterCallProgress,
+    formattedRemaining: remainingWaiterDuration,
+    formattedElapsed: elapsedWaiterDuration,
+  } = useProgress(
     table.active_call?.created_at || "",
-    table.active_call?.expires_at || ""
+    table.active_call?.expires_at || "",
+    undefined,
+    true
   );
 
   //set back to default state when waiter call is done
   useEffect(() => {
-    if (waiterCallProgress === 100) {
+    if (waiterCallProgress === 0) {
       setState("default");
     }
   }, [waiterCallProgress]);
@@ -191,13 +203,18 @@ export default function LiveCard({
             <div className="relative flex flex-col justify-center items-center">
               {table.active_session?.code && (
                 <>
-                  <p
+                  <div
                     className={cn(
-                      "absolute text-2xl font-semibold mx-auto text-(--livecard-text)"
+                      "absolute flex gap-2 flex-col items-center justify-center text-2xl font-semibold mx-auto text-(--livecard-text)"
                     )}
                   >
-                    {title}
-                  </p>
+                    <p>{title}</p>
+                    <p className="text-md font-normal">
+                      {activeCallValid
+                        ? remainingWaiterDuration
+                        : remainingSessionDuration}
+                    </p>
+                  </div>
                   <ProgressBar
                     outerColor="var(--livecard-secondary)"
                     innerColor="var(--livecard-primary)"
@@ -209,16 +226,17 @@ export default function LiveCard({
                 </>
               )}
             </div>
-            <div
-              className={cn(
-                "flex gap-1 transition-all duration-300",
-                activeCallValid ? "opacity-100 mb-0" : "opacity-0 -mb-8"
-              )}
-            >
+            <div className={cn("flex gap-1 transition-all duration-300")}>
               <CircleAlert className="w-4 h-4 text-(--livecard-text)"></CircleAlert>
-              <p className={cn("text-xs text-(--livecard-text)")}>
-                مشتری ۲ دقیقه پیش صدا زده
-              </p>
+              {activeCallValid ? (
+                <p className={cn("text-xs text-(--livecard-text)")}>
+                  مشتری {elapsedWaiterDuration} پیش صدا زده
+                </p>
+              ) : (
+                <p className={cn("text-xs text-(--livecard-text)")}>
+                  مشتری {elapsedSessionDuration} پیش اسکن کرده
+                </p>
+              )}
             </div>
           </div>
         ) : (
