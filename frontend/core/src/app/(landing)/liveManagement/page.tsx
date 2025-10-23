@@ -355,6 +355,7 @@ const LiveManagementMockUp = () => {
         <div className="w-full gap-4 flex">
           {liveDummyTables.slice(0, 5).map((table, index) => (
             <LiveCard
+            isMockUp
               key={index}
               table={table}
               businessSlug="navid"
@@ -365,6 +366,7 @@ const LiveManagementMockUp = () => {
         <div className="w-full gap-4 flex">
           {liveDummyTables.slice(5).map((table, index) => (
             <LiveCard
+            isMockUp
               key={index}
               table={table}
               businessSlug="navid"

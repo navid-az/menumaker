@@ -69,6 +69,7 @@ type LiveCardType = {
   status?: "occupied" | "reserved" | "canceled" | "notice";
   seats?: number;
   hasSession?: boolean;
+  isMockUp?: boolean;
 };
 type ServiceType = "in-person" | "on-table" | "online";
 type LiveCardState =
@@ -126,12 +127,17 @@ export default function LiveCard({
   hasSession,
   businessSlug,
   branchSlug,
+  isMockUp = false,
 }: LiveCardType) {
   const [showCode, setShowCode] = useState(false);
   const [state, setState] = useState<LiveCardState>("default");
+  const [progress, setProgress] = useState(0);
   const [ServiceType, setServiceType] = useState<ServiceType | undefined>();
   const [title, setTitle] = useState("");
   const now = new Date();
+
+  const successfulTransaction = false; //test
+  const reservedTable = false; //test
 
   //calculate session progress
   const {
@@ -171,13 +177,32 @@ export default function LiveCard({
 
   useEffect(() => {
     if (table.active_session?.code) {
+      setState("default");
       setTitle("مشاهده منو");
+      setProgress(sessionProgress);
       if (activeCallValid) {
         setState("attention");
         setTitle("سالن دار!");
+        setProgress(waiterCallProgress);
       }
     }
-  }, [activeCallValid, table.active_session]);
+    //test
+    if (successfulTransaction) {
+      setState("success");
+      setTitle("پرداخت موفق");
+      setProgress(100);
+    }
+  }, [
+    activeCallValid,
+    table.active_session,
+    successfulTransaction,
+    waiterCallProgress,
+    sessionProgress,
+  ]);
+  const activeSessionValid =
+    table.active_session &&
+    table.active_session.is_active &&
+    new Date(table.active_session.expires_at) > now;
 
   return (
     <div
@@ -186,19 +211,25 @@ export default function LiveCard({
         "relative border-[3px] overflow-clip border-(--livecard-primary) bg-(--livecard-primary) text-(--livecard-accent) min-h-[350px] font-normal w-60 transition-all duration-300 justify-end flex items-center flex-col rounded-[26px]"
       )}
     >
-      <LiveCardBody table={table}>
+      <LiveCardBody activeSessionValid={activeSessionValid} table={table}>
         <LiveCardHeader
           setShowCode={setShowCode}
           branchSlug={branchSlug}
           table={table}
+          successfulTransaction={successfulTransaction}
+          isMockUp={isMockUp}
         ></LiveCardHeader>
         {showCode ? (
           <div className="flex items-center justify-center w-full h-full">
             <QrCodeGenerator
-              url={`http://localhost:3000/${businessSlug}/menu?t=${table.code}`}
+              url={
+                isMockUp
+                  ? "http://localhost:3000"
+                  : `http://localhost:3000/${businessSlug}/menu?t=${table.code}`
+              }
             ></QrCodeGenerator>
           </div>
-        ) : table.active_session ? (
+        ) : activeSessionValid ? (
           <div className="flex flex-col justify-center h-full items-center gap-4">
             <div className="group relative flex flex-col justify-center items-center">
               {table.active_session?.code && (
@@ -211,7 +242,7 @@ export default function LiveCard({
                     <p className="line-clamp-2 text-center text-[clamp(16px,20px,24px)] block group-hover:hidden">
                       {title}
                     </p>
-                    <p className="text-xl font-normal hidden group-hover:block">
+                    <p className="text-2xl font-medium hidden group-hover:block">
                       {activeCallValid
                         ? remainingWaiterDuration
                         : remainingSessionDuration}
@@ -221,9 +252,7 @@ export default function LiveCard({
                     outerColor="var(--livecard-secondary)"
                     innerColor="var(--livecard-primary)"
                     size={190}
-                    progress={
-                      activeCallValid ? waiterCallProgress : sessionProgress
-                    }
+                    progress={progress}
                   ></ProgressBar>
                 </>
               )}
@@ -260,16 +289,12 @@ export default function LiveCard({
 export function LiveCardBody({
   table,
   children,
+  activeSessionValid,
 }: {
   table: TableType;
   children: React.ReactNode;
+  activeSessionValid: boolean | undefined;
 }) {
-  const now = new Date();
-  const activeSessionValid =
-    table.active_session &&
-    table.active_session?.is_active &&
-    new Date(table.active_session.expires_at) > now;
-
   return (
     <div
       className={cn(
@@ -286,10 +311,14 @@ export function LiveCardHeader({
   table,
   branchSlug,
   setShowCode,
+  successfulTransaction,
+  isMockUp = false,
 }: {
   table: TableType;
   branchSlug: string;
   setShowCode: React.Dispatch<React.SetStateAction<boolean>>;
+  successfulTransaction: boolean;
+  isMockUp: boolean;
 }) {
   async function handleTableDelete() {
     const res = await deleteTable(branchSlug, table.id);
@@ -327,17 +356,24 @@ export function LiveCardHeader({
                 <QrCode></QrCode>
                 مشاهده QR کد
               </DropdownMenuItem>
-              <CreateTableForm
-                branchSlug={branchSlug}
-                defaultValues={table}
-                tableId={table.id}
-                title="ویرایش میز"
-              >
-                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+              {isMockUp ? (
+                <DropdownMenuItem>
                   <Pen></Pen>
                   ویرایش میز
                 </DropdownMenuItem>
-              </CreateTableForm>
+              ) : (
+                <CreateTableForm
+                  branchSlug={branchSlug}
+                  defaultValues={table}
+                  tableId={table.id}
+                  title="ویرایش میز"
+                >
+                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                    <Pen></Pen>
+                    ویرایش میز
+                  </DropdownMenuItem>
+                </CreateTableForm>
+              )}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
@@ -345,37 +381,44 @@ export function LiveCardHeader({
                 onClick={(e) => e.preventDefault()}
                 className="text-red-600 p-0 focus:text-red-600 focus:bg-red-50"
               >
-                <AlertDialog>
-                  <AlertDialogTrigger
-                    asChild
-                    className="w-full h-full flex items-center gap-2 py-1.5 px-2"
-                  >
-                    <div>
-                      <Trash2></Trash2>
-                      حذف میز
-                    </div>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        آیا مطمعنی که میخوای میز "{table.name}" رو حذف کنی؟
-                      </AlertDialogTitle>
-                      <AlertDialogDescription>
-                        این عمل غیر قابل بازگشت میباشد
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter className="mt-8">
-                      <AlertDialogCancel>انصراف</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={(e) => {
-                          handleTableDelete();
-                        }}
-                      >
-                        حذفش کن
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                {isMockUp ? (
+                  <DropdownMenuItem>
+                    <Trash2></Trash2>
+                    حذف میز
+                  </DropdownMenuItem>
+                ) : (
+                  <AlertDialog>
+                    <AlertDialogTrigger
+                      asChild
+                      className="w-full h-full flex items-center gap-2 py-1.5 px-2"
+                    >
+                      <div>
+                        <Trash2></Trash2>
+                        حذف میز
+                      </div>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          آیا مطمعنی که میخوای میز "{table.name}" رو حذف کنی؟
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          این عمل غیر قابل بازگشت میباشد
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter className="mt-8">
+                        <AlertDialogCancel>انصراف</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={(e) => {
+                            handleTableDelete();
+                          }}
+                        >
+                          حذفش کن
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                )}
               </DropdownMenuItem>
               <DropdownMenuItem
                 disabled
@@ -401,7 +444,7 @@ export function LiveCardHeader({
             size="icon"
             className={cn(
               "rounded-full w-14 transition-all duration-300 bg-(--livecard-secondary)",
-              false ? "opacity-0 -ml-[64px]" : "opacity-100 ml-0"
+              true ? "opacity-0 -ml-[64px]" : "opacity-100 ml-0"
             )}
           >
             <User2 className="text-(--livecard-primary)"></User2>
@@ -410,18 +453,20 @@ export function LiveCardHeader({
       </div>
 
       {/* transaction success message */}
-      {/* <div className="w-full h-full absolute flex justify-center z-20">
-        <Button className="rounded-full justify-center bg-green-950 text-green-200 group">
-          <BadgeCheck className="w-6 h-6"></BadgeCheck>
-          <p
-            className={cn(
-              "text-md font-light transition-all duration-300 -ml-[83.8px] opacity-0 group-hover:ml-0 group-hover:opacity-100"
-            )}
-          >
-            پرداخت موفق
-          </p>
-        </Button>
-      </div> */}
+      {successfulTransaction && (
+        <div className="w-full h-full absolute flex justify-center z-20">
+          <Button className="rounded-full justify-center bg-green-950 text-green-200 group">
+            <BadgeCheck className="w-6 h-6"></BadgeCheck>
+            <p
+              className={cn(
+                "text-xs font-medium transition-all duration-300 -ml-[73px] opacity-0 group-hover:ml-0 group-hover:opacity-100"
+              )}
+            >
+              پرداخت موفق
+            </p>
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
