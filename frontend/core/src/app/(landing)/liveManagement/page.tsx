@@ -238,7 +238,7 @@ const icons = [
 export default function Page() {
   // Animation variants
   const itemVariants: Variants = {
-    hidden: { opacity: 0, scale: 1.5, filter: "blur(24px)" },
+    hidden: { opacity: 0, scale: 2, filter: "blur(24px)" },
     visible: (delay: number) => ({
       scale: 1,
       opacity: 1,
@@ -254,14 +254,14 @@ export default function Page() {
   };
 
   // delays so: outer → inner → center
-  const delayOrder = [0, 1, 3, 1, 0];
+  const delayOrder = [0, 2, 4, 2, 0];
   return (
     <div className="h-full w-full">
-      <section className="relative overflow-hidden flex flex-col justify-center items-center">
-        <div className="relative flex flex-col justify-between mt-10 mb-16 sm:mb-24 md:mb-32 lg:mb-42 w-full">
+      <section className="relative flex flex-col items-center justify-center overflow-hidden">
+        <div className="relative mt-10 mb-16 flex w-full flex-col justify-between sm:mb-24 md:mb-32 lg:mb-42">
           {/* icons */}
 
-          <div className="flex justify-between self-end px-4 w-full lg:px-24">
+          <div className="flex w-full justify-between self-end px-4 lg:px-24">
             {icons.map((icon, i) => {
               const Icon = icon.Component;
               const delay = delayOrder[i] * 0.3;
@@ -307,7 +307,7 @@ export default function Page() {
             duration: 3,
             ease: "easeInOut",
           }}
-          className="absolute bottom-0 z-5 w-10/12 h-1/4 bg-[#4EEBFF]/50 rounded-full blur-[120px]"
+          className="absolute bottom-0 z-5 h-1/4 w-10/12 rounded-full bg-[#4EEBFF]/50 blur-[120px]"
         ></motion.div>
 
         {/* hero title  */}
@@ -351,9 +351,9 @@ export default function Page() {
       </section>
 
       {/* dashboard mockup */}
-      <div className="relative lg:flex-row flex-col gap-8 w-full flex h-[2000px] overflow-hidden px-4 lg:px-12 xl:px-16">
-        <div className="flex flex-col gap-8 w-11/12 lg:basis-2/5">
-          <h2 className="text-royal-green md:text-5xl/18 sm:text-4xl/14 xl:text-5xl/18 text-xl/8">
+      <div className="relative flex h-[2000px] w-full flex-col gap-8 overflow-hidden px-4 lg:flex-row lg:px-12 xl:px-16">
+        <div className="flex w-11/12 flex-col gap-8 lg:basis-2/5">
+          <h2 className="text-royal-green text-xl/8 sm:text-4xl/14 md:text-5xl/18 xl:text-5xl/18">
             مشاهده وضعیت میز ها
             <br className="hidden md:flex" /> و سفارشات آنلاین به{" "}
             <br className="hidden md:flex" />
@@ -363,7 +363,7 @@ export default function Page() {
             </span>
           </h2>
           <div className="flex flex-col gap-4">
-            <h4 className="text-xs sm:text-base text-royal-green/70">
+            <h4 className="text-royal-green/70 text-xs sm:text-base">
               <span className="text-royal-green font-semibold">
                 به سادگی از وضعیت هر سفارش با خبر شوید.
               </span>{" "}
@@ -375,12 +375,12 @@ export default function Page() {
               رزرو میز
             </h5>
           </div>
-          <div className="gap-10 w-full hidden sm:flex">
+          <div className="hidden w-full gap-10 sm:flex">
             <div className="flex flex-col gap-4">
               <FeatureHighlight
                 icon={
                   <CloudCheck
-                    className="w-4 h-4 lg:w-5 lg:h-5"
+                    className="h-4 w-4 lg:h-5 lg:w-5"
                     primaryColor="var(--royal-green)"
                   ></CloudCheck>
                 }
@@ -389,7 +389,7 @@ export default function Page() {
               <FeatureHighlight
                 icon={
                   <Users
-                    className="w-4 h-4 lg:w-5 lg:h-5"
+                    className="h-4 w-4 lg:h-5 lg:w-5"
                     primaryColor="var(--royal-green)"
                     size={20}
                   ></Users>
@@ -401,7 +401,7 @@ export default function Page() {
               <FeatureHighlight
                 icon={
                   <Infinity
-                    className="w-4 h-4 lg:w-5 lg:h-5"
+                    className="h-4 w-4 lg:h-5 lg:w-5"
                     primaryColor="var(--royal-green)"
                     size={20}
                   ></Infinity>
@@ -411,7 +411,7 @@ export default function Page() {
               <FeatureHighlight
                 icon={
                   <ClockAlert
-                    className="w-4 h-4 lg:w-5 lg:h-5"
+                    className="h-4 w-4 lg:h-5 lg:w-5"
                     primaryColor="var(--royal-green)"
                     size={20}
                   ></ClockAlert>
@@ -421,18 +421,18 @@ export default function Page() {
             </div>
           </div>
         </div>
-        <div className="relative lg:absolute xl:-left-[500px] h-max 2xl:-left-[450px] lg:-left-[700px] max-h-[280px]">
-          <div className="relative w-max scale-45 sm:scale-85 lg:scale-75 xl:scale-85 2xl:scale-100 origin-top-right pr-32 sm:pr-48 lg:pr-0">
+        <div className="relative h-max max-h-[280px] lg:absolute lg:-left-[700px] xl:-left-[500px] 2xl:-left-[450px]">
+          <div className="relative w-max origin-top-right scale-45 pr-32 sm:scale-85 sm:pr-48 lg:scale-75 lg:pr-0 xl:scale-85 2xl:scale-100">
             <LiveManagementMockUp></LiveManagementMockUp>
-            <div className="absolute z-50 w-full -bottom-2 left-0 h-[350px] bg-gradient-to-t from-white from-45% via-white/95 via-55% to-transparent pointer-events-none" />
+            <div className="pointer-events-none absolute -bottom-2 left-0 z-50 h-[350px] w-full bg-gradient-to-t from-white from-45% via-white/95 via-55% to-transparent" />
           </div>
         </div>
-        <div className="sm:gap-10 sm:hidden sm:justify-center justify-between w-full z-30 flex mt-8">
+        <div className="z-30 mt-8 flex w-full justify-between sm:hidden sm:justify-center sm:gap-10">
           <div className="flex flex-col gap-2">
             <FeatureHighlight
               icon={
                 <CloudCheck
-                  className="w-4 h-4 lg:w-5 lg:h-5"
+                  className="h-4 w-4 lg:h-5 lg:w-5"
                   primaryColor="var(--royal-green)"
                 ></CloudCheck>
               }
@@ -441,7 +441,7 @@ export default function Page() {
             <FeatureHighlight
               icon={
                 <Users
-                  className="w-4 h-4 lg:w-5 lg:h-5"
+                  className="h-4 w-4 lg:h-5 lg:w-5"
                   primaryColor="var(--royal-green)"
                   size={20}
                 ></Users>
@@ -453,7 +453,7 @@ export default function Page() {
             <FeatureHighlight
               icon={
                 <Infinity
-                  className="w-4 h-4 lg:w-5 lg:h-5"
+                  className="h-4 w-4 lg:h-5 lg:w-5"
                   primaryColor="var(--royal-green)"
                   size={20}
                 ></Infinity>
@@ -463,7 +463,7 @@ export default function Page() {
             <FeatureHighlight
               icon={
                 <ClockAlert
-                  className="w-4 h-4 lg:w-5 lg:h-5"
+                  className="h-4 w-4 lg:h-5 lg:w-5"
                   primaryColor="var(--royal-green)"
                   size={20}
                 ></ClockAlert>
@@ -485,31 +485,31 @@ const FeatureHighlight = ({
   text: string;
 }) => {
   return (
-    <div className="flex gap-2 items-center">
+    <div className="flex items-center gap-2">
       {icon}
-      <p className="font-normal text-xs lg:text-sm">{text}</p>
+      <p className="text-xs font-normal lg:text-sm">{text}</p>
     </div>
   );
 };
 
 const LiveManagementMockUp = () => {
   return (
-    <div className="flex flex-col w-max gap-4 border-1 h-max p-4 rounded-[40px] border-[#C5E5E9]/20 bg-[#243B3E]">
-      <div className="w-full bg-[#C5E5E9]/20 p-2 border-1 rounded-full border-[#C5E5E9]/40">
-        <div className="bg-[#F8FEFF] border-1 border-royal-green w-max p-1 rounded-full gap-2 flex">
-          <Button className="rounded-full bg-royal-green text-white text-sm px-6">
+    <div className="flex h-max w-max flex-col gap-4 rounded-[40px] border-1 border-[#C5E5E9]/20 bg-[#243B3E] p-4">
+      <div className="w-full rounded-full border-1 border-[#C5E5E9]/40 bg-[#C5E5E9]/20 p-2">
+        <div className="border-royal-green flex w-max gap-2 rounded-full border-1 bg-[#F8FEFF] p-1">
+          <Button className="bg-royal-green rounded-full px-6 text-sm text-white">
             همه
           </Button>
-          <Button className="rounded-full bg-inherit text-royal-green text-sm hover:bg-royal-green/10 px-6">
+          <Button className="text-royal-green hover:bg-royal-green/10 rounded-full bg-inherit px-6 text-sm">
             میز ها
           </Button>
-          <Button className="rounded-full bg-inherit text-royal-green text-sm hover:bg-royal-green/10">
+          <Button className="text-royal-green hover:bg-royal-green/10 rounded-full bg-inherit text-sm">
             سفارشات آنلاین
           </Button>
         </div>
       </div>
-      <section className="w-full flex flex-col gap-4">
-        <div className="w-full gap-4 flex">
+      <section className="flex w-full flex-col gap-4">
+        <div className="flex w-full gap-4">
           {liveDummyTables.slice(0, 5).map((table, index) => (
             <LiveCard
               isMockUp
@@ -520,7 +520,7 @@ const LiveManagementMockUp = () => {
             ></LiveCard>
           ))}
         </div>
-        <div className="w-full gap-4 flex">
+        <div className="flex w-full gap-4">
           {liveDummyTables.slice(5).map((table, index) => (
             <LiveCard
               isMockUp
