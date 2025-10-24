@@ -1,9 +1,17 @@
+"use client";
+
 import LiveCard from "@/app/dashboard/components/LiveCard";
 import { Button } from "@/components/ui/button";
 import React from "react";
 
 //types
 import { type TableType } from "@/app/dashboard/[business_slug]/[branch_slug]/liveManagement/all/page";
+
+//libraries
+import { motion, type Variants } from "motion/react";
+
+//utils
+import BlurRevealText from "@/lib/blurRevealText";
 
 //SVGs
 import {
@@ -196,39 +204,84 @@ export const liveDummyTables: TableType[] = [
     is_requesting_assistance: false,
   },
 ];
+const icons = [
+  {
+    id: 1,
+    Component: Settings,
+    className: "w-5 h-5 sm:w-8 sm:h-8 opacity-35 md:w-9 md:h-9 lg:w-14 lg:h-14",
+  },
+  {
+    id: 2,
+    Component: ScrollText,
+    className:
+      "w-8 h-8 sm:w-12 sm:h-12 opacity-55 md:w-14 md:h-14 lg:w-22 lg:h-22 mt-5",
+  },
+  {
+    id: 3,
+    Component: Radar,
+    className:
+      "w-15 h-15 sm:w-22 sm:h-22 md:w-28 md:h-28 lg:w-42 lg:h-42 mt-10",
+  },
+  {
+    id: 4,
+    Component: Chart,
+    className:
+      "w-8 h-8 sm:w-12 sm:h-12 opacity-55 md:w-14 md:h-14 lg:w-22 lg:h-22 mt-5",
+  },
+  {
+    id: 5,
+    Component: Users,
+    className: "w-5 h-5 sm:w-8 sm:h-8 opacity-35 md:w-9 md:h-9 lg:w-14 lg:h-14",
+  },
+];
 
 export default function Page() {
+  // Animation variants
+  const itemVariants: Variants = {
+    hidden: { opacity: 0, scale: 1.5, filter: "blur(24px)" },
+    visible: (delay: number) => ({
+      scale: 1,
+      opacity: 1,
+      filter: "blur(0px)",
+      transition: {
+        delay,
+        duration: 0.6,
+        ease: "easeOut",
+
+        stiffness: 150,
+      },
+    }),
+  };
+
+  // delays so: outer → inner → center
+  const delayOrder = [0, 1, 3, 1, 0];
   return (
     <div className="h-full w-full">
-      <section className="relative overflow-hidden flex flex-col justify-center items-center mb-[2000px]">
-        <div className="relative flex flex-col justify-between my-16 sm:my-24 md:my-32 lg:my-42 w-full">
+      <section className="relative overflow-hidden flex flex-col justify-center items-center">
+        <div className="relative flex flex-col justify-between mt-10 mb-16 sm:mb-24 md:mb-32 lg:mb-42 w-full">
           {/* icons */}
+
           <div className="flex justify-between self-end px-4 w-full lg:px-24">
-            <Settings
-              primaryColor="var(--royal-green)"
-              strokeWidth={1.5}
-              className="w-5 h-5 sm:w-8 sm:h-8 opacity-35 md:w-9 md:h-9 lg:w-14 lg:h-14"
-            ></Settings>
-            <ScrollText
-              primaryColor="var(--royal-green)"
-              strokeWidth={1.5}
-              className="w-8 h-8 sm:w-12 sm:h-12 opacity-55 md:w-14 md:h-14 lg:w-22 lg:h-22 mt-5"
-            ></ScrollText>
-            <Radar
-              primaryColor="var(--royal-green)"
-              strokeWidth={1.5}
-              className="w-15 h-15 sm:w-22 sm:h-22 md:w-28 md:h-28 lg:w-42 lg:h-42 mt-10"
-            ></Radar>
-            <Chart
-              primaryColor="var(--royal-green)"
-              strokeWidth={1.5}
-              className="w-8 h-8 sm:w-12 sm:h-12 opacity-55 md:w-14 md:h-14 lg:w-22 lg:h-22 mt-5"
-            ></Chart>
-            <Users
-              primaryColor="var(--royal-green)"
-              strokeWidth={1.5}
-              className="w-5 h-5 sm:w-8 sm:h-8 opacity-35 md:w-9 md:h-9 lg:w-14 lg:h-14"
-            ></Users>
+            {icons.map((icon, i) => {
+              const Icon = icon.Component;
+              const delay = delayOrder[i] * 0.3;
+
+              return (
+                <motion.div
+                  key={icon.id}
+                  custom={delay}
+                  variants={itemVariants}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  <Icon
+                    primaryColor="var(--royal-green)"
+                    strokeWidth={1.5}
+                    className={icon.className}
+                  />
+                </motion.div>
+              );
+            })}
           </div>
           {/* curved line */}
           <svg
@@ -247,15 +300,39 @@ export default function Page() {
           </svg>
         </div>
         {/* blue glow  */}
-        <div className="absolute bottom-0 z-5 w-8/12 h-1/4 bg-[#4EEBFF]/40 rounded-full blur-[120px]"></div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: -20 }}
+          transition={{
+            duration: 3,
+            ease: "easeInOut",
+          }}
+          className="absolute bottom-0 z-5 w-10/12 h-1/4 bg-[#4EEBFF]/50 rounded-full blur-[120px]"
+        ></motion.div>
+
         {/* hero title  */}
-        <h1 className="text-center sm:text-xl md:text-3xl lg:text-4xl/14">
+        <div className="text-center">
+          <BlurRevealText
+            className="text-center sm:text-xl md:text-3xl lg:text-4xl/14"
+            text="مدیریت مجموعه در هر لحظه و هر زمان"
+          ></BlurRevealText>
+          <BlurRevealText
+            className="text-center sm:text-xl md:text-3xl lg:text-4xl/14"
+            text="به صورت زنده"
+          ></BlurRevealText>
+        </div>
+        {/* <motion.h1
+          initial={{ opacity: 0, filter: "blur(8px)", y: 10 }}
+          animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+          transition={{ duration: 0.6, delay: 1, ease: "easeInOut" }}
+          className="text-center sm:text-xl md:text-3xl lg:text-4xl/14"
+        >
           مدیریت مجموعه در هر لحظه و هر زمان <br />
           به صورت{" "}
           <span className="text-grad bg-gradient-to-b from-[#94D9E2] to-[#06434C] bg-clip-text text-transparent">
             زنده
           </span>
-        </h1>
+        </motion.h1> */}
         {/* arc  */}
         <svg
           className="z-20"
