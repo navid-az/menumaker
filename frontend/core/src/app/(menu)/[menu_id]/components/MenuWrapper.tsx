@@ -1,7 +1,7 @@
 import React from "react";
 
 //types
-import { MenuGlobalStyling } from "../menu/page";
+import { type MenuGlobalStyling } from "@/app/types/api/menu";
 
 //utils
 import { getStyleVars } from "../utilities/styleVars";
@@ -16,7 +16,10 @@ export default function MenuWrapper({
   const styleVars = getStyleVars(config);
 
   return (
-    <div className="h-screen" style={styleVars as React.CSSProperties}>
+    <div
+      className="h-screen bg-(--bg)"
+      style={styleVars as React.CSSProperties}
+    >
       {children}
     </div>
   );

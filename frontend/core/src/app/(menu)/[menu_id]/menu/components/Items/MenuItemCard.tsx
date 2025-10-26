@@ -37,6 +37,10 @@ export type MenuItemCardProps = MenuItem & {
 
 //utils
 import { getStyleVars } from "../../../utilities/styleVars";
+
+//libraries
+import { cn } from "@/lib/utils";
+
 export function MenuItemCard({
   id,
   name,
@@ -49,6 +53,8 @@ export function MenuItemCard({
   globalStyling,
 }: MenuItemCardProps) {
   const styleVars = getStyleVars(globalStyling);
+  const style = "retro";
+  const fullScreen = false;
 
   //change the value of drawerIsOpen global state
   const setDrawerIsOpen = useMenuItemDrawer((state) => state.updateIsOpen);
@@ -81,7 +87,6 @@ export function MenuItemCard({
     globalStyling.click_animation_type
   );
 
-  const fullScreen = false;
   return (
     <Drawer setBackgroundColorOnScale={false} onOpenChange={handleDrawer}>
       <DrawerTrigger
@@ -126,7 +131,13 @@ export function MenuItemCard({
             </div>
           </div>
         ) : !fullScreen ? (
-          <div className="flex h-[300px] flex-none flex-col xss:col-span-1">
+          <div
+            className={cn(
+              "flex h-[300px] flex-none flex-col xss:col-span-1 border-(--secondary)",
+              style === "retro" &&
+                "border-3 shadow-[4px_4px_0px_0px_var(--secondary)]"
+            )}
+          >
             <div className="relative flex basis-6/6 w-full">
               <Image
                 className="rounded-t-(--radius-exception) object-cover absolute -z-5"
@@ -136,13 +147,18 @@ export function MenuItemCard({
               ></Image>
             </div>
             <div
-              className={`relative bottom-0 flex w-full flex-none shrink-0 basis-5/12 flex-col justify-between gap-3 rounded-b-(--radius-exception) bg-(--primary) p-2 text-(--secondary)`}
+              className={cn(
+                `relative bottom-0 flex w-full flex-none shrink-0 basis-5/12 flex-col justify-between gap-3 rounded-b-(--radius-exception) bg-(--primary) p-2 text-(--secondary)`,
+                style === "retro" && "border-t-3 border-(--secondary)"
+              )}
             >
               <div className="space-y-0.5">
                 <p
-                  className={`font-semibold ${
-                    name.length > 20 ? "text-sm" : "text-lg"
-                  }`}
+                  className={cn(
+                    `font-semibold`,
+                    name.length > 20 ? "text-sm" : "text-lg",
+                    style === "retro" && "font-black"
+                  )}
                 >
                   {name}
                 </p>
@@ -155,7 +171,13 @@ export function MenuItemCard({
             </div>
           </div>
         ) : (
-          <div className="relative flex h-[300px] flex-none flex-col xss:col-span-1">
+          <div
+            className={cn(
+              "relative flex h-[300px] flex-none flex-col xss:col-span-1",
+              style === "retro" &&
+                "border-3 border-(--secondary) shadow-[4px_4px_0px_0px_var(--secondary)]"
+            )}
+          >
             {/* Removing -z-5 will apply ripple animation effect BEHIND the image
             This only works if the element doesn't have a background(png) */}
             <Image

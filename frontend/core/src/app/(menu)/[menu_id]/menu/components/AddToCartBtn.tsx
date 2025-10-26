@@ -67,7 +67,7 @@ export default function AddToCartBtn({
   const handleAdd = () => {
     updateItems(itemId);
   };
-
+  const style = "retro";
   return (
     <div
       onClick={(e) => e.stopPropagation()}
@@ -99,8 +99,10 @@ export default function AddToCartBtn({
           className="h-full w-full rounded-full bg-(--secondary) text-(--primary)"
           onClick={handleAdd}
         >
-          <Plus className="h-6 w-6 ltr:mr-2 rtl:ml-2" />
-          <p className=" text-base">افزودن</p>
+          <Plus className={cn("h-6 w-6")} />
+          <p className={cn("text-base", style === "retro" && "font-bold")}>
+            افزودن
+          </p>
         </Button>
       )}
     </div>

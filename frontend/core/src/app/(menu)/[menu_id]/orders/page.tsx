@@ -11,6 +11,9 @@ import { type MenuItem } from "@/app/types/api/menu";
 import { type MenuGlobalStyling } from "@/app/types/api/menu";
 export type ValidItemType = { item: MenuItem; count?: number };
 
+//libraries
+import { cn } from "@/lib/utils";
+
 // GET menu items
 async function getItems(menu_id: string) {
   try {
@@ -48,6 +51,8 @@ export default async function Page(props: {
     params.menu_id
   );
 
+  const style = "retro";
+  const isDisabled = true;
   return (
     <div className="container flex h-screen flex-col justify-between gap-8 p-4">
       <header className="flex items-center justify-between">
@@ -66,14 +71,22 @@ export default async function Page(props: {
       <OrderList data={data} globalStyling={globalStyling} />
       <footer className="flex gap-4">
         <Button
-          disabled
-          className="h-12 basis-9/12 rounded-(--radius-base) bg-(--primary) text-base text-(--secondary)"
+          disabled={isDisabled}
+          className={cn(
+            "h-12 basis-9/12 rounded-(--radius-base) bg-(--primary) text-base text-(--secondary) transition-all duration-300",
+            style === "retro" &&
+              `border-3 border-(--secondary) ${!isDisabled && "shadow-[4px_4px_0px_0px_var(--secondary)]"}`
+          )}
         >
           ثبت سفارش
         </Button>
         <Button
           size="icon"
-          className="h-12 basis-3/12 rounded-(--radius-base) bg-(--primary) text-(--secondary)"
+          className={cn(
+            "h-12 basis-3/12 rounded-(--radius-base) bg-(--primary) text-(--secondary)",
+            style === "retro" &&
+              "border-3 border-(--secondary) shadow-[4px_4px_0px_0px_var(--secondary)]"
+          )}
         >
           <ConciergeBell />
         </Button>

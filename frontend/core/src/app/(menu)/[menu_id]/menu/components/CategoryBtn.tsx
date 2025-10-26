@@ -28,6 +28,9 @@ import { useCategoryBtn } from "@/lib/stores";
 import { useTactileAnimation } from "@/app/hooks/useTactileAnimation"; //animation hook
 import { useRippleAnimation } from "@/app/hooks/useRippleAnimation"; //animation hook
 
+//libraries
+import clsx from "clsx";
+
 const buttonVariants = cva(
   `flex-none select-none transition-colors duration-500`,
   {
@@ -73,6 +76,7 @@ export default function CategoryBtn({
   size,
   globalStyling,
 }: ButtonProps) {
+  const style = "retro"; //testing stylings
   const [isIconOnly, setIsIconOnly] = useState(false);
   const [lastChangeByClick, setLastChangeByClick] = useState(false);
   const buttonRef = useRef<HTMLDivElement>(null);
@@ -177,8 +181,12 @@ export default function CategoryBtn({
         onClick={moveToCat}
         id={`category-${id}`}
         className={cn(
-          "h-10 flex-none relative select-none rounded-(--radius-base) border-3 bg-(--primary) px-4 py-2 text-(--secondary) transition-color duration-300",
-          activeCategory === id ? "border-(--secondary)" : "border-(--primary)",
+          "h-10 flex-none relative select-none rounded-(--radius-base) border-3 bg-(--primary) px-4 py-2 text-(--secondary) transition-[color,box-shadow] duration-300",
+          style === "retro" &&
+            "shadow-[4px_4px_0px_0px_var(--secondary)] border-(--secondary) font-bold",
+          activeCategory === id
+            ? "border-(--secondary) shadow-[0px_0px_0px_0px_var(--secondary)]"
+            : "border-(--secondary)",
           className
         )}
       >

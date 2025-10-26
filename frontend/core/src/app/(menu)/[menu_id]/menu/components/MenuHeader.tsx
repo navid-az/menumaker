@@ -14,6 +14,7 @@ import { type MenuUI } from "@/app/types/ui/menu";
 
 //libraries
 import { cn } from "@/lib/utils";
+import clsx from "clsx";
 
 export default function MenuHeader({ menuData }: { menuData: MenuUI }) {
   async function callWaiter() {
@@ -26,7 +27,7 @@ export default function MenuHeader({ menuData }: { menuData: MenuUI }) {
       console.error("wtf just happened");
     }
   }
-
+  const style = "retro";
   return (
     <section
       className={cn(
@@ -39,14 +40,20 @@ export default function MenuHeader({ menuData }: { menuData: MenuUI }) {
           {menuData.call_waiter_enabled && (
             <Button
               onClick={() => callWaiter()}
-              className="rounded-(--radius-base) bg-(--primary) text-(--secondary)"
+              className={clsx(
+                "rounded-(--radius-base) bg-(--primary) text-(--secondary)",
+                style === "retro" &&
+                  "border-3 font-bold shadow-[4px_4px_0px_0px_var(--secondary)] border-(--secondary)"
+              )}
             >
               <ConciergeBell></ConciergeBell>
               سالن دار
             </Button>
           )}
         </div>
-        <AlignLeft className="ml-2 text-(--primary)"></AlignLeft>
+        <AlignLeft
+          className={cn("ml-2 text-(--primary)", "stroke-3")}
+        ></AlignLeft>
       </section>
       <div className="flex gap-2">
         {menuData.searchbar_enabled && <SearchBar></SearchBar>}

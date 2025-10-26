@@ -23,6 +23,7 @@ import { ShoppingBag } from "lucide-react";
 import { type MenuCategory } from "@/app/types/api/menu";
 import { type MenuItem } from "@/app/types/api/menu";
 import { type MenuGlobalStylingUI } from "@/app/types/ui/menu";
+import clsx from "clsx";
 type CartBtnType = {
   type?: "default" | "compact";
   businessSlug?: string;
@@ -31,12 +32,13 @@ type CartBtnType = {
 };
 
 export default function CartBtn({
-  type = "default",
+  type = "compact",
   businessSlug,
   categories,
   globalStyling,
 }: CartBtnType) {
   const cartBtnRef = useRef<HTMLButtonElement>(null);
+  const style = "retro";
 
   const DrawerIsOpen = useMenuItemDrawer((state) => state.isOpen);
   const cartItems = useItemCart((state) => state.items);
@@ -112,11 +114,20 @@ export default function CartBtn({
       <Button
         ref={cartBtnRef}
         asChild
-        className="fixed bottom-[-80px] mx-4 mb-4 border-2 border-(--secondary) left-0 right-0 z-50 flex h-max items-center justify-between rounded-(--radius-base) bg-(--primary) p-2 text-(--secondary) shadow-2xl xs:p-2.5"
+        className={clsx(
+          "fixed bottom-[-80px] mx-4 mb-4 border-2 border-(--secondary) left-0 right-0 z-50 flex h-max items-center justify-between rounded-(--radius-base) bg-(--primary) p-2 text-(--secondary) shadow-2xl xs:p-2.5",
+          style === "retro" &&
+            "border-3 shadow-[4px_4px_0px_0px_var(--secondary)]"
+        )}
       >
         <Link href={`/${businessSlug}/orders`}>
           <div className=" flex items-center pr-2">
-            <p className="text-lg font-medium text-(--secondary) xs:text-xl xs:font-semibold">
+            <p
+              className={cn(
+                "text-lg font-medium text-(--secondary) xs:text-xl xs:font-semibold",
+                style === "retro" && "font-black"
+              )}
+            >
               ثبت سفارش
             </p>
           </div>
@@ -124,7 +135,11 @@ export default function CartBtn({
             {matchingItems.slice(0, 3).map((item) => (
               <div
                 key={item.item.id}
-                className="relative h-11 w-11 bg-(--bg) -ml-4 first:ml-0 rounded-(--radius-base) border-2 border-(--secondary) shadow-sm transition-all duration-300 xs:h-12 xs:w-12"
+                className={cn(
+                  "relative h-11 w-11 bg-(--bg) -ml-4 first:ml-0 rounded-(--radius-base) border-2 border-(--secondary) shadow-sm transition-all duration-300 xs:h-12 xs:w-12",
+                  style === "retro" &&
+                    "border-3 shadow-[2px_2px_0px_0px_var(--secondary)]"
+                )}
               >
                 <Image
                   fill
@@ -134,10 +149,11 @@ export default function CartBtn({
                 ></Image>
                 <div
                   className={cn(
-                    "absolute z-10 w-[18px] h-[18px] aspect-square rounded-(--radius-base) border-2 border-(--primary) bg-(--secondary) text-center text-xs font-light text-(--primary) transition-all duration-300 xs:h-5 xs:w-5 xs:font-normal",
+                    "absolute z-10 h-4.5 w-4.5 flex justify-center items-center rounded-(--radius-inner-alt) border-2 border-(--secondary) bg-(--primary) text-center text-xs pt-0.5 font-normal text-(--secondary) transition-all duration-300",
                     globalStyling.border_radius === "full"
                       ? "-left-0.5 -top-0.5"
-                      : "-left-1.5 -top-1.5"
+                      : "-left-1.5 -top-1.5",
+                    style === "retro" && "font-medium"
                   )}
                 >
                   {item.count}
@@ -159,18 +175,24 @@ export default function CartBtn({
         <Button
           ref={cartBtnRef}
           asChild
-          className="relative h-14 w-14 rounded-(--radius-base) bg-(--secondary) shadow-inner"
+          className={clsx(
+            "relative h-14 w-14 rounded-(--radius-base) bg-(--primary)",
+            style === "retro" &&
+              "border-3 border-(--secondary) shadow-[4px_4px_0px_0px_var(--secondary)]"
+          )}
           size="icon"
         >
           <Link href={`/${businessSlug}/orders`}>
-            <ShoppingBag className="h-6 w-6 text-(--primary)"></ShoppingBag>
+            <ShoppingBag className="h-6 w-6 text-(--secondary)"></ShoppingBag>
             {totalItemCount >= 1 && (
               <div
                 className={cn(
-                  "absolute z-10 h-6 w-6 flex justify-center items-center rounded-(--radius-base) border-2 border-(--secondary) bg-(--primary) text-center text-xs pt-0.5 font-normal text-(--secondary) transition-all duration-300",
+                  "absolute z-10 h-5.5 w-5.5 flex justify-center items-center rounded-(--radius-inner-alt) border-2 border-(--secondary) bg-(--primary) text-center text-xs pt-0.5 font-normal text-(--secondary) transition-all duration-300",
                   globalStyling.border_radius === "full"
                     ? "-left-0.5 -top-0.5"
-                    : "-left-1.5 -top-1.5"
+                    : "-left-1.5 -top-1.5",
+                  style === "retro" &&
+                    "border-3 shadow-[1px_1px_0px_0px_var(--secondary)] font-black"
                 )}
               >
                 {totalItemCount}
