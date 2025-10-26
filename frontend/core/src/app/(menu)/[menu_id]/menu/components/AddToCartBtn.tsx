@@ -67,12 +67,11 @@ export default function AddToCartBtn({
   const handleAdd = () => {
     updateItems(itemId);
   };
-  const style = "retro";
   return (
     <div
       onClick={(e) => e.stopPropagation()}
       className={cn(
-        "flex h-10 w-full justify-center gap-2 rounded-(--radius-base) bg-(--secondary)",
+        "flex h-10 w-full justify-center gap-2 rounded-(--radius-base) bg-(--secondary) transition-all duration-300",
         className
       )}
     >
@@ -99,8 +98,18 @@ export default function AddToCartBtn({
           className="h-full w-full rounded-full bg-(--secondary) text-(--primary)"
           onClick={handleAdd}
         >
-          <Plus className={cn("h-6 w-6")} />
-          <p className={cn("text-base", style === "retro" && "font-bold")}>
+          <Plus
+            className={cn(
+              "h-6 w-6",
+              globalStyling.style === "retro" && "stroke-2"
+            )}
+          />
+          <p
+            className={cn(
+              "text-base",
+              globalStyling.style === "retro" && "font-bold"
+            )}
+          >
             افزودن
           </p>
         </Button>
@@ -152,7 +161,7 @@ const StepperBtn = ({
       onClick={action}
       size="icon"
       className={cn(
-        "scale-pro h-full w-24 flex-initial rounded-(--radius-inner-alt) bg-(--primary) text-(--secondary)",
+        "scale-pro h-full w-24 flex-initial rounded-(--radius-inner-alt) bg-(--primary) text-(--secondary) transition-[border-radius] duration-300",
         className
       )}
     >

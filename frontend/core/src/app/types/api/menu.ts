@@ -24,7 +24,7 @@ export type MenuGlobalStyling = {
   secondary_color: string;
   tertiary_color: string;
   bg_color: string;
-  style?: "retro" | "minimal" | "liquid-glass" | "fronted-glass" | "brutal";
+  style: "default" | "retro";
   // unit_display_type: "comp" | "simp" | "engL" | "perL";
   border_radius: "sm" | "md" | "lg" | "full";
   click_animation_enabled?: boolean;

@@ -57,7 +57,7 @@ export function SliderTabTitle({
 }: SliderTabTitle) {
   return (
     <Label
-      className={`flex w-full ${
+      className={`flex gap-2 w-full ${
         children ? "cursor-pointer" : "cursor-auto"
       } flex-col justify-between p-2 sm:p-3`}
     >

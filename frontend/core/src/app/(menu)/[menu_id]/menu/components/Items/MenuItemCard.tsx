@@ -53,7 +53,6 @@ export function MenuItemCard({
   globalStyling,
 }: MenuItemCardProps) {
   const styleVars = getStyleVars(globalStyling);
-  const style = "retro";
   const fullScreen = false;
 
   //change the value of drawerIsOpen global state
@@ -98,14 +97,14 @@ export function MenuItemCard({
           <div className="col-span-2 flex h-[300px] flex-none flex-col">
             <div className="relative flex h-full w-full">
               <Image
-                className="rounded-t-(--radius-exception) object-cover object-top"
+                className="rounded-t-(--radius-exception) object-cover object-top transition-all duration-300"
                 src={`http://127.0.0.1:8000${image}`}
                 alt={name}
                 fill
               ></Image>
             </div>
             <div
-              className={`flex w-full flex-none shrink-0 gap-4 basis-5/12 flex-col justify-between rounded-b-(--radius-exception) bg-(--primary) text-(--secondary) p-2`}
+              className={`flex w-full flex-none shrink-0 gap-4 basis-5/12 flex-col justify-between rounded-b-(--radius-exception) bg-(--primary) text-(--secondary) p-2 transition-all duration-300`}
             >
               <div className="flex flex-col">
                 <div className="flex justify-between items-center">
@@ -133,14 +132,14 @@ export function MenuItemCard({
         ) : !fullScreen ? (
           <div
             className={cn(
-              "flex h-[300px] flex-none flex-col xss:col-span-1 border-(--secondary)",
-              style === "retro" &&
+              "flex h-[300px] flex-none flex-col xss:col-span-1 border-(--secondary) transition-all duration-300",
+              globalStyling.style === "retro" &&
                 "border-3 shadow-[4px_4px_0px_0px_var(--secondary)]"
             )}
           >
             <div className="relative flex basis-6/6 w-full">
               <Image
-                className="rounded-t-(--radius-exception) object-cover absolute -z-5"
+                className="rounded-t-(--radius-exception) object-cover absolute -z-5 transition-all duration-300"
                 src={`http://127.0.0.1:8000${image}`}
                 alt={name}
                 fill
@@ -149,7 +148,8 @@ export function MenuItemCard({
             <div
               className={cn(
                 `relative bottom-0 flex w-full flex-none shrink-0 basis-5/12 flex-col justify-between gap-3 rounded-b-(--radius-exception) bg-(--primary) p-2 text-(--secondary)`,
-                style === "retro" && "border-t-3 border-(--secondary)"
+                globalStyling.style === "retro" &&
+                  "border-t-3 border-(--secondary)"
               )}
             >
               <div className="space-y-0.5">
@@ -157,7 +157,7 @@ export function MenuItemCard({
                   className={cn(
                     `font-semibold`,
                     name.length > 20 ? "text-sm" : "text-lg",
-                    style === "retro" && "font-black"
+                    globalStyling.style === "retro" && "font-black"
                   )}
                 >
                   {name}
@@ -173,8 +173,8 @@ export function MenuItemCard({
         ) : (
           <div
             className={cn(
-              "relative flex h-[300px] flex-none flex-col xss:col-span-1",
-              style === "retro" &&
+              "relative flex h-[300px] flex-none flex-col xss:col-span-1 transition-[box-shadow,border,border-radius] duration-300",
+              globalStyling.style === "retro" &&
                 "border-3 border-(--secondary) shadow-[4px_4px_0px_0px_var(--secondary)]"
             )}
           >

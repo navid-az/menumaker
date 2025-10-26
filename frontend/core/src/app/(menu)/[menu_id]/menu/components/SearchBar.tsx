@@ -15,12 +15,18 @@ import { useSearchBar } from "@/lib/stores";
 import { cn } from "@/lib/utils";
 
 //types
+import { type MenuGlobalStylingUI } from "@/app/types/ui/menu";
 type SearchBar = {
+  globalStyling: MenuGlobalStylingUI;
   value: string;
   onChange: () => void;
 };
 
-export default function SearchBar() {
+export default function SearchBar({
+  globalStyling,
+}: {
+  globalStyling: MenuGlobalStylingUI;
+}) {
   const searchBtnRef = useRef<HTMLButtonElement>(null);
   // useConditionalAnimation(searchBtnRef, ["tactile"]);
 
@@ -47,13 +53,11 @@ export default function SearchBar() {
     setIsLoading(false);
   }, [searchQuery]);
 
-  const style = "retro";
-
   return (
     <div
       className={cn(
-        "flex h-max flex-1 items-center justify-between rounded-(--radius-base) bg-(--primary) p-1",
-        style === "retro" &&
+        "flex h-max flex-1 items-center justify-between rounded-(--radius-base) bg-(--primary) p-1 duration-300 transition-all",
+        globalStyling.style === "retro" &&
           "border-3 shadow-[4px_4px_0px_0px_var(--secondary)] border-(--secondary)"
       )}
     >
@@ -66,14 +70,14 @@ export default function SearchBar() {
           <Loader2
             className={cn(
               "h-4 w-4 animate-spin",
-              style === "retro" && "stroke-3"
+              globalStyling.style === "retro" && "stroke-3"
             )}
           ></Loader2>
         ) : (
           <Search
             className={cn(
-              "h-4 w-4 text-(--primary)",
-              style === "retro" && "stroke-3"
+              "h-4 w-4 text-(--primary) transition-all duration-300",
+              globalStyling.style === "retro" && "stroke-3"
             )}
           />
         )}
@@ -82,8 +86,8 @@ export default function SearchBar() {
         <input
           ref={inputRef}
           className={cn(
-            "h-full flex-1 rounded-full bg-inherit px-2 text-right text-xs font-normal text-(--secondary) caret-(--secondary) outline-none placeholder:text-(--secondary)/80",
-            style === "retro" &&
+            "h-full flex-1 rounded-full bg-inherit px-2 text-right text-xs font-normal text-(--secondary) caret-(--secondary) transition-all duration-300 outline-none placeholder:text-(--secondary)/80",
+            globalStyling.style === "retro" &&
               "text-sm font-bold placeholder:text-(--secondary)/60"
           )}
           placeholder="جستجو آیتم"
@@ -103,7 +107,7 @@ export default function SearchBar() {
             <X
               className={cn(
                 "h-4 w-4 text-(--secondary)",
-                style === "retro" && "stroke-3"
+                globalStyling.style === "retro" && "stroke-3"
               )}
             ></X>
           </Button>

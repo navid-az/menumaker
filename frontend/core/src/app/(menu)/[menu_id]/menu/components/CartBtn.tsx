@@ -32,13 +32,12 @@ type CartBtnType = {
 };
 
 export default function CartBtn({
-  type = "compact",
+  type = "default",
   businessSlug,
   categories,
   globalStyling,
 }: CartBtnType) {
   const cartBtnRef = useRef<HTMLButtonElement>(null);
-  const style = "retro";
 
   const DrawerIsOpen = useMenuItemDrawer((state) => state.isOpen);
   const cartItems = useItemCart((state) => state.items);
@@ -115,8 +114,8 @@ export default function CartBtn({
         ref={cartBtnRef}
         asChild
         className={clsx(
-          "fixed bottom-[-80px] mx-4 mb-4 border-2 border-(--secondary) left-0 right-0 z-50 flex h-max items-center justify-between rounded-(--radius-base) bg-(--primary) p-2 text-(--secondary) shadow-2xl xs:p-2.5",
-          style === "retro" &&
+          "fixed bottom-[-80px] mx-4 mb-4 border-2 border-(--secondary) left-0 right-0 z-50 flex h-max items-center justify-between rounded-(--radius-base) bg-(--primary) p-2 text-(--secondary) shadow-2xl xs:p-2.5 transition-[box-shadow,border-radius] duration-300",
+          globalStyling.style === "retro" &&
             "border-3 shadow-[4px_4px_0px_0px_var(--secondary)]"
         )}
       >
@@ -125,7 +124,7 @@ export default function CartBtn({
             <p
               className={cn(
                 "text-lg font-medium text-(--secondary) xs:text-xl xs:font-semibold",
-                style === "retro" && "font-black"
+                globalStyling.style === "retro" && "font-black"
               )}
             >
               ثبت سفارش
@@ -137,7 +136,7 @@ export default function CartBtn({
                 key={item.item.id}
                 className={cn(
                   "relative h-11 w-11 bg-(--bg) -ml-4 first:ml-0 rounded-(--radius-base) border-2 border-(--secondary) shadow-sm transition-all duration-300 xs:h-12 xs:w-12",
-                  style === "retro" &&
+                  globalStyling.style === "retro" &&
                     "border-3 shadow-[2px_2px_0px_0px_var(--secondary)]"
                 )}
               >
@@ -145,7 +144,7 @@ export default function CartBtn({
                   fill
                   src={"http://127.0.0.1:8000" + item.item.image}
                   alt={item.item.name}
-                  className="rounded-(--radius-base) object-cover"
+                  className="rounded-(--radius-base) object-cover transition-all duration-300"
                 ></Image>
                 <div
                   className={cn(
@@ -153,7 +152,7 @@ export default function CartBtn({
                     globalStyling.border_radius === "full"
                       ? "-left-0.5 -top-0.5"
                       : "-left-1.5 -top-1.5",
-                    style === "retro" && "font-medium"
+                    globalStyling.style === "retro" && "font-medium"
                   )}
                 >
                   {item.count}
@@ -176,8 +175,8 @@ export default function CartBtn({
           ref={cartBtnRef}
           asChild
           className={clsx(
-            "relative h-14 w-14 rounded-(--radius-base) bg-(--primary)",
-            style === "retro" &&
+            "relative h-14 w-14 rounded-(--radius-base) bg-(--primary) transition-[box-shadow] duration-300",
+            globalStyling.style === "retro" &&
               "border-3 border-(--secondary) shadow-[4px_4px_0px_0px_var(--secondary)]"
           )}
           size="icon"
@@ -191,7 +190,7 @@ export default function CartBtn({
                   globalStyling.border_radius === "full"
                     ? "-left-0.5 -top-0.5"
                     : "-left-1.5 -top-1.5",
-                  style === "retro" &&
+                  globalStyling.style === "retro" &&
                     "border-3 shadow-[1px_1px_0px_0px_var(--secondary)] font-black"
                 )}
               >

@@ -51,7 +51,6 @@ export default async function Page(props: {
     params.menu_id
   );
 
-  const style = "retro";
   const isDisabled = true;
   return (
     <div className="container flex h-screen flex-col justify-between gap-8 p-4">
@@ -74,7 +73,7 @@ export default async function Page(props: {
           disabled={isDisabled}
           className={cn(
             "h-12 basis-9/12 rounded-(--radius-base) bg-(--primary) text-base text-(--secondary) transition-all duration-300",
-            style === "retro" &&
+            globalStyling.style === "retro" &&
               `border-3 border-(--secondary) ${!isDisabled && "shadow-[4px_4px_0px_0px_var(--secondary)]"}`
           )}
         >
@@ -84,7 +83,7 @@ export default async function Page(props: {
           size="icon"
           className={cn(
             "h-12 basis-3/12 rounded-(--radius-base) bg-(--primary) text-(--secondary)",
-            style === "retro" &&
+            globalStyling.style === "retro" &&
               "border-3 border-(--secondary) shadow-[4px_4px_0px_0px_var(--secondary)]"
           )}
         >

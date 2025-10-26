@@ -42,7 +42,7 @@ export default function Menu({
 }: MenuWrapper & (MenuProps | MenuPreviewProps)) {
   return (
     <div className={cn("relative flex flex-col bg-(--bg) scrollbar-hide")}>
-      <MenuHeader menuData={data}></MenuHeader>
+      <MenuHeader globalStyling={globalStyling} menuData={data}></MenuHeader>
       <ItemsCategory
         categories={categories}
         globalStyling={globalStyling}

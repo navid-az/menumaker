@@ -12,6 +12,7 @@ export const formToMenuGlobalStyling = (
 ): { globalStyling: MenuGlobalStylingUI; menu: MenuUI } => {
   const [primary, secondary, tertiary, bg] = form.global_styling.color_palette;
   const globalStyling = {
+    style: form.global_styling.style,
     primary_color: primary,
     secondary_color: secondary,
     tertiary_color: tertiary,

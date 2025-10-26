@@ -180,58 +180,58 @@ export default function MenuPreview() {
       globalBorderRadius === "sm"
         ? "4px"
         : globalBorderRadius === "md"
-        ? "10px"
-        : globalBorderRadius === "lg"
-        ? "14px"
-        : "9999px", // full
+          ? "10px"
+          : globalBorderRadius === "lg"
+            ? "14px"
+            : "9999px", // full
     "--radius-inner":
       globalBorderRadius === "sm"
         ? "3px"
         : globalBorderRadius === "md"
-        ? "8px"
-        : globalBorderRadius === "lg"
-        ? "10px"
-        : "9999px", // full,
+          ? "8px"
+          : globalBorderRadius === "lg"
+            ? "10px"
+            : "9999px", // full,
     "--radius-inner-alt":
       globalBorderRadius === "sm"
         ? "2px"
         : globalBorderRadius === "md"
-        ? "6px"
-        : globalBorderRadius === "lg"
-        ? "10px"
-        : "9999px", // full,
+          ? "6px"
+          : globalBorderRadius === "lg"
+            ? "10px"
+            : "9999px", // full,
     "--radius-exception":
       globalBorderRadius === "sm"
         ? "4px"
         : globalBorderRadius === "md"
-        ? "10px"
-        : globalBorderRadius === "lg"
-        ? "18px"
-        : "26px", // full,
+          ? "10px"
+          : globalBorderRadius === "lg"
+            ? "18px"
+            : "26px", // full,
     "--radius-sm":
       globalBorderRadius === "sm"
         ? "0.5rem"
         : globalBorderRadius === "md"
-        ? "1rem"
-        : globalBorderRadius === "lg"
-        ? "3rem"
-        : "4rem", // full,
+          ? "1rem"
+          : globalBorderRadius === "lg"
+            ? "3rem"
+            : "4rem", // full,
     "--radius-md":
       globalBorderRadius === "sm"
         ? "0.5rem"
         : globalBorderRadius === "md"
-        ? "2rem"
-        : globalBorderRadius === "lg"
-        ? "5rem"
-        : "7rem", // full,
+          ? "2rem"
+          : globalBorderRadius === "lg"
+            ? "5rem"
+            : "7rem", // full,
     "--radius-lg":
       globalBorderRadius === "sm"
         ? "0.5rem"
         : globalBorderRadius === "md"
-        ? "2rem"
-        : globalBorderRadius === "lg"
-        ? "6rem"
-        : "8rem", // full,
+          ? "2rem"
+          : globalBorderRadius === "lg"
+            ? "6rem"
+            : "8rem", // full,
   };
 
   const screenRef = useRef<HTMLDivElement>(null);

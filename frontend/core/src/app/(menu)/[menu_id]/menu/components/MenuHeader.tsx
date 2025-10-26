@@ -10,13 +10,20 @@ import SearchBar from "./SearchBar";
 import { AlignLeft, ConciergeBell } from "lucide-react";
 
 //types
+import { type MenuGlobalStylingUI } from "@/app/types/ui/menu";
 import { type MenuUI } from "@/app/types/ui/menu";
 
 //libraries
 import { cn } from "@/lib/utils";
 import clsx from "clsx";
 
-export default function MenuHeader({ menuData }: { menuData: MenuUI }) {
+export default function MenuHeader({
+  globalStyling,
+  menuData,
+}: {
+  globalStyling: MenuGlobalStylingUI;
+  menuData: MenuUI;
+}) {
   async function callWaiter() {
     const sessionCode = sessionStorage.getItem("session_code");
     const res = await fetch(
@@ -27,7 +34,6 @@ export default function MenuHeader({ menuData }: { menuData: MenuUI }) {
       console.error("wtf just happened");
     }
   }
-  const style = "retro";
   return (
     <section
       className={cn(
@@ -41,8 +47,8 @@ export default function MenuHeader({ menuData }: { menuData: MenuUI }) {
             <Button
               onClick={() => callWaiter()}
               className={clsx(
-                "rounded-(--radius-base) bg-(--primary) text-(--secondary)",
-                style === "retro" &&
+                "rounded-(--radius-base) border border-transparent bg-(--primary) text-(--secondary) transition-all duration-300",
+                globalStyling.style === "retro" &&
                   "border-3 font-bold shadow-[4px_4px_0px_0px_var(--secondary)] border-(--secondary)"
               )}
             >
@@ -56,7 +62,9 @@ export default function MenuHeader({ menuData }: { menuData: MenuUI }) {
         ></AlignLeft>
       </section>
       <div className="flex gap-2">
-        {menuData.searchbar_enabled && <SearchBar></SearchBar>}
+        {menuData.searchbar_enabled && (
+          <SearchBar globalStyling={globalStyling}></SearchBar>
+        )}
       </div>
     </section>
   );

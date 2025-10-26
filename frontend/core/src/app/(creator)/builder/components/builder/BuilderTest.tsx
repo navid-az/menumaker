@@ -7,8 +7,9 @@ import { Form } from "@/components/ui/form";
 import { toast } from "sonner";
 import { Slider } from "@/components/global/slider/Slider";
 import { AssetGroupType } from "@/components/global/AssetPicker";
-import ThemeStep from "./steps/ThemeStep";
 import StyleStep from "./steps/StyleStep";
+import ThemeStep from "./steps/ThemeStep";
+import DetailStep from "./steps/DetailStep";
 import MenuSectionStep from "./steps/MenuSectionStep";
 import HomeFeatureStep from "./steps/HomeFeatureStep";
 import MenuLayoutStep from "./steps/MenuLayoutStep";
@@ -52,6 +53,7 @@ const BusinessSchema = z.object({
   branches: z.array(z.string()),
 });
 const GlobalStylingSchema = z.object({
+  style: z.enum(["default", "retro"]),
   color_palette: z
     .array(
       z
@@ -119,6 +121,7 @@ export default function BuilderTest({
     defaultValues: {
       business: { social_links: [], phone_numbers: [], branches: [] },
       global_styling: {
+        style: "default",
         color_palette: ["#0d3b66", "#faf0ca", "#f4d35e"],
         border_radius: "full",
         click_animation_type: [],
@@ -137,15 +140,21 @@ export default function BuilderTest({
       title: "شخصی سازی",
       steps: [
         {
+          id: "style",
+          subtitle: "استایل مورد نظرت رو انتخاب کن",
+          component: <StyleStep stepId={"style"} />,
+          show: true,
+        },
+        {
           id: "theme",
           subtitle: "رنگ بندی و تم مورد نظرت رو انتخاب کن",
           component: <ThemeStep stepId={"theme"} />,
           show: true,
         },
         {
-          id: "style",
+          id: "detail",
           subtitle: "ویژگی های ظاهری مورد نظر خودت رو انتخاب کن",
-          component: <StyleStep stepId={"style"} />,
+          component: <DetailStep stepId={"detail"} />,
           show: true,
         },
       ],

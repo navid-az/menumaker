@@ -66,13 +66,10 @@ export default async function Page(props: {
 
   return (
     <div className="relative flex flex-col bg-(--bg) scrollbar-hide">
-      {/* <Menu
-        data={menuData}
-        businessSlug={params.menu_id}
+      <MenuHeader
         globalStyling={globalStyling}
-        categories={categories}
-      ></Menu> */}
-      <MenuHeader menuData={menuData}></MenuHeader>
+        menuData={menuData}
+      ></MenuHeader>
       <ItemsCategory
         categories={categories}
         globalStyling={globalStyling}
