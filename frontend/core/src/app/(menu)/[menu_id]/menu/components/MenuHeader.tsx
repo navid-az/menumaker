@@ -61,11 +61,11 @@ export default function MenuHeader({
           className={cn("ml-2 text-(--primary)", "stroke-3")}
         ></AlignLeft>
       </section>
-      <div className="flex gap-2">
-        {menuData.searchbar_enabled && (
+      {menuData.searchbar_enabled && (
+        <div className="flex gap-2">
           <SearchBar globalStyling={globalStyling}></SearchBar>
-        )}
-      </div>
+        </div>
+      )}
     </section>
   );
 }

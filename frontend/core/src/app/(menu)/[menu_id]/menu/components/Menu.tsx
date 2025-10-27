@@ -43,14 +43,33 @@ export default function Menu({
   return (
     <div className={cn("relative flex flex-col bg-(--bg) scrollbar-hide")}>
       <MenuHeader globalStyling={globalStyling} menuData={data}></MenuHeader>
-      <ItemsCategory
-        categories={categories}
-        globalStyling={globalStyling}
-      ></ItemsCategory>
-      <MenuItemsWrapper
-        categories={categories}
-        globalStyling={globalStyling}
-      ></MenuItemsWrapper>
+      {data.items_page_layout === "horizontal" ? (
+        <>
+          <ItemsCategory
+            categories={categories}
+            globalStyling={globalStyling}
+            type={data.items_page_layout}
+          ></ItemsCategory>
+          <MenuItemsWrapper
+            categories={categories}
+            menuData={data}
+            globalStyling={globalStyling}
+          ></MenuItemsWrapper>
+        </>
+      ) : (
+        <div className="flex">
+          <MenuItemsWrapper
+            categories={categories}
+            menuData={data}
+            globalStyling={globalStyling}
+          ></MenuItemsWrapper>
+          <ItemsCategory
+            categories={categories}
+            globalStyling={globalStyling}
+            type={data.items_page_layout}
+          ></ItemsCategory>
+        </div>
+      )}
       <CartBtn
         businessSlug={businessSlug}
         categories={categories}

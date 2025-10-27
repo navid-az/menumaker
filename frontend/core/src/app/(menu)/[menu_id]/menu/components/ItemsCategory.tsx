@@ -25,7 +25,7 @@ type ItemsCategoryType = {
 
 export default function ItemsCategory({
   categories,
-  type = "horizontal",
+  type = "vertical",
   variant = "minimal",
   isSticky = true,
   hasBackGround = false,
@@ -38,10 +38,10 @@ export default function ItemsCategory({
         isSticky && "sticky"
       } top-0 z-50 flex overflow-y-auto ${
         hasBackGround && "bg-primary"
-      } p-4 transition-all duration-300 ${
+      }transition-all duration-300 ${
         type == "horizontal"
-          ? "w-full flex-row gap-2"
-          : "flex-color h-screen w-2/12 flex-col gap-4"
+          ? "w-full flex-row gap-2 p-4 "
+          : "flex-color w-max shrink-0 flex-col gap-4 px-4 sticky top-4 h-screen pt-4"
       }`}
     >
       {categories.map(

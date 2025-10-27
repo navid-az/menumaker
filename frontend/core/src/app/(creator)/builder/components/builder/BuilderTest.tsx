@@ -87,6 +87,7 @@ export const BuilderSchema = z.object({
   show_social_links: z.boolean().default(false),
   show_phone_numbers: z.boolean().default(false),
   show_branches: z.boolean().default(false),
+
   //items page
   items_page_layout: z.enum(["horizontal", "vertical"]),
   categories_display_type: z.enum(["slider", "circular"]),
@@ -127,6 +128,7 @@ export default function BuilderTest({
         click_animation_type: [],
         click_animation_enabled: false,
       },
+      items_page_layout: "horizontal",
       menu_sections: [],
       home_title: "",
       home_subtitle: "",

@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { MenuItemCard } from "./MenuItemCard";
 
 // libraries
+import { cn } from "@/lib/utils";
 import { InView } from "react-intersection-observer";
 
 // hooks
@@ -14,13 +15,15 @@ import { useCategoryBtn, useSearchBar } from "@/lib/stores";
 
 // types
 import { type MenuCategory } from "@/app/types/api/menu";
-import { type MenuGlobalStylingUI } from "@/app/types/ui/menu";
+import { type MenuUI, type MenuGlobalStylingUI } from "@/app/types/ui/menu";
 
 export default function MenuItemsWrapper({
   categories,
+  menuData,
   globalStyling,
 }: {
   categories: MenuCategory[];
+  menuData: MenuUI;
   globalStyling: MenuGlobalStylingUI;
 }) {
   const searchParams = useSearchParams();
@@ -83,7 +86,12 @@ export default function MenuItemsWrapper({
   }, [searchQuery]);
 
   return (
-    <section className="flex h-max w-full flex-col gap-4 pb-4">
+    <section
+      className={cn(
+        "flex h-max w-full flex-col gap-4 pb-4 px-4",
+        menuData.items_page_layout === "vertical" && "mr-4 px-0 mt-4"
+      )}
+    >
       {(filteredCategories.length > 0 ? filteredCategories : categories).map(
         (category) =>
           category.items.length > 0 && (
@@ -94,7 +102,7 @@ export default function MenuItemsWrapper({
                     ref={ref}
                     key={category.id}
                     id={category.id.toString()}
-                    className="grid h-auto grid-cols-2 gap-4 px-4"
+                    className="grid h-auto grid-cols-2 gap-4"
                   >
                     {category.items.map((item) => (
                       <MenuItemCard

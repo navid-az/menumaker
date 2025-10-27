@@ -11,57 +11,57 @@ export function getStyleVars(config: MenuGlobalStylingUI): React.CSSProperties {
       config.border_radius === "sm"
         ? "4px"
         : config.border_radius === "md"
-        ? "10px"
-        : config.border_radius === "lg"
-        ? "14px"
-        : "9999px", // full
+          ? "10px"
+          : config.border_radius === "lg"
+            ? "14px"
+            : "9999px", // full
     "--radius-inner":
       config.border_radius === "sm"
         ? "3px"
         : config.border_radius === "md"
-        ? "6px"
-        : config.border_radius === "lg"
-        ? "10px"
-        : "9999px", // full,
+          ? "6px"
+          : config.border_radius === "lg"
+            ? "12px"
+            : "9999px", // full,
     "--radius-inner-alt":
       config.border_radius === "sm"
         ? "2px"
         : config.border_radius === "md"
-        ? "6px"
-        : config.border_radius === "lg"
-        ? "10px"
-        : "9999px", // full,
+          ? "6px"
+          : config.border_radius === "lg"
+            ? "10px"
+            : "9999px", // full,
     "--radius-exception":
       config.border_radius === "sm"
         ? "4px"
         : config.border_radius === "md"
-        ? "10px"
-        : config.border_radius === "lg"
-        ? "18px"
-        : "26px", // full,
+          ? "8px"
+          : config.border_radius === "lg"
+            ? "18px"
+            : "24px", // full,
     "--radius-sm":
       config.border_radius === "sm"
         ? "0.5rem"
         : config.border_radius === "md"
-        ? "1rem"
-        : config.border_radius === "lg"
-        ? "3rem"
-        : "4rem", // full,
+          ? "1rem"
+          : config.border_radius === "lg"
+            ? "3rem"
+            : "4rem", // full,
     "--radius-md":
       config.border_radius === "sm"
         ? "0.5rem"
         : config.border_radius === "md"
-        ? "2rem"
-        : config.border_radius === "lg"
-        ? "5rem"
-        : "7rem", // full,
+          ? "2rem"
+          : config.border_radius === "lg"
+            ? "5rem"
+            : "7rem", // full,
     "--radius-lg":
       config.border_radius === "sm"
         ? "0.5rem"
         : config.border_radius === "md"
-        ? "2rem"
-        : config.border_radius === "lg"
-        ? "6rem"
-        : "8rem", // full,
+          ? "2rem"
+          : config.border_radius === "lg"
+            ? "6rem"
+            : "8rem", // full,
   } as React.CSSProperties;
 }

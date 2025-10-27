@@ -9,6 +9,9 @@ import MenuHeader from "./components/MenuHeader";
 import { type MenuGlobalStyling } from "@/app/types/api/menu";
 import { type Menu as MenuData } from "@/app/types/api/menu";
 
+//libraries
+import { cn } from "@/lib/utils";
+
 // GET menu data
 export async function getMenuData(menu_id: string) {
   try {
@@ -18,7 +21,7 @@ export async function getMenuData(menu_id: string) {
     }
     return await res.json();
   } catch (error) {
-    console.error("error fetching data:", error);
+    console.error("error fetching menuData:", error);
   }
 }
 
@@ -33,7 +36,7 @@ export async function getGlobalStyling(menu_id: string) {
     }
     return await res.json();
   } catch (error) {
-    console.error("error fetching data:", error);
+    console.error("error fetching menuData:", error);
   }
 }
 
@@ -48,7 +51,7 @@ export async function getMenuCategories(menu_id: string) {
     }
     return await res.json();
   } catch (error) {
-    console.error("error fetching data:", error);
+    console.error("error fetching menuData:", error);
   }
 }
 
@@ -65,19 +68,38 @@ export default async function Page(props: {
   const businessSlug = params.menu_id;
 
   return (
-    <div className="relative flex flex-col bg-(--bg) scrollbar-hide">
+    <div className={cn("relative flex flex-col bg-(--bg) scrollbar-hide")}>
       <MenuHeader
         globalStyling={globalStyling}
         menuData={menuData}
       ></MenuHeader>
-      <ItemsCategory
-        categories={categories}
-        globalStyling={globalStyling}
-      ></ItemsCategory>
-      <MenuItemsWrapper
-        categories={categories}
-        globalStyling={globalStyling}
-      ></MenuItemsWrapper>
+      {menuData.items_page_layout === "horizontal" ? (
+        <>
+          <ItemsCategory
+            categories={categories}
+            globalStyling={globalStyling}
+            type={menuData.items_page_layout}
+          ></ItemsCategory>
+          <MenuItemsWrapper
+            categories={categories}
+            menuData={menuData}
+            globalStyling={globalStyling}
+          ></MenuItemsWrapper>
+        </>
+      ) : (
+        <div className="flex">
+          <MenuItemsWrapper
+            categories={categories}
+            menuData={menuData}
+            globalStyling={globalStyling}
+          ></MenuItemsWrapper>
+          <ItemsCategory
+            categories={categories}
+            globalStyling={globalStyling}
+            type={menuData.items_page_layout}
+          ></ItemsCategory>
+        </div>
+      )}
       <CartBtn
         businessSlug={businessSlug}
         categories={categories}

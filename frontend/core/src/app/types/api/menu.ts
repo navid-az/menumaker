@@ -4,7 +4,7 @@ export type Menu = {
   show_social_links: boolean;
   show_phone_numbers: boolean;
   show_branches: boolean;
-  items_page_layout: string;
+  items_page_layout: "horizontal" | "vertical";
   categories_display_type: string;
   call_waiter_enabled: boolean;
   searchbar_enabled: boolean;

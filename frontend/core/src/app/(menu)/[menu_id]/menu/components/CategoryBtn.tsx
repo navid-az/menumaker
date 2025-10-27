@@ -28,9 +28,6 @@ import { useCategoryBtn } from "@/lib/stores";
 import { useTactileAnimation } from "@/app/hooks/useTactileAnimation"; //animation hook
 import { useRippleAnimation } from "@/app/hooks/useRippleAnimation"; //animation hook
 
-//libraries
-import clsx from "clsx";
-
 const buttonVariants = cva(
   `flex-none select-none transition-colors duration-500`,
   {
@@ -179,15 +176,28 @@ export default function CategoryBtn({
       <Button
         onClick={moveToCat}
         id={`category-${id}`}
+        style={
+          parentType === "vertical"
+            ? {
+                writingMode: "vertical-rl",
+                transform: "rotate(180deg)",
+              }
+            : undefined
+        }
         className={cn(
           "scale-pro h-10 flex-none relative select-none rounded-(--radius-base) border-2 bg-(--primary) px-4 py-2 text-(--secondary) transition-[color,box-shadow,border-radius,border-color,font-size] duration-300",
           globalStyling.style === "retro" &&
             "border-3 border-(--secondary) shadow-[4px_4px_0px_0px_var(--secondary)] font-bold",
+          globalStyling.style === "retro" &&
+            parentType === "vertical" &&
+            " shadow-[-4px_-4px_0px_0px_var(--secondary)]",
           activeCategory === id
             ? " border-(--secondary) shadow-[0px_0px_0px_0px_var(--secondary)]"
             : globalStyling.style === "retro"
               ? "border-(--secondary)"
               : "border-(--secondary)/20",
+          parentType === "vertical" &&
+            "h-auto w-10 flex items-center justify-center p-4",
           className
         )}
       >

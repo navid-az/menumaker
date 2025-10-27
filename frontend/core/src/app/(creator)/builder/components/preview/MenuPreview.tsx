@@ -188,9 +188,9 @@ export default function MenuPreview() {
       globalBorderRadius === "sm"
         ? "3px"
         : globalBorderRadius === "md"
-          ? "8px"
+          ? "6px"
           : globalBorderRadius === "lg"
-            ? "10px"
+            ? "12px"
             : "9999px", // full,
     "--radius-inner-alt":
       globalBorderRadius === "sm"
@@ -204,10 +204,10 @@ export default function MenuPreview() {
       globalBorderRadius === "sm"
         ? "4px"
         : globalBorderRadius === "md"
-          ? "10px"
+          ? "8px"
           : globalBorderRadius === "lg"
             ? "18px"
-            : "26px", // full,
+            : "24px", // full,
     "--radius-sm":
       globalBorderRadius === "sm"
         ? "0.5rem"
@@ -241,7 +241,7 @@ export default function MenuPreview() {
       style={styleVars as React.CSSProperties}
       className="hidden lg:flex justify-center items-center"
     >
-      <div className="relative overflow-hidden w-[400px] rounded-4xl h-[760px] scale-[90%]">
+      <div className="relative overflow-hidden w-[450px] rounded-4xl h-[760px] scale-[90%]">
         {/* <Image
           src="/svgs/iphone-frame.svg"
           alt="iPhone frame"

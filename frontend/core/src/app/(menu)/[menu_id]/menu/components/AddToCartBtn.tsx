@@ -71,7 +71,7 @@ export default function AddToCartBtn({
     <div
       onClick={(e) => e.stopPropagation()}
       className={cn(
-        "flex h-10 w-full justify-center gap-2 rounded-(--radius-base) bg-(--secondary) transition-all duration-300",
+        "flex h-10 w-full justify-center gap-2 rounded-(--radius-inner) bg-(--secondary) transition-all duration-300",
         className
       )}
     >

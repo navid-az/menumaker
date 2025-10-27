@@ -44,7 +44,7 @@ export default function MenuMaker({
   return (
     <section className="flex h-screen w-full items-center justify-between gap-12 overflow-hidden">
       <AnimatePresence mode="wait">
-        {activeForm === "setup" && (
+        {/* {activeForm === "setup" && (
           <motion.div
             className="w-full"
             key="setup"
@@ -72,35 +72,35 @@ export default function MenuMaker({
               setBusinessData={setBusinessData}
             ></Setup>
           </motion.div>
-        )}
+        )} */}
 
-        {activeForm === "builder" && (
-          <motion.div
-            className="w-full"
-            key="builder"
-            initial={{
-              opacity: 0,
-              x: 200,
-              filter: "blur(4px)",
-              transition: { delay: 0.8 },
-            }}
-            animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-            exit={{ opacity: 0, x: -200, filter: "blur(4px)" }}
-            transition={{
-              duration: 0.6,
-              ease: [0.25, 0.1, 0.25, 1],
-            }}
-          >
-            <BuilderTest
-              ref={builderFormRef}
-              businessData={businessData}
-              assetGroups={assetGroups}
-              onSuccess={() => onBuilderSuccess()}
-            ></BuilderTest>
-          </motion.div>
-        )}
+        {/* {activeForm === "builder" && ( */}
+        <motion.div
+          className="w-full"
+          key="builder"
+          initial={{
+            opacity: 0,
+            x: 200,
+            filter: "blur(4px)",
+            transition: { delay: 0.8 },
+          }}
+          animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+          exit={{ opacity: 0, x: -200, filter: "blur(4px)" }}
+          transition={{
+            duration: 0.6,
+            ease: [0.25, 0.1, 0.25, 1],
+          }}
+        >
+          <BuilderTest
+            ref={builderFormRef}
+            businessData={businessData}
+            assetGroups={assetGroups}
+            onSuccess={() => onBuilderSuccess()}
+          ></BuilderTest>
+        </motion.div>
+        {/* )} */}
 
-        {activeForm === "qr" && (
+        {/* {activeForm === "qr" && (
           <motion.div
             key="qr"
             initial={{ opacity: 0, x: 200, filter: "blur(4px)" }}
@@ -114,7 +114,7 @@ export default function MenuMaker({
           >
             <SuccessPage businessData={businessData}></SuccessPage>
           </motion.div>
-        )}
+        )} */}
       </AnimatePresence>
     </section>
   );

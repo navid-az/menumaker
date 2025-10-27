@@ -132,7 +132,7 @@ export function MenuItemCard({
         ) : !fullScreen ? (
           <div
             className={cn(
-              "flex h-[300px] flex-none flex-col xss:col-span-1 border-(--secondary) transition-all duration-300",
+              "flex h-[300px] flex-none flex-col xss:col-span-1 border-(--secondary) bg-(--primary) transition-[box-shadow,border-radius] duration-300",
               globalStyling.style === "retro" &&
                 "border-3 shadow-[4px_4px_0px_0px_var(--secondary)]"
             )}
@@ -147,7 +147,7 @@ export function MenuItemCard({
             </div>
             <div
               className={cn(
-                `relative bottom-0 flex w-full flex-none shrink-0 basis-5/12 flex-col justify-between gap-3 rounded-b-(--radius-exception) bg-(--primary) p-2 text-(--secondary)`,
+                `relative bottom-0 flex w-full flex-none shrink-0 basis-5/12 flex-col justify-between gap-3 rounded-b-(--radius-exception) bg-(--primary) p-2 text-(--secondary) transition-[border-radius] duration-300`,
                 globalStyling.style === "retro" &&
                   "border-t-3 border-(--secondary)"
               )}
