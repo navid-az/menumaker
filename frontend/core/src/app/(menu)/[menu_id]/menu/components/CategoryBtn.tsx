@@ -187,12 +187,12 @@ export default function CategoryBtn({
         className={cn(
           "scale-pro h-10 flex-none relative select-none rounded-(--radius-base) border-2 bg-(--primary) px-4 py-2 text-(--secondary) transition-[color,box-shadow,border-radius,border-color,font-size] duration-300",
           globalStyling.style === "retro" &&
-            "border-3 border-(--secondary) shadow-[4px_4px_0px_0px_var(--secondary)] font-bold",
+            "border-3 !border-(--secondary) shadow-[4px_4px_0px_0px_var(--secondary)] font-bold",
           globalStyling.style === "retro" &&
             parentType === "vertical" &&
             " shadow-[-4px_-4px_0px_0px_var(--secondary)]",
           activeCategory === id
-            ? " border-(--secondary) shadow-[0px_0px_0px_0px_var(--secondary)]"
+            ? " border-(--tertiary) shadow-[0px_0px_0px_0px_var(--secondary)]"
             : globalStyling.style === "retro"
               ? "border-(--secondary)"
               : "border-(--secondary)/20",

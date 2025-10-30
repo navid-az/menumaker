@@ -23,7 +23,7 @@ import { ShoppingBag } from "lucide-react";
 import { type MenuCategory } from "@/app/types/api/menu";
 import { type MenuItem } from "@/app/types/api/menu";
 import { type MenuGlobalStylingUI } from "@/app/types/ui/menu";
-import clsx from "clsx";
+
 type CartBtnType = {
   type?: "default" | "compact";
   businessSlug?: string;
@@ -113,8 +113,8 @@ export default function CartBtn({
       <Button
         ref={cartBtnRef}
         asChild
-        className={clsx(
-          "fixed bottom-[-80px] mx-4 mb-4 border-2 border-(--secondary) left-0 right-0 z-50 flex h-max items-center justify-between rounded-(--radius-base) bg-(--primary) p-2 text-(--secondary) shadow-2xl xs:p-2.5 transition-[box-shadow,border-radius] duration-300",
+        className={cn(
+          "fixed bottom-[-80px] mx-4 mb-4 border-2 border-(--secondary) left-0 right-0 z-50 flex h-max items-center justify-between rounded-(--radius-base) p-2 bg-[var(--footer-cart-bg)] text-[var(--footer-cart-text)] shadow-2xl xs:p-2.5 transition-[box-shadow,border-radius,color,background-color] duration-300",
           globalStyling.style === "retro" &&
             "border-3 shadow-[4px_4px_0px_0px_var(--secondary)]"
         )}
@@ -148,7 +148,7 @@ export default function CartBtn({
                 ></Image>
                 <div
                   className={cn(
-                    "absolute z-10 h-4.5 w-4.5 flex justify-center items-center rounded-(--radius-inner-alt) border-2 border-(--secondary) bg-(--primary) text-center text-xs pt-0.5 font-normal text-(--secondary) transition-all duration-300",
+                    "absolute z-10 h-4.5 w-4.5 flex justify-center items-center rounded-(--radius-inner-alt) border-2 border-(--secondary) text-center text-xs pt-0.5 font-normal bg-[var(--footer-cart-counter-bg)] text-[var(--footer-cart-counter-text)] transition-all duration-300",
                     globalStyling.border_radius === "full"
                       ? "-left-0.5 -top-0.5"
                       : "-left-1.5 -top-1.5",
@@ -174,8 +174,8 @@ export default function CartBtn({
         <Button
           ref={cartBtnRef}
           asChild
-          className={clsx(
-            "relative h-14 w-14 rounded-(--radius-base) bg-(--primary) transition-[box-shadow] duration-300",
+          className={cn(
+            "relative h-14 w-14 rounded-(--radius-base) bg-[var(--footer-cart-bg)] text-[var(--footer-cart-text)] transition-[box-shadow] duration-300",
             globalStyling.style === "retro" &&
               "border-3 border-(--secondary) shadow-[4px_4px_0px_0px_var(--secondary)]"
           )}
@@ -186,12 +186,11 @@ export default function CartBtn({
             {totalItemCount >= 1 && (
               <div
                 className={cn(
-                  "absolute z-10 h-5.5 w-5.5 flex justify-center items-center rounded-(--radius-inner-alt) border-2 border-(--secondary) bg-(--primary) text-center text-xs pt-0.5 font-normal text-(--secondary) transition-all duration-300",
+                  "absolute z-10 h-5.5 w-5.5 flex justify-center items-center rounded-(--radius-inner-alt) border-(--secondary) bg-[var(--footer-cart-counter-bg)] text-[var(--footer-cart-counter-text)] text-center text-xs pt-0.5 font-normal transition-all duration-300",
                   globalStyling.border_radius === "full"
                     ? "-left-0.5 -top-0.5"
                     : "-left-1.5 -top-1.5",
-                  globalStyling.style === "retro" &&
-                    "border-3 shadow-[1px_1px_0px_0px_var(--secondary)] font-black"
+                  globalStyling.style === "retro" && "font-black"
                 )}
               >
                 {totalItemCount}

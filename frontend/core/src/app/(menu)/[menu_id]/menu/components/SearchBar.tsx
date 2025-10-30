@@ -64,7 +64,7 @@ export default function SearchBar({
       <Button
         ref={searchBtnRef}
         size="icon"
-        className="h-8 aspect-square rounded-(--radius-inner) bg-(--secondary) text-(--primary) transition-all duration-300"
+        className="h-8 aspect-square rounded-(--radius-inner) bg-[var(--search-btn-bg)] text-[var(--search-btn-text)] transition-all duration-300"
       >
         {isLoading ? (
           <Loader2
@@ -76,7 +76,7 @@ export default function SearchBar({
         ) : (
           <Search
             className={cn(
-              "h-4 w-4 text-(--primary) transition-all duration-300",
+              "h-4 w-4 transition-all duration-300",
               globalStyling.style === "retro" && "stroke-3"
             )}
           />

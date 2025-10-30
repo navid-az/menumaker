@@ -47,7 +47,7 @@ export default function MenuHeader({
             <Button
               onClick={() => callWaiter()}
               className={clsx(
-                "rounded-(--radius-base) border border-transparent bg-(--primary) text-(--secondary) transition-all duration-300",
+                "rounded-(--radius-base) border border-transparent bg-[var(--waiter-btn-bg)] text-[var(--waiter-btn-text)] transition-all duration-300",
                 globalStyling.style === "retro" &&
                   "border-3 font-bold shadow-[4px_4px_0px_0px_var(--secondary)] border-(--secondary)"
               )}
@@ -58,7 +58,7 @@ export default function MenuHeader({
           )}
         </div>
         <AlignLeft
-          className={cn("ml-2 text-(--primary)", "stroke-3")}
+          className={cn("ml-2 text-(--secondary)", "stroke-3")}
         ></AlignLeft>
       </section>
       {menuData.searchbar_enabled && (

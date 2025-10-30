@@ -71,7 +71,7 @@ export default function AddToCartBtn({
     <div
       onClick={(e) => e.stopPropagation()}
       className={cn(
-        "flex h-10 w-full justify-center gap-2 rounded-(--radius-inner) bg-(--secondary) transition-all duration-300",
+        "flex h-10 w-full justify-center gap-2 rounded-(--radius-inner) bg-[var(--cart-btn-bg)] text-[var(--cart-btn-text)] transition-all duration-300",
         className
       )}
     >
@@ -83,7 +83,7 @@ export default function AddToCartBtn({
             iconSrc="plus"
             globalStyling={globalStyling}
           ></StepperBtn>
-          <span className="mt-1 flex-initial basis-2/12 text-center text-lg text-(--primary)">
+          <span className="mt-1 flex-initial basis-2/12 text-center text-lg">
             <p className="text-xl">{quantity}</p>
           </span>
           <StepperBtn
@@ -95,7 +95,7 @@ export default function AddToCartBtn({
         </div>
       ) : (
         <Button
-          className="h-full w-full rounded-full bg-(--secondary) text-(--primary)"
+          className="h-full w-full rounded-(--radius-inner) bg-[var(--cart-btn-bg)] text-[var(--cart-btn-text)]"
           onClick={handleAdd}
         >
           <Plus
@@ -161,7 +161,7 @@ const StepperBtn = ({
       onClick={action}
       size="icon"
       className={cn(
-        "scale-pro h-full w-24 flex-initial rounded-(--radius-inner-alt) bg-(--primary) text-(--secondary) transition-[border-radius] duration-300",
+        "scale-pro h-full w-24 flex-initial rounded-(--radius-inner-alt) bg-[var(--cart-counter-bg)] text-[var(--cart-counter-text)] transition-[border-radius] duration-300",
         className
       )}
     >
