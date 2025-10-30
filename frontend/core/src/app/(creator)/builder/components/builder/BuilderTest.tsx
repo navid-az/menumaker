@@ -150,7 +150,12 @@ export default function BuilderTest({
         {
           id: "theme",
           subtitle: "رنگ بندی و تم مورد نظرت رو انتخاب کن",
-          component: <ThemeStep stepId={"theme"} />,
+          component: (
+            <ThemeStep
+              globalStyle={form.watch("global_styling.style")}
+              stepId={"theme"}
+            />
+          ),
           show: true,
         },
         {

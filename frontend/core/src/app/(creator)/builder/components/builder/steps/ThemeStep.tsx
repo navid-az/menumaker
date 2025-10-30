@@ -17,7 +17,13 @@ import PaletteBuilder from "@/components/global/PaletteBuilder";
 //libraries
 import { useFormContext } from "react-hook-form";
 
-export default function ThemeStep({ stepId }: { stepId: string }) {
+export default function ThemeStep({
+  stepId,
+  globalStyle,
+}: {
+  stepId: string;
+  globalStyle: "default" | "retro";
+}) {
   const { control } = useFormContext();
 
   return (
@@ -32,7 +38,7 @@ export default function ThemeStep({ stepId }: { stepId: string }) {
           >
             <SliderTabTitle
               title="پالت های پیشنهادی"
-              description="ترکیب رنگ های پیش فرز"
+              description="پالت های پیشنهادی با توجه به استایل انتخاب شده"
               iconSrc="/images/form-icons/palette.svg"
             >
               <FormItem>
@@ -52,6 +58,7 @@ export default function ThemeStep({ stepId }: { stepId: string }) {
                   <FormItem className="w-full">
                     <FormControl>
                       <SuggestedPalettes
+                        globalStyle={globalStyle}
                         value={field.value}
                         onChange={field.onChange}
                       ></SuggestedPalettes>
