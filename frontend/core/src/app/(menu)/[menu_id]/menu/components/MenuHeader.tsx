@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import SearchBar from "./SearchBar";
 
 //SVGs
-import { AlignLeft, ConciergeBell } from "lucide-react";
+import { ConciergeBell, House } from "lucide-react";
 
 //types
 import { type MenuGlobalStylingUI } from "@/app/types/ui/menu";
@@ -16,6 +16,9 @@ import { type MenuUI } from "@/app/types/ui/menu";
 //libraries
 import { cn } from "@/lib/utils";
 import clsx from "clsx";
+
+//provider
+import { usePreview } from "@/app/(creator)/builder/components/preview/PreviewContext";
 
 export default function MenuHeader({
   globalStyling,
@@ -34,6 +37,8 @@ export default function MenuHeader({
       console.error("wtf just happened");
     }
   }
+
+  const { setActivePage } = usePreview();
   return (
     <section
       className={cn(
@@ -52,14 +57,32 @@ export default function MenuHeader({
                   "border-3 font-bold shadow-[4px_4px_0px_0px_var(--secondary)] border-(--secondary)"
               )}
             >
-              <ConciergeBell></ConciergeBell>
+              <ConciergeBell
+                className={cn(
+                  "text-(--secondary) transition-all duration-300",
+                  globalStyling.style === "retro" && "stroke-[2.5]"
+                )}
+              ></ConciergeBell>
               سالن دار
             </Button>
           )}
         </div>
-        <AlignLeft
-          className={cn("ml-2 text-(--secondary)", "stroke-3")}
-        ></AlignLeft>
+        <Button
+          onClick={() => setActivePage("home")}
+          size="icon"
+          className={clsx(
+            "rounded-(--radius-base) bg-[var(--waiter-btn-bg)] text-[var(--waiter-btn-text)] transition-all duration-300",
+            globalStyling.style === "retro" &&
+              "border-3 font-bold shadow-[4px_4px_0px_0px_var(--secondary)] border-(--secondary)"
+          )}
+        >
+          <House
+            className={cn(
+              "text-(--secondary) transition-all duration-300",
+              globalStyling.style === "retro" && "stroke-[2.5]"
+            )}
+          ></House>
+        </Button>
       </section>
       {menuData.searchbar_enabled && (
         <div className="flex gap-2">

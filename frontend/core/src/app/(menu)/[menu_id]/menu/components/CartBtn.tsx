@@ -6,6 +6,9 @@ import React, { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { cn } from "@/lib/utils";
 
+//providers
+import { usePreview } from "@/app/(creator)/builder/components/preview/PreviewContext";
+
 //components
 import Link from "next/link";
 import Image from "next/image";
@@ -29,6 +32,7 @@ type CartBtnType = {
   businessSlug?: string;
   categories: MenuCategory[];
   globalStyling: MenuGlobalStylingUI;
+  isPreview?: boolean;
 };
 
 export default function CartBtn({
@@ -36,11 +40,14 @@ export default function CartBtn({
   businessSlug,
   categories,
   globalStyling,
+  isPreview = false,
 }: CartBtnType) {
   const cartBtnRef = useRef<HTMLButtonElement>(null);
 
   const DrawerIsOpen = useMenuItemDrawer((state) => state.isOpen);
   const cartItems = useItemCart((state) => state.items);
+
+  const { setActivePage } = usePreview();
 
   //store categories of items inside cartItems
   const [matchingItems, setMatchingItems] = useState<
@@ -103,6 +110,58 @@ export default function CartBtn({
     0
   );
 
+  const CartButtonContent = (
+    <>
+      <div className="flex items-center pr-2">
+        <p
+          className={cn(
+            "text-lg font-medium text-(--secondary) xs:text-xl xs:font-semibold",
+            globalStyling.style === "retro" && "font-black"
+          )}
+        >
+          ثبت سفارش
+        </p>
+      </div>
+
+      <section className="flex shrink flex-row-reverse justify-start ltr:space-x-reverse gap-1">
+        {matchingItems.slice(0, 3).map((item) => (
+          <div
+            key={item.item.id}
+            className={cn(
+              "relative h-11 w-11 bg-(--bg) -ml-4 first:ml-0 rounded-(--radius-base) border-2 border-(--secondary) shadow-sm transition-all duration-300 xs:h-12 xs:w-12",
+              globalStyling.style === "retro" &&
+                "border-3 shadow-[2px_2px_0px_0px_var(--secondary)]"
+            )}
+          >
+            <Image
+              fill
+              src={"http://127.0.0.1:8000" + item.item.image}
+              alt={item.item.name}
+              className="rounded-(--radius-base) object-cover transition-all duration-300"
+            />
+            <div
+              className={cn(
+                "absolute z-10 h-4.5 w-4.5 flex justify-center items-center rounded-(--radius-inner-alt) border-2 border-(--secondary) text-center text-xs pt-0.5 font-normal bg-[var(--footer-cart-counter-bg)] text-[var(--footer-cart-counter-text)] transition-all duration-300",
+                globalStyling.border_radius === "full"
+                  ? "-left-0.5 -top-0.5"
+                  : "-left-1.5 -top-1.5",
+                globalStyling.style === "retro" && "font-medium"
+              )}
+            >
+              {item.count}
+            </div>
+          </div>
+        ))}
+
+        {matchingItems.length > 3 && (
+          <div className="h-11 w-11 rounded-(--radius-base) z-10 -ml-4 border-2 border-(--primary) bg-(--secondary) pt-3 text-center text-(--primary) shadow-sm transition-all duration-300 xs:h-12 xs:w-12">
+            <p>{matchingItems.length - 3}+</p>
+          </div>
+        )}
+      </section>
+    </>
+  );
+
   //add animations *needs to be checked using props value*
   // useConditionalAnimation(cartBtnRef, ["tactile"]);
   //automatically add tactile animation (only for compact button)
@@ -111,6 +170,7 @@ export default function CartBtn({
   if (type === "default") {
     return (
       <Button
+        onClick={() => setActivePage("order")}
         ref={cartBtnRef}
         asChild
         className={cn(
@@ -119,59 +179,23 @@ export default function CartBtn({
             "border-3 shadow-[4px_4px_0px_0px_var(--secondary)]"
         )}
       >
-        <Link href={`/${businessSlug}/orders`}>
-          <div className=" flex items-center pr-2">
-            <p
-              className={cn(
-                "text-lg font-medium text-(--secondary) xs:text-xl xs:font-semibold",
-                globalStyling.style === "retro" && "font-black"
-              )}
-            >
-              ثبت سفارش
-            </p>
+        {isPreview ? (
+          <div
+            onClick={() => setActivePage("order")}
+            className="cursor-pointer"
+          >
+            {CartButtonContent}
           </div>
-          <section className="flex shrink flex-row-reverse justify-start ltr:space-x-reverse gap-1">
-            {matchingItems.slice(0, 3).map((item) => (
-              <div
-                key={item.item.id}
-                className={cn(
-                  "relative h-11 w-11 bg-(--bg) -ml-4 first:ml-0 rounded-(--radius-base) border-2 border-(--secondary) shadow-sm transition-all duration-300 xs:h-12 xs:w-12",
-                  globalStyling.style === "retro" &&
-                    "border-3 shadow-[2px_2px_0px_0px_var(--secondary)]"
-                )}
-              >
-                <Image
-                  fill
-                  src={"http://127.0.0.1:8000" + item.item.image}
-                  alt={item.item.name}
-                  className="rounded-(--radius-base) object-cover transition-all duration-300"
-                ></Image>
-                <div
-                  className={cn(
-                    "absolute z-10 h-4.5 w-4.5 flex justify-center items-center rounded-(--radius-inner-alt) border-2 border-(--secondary) text-center text-xs pt-0.5 font-normal bg-[var(--footer-cart-counter-bg)] text-[var(--footer-cart-counter-text)] transition-all duration-300",
-                    globalStyling.border_radius === "full"
-                      ? "-left-0.5 -top-0.5"
-                      : "-left-1.5 -top-1.5",
-                    globalStyling.style === "retro" && "font-medium"
-                  )}
-                >
-                  {item.count}
-                </div>
-              </div>
-            ))}
-            {matchingItems.length > 3 && (
-              <div className="h-11 w-11 rounded-(--radius-base) z-10 -ml-4 border-2 border-(--primary) bg-(--secondary) pt-3 text-center text-(--primary) shadow-sm transition-all duration-300 xs:h-12 xs:w-12">
-                <p>{matchingItems.length - 3}+</p>
-              </div>
-            )}
-          </section>
-        </Link>
+        ) : (
+          <Link href={`/${businessSlug}/orders`}>{CartButtonContent}</Link>
+        )}
       </Button>
     );
   } else if (type === "compact") {
     return (
       <div className="fixed w-full bottom-[-80px] z-50 mb-4 flex justify-center">
         <Button
+          onClick={() => setActivePage("order")}
           ref={cartBtnRef}
           asChild
           className={cn(
@@ -181,22 +205,41 @@ export default function CartBtn({
           )}
           size="icon"
         >
-          <Link href={`/${businessSlug}/orders`}>
-            <ShoppingBag className="h-6 w-6 text-(--secondary)"></ShoppingBag>
-            {totalItemCount >= 1 && (
-              <div
-                className={cn(
-                  "absolute z-10 h-5.5 w-5.5 flex justify-center items-center rounded-(--radius-inner-alt) border-(--secondary) bg-[var(--footer-cart-counter-bg)] text-[var(--footer-cart-counter-text)] text-center text-xs pt-0.5 font-normal transition-all duration-300",
-                  globalStyling.border_radius === "full"
-                    ? "-left-0.5 -top-0.5"
-                    : "-left-1.5 -top-1.5",
-                  globalStyling.style === "retro" && "font-black"
-                )}
-              >
-                {totalItemCount}
-              </div>
-            )}
-          </Link>
+          {isPreview ? (
+            <div className="relative flex items-center">
+              <ShoppingBag className="h-6 w-6 text-[var(--secondary)]" />
+              {totalItemCount >= 1 && (
+                <div
+                  className={cn(
+                    "absolute z-10 h-[22px] w-[22px] flex justify-center items-center rounded-[var(--radius-inner-alt)] border-[var(--secondary)] bg-[var(--footer-cart-counter-bg)] text-[var(--footer-cart-counter-text)] text-center text-xs pt-0.5 font-normal transition-all duration-300",
+                    globalStyling.border_radius === "full"
+                      ? "-left-0.5 -top-0.5"
+                      : "-left-1.5 -top-1.5",
+                    globalStyling.style === "retro" && "font-black"
+                  )}
+                >
+                  {totalItemCount}
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link href={`/${businessSlug}/orders`}>
+              <ShoppingBag className="h-6 w-6 text-(--secondary)"></ShoppingBag>
+              {totalItemCount >= 1 && (
+                <div
+                  className={cn(
+                    "absolute z-10 h-5.5 w-5.5 flex justify-center items-center rounded-(--radius-inner-alt) border-(--secondary) bg-[var(--footer-cart-counter-bg)] text-[var(--footer-cart-counter-text)] text-center text-xs pt-0.5 font-normal transition-all duration-300",
+                    globalStyling.border_radius === "full"
+                      ? "-left-0.5 -top-0.5"
+                      : "-left-1.5 -top-1.5",
+                    globalStyling.style === "retro" && "font-black"
+                  )}
+                >
+                  {totalItemCount}
+                </div>
+              )}
+            </Link>
+          )}
         </Button>
       </div>
     );

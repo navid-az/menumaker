@@ -74,6 +74,7 @@ export default function Menu({
         businessSlug={businessSlug}
         categories={categories}
         globalStyling={globalStyling}
+        isPreview
       ></CartBtn>
     </div>
   );

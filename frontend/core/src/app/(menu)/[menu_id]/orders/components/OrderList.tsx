@@ -14,7 +14,7 @@ import { ShoppingBag } from "lucide-react";
 
 //types
 import { MenuItem } from "@/app/types/api/menu";
-import { MenuGlobalStyling } from "@/app/types/api/menu";
+import { type MenuGlobalStylingUI } from "@/app/types/ui/menu";
 export type ValidItemType = { item: MenuItem; count?: number };
 
 export default function OrderList({
@@ -22,7 +22,7 @@ export default function OrderList({
   globalStyling,
 }: {
   data: MenuItem[];
-  globalStyling: MenuGlobalStyling;
+  globalStyling: MenuGlobalStylingUI;
 }) {
   const cartItems = useItemCart((state) => state.items);
 

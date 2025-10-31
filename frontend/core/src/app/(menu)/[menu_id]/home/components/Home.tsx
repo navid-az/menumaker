@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 
 //components
 import Image from "next/image";
@@ -12,23 +12,29 @@ import { cn } from "@/lib/utils";
 import { AlignLeft } from "lucide-react";
 
 //types
-import { type MenuUI } from "@/app/types/ui/menu";
+import { type MenuGlobalStylingUI, type MenuUI } from "@/app/types/ui/menu";
+
+//provider
+import { usePreview } from "@/app/(creator)/builder/components/preview/PreviewContext";
 
 export default function Home({
   menuData,
   businessSlug,
   isPreview = false,
+  globalStyling,
 }: {
   menuData: MenuUI;
   businessSlug?: string;
   isPreview?: boolean;
+  globalStyling: MenuGlobalStylingUI;
 }) {
+  const { setActivePage } = usePreview();
   return (
-    <div className="relative flex h-full w-full flex-col justify-between overflow-x-hidden bg-(--secondary)">
+    <div className="relative flex h-full w-full flex-col justify-between overflow-x-hidden bg-(--primary) transition-all duration-300">
       <section className="flex flex-col gap-4">
         <header className="flex justify-between">
           <svg
-            className="absolute -right-20 top-[6vh] text-(--primary)"
+            className="absolute -right-20 top-[6vh] text-(--secondary)"
             width="200"
             height="298"
             viewBox="0 0 200 298"
@@ -55,23 +61,27 @@ export default function Home({
             />
           </svg>
           {menuData.secondary_image && (
-            <div className="relative h-[22vh] w-6/12">
+            <div className="relative h-[22vh] w-6/12 rounded-bl-(--radius-md)">
               <Image
                 src={`http://127.0.0.1:8000${menuData.secondary_image}`}
                 fill
                 alt="secondary_image"
-                className="rounded-bl-(--radius-md) object-cover"
+                className={cn(
+                  "rounded-bl-(--radius-md) object-cover transition-all duration-300",
+                  globalStyling.style === "retro" &&
+                    "border-l-3 border-b-3 border-(--secondary)"
+                )}
               ></Image>
             </div>
           )}
           <Button
             size="icon"
-            className="ml-4 mt-4 bg-(--secondary) text-(--primary)"
+            className="ml-4 mt-4 bg-(--secondary) text-(--tertiary) rounded-(--radius-base) transition-all duration-300"
           >
             <AlignLeft></AlignLeft>
           </Button>
           <svg
-            className="absolute -left-1 top-[20vh] text-(--primary)"
+            className="absolute -left-1 top-[20vh] text-(--secondary)"
             width="200"
             height="298"
             viewBox="0 0 200 298"
@@ -98,7 +108,7 @@ export default function Home({
             />
           </svg>
         </header>
-        <div className="flex flex-col gap-2 px-4 text-(--primary)">
+        <div className="flex flex-col gap-2 px-4 text-(--secondary) z-10 transition-all duration-300">
           <h1
             className={cn(
               "font-semibold",
@@ -116,21 +126,31 @@ export default function Home({
             src={`http://127.0.0.1:8000${menuData.tertiary_image}`}
             fill
             alt="tertiary_image"
-            className="rounded-r-(--radius-sm) object-cover"
+            className={cn(
+              "rounded-r-(--radius-sm) object-cover transition-all duration-300",
+              globalStyling.style === "retro" &&
+                "border-3 border-l-0 border-(--secondary)"
+            )}
           ></Image>
         </div>
       )}
       <footer className="flex h-[52vh] w-full">
         <Button
+          onClick={() => setActivePage("menu")}
           asChild
-          className="group flex h-full w-20 flex-col gap-20 rounded-none bg-(--secondary) pt-20 text-(--primary)"
+          className="group flex h-full w-20 flex-col gap-10 rounded-none bg-(--primary) pt-20 text-(--secondary) transition-all duration-300"
         >
-          <Link href={`/${businessSlug}/menu`}>
-            <span className="-rotate-90 transform text-xl">
-              ورود به منو آیتم ها
-            </span>
-            <div className="text-4xl">↓</div>
-          </Link>
+          {isPreview ? (
+            <div>
+              <span className="-rotate-90 transform text-xl">ورود به منو</span>
+              <div className="text-4xl">↓</div>
+            </div>
+          ) : (
+            <Link href={`/${businessSlug}/menu`}>
+              <span className="-rotate-90 transform text-xl">ورود به منو</span>
+              <div className="text-4xl">↓</div>
+            </Link>
+          )}
         </Button>
         {menuData.primary_image && (
           <div className="relative h-full w-full">
@@ -138,7 +158,11 @@ export default function Home({
               src={`http://127.0.0.1:8000${menuData.primary_image}`}
               fill
               alt="primary_image"
-              className="rounded-tr-(--radius-lg) object-cover"
+              className={cn(
+                "rounded-tr-(--radius-lg) object-cover transition-all duration-300",
+                globalStyling.style === "retro" &&
+                  "border-3 border-l-0 border-(--secondary)"
+              )}
             ></Image>
           </div>
         )}

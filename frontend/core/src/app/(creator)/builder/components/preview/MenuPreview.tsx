@@ -3,28 +3,21 @@
 import React, { useRef } from "react";
 
 //components
-import Menu from "@/app/(menu)/[menu_id]/menu/components/Menu";
 import Home from "@/app/(menu)/[menu_id]/home/components/Home";
-import Image from "next/image";
-import HomePagePreview from "./HomePagePreview";
-import ItemsPagePreview from "./ItemsPagePreview";
-import { Button } from "@/components/ui/button";
+import Menu from "@/app/(menu)/[menu_id]/menu/components/Menu";
+import Cart from "@/app/(menu)/[menu_id]/orders/components/Cart";
 
 //libraries
 import { useFormContext } from "react-hook-form";
-import { cn } from "@/lib/utils";
 
 //types
 import { BuilderFormType } from "../builder/BuilderTest";
-import { type MenuGlobalStyling } from "@/app/types/api/menu";
 import { type MenuCategory } from "@/app/types/api/menu";
-import { PreviewProvider } from "./PreviewContext";
+import { type ActivePreviewPage, PreviewProvider } from "./PreviewContext";
 import { formToMenuGlobalStyling } from "../../utils/formToMenuGlobalStyling";
 
 export default function MenuPreview() {
-  const [activePage, setActivePage] = React.useState<
-    "home" | "items" | "order"
-  >("items");
+  const [activePage, setActivePage] = React.useState<ActivePreviewPage>("home");
 
   const { watch } = useFormContext<BuilderFormType>();
   const colors = watch("global_styling.color_palette");
@@ -280,14 +273,26 @@ export default function MenuPreview() {
           ref={screenRef}
           className="relative w-full h-full overflow-y-scroll overflow-hidden hide-scrollbar rounded-4xl border-3 border-primary/20"
         >
-          <PreviewProvider container={screenRef.current}>
-            {/* <Home isPreview menuData={menu}></Home> */}
-            <Menu
-              isPreview={true}
-              categories={mockCategories}
-              data={menu}
-              globalStyling={globalStyling}
-            ></Menu>
+          <PreviewProvider
+            container={screenRef.current}
+            setActivePage={setActivePage}
+          >
+            {activePage === "home" ? (
+              <Home
+                isPreview
+                menuData={menu}
+                globalStyling={globalStyling}
+              ></Home>
+            ) : activePage === "menu" ? (
+              <Menu
+                isPreview={true}
+                categories={mockCategories}
+                data={menu}
+                globalStyling={globalStyling}
+              ></Menu>
+            ) : (
+              <Cart globalStyling={globalStyling} isPreview></Cart>
+            )}
           </PreviewProvider>
         </div>
       </div>

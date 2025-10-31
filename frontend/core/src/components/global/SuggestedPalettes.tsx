@@ -38,6 +38,9 @@ const palettePacks = {
 
     // 70s vibe
     ["#A8DADC", "#000000", "#fbffad", "#fff4e9"],
+
+    // Candy shop
+    ["#f7ccff", "#440051", "#a3d9ff", "#fef4ff"],
   ],
 };
 
