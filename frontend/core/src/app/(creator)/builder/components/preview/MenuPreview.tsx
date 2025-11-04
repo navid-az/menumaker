@@ -4,7 +4,7 @@ import React, { useRef } from "react";
 
 //components
 import MenuLayout from "@/app/(menu)/[menu_id]/components/MenuLayout";
-import Home from "@/app/(menu)/[menu_id]/home/components/Home";
+import HomeLayout from "@/app/(menu)/[menu_id]/home/components/HomeLayout";
 import Cart from "@/app/(menu)/[menu_id]/orders/components/Cart";
 
 //libraries
@@ -25,7 +25,7 @@ export default function MenuPreview() {
   const { watch } = useFormContext<BuilderFormType>();
   const data = watch();
 
-  //separates and normalize form data
+  //separates and normalizes form data
   const { globalStyling, menu } = formToMenuGlobalStyling(data);
 
   const mockCategories: MenuCategory[] = [
@@ -172,6 +172,26 @@ export default function MenuPreview() {
   ];
   const styleVars = generateStyleVars(colors, globalStyling.border_radius);
 
+  //render active preview page according to activePage state
+  function renderActivePage() {
+    switch (activePage) {
+      case "home":
+        return <HomeLayout menuData={menu} globalStyling={globalStyling} />;
+      case "menu":
+        return (
+          <MenuLayout
+            menuData={menu}
+            globalStyling={globalStyling}
+            categories={mockCategories}
+          />
+        );
+      case "cart":
+        return <Cart globalStyling={globalStyling} isPreview />;
+      default:
+        return null;
+    }
+  }
+
   return (
     <div
       ref={screenRef}
@@ -183,21 +203,7 @@ export default function MenuPreview() {
           container={screenRef.current}
           setActivePage={setActivePage}
         >
-          {activePage === "home" ? (
-            <Home
-              isPreview
-              menuData={menu}
-              globalStyling={globalStyling}
-            ></Home>
-          ) : activePage === "menu" ? (
-            <MenuLayout
-              menuData={menu}
-              globalStyling={globalStyling}
-              categories={mockCategories}
-            ></MenuLayout>
-          ) : (
-            <Cart globalStyling={globalStyling} isPreview></Cart>
-          )}
+          {renderActivePage()}
         </PreviewProvider>
       </div>
     </div>

@@ -1,17 +1,8 @@
 //components
-import Home from "./components/Home";
-import Link from "next/link";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
-
-//SVGs
-import { AlignLeft } from "lucide-react";
-
-//libraries
-import { cn } from "@/lib/utils";
+import HomeLayout from "./components/HomeLayout";
 
 //types
-import { type Menu } from "@/app/types/api/menu";
+import { type MenuGlobalStyling, type Menu } from "@/app/types/api/menu";
 
 // GET menu data
 export async function getMenuData(menu_id: string) {
@@ -25,6 +16,7 @@ export async function getMenuData(menu_id: string) {
     console.error("error fetching data:", error);
   }
 }
+
 // GET menu global stylings
 export async function getGlobalStyling(menu_id: string) {
   try {
@@ -46,8 +38,15 @@ export default async function page(props: {
   const params = await props.params;
 
   const menuData: Menu = await getMenuData(params.menu_id);
+  const globalStyling: MenuGlobalStyling = await getGlobalStyling(
+    params.menu_id
+  );
 
   return (
-    <Home menuData={menuData} businessSlug={params.menu_id} isPreview></Home>
+    <HomeLayout
+      menuData={menuData}
+      businessSlug={params.menu_id}
+      globalStyling={globalStyling}
+    ></HomeLayout>
   );
 }
