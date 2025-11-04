@@ -32,7 +32,6 @@ type CartBtnType = {
   businessSlug?: string;
   categories: MenuCategory[];
   globalStyling: MenuGlobalStylingUI;
-  isPreview?: boolean;
 };
 
 export default function CartBtn({
@@ -40,14 +39,13 @@ export default function CartBtn({
   businessSlug,
   categories,
   globalStyling,
-  isPreview = false,
 }: CartBtnType) {
   const cartBtnRef = useRef<HTMLButtonElement>(null);
 
   const DrawerIsOpen = useMenuItemDrawer((state) => state.isOpen);
   const cartItems = useItemCart((state) => state.items);
 
-  const { setActivePage } = usePreview();
+  const { setActivePage, isPreview } = usePreview();
 
   //store categories of items inside cartItems
   const [matchingItems, setMatchingItems] = useState<
@@ -170,7 +168,7 @@ export default function CartBtn({
   if (type === "default") {
     return (
       <Button
-        onClick={() => setActivePage("order")}
+        onClick={() => setActivePage("cart")}
         ref={cartBtnRef}
         asChild
         className={cn(
@@ -180,10 +178,7 @@ export default function CartBtn({
         )}
       >
         {isPreview ? (
-          <div
-            onClick={() => setActivePage("order")}
-            className="cursor-pointer"
-          >
+          <div onClick={() => setActivePage("cart")} className="cursor-pointer">
             {CartButtonContent}
           </div>
         ) : (
@@ -195,7 +190,7 @@ export default function CartBtn({
     return (
       <div className="fixed w-full bottom-[-80px] z-50 mb-4 flex justify-center">
         <Button
-          onClick={() => setActivePage("order")}
+          onClick={() => setActivePage("cart")}
           ref={cartBtnRef}
           asChild
           className={cn(

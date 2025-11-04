@@ -5,7 +5,7 @@ import React, { useRef } from "react";
 //components
 import MenuLayout from "@/app/(menu)/[menu_id]/components/MenuLayout";
 import HomeLayout from "@/app/(menu)/[menu_id]/home/components/HomeLayout";
-import Cart from "@/app/(menu)/[menu_id]/orders/components/Cart";
+import CartLayout from "@/app/(menu)/[menu_id]/orders/components/CartLayout";
 
 //libraries
 import { useFormContext } from "react-hook-form";
@@ -161,6 +161,8 @@ export default function MenuPreview() {
     },
   ];
 
+  const mockItems = mockCategories.flatMap((category) => category.items);
+
   const screenRef = useRef<HTMLDivElement>(null);
 
   //generate style variables
@@ -186,7 +188,12 @@ export default function MenuPreview() {
           />
         );
       case "cart":
-        return <Cart globalStyling={globalStyling} isPreview />;
+        return (
+          <CartLayout
+            items={mockItems}
+            globalStyling={globalStyling}
+          ></CartLayout>
+        );
       default:
         return null;
     }
@@ -198,7 +205,7 @@ export default function MenuPreview() {
       style={styleVars as React.CSSProperties}
       className="relative overflow-hidden w-[450px] h-[760px] scale-[90%] rounded-(--radius-preview) border-3 border-(--tertiary) transition-all duration-300"
     >
-      <div className="relative w-full h-full overflow-y-scroll overflow-hidden hide-scrollbar">
+      <div className="relative bg-(--bg) w-full h-full overflow-y-scroll overflow-hidden hide-scrollbar">
         <PreviewProvider
           container={screenRef.current}
           setActivePage={setActivePage}
