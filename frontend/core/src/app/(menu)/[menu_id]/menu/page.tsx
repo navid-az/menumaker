@@ -1,16 +1,9 @@
 //components
-import Menu from "./components/Menu";
-import MenuItemsWrapper from "./components/Items/MenuItemsWrapper";
-import ItemsCategory from "./components/ItemsCategory";
-import CartBtn from "./components/CartBtn";
-import MenuHeader from "./components/MenuHeader";
+import MenuLayout from "../components/MenuLayout";
 
 //types
 import { type MenuGlobalStyling } from "@/app/types/api/menu";
 import { type Menu as MenuData } from "@/app/types/api/menu";
-
-//libraries
-import { cn } from "@/lib/utils";
 
 // GET menu data
 export async function getMenuData(menu_id: string) {
@@ -68,43 +61,11 @@ export default async function Page(props: {
   const businessSlug = params.menu_id;
 
   return (
-    <div className={cn("relative flex flex-col bg-(--bg) scrollbar-hide")}>
-      <MenuHeader
-        globalStyling={globalStyling}
-        menuData={menuData}
-      ></MenuHeader>
-      {menuData.items_page_layout === "horizontal" ? (
-        <>
-          <ItemsCategory
-            categories={categories}
-            globalStyling={globalStyling}
-            type={menuData.items_page_layout}
-          ></ItemsCategory>
-          <MenuItemsWrapper
-            categories={categories}
-            menuData={menuData}
-            globalStyling={globalStyling}
-          ></MenuItemsWrapper>
-        </>
-      ) : (
-        <div className="flex">
-          <MenuItemsWrapper
-            categories={categories}
-            menuData={menuData}
-            globalStyling={globalStyling}
-          ></MenuItemsWrapper>
-          <ItemsCategory
-            categories={categories}
-            globalStyling={globalStyling}
-            type={menuData.items_page_layout}
-          ></ItemsCategory>
-        </div>
-      )}
-      <CartBtn
-        businessSlug={businessSlug}
-        categories={categories}
-        globalStyling={globalStyling}
-      ></CartBtn>
-    </div>
+    <MenuLayout
+      menuData={menuData}
+      globalStyling={globalStyling}
+      categories={categories}
+      businessSlug={businessSlug}
+    ></MenuLayout>
   );
 }

@@ -3,34 +3,31 @@
 import React, { useRef } from "react";
 
 //components
+import MenuLayout from "@/app/(menu)/[menu_id]/components/MenuLayout";
 import Home from "@/app/(menu)/[menu_id]/home/components/Home";
-import Menu from "@/app/(menu)/[menu_id]/menu/components/Menu";
 import Cart from "@/app/(menu)/[menu_id]/orders/components/Cart";
 
 //libraries
 import { useFormContext } from "react-hook-form";
 
+//utils
+import { generateStyleVars } from "@/app/(menu)/[menu_id]/utilities/styleVars";
+import { formToMenuGlobalStyling } from "../../utils/formToMenuGlobalStyling";
+
 //types
-import { BuilderFormType } from "../builder/BuilderTest";
+import { type BuilderFormType } from "../builder/BuilderTest";
 import { type MenuCategory } from "@/app/types/api/menu";
 import { type ActivePreviewPage, PreviewProvider } from "./PreviewContext";
-import { formToMenuGlobalStyling } from "../../utils/formToMenuGlobalStyling";
 
 export default function MenuPreview() {
   const [activePage, setActivePage] = React.useState<ActivePreviewPage>("home");
 
   const { watch } = useFormContext<BuilderFormType>();
-  const colors = watch("global_styling.color_palette");
   const data = watch();
-  // const { business, global_styling, frontend_only, ...menuData } = data;
+
+  //separates and normalize form data
   const { globalStyling, menu } = formToMenuGlobalStyling(data);
-  const globalBorderRadius = watch("global_styling.border_radius");
-  // const homeImages = watch("home_images");
-  // const imageUrls = homeImages.map(
-  //   (img: { tempId: string; url: string }) => img.url
-  // );
-  // const homeTitle = watch("home_title");
-  // const homeSubtitle = watch("home_subtitle");
+
   const mockCategories: MenuCategory[] = [
     {
       id: 265,
@@ -163,138 +160,45 @@ export default function MenuPreview() {
       is_active: true,
     },
   ];
-  function generateStyleVars(colors: string[], globalBorderRadius: string) {
-    const [primary, secondary, tertiaryMaybe, bgMaybe] = colors;
-    const hasTertiary = Boolean(tertiaryMaybe);
-
-    // Fallback color logic
-    const tertiary = tertiaryMaybe || secondary;
-    const background = bgMaybe || "#FFFFFF";
-
-    return {
-      /* Base Palette */
-      "--primary": primary,
-      "--secondary": secondary,
-      "--tertiary": tertiary,
-      "--bg": background,
-
-      /* Semantic Roles */
-      "--surface-main": hasTertiary ? tertiary : primary,
-      "--surface-alt": hasTertiary ? secondary : primary,
-      "--surface-accent": hasTertiary ? tertiary : secondary,
-      "--text-main": primary,
-      "--text-alt": secondary,
-
-      /* Add to Cart Button */
-      "--cart-btn-bg": hasTertiary ? tertiary : secondary,
-      "--cart-btn-text": hasTertiary ? secondary : primary,
-      "--cart-counter-bg": hasTertiary ? secondary : primary,
-      "--cart-counter-text": hasTertiary ? tertiary : secondary,
-
-      /* Waiter Call Button */
-      "--waiter-btn-bg": hasTertiary ? tertiary : primary,
-      "--waiter-btn-text": secondary,
-
-      /* Search Button */
-      "--search-btn-bg": hasTertiary ? tertiary : secondary,
-      "--search-btn-text": hasTertiary ? secondary : primary,
-
-      /* Footer Cart */
-      "--footer-cart-bg": hasTertiary ? tertiary : primary,
-      "--footer-cart-text": secondary,
-      "--footer-cart-counter-bg": secondary,
-      "--footer-cart-counter-text": hasTertiary ? tertiary : primary,
-
-      /* Border Radius System */
-      ...getRadiusVars(globalBorderRadius),
-    } as const;
-  }
-
-  /* Helper for radius mapping */
-  function getRadiusVars(radius: string) {
-    const map = {
-      sm: {
-        "--radius-base": "4px",
-        "--radius-inner": "3px",
-        "--radius-inner-alt": "2px",
-        "--radius-exception": "4px",
-        "--radius-sm": "0.5rem",
-        "--radius-md": "0.5rem",
-        "--radius-lg": "0.5rem",
-      },
-      md: {
-        "--radius-base": "10px",
-        "--radius-inner": "6px",
-        "--radius-inner-alt": "6px",
-        "--radius-exception": "8px",
-        "--radius-sm": "1rem",
-        "--radius-md": "2rem",
-        "--radius-lg": "2rem",
-      },
-      lg: {
-        "--radius-base": "14px",
-        "--radius-inner": "12px",
-        "--radius-inner-alt": "10px",
-        "--radius-exception": "18px",
-        "--radius-sm": "3rem",
-        "--radius-md": "5rem",
-        "--radius-lg": "6rem",
-      },
-      full: {
-        "--radius-base": "9999px",
-        "--radius-inner": "9999px",
-        "--radius-inner-alt": "9999px",
-        "--radius-exception": "24px",
-        "--radius-sm": "4rem",
-        "--radius-md": "7rem",
-        "--radius-lg": "8rem",
-      },
-    };
-    return map[radius as keyof typeof map] || map.full;
-  }
 
   const screenRef = useRef<HTMLDivElement>(null);
-  const styleVars = generateStyleVars(colors, globalBorderRadius);
+
+  //generate style variables
+  const colors = [
+    globalStyling.primary_color,
+    globalStyling.secondary_color,
+    globalStyling.tertiary_color,
+    globalStyling.bg_color,
+  ];
+  const styleVars = generateStyleVars(colors, globalStyling.border_radius);
 
   return (
     <div
+      ref={screenRef}
       style={styleVars as React.CSSProperties}
-      className="hidden lg:flex justify-center items-center"
+      className="relative overflow-hidden w-[450px] h-[760px] scale-[90%] rounded-(--radius-preview) border-3 border-(--tertiary) transition-all duration-300"
     >
-      <div className="relative overflow-hidden w-[450px] rounded-4xl h-[760px] scale-[90%]">
-        {/* <Image
-          src="/svgs/iphone-frame.svg"
-          alt="iPhone frame"
-          fill
-          className="pointer-events-none z-50"
-          priority
-        /> */}
-        <div
-          ref={screenRef}
-          className="relative w-full h-full overflow-y-scroll overflow-hidden hide-scrollbar rounded-4xl border-3 border-primary/20"
+      <div className="relative w-full h-full overflow-y-scroll overflow-hidden hide-scrollbar">
+        <PreviewProvider
+          container={screenRef.current}
+          setActivePage={setActivePage}
         >
-          <PreviewProvider
-            container={screenRef.current}
-            setActivePage={setActivePage}
-          >
-            {activePage === "home" ? (
-              <Home
-                isPreview
-                menuData={menu}
-                globalStyling={globalStyling}
-              ></Home>
-            ) : activePage === "menu" ? (
-              <Menu
-                isPreview={true}
-                categories={mockCategories}
-                data={menu}
-                globalStyling={globalStyling}
-              ></Menu>
-            ) : (
-              <Cart globalStyling={globalStyling} isPreview></Cart>
-            )}
-          </PreviewProvider>
-        </div>
+          {activePage === "home" ? (
+            <Home
+              isPreview
+              menuData={menu}
+              globalStyling={globalStyling}
+            ></Home>
+          ) : activePage === "menu" ? (
+            <MenuLayout
+              menuData={menu}
+              globalStyling={globalStyling}
+              categories={mockCategories}
+            ></MenuLayout>
+          ) : (
+            <Cart globalStyling={globalStyling} isPreview></Cart>
+          )}
+        </PreviewProvider>
       </div>
     </div>
   );
