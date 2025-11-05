@@ -25,7 +25,8 @@ export default function RootLayout({
   return (
     <html lang="en" dir="rtl">
       <body className={cn("overflow-x-hidden bg-white font-vazir font-medium")}>
-        <main data-vaul-drawer-wrapper>
+        {/* data-vaul-drawer-wrapper */}
+        <main>
           {children}
           <Toaster duration={4000} />
         </main>

@@ -36,7 +36,7 @@ export type MenuItemCardProps = MenuItem & {
 };
 
 //utils
-import { getStyleVars } from "../../../utilities/styleVars";
+import { generateStyleVars } from "../../../utilities/styleVars";
 
 //libraries
 import { cn } from "@/lib/utils";
@@ -52,7 +52,14 @@ export function MenuItemCard({
   is_featured = false,
   globalStyling,
 }: MenuItemCardProps) {
-  const styleVars = getStyleVars(globalStyling);
+  //generate style variables
+  const colors = [
+    globalStyling.primary_color,
+    globalStyling.secondary_color,
+    globalStyling.tertiary_color,
+    globalStyling.bg_color,
+  ];
+  const styleVars = generateStyleVars(colors, globalStyling.border_radius);
   const fullScreen = false;
 
   //change the value of drawerIsOpen global state

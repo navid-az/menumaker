@@ -4,7 +4,7 @@ import React from "react";
 import { type MenuGlobalStyling } from "@/app/types/api/menu";
 
 //utils
-import { getStyleVars } from "../utilities/styleVars";
+import { generateStyleVars } from "../utilities/styleVars";
 
 export default function MenuWrapper({
   children,
@@ -13,7 +13,13 @@ export default function MenuWrapper({
   children: React.ReactNode;
   config: MenuGlobalStyling;
 }) {
-  const styleVars = getStyleVars(config);
+  const colors = [
+    config.primary_color,
+    config.secondary_color,
+    config.tertiary_color,
+    config.bg_color,
+  ];
+  const styleVars = generateStyleVars(colors, config.border_radius);
 
   return (
     <div
