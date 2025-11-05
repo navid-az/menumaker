@@ -35,7 +35,7 @@ export default function MenuLayout({
         menuData={menuData}
       ></MenuHeader>
       {menuData.items_page_layout === "horizontal" ? (
-        <>
+        <div>
           <ItemsCategory
             categories={categories}
             globalStyling={globalStyling}
@@ -46,7 +46,7 @@ export default function MenuLayout({
             menuData={menuData}
             globalStyling={globalStyling}
           ></MenuItemsWrapper>
-        </>
+        </div>
       ) : (
         <div className="flex">
           <MenuItemsWrapper
