@@ -64,7 +64,12 @@ const GlobalStylingSchema = z.object({
   border_radius: z.enum(["sm", "md", "lg", "full"]),
   click_animation_enabled: z.boolean().default(false),
   click_animation_type: z.array(z.enum(["ripple", "tactile"])).optional(),
-  // unit_display_type: z.enum(["simp", "comp", "engL", "perL"]),
+  unit_display_type: z.enum([
+    "default",
+    "compact",
+    "persian_abbr",
+    "english_abbr",
+  ]),
 });
 const FrontEndOnlySchema = z.object({
   suggested_palette_enabled: z.boolean().default(false),
@@ -93,6 +98,7 @@ export const BuilderSchema = z.object({
   categories_display_type: z.enum(["slider", "circular"]),
   call_waiter_enabled: z.boolean().default(false),
   searchbar_enabled: z.boolean().default(false),
+  cart_btn_display_type: z.enum(["default", "compact"]),
   // items_display_type: z.enum(["modern", "square", "list"]), //
 
   business: BusinessSchema, // Nested Business schema
@@ -125,6 +131,7 @@ export default function BuilderTest({
         style: "default",
         color_palette: ["#0d3b66", "#faf0ca", "#f4d35e"],
         border_radius: "full",
+        unit_display_type: "default",
         click_animation_type: [],
         click_animation_enabled: false,
       },

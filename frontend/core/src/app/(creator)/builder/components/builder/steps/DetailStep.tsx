@@ -83,7 +83,48 @@ export default function DetailStep({ stepId }: { stepId: string }) {
           </FormItem>
         )}
       />
-
+      <FormField
+        control={control}
+        name="global_styling.unit_display_type"
+        render={({ field }) => (
+          <FormItem>
+            <FormControl>
+              <SliderTab onClick={() => console.log("clicked")} isActive>
+                <SliderTabTitle
+                  title="نمایش واحد قیمت"
+                  description="نحوه نمایش واحد پول در کل منو را انتخاب کنید"
+                  iconSrc="/images/form-icons/border.svg"
+                ></SliderTabTitle>
+                <SliderTabBody isOpen>
+                  <ButtonSelectGroup
+                    className="flex-row-reverse"
+                    value={field.value}
+                    onValueChange={field.onChange}
+                  >
+                    <ButtonSelect value="default">
+                      <p className="text-sm text-royal-green">تومان</p>
+                    </ButtonSelect>
+                    <ButtonSelect value="compact">
+                      <Image
+                        width={24}
+                        height={24}
+                        alt={`radius-sm`}
+                        src={`/images/form-icons/compact-fr-unit.svg`}
+                      />
+                    </ButtonSelect>
+                    <ButtonSelect value="persian_abbr">
+                      <p className="text-xl text-royal-green">ت</p>
+                    </ButtonSelect>
+                    <ButtonSelect value="english_abbr">
+                      <p className="text-xl text-royal-green font-sans">T</p>
+                    </ButtonSelect>
+                  </ButtonSelectGroup>
+                </SliderTabBody>
+              </SliderTab>
+            </FormControl>
+          </FormItem>
+        )}
+      />
       <FormField
         control={control}
         name="global_styling.click_animation_enabled"

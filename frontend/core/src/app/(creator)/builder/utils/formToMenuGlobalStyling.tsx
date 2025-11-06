@@ -18,7 +18,7 @@ export const formToMenuGlobalStyling = (
     tertiary_color: tertiary,
     bg_color: bg,
     border_radius: form.global_styling.border_radius,
-    // unit_display_type: form.unit_display_type,
+    unit_display_type: form.global_styling.unit_display_type,
     click_animation_enabled: form.global_styling.click_animation_enabled,
     click_animation_type: form.global_styling.click_animation_type,
   };
@@ -27,6 +27,7 @@ export const formToMenuGlobalStyling = (
     show_phone_numbers: form.show_phone_numbers,
     show_social_links: form.show_social_links,
     items_page_layout: form.items_page_layout,
+    cart_btn_display_type: form.cart_btn_display_type,
     categories_display_type: form.categories_display_type,
     call_waiter_enabled: form.call_waiter_enabled,
     home_title: form.home_title,
