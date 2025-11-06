@@ -5,6 +5,7 @@ export type Menu = {
   show_phone_numbers: boolean;
   show_branches: boolean;
   items_page_layout: "horizontal" | "vertical";
+  cart_btn_display_type: "default" | "compact";
   categories_display_type: string;
   call_waiter_enabled: boolean;
   searchbar_enabled: boolean;
@@ -20,12 +21,12 @@ export type AnimationVariant = "ripple" | "tactile";
 export type MenuGlobalStyling = {
   id: number;
   business: number;
+  style: "default" | "retro";
   primary_color: string;
   secondary_color: string;
   tertiary_color: string;
   bg_color: string;
-  style: "default" | "retro";
-  // unit_display_type: "comp" | "simp" | "engL" | "perL";
+  unit_display_type: "default" | "compact" | "persian_abbr" | "english_abbr";
   border_radius: "sm" | "md" | "lg" | "full";
   click_animation_enabled?: boolean;
   click_animation_type?: AnimationVariant[];

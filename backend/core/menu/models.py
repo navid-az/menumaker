@@ -9,9 +9,10 @@ User = settings.AUTH_USER_MODEL
 
 
 class Menu(models.Model):
+    CART_BTN_DISPLAY_CHOICES = [
+        ('default', 'Default'), ('compact', 'Compact')]
     CATEGORIES_DISPLAY_CHOICES = [
         ('slider', 'Slider'), ('circular', 'Circular')]
-
     business = models.ForeignKey(
         'business.Business', on_delete=models.CASCADE, null=True, blank=True, related_name='menus')
     show_social_links = models.BooleanField(default=False)
@@ -22,6 +23,8 @@ class Menu(models.Model):
         choices=[('vertical', 'Vertical'), ('horizontal', 'Horizontal')],
         default='horizontal'
     )
+    cart_btn_display_type = models.CharField(
+        max_length=20, choices=CART_BTN_DISPLAY_CHOICES, default='default')
     categories_display_type = models.CharField(
         max_length=20, choices=CATEGORIES_DISPLAY_CHOICES, default='slider')
     call_waiter_enabled = models.BooleanField(default=False)
@@ -50,17 +53,22 @@ class Menu(models.Model):
 
 # stylings which effect the entire menu
 class MenuGlobalStyling(models.Model):
+    GLOBAL_STYLE_CHOICES = [
+        ('default', 'Default'), ('retro', 'Retro')
+    ]
     CLICK_ANIMATION_CHOICES = [
         ('ripple', 'ripple effect'), ('tactile', 'tactile effect')]
-    PRICE_UNITS = [
-        ("simp", "simple"),
-        ("comp", "compact"),
-        ("engL", "engLetter"),
-        ("perL", "perLetter"),
+    PRICE_UNIT_CHOICES = [
+        ("default", "Default (250,000 تومان)"),
+        ("compact", "Compact (250 هزار تومان)"),
+        ("persian_abbr", "Persian Abbreviated (250,000 ت)"),
+        ("english_abbr", "English Abbreviated (250,000 T)"),
     ]
 
     menu = models.OneToOneField(
         Menu, on_delete=models.CASCADE, null=True, blank=True)
+    style = models.CharField(
+        max_length=20, choices=GLOBAL_STYLE_CHOICES, default='default')
     primary_color = ColorField()
     secondary_color = ColorField()
     tertiary_color = ColorField()
@@ -72,7 +80,7 @@ class MenuGlobalStyling(models.Model):
         default='full'
     )
     unit_display_type = models.CharField(
-        max_length=9, choices=PRICE_UNITS, default="simp")
+        max_length=12, choices=PRICE_UNIT_CHOICES, default="default")
     click_animation_type = MultiSelectField(
         choices=CLICK_ANIMATION_CHOICES, max_choices=3, null=True, blank=True)
     click_animation_enabled = models.BooleanField(default=False)

@@ -19,7 +19,7 @@ import { useEffect, useState } from "react";
 //types
 type PriceTagType = {
   price: number;
-  unitDisplayType?: "default" | "minimal" | "compact" | "engMinimal";
+  unitDisplayType?: "default" | "compact" | "persian_abbr" | "english_abbr";
   size?: "default" | "sm" | "lg";
   persianDigits?: boolean;
   removeZeroes?: boolean;
@@ -72,15 +72,15 @@ export default function PriceTag({
               size === "sm"
                 ? "text-md font-medium"
                 : size === "lg"
-                ? "text-3xl"
-                : "text-2xl"
+                  ? "text-3xl"
+                  : "text-2xl"
             } sm:text-2xl`}
           >
             {validatedPrice}
           </p>
-          {unitDisplayType == "minimal" ? (
+          {unitDisplayType == "persian_abbr" ? (
             <p
-              className={`text-${secondaryColor} text-sm font-semibold sm:text-xl`}
+              className={`text-${secondaryColor} text-base mt-0.5 font-medium sm:font-semibold sm:text-2xl`}
             >
               ت
             </p>
@@ -90,13 +90,13 @@ export default function PriceTag({
                 size === "sm"
                   ? "h-6 w-6"
                   : size === "lg"
-                  ? "h-8 w-8"
-                  : "h-8 w-8"
+                    ? "h-8 w-8"
+                    : "h-8 w-8"
               }`}
             >
               <Toman className={`h-full w-full text-${secondaryColor}`}></Toman>
             </span>
-          ) : unitDisplayType == "engMinimal" ? (
+          ) : unitDisplayType == "english_abbr" ? (
             <p
               className={`text-${secondaryColor} text-sm font-semibold sm:text-xl`}
             >

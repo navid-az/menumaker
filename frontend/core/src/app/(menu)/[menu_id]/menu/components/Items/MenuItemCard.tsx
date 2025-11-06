@@ -169,7 +169,11 @@ export function MenuItemCard({
                 >
                   {name}
                 </p>
-                <PriceTag size="sm" price={price}></PriceTag>
+                <PriceTag
+                  unitDisplayType={globalStyling.unit_display_type}
+                  size="sm"
+                  price={price}
+                ></PriceTag>
               </div>
               <AddToCartBtn
                 itemId={id}

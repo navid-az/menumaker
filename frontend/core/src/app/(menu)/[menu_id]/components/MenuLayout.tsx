@@ -62,6 +62,7 @@ export default function MenuLayout({
         </div>
       )}
       <CartBtn
+        type={menuData.cart_btn_display_type}
         businessSlug={businessSlug}
         categories={categories}
         globalStyling={globalStyling}
