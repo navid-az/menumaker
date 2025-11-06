@@ -14,6 +14,7 @@ import MenuSectionStep from "./steps/MenuSectionStep";
 import HomeFeatureStep from "./steps/HomeFeatureStep";
 import MenuLayoutStep from "./steps/MenuLayoutStep";
 import CategoryStyleStep from "./steps/CategoryStyleStep";
+import ItemStyleStep from "./steps/ItemStyleStep";
 import CartStyleStep from "./steps/CartStyleStep";
 import HomeLayoutStep from "./steps/HomeLayoutStep";
 import MenuPreview from "../preview/MenuPreview";
@@ -97,7 +98,7 @@ export const BuilderSchema = z.object({
   //items page
   items_page_layout: z.enum(["horizontal", "vertical"]),
   categories_display_type: z.enum(["slider", "circular"]),
-  // items_display_type: z.enum(["modern", "square", "list"]),
+  items_display_type: z.enum(["half-image-stacked", "full-bleed-overlay"]),
   cart_btn_display_type: z.enum(["default", "compact"]),
   call_waiter_enabled: z.boolean().default(false),
   searchbar_enabled: z.boolean().default(false),
@@ -137,6 +138,7 @@ export default function BuilderTest({
         click_animation_enabled: false,
       },
       items_page_layout: "horizontal",
+      items_display_type: "half-image-stacked",
       cart_btn_display_type: "default",
       menu_sections: [],
       home_title: "",
@@ -229,12 +231,17 @@ export default function BuilderTest({
           show: true,
         },
         {
+          id: "itemStyle",
+          subtitle: "تنظیمات ظاهری آیتم ها",
+          component: <ItemStyleStep stepId={"itemStyle"} />,
+          show: true,
+        },
+        {
           id: "cartStyle",
           subtitle: "تنظیمات ظاهری سبد سفارشات",
           component: <CartStyleStep stepId={"cartStyle"} />,
           show: true,
         },
-
         {
           id: "menuFeatures",
           subtitle: "ویژگی های صفحه آیتم ها",

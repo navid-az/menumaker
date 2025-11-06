@@ -29,6 +29,7 @@ export const formToMenuGlobalStyling = (
     items_page_layout: form.items_page_layout,
     cart_btn_display_type: form.cart_btn_display_type,
     categories_display_type: form.categories_display_type,
+    items_display_type: form.items_display_type,
     call_waiter_enabled: form.call_waiter_enabled,
     home_title: form.home_title,
     home_subtitle: form.home_subtitle,

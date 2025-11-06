@@ -1,3 +1,5 @@
+export type ItemsDisplayType = "full-bleed-overlay" | "half-image-stacked";
+
 export type Menu = {
   id: number;
   business: number;
@@ -7,6 +9,7 @@ export type Menu = {
   items_page_layout: "horizontal" | "vertical";
   cart_btn_display_type: "default" | "compact";
   categories_display_type: string;
+  items_display_type: ItemsDisplayType;
   call_waiter_enabled: boolean;
   searchbar_enabled: boolean;
   home_title?: string;

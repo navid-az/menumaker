@@ -108,6 +108,7 @@ export default function MenuItemsWrapper({
                       <MenuItemCard
                         key={item.id}
                         {...item}
+                        style={menuData.items_display_type}
                         globalStyling={globalStyling}
                       ></MenuItemCard>
                     ))}

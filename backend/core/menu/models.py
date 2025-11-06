@@ -9,10 +9,12 @@ User = settings.AUTH_USER_MODEL
 
 
 class Menu(models.Model):
-    CART_BTN_DISPLAY_CHOICES = [
-        ('default', 'Default'), ('compact', 'Compact')]
     CATEGORIES_DISPLAY_CHOICES = [
         ('slider', 'Slider'), ('circular', 'Circular')]
+    ITEMS_DISPLAY_CHOICES = [('full-bleed-overlay', 'Full-Bleed with Overlay'),
+                             ('half-image-stacked', 'Half-Image Stacked')]
+    CART_BTN_DISPLAY_CHOICES = [
+        ('default', 'Default'), ('compact', 'Compact')]
     business = models.ForeignKey(
         'business.Business', on_delete=models.CASCADE, null=True, blank=True, related_name='menus')
     show_social_links = models.BooleanField(default=False)
@@ -25,6 +27,8 @@ class Menu(models.Model):
     )
     cart_btn_display_type = models.CharField(
         max_length=20, choices=CART_BTN_DISPLAY_CHOICES, default='default')
+    items_display_type = models.CharField(
+        max_length=20, choices=ITEMS_DISPLAY_CHOICES, default='half-image-stacked')
     categories_display_type = models.CharField(
         max_length=20, choices=CATEGORIES_DISPLAY_CHOICES, default='slider')
     call_waiter_enabled = models.BooleanField(default=False)

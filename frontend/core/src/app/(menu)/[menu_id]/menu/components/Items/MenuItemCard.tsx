@@ -30,8 +30,9 @@ import {
   type AnimationVariantType,
 } from "@/components/global/InteractiveWrapper";
 import { type MenuGlobalStylingUI } from "@/app/types/ui/menu";
-import { type MenuItem } from "@/app/types/api/menu";
+import { type ItemsDisplayType, type MenuItem } from "@/app/types/api/menu";
 export type MenuItemCardProps = MenuItem & {
+  style: ItemsDisplayType;
   globalStyling: MenuGlobalStylingUI;
 };
 
@@ -50,6 +51,7 @@ export function MenuItemCard({
   is_active = true,
   is_available = false,
   is_featured = false,
+  style,
   globalStyling,
 }: MenuItemCardProps) {
   //generate style variables
@@ -60,7 +62,6 @@ export function MenuItemCard({
     globalStyling.bg_color,
   ];
   const styleVars = generateStyleVars(colors, globalStyling.border_radius);
-  const fullScreen = false;
 
   //change the value of drawerIsOpen global state
   const setDrawerIsOpen = useMenuItemDrawer((state) => state.updateIsOpen);
@@ -136,10 +137,10 @@ export function MenuItemCard({
               </div>
             </div>
           </div>
-        ) : !fullScreen ? (
+        ) : style === "half-image-stacked" ? (
           <div
             className={cn(
-              "flex h-[300px] flex-none flex-col xss:col-span-1 border-(--secondary) bg-[var(--primary)] text-[var(--contrast-on-primary)] transition-[box-shadow,border-radius] duration-300",
+              "flex h-[300px] flex-none flex-col xss:col-span-1 border-(--secondary) text-[var(--contrast-on-primary)] transition-[box-shadow,border-radius] duration-300",
               globalStyling.style === "retro" &&
                 "border-3 shadow-[4px_4px_0px_0px_var(--secondary)]"
             )}
@@ -181,7 +182,7 @@ export function MenuItemCard({
               ></AddToCartBtn>
             </div>
           </div>
-        ) : (
+        ) : style === "full-bleed-overlay" ? (
           <div
             className={cn(
               "relative flex h-[300px] flex-none flex-col xss:col-span-1 transition-[box-shadow,border,border-radius] duration-300",
@@ -209,6 +210,7 @@ export function MenuItemCard({
                   {name}
                 </p>
                 <PriceTag
+                  unitDisplayType={globalStyling.unit_display_type}
                   className="text-(--secondary)/80"
                   size="sm"
                   price={price}
@@ -220,6 +222,8 @@ export function MenuItemCard({
               ></AddToCartBtn>
             </div>
           </div>
+        ) : (
+          ""
         )}
       </DrawerTrigger>
       <DrawerContent
