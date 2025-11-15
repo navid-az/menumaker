@@ -100,7 +100,7 @@ class Subscription(models.Model):
         # auto-calculate end_date based on chosen duration
         if not self.end_date and self.start_date and self.pricing.duration:
             self.end_date = self.start_date + \
-                relativedelta(months=self.pricing.duration.months)
+                relativedelta(days=self.pricing.duration.days)
         super().save(*args, **kwargs)
 
     def __str__(self):
