@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     "menu",
     "pickers",
     "personnel",
-    # "dashboard",
+    'subscriptions',
 
     # 3rd party packages
     "channels",
