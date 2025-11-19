@@ -3,7 +3,12 @@ from .models import Subscription
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subscription
+        fields = '__all__'
 
+
+class SubscriptionCreateUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
         fields = '__all__'
@@ -23,8 +28,6 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
-        print("CREATE CALLED")
-        print("Business:", self.context['business'])
         business = self.context['business']
 
         return Subscription.objects.create(
