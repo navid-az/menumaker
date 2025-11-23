@@ -1,83 +1,85 @@
-from django.urls import path, re_path
-from business.views import (CategoriesView, CategoryCreateView, CategoryUpdateView, CategoryDeleteView,
-                            ItemsView, ItemCreateView, ItemUpdateView, ItemDeleteView, BusinessView, BusinessesView, BusinessCreateView,
-                            BranchesView, BranchCreateView, BranchUpdateView, BranchDeleteView, TablesView, TableCreateView, TableUpdateView, TableDeleteView, CheckTableSessionView, CallWaiterCreateView, CallWaiterResolveView, RoleView)
+from django.urls import path
+from business.views import BusinessesView, BusinessDetailView, BranchesView, BranchDetailView, TablesView, TableDetailView, CategoriesView, CategoryDetailView, ItemsView, ItemDetailView,  RoleView
 
-from personnel.views import PersonnelListView, PersonnelUpdateView, PersonnelDeleteView
 
 app_name = 'business'
 
 urlpatterns = [
-    # business endpoints
-    path('<str:slug>/detail/', BusinessView.as_view(), name='business-detail'),
-    path('<int:id>/businesses', BusinessesView.as_view(),
-         name="businesses"),
-    path('create/', BusinessCreateView.as_view(),
-         name='register-business'),
+    # Business endpoints
+    # List & create
+    path('', BusinessesView.as_view(),
+         name='businesses-list-create'),
+    # Detail (retrieve, update, delete)
+    path('businesses/<str:business_slug>/',
+         BusinessDetailView.as_view(), name='business-detail'),
 
     # branch endpoints
-    path('<str:slug>/branches/', BranchesView.as_view(), name='business-branches'),
-    path('<str:slug>/branches/create/',
-         BranchCreateView.as_view(), name='create-branch'),
-    path('<str:slug>/branches/<int:branch_id>/update/',
-         BranchUpdateView.as_view(), name='update-branch'),
-    path('<str:slug>/branches/<int:branch_id>/delete/',
-         BranchDeleteView.as_view(), name='delete-branch'),
+    path('<str:business_slug>/branches/',
+         BranchesView.as_view(), name='business-branches'),
+    path('<str:business_slug>/branches/<str:branch_slug>/',
+         BranchDetailView.as_view(), name='business-branch-detail'),
 
-    # table endpoints
-    path('<str:branch_slug>/tables/', TablesView.as_view(), name='branch-tables'),
-    path('<str:branch_slug>/tables/create/',
-         TableCreateView.as_view(), name='create-table'),
-    path('<str:branch_slug>/tables/<int:table_id>/update/',
-         TableUpdateView.as_view(), name='update-table'),
-    path('<str:branch_slug>/tables/<int:table_id>/delete/',
-         TableDeleteView.as_view(), name='delete-table'),
+    # Table endpoints
+    path('<str:business_slug>/branches/<str:branch_slug>/tables/',
+         TablesView.as_view(), name='branch-tables'),
+    path('<str:business_slug>/branches/<str:branch_slug>/tables/<int:table_id>/',
+         TableDetailView.as_view(), name='branch-table-detail'),
 
+
+    # Needs to change !!!
     # table session endpoints
-    path('tables/<str:table_code>/check-session/',
-         CheckTableSessionView.as_view(), name='check-session'),
+    #     path('tables/<str:table_code>/check-session/',
+    #          CheckTableSessionView.as_view(), name='check-session'),
 
-    # call waiter endpoints
-    path('table-sessions/<str:session_code>/call-waiter/create/',
-         CallWaiterCreateView.as_view(), name='call-waiter-create'),
-    path('table-sessions/<str:session_code>/call-waiter/resolve/',
-         CallWaiterResolveView.as_view(), name='call-waiter-resolve'),
+    #     # Needs to change !!!
+    #     # call waiter endpoints
+    #     path('table-sessions/<str:session_code>/call-waiter/create/',
+    #          CallWaiterCreateView.as_view(), name='call-waiter-create'),
+    #     path('table-sessions/<str:session_code>/call-waiter/resolve/',
+    #          CallWaiterResolveView.as_view(), name='call-waiter-resolve'),
 
-    # category endpoints
-    path('<str:slug>/categories/',
-         CategoriesView.as_view(), name='menu-categories'),
-    path('<str:slug>/categories/create/',
-         CategoryCreateView.as_view(), name='create-category'),
-    path('<str:slug>/categories/<int:category_id>/update/',
-         CategoryUpdateView.as_view(), name='update-category'),
-    path('<str:slug>/categories/<int:category_id>/delete/',
-         CategoryDeleteView.as_view(), name='delete-category'),
+    # Category endpoints
+    path('<str:business_slug>/categories/',
+         CategoriesView.as_view(), name='business-categories'),
+    path('<str:business_slug>/categories/<int:category_id>/',
+         CategoryDetailView.as_view(), name='business-category-detail'),
 
-    # item endpoints
-    # Items endpoint has 3 variants depending on query params:
-    # 1. /business/{slug}/items/ → all items (ignores branches)
-    # 2. /business/{slug}/items/visible/?branch_slug=foo → visible items for branch foo
-    # 3. /business/{slug}/items/hidden/?branch_slug=foo → hidden items for branch foo
-    path('<str:slug>/items/', ItemsView.as_view(), name='items-all'),
-    re_path(r"^(?P<slug>[^/]+)/items/(?P<scope>hidden|visible)/$",
-            ItemsView.as_view(), name="items-scoped"),
+    # Items API endpoints
+    # -------------------
+    # Collection endpoint: GET /businesses/<business_slug>/items/
+    #   - Returns all items of the business
+    #   - Optional query parameters:
+    #       ?branch=<branch_slug>   → filter items for a specific branch
+    #       ?scope=visible|hidden  → filter items by visibility in the branch
+    #   - POST /businesses/<business_slug>/items/ creates a new item
+    #
+    # Detail endpoint: GET/PATCH/DELETE /businesses/<business_slug>/items/<item_id>/
+    #   - GET    → retrieve item details
+    #   - PATCH  → update item fields (partial update)
+    #   - DELETE → remove item
+    #
+    # Examples:
+    #   GET /businesses/cafe-delight/items/                       → all items
+    #   GET /businesses/cafe-delight/items/?branch=main-hall      → items for main-hall
+    #   GET /businesses/cafe-delight/items/?branch=main-hall&scope=hidden  → hidden items
 
+    # Item endpoints
+    path('<str:business_slug>/items/',
+         ItemsView.as_view(), name='business-items'),
+    path('<str:business_slug>/items/<int:item_id>/',
+         ItemDetailView.as_view(), name='business-item-detail'),
 
-    path('<str:slug>/items/create/',
-         ItemCreateView.as_view(), name='create-item'),
-    path('<str:slug>/items/<int:item_id>/update/',
-         ItemUpdateView.as_view(), name='update-item'),
-    path('<str:slug>/items/<int:item_id>/delete/',
-         ItemDeleteView.as_view(), name='delete-item'),
+    # Needs to move to personnel app !!!
+    # Personnel endpoints
+    # Pass branch_slug as query param to filter by branch
+    #     path('<str:business_slug>/personnel/',
+    #          PersonnelView.as_view(), name='business-personnel'),
 
-    # Personnel
-    path('<str:slug>/personnel/all/',
-         PersonnelListView.as_view(), name='personnel-list'),
-    path('<str:slug>/personnel/<int:personnel_id>/update/',
-         PersonnelUpdateView.as_view(), name='update-personnel'),
-    path('<str:slug>/personnel/<int:personnel_id>/delete/',
-         PersonnelDeleteView.as_view(), name='update-personnel'),
+    #     path('<str:business_slug>/personnel/<int:personnel_id>/',
+    #          PersonnelDetailView.as_view(), name='business-personnel-detail'),
 
+    # Needs to change !!!
+    # Needs to move to personnel app !!!
     # get user's role/permissions
     path('<str:slug>/staff/role/',
          RoleView.as_view(), name='staff-role'),
