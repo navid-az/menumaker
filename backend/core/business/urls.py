@@ -6,14 +6,12 @@ app_name = 'business'
 
 urlpatterns = [
     # Business endpoints
-    # List & create
     path('', BusinessesView.as_view(),
          name='businesses-list-create'),
-    # Detail (retrieve, update, delete)
-    path('businesses/<str:business_slug>/',
+    path('<str:business_slug>/',
          BusinessDetailView.as_view(), name='business-detail'),
 
-    # branch endpoints
+    # Branch endpoints
     path('<str:business_slug>/branches/',
          BranchesView.as_view(), name='business-branches'),
     path('<str:business_slug>/branches/<str:branch_slug>/',
