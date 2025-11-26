@@ -15,7 +15,7 @@ class IsOwner(BasePermission):
 class HasBusinessBranchAccess(BasePermission):
     def has_permission(self, request, view):
         # Extract business_slug from URL kwargs
-        business_slug = view.kwargs.get('slug')
+        business_slug = view.kwargs.get('business_slug')
         if not business_slug:
             raise ValidationError(
                 {"error": "Business slug must be provided in the URL."})
@@ -98,10 +98,17 @@ class HasBusinessBranchAccess(BasePermission):
 class HasMethodAccess(BasePermission):
     def has_permission(self, request, view):
         # Get required permission(s)
-        required_perms = getattr(view, 'required_permission', None)
+        required_perms_dict = getattr(
+            view, 'required_permission_by_method', None)
+
+        if required_perms_dict:
+            required_perms = required_perms_dict.get(request.method)
+        else:
+            # Fallback for when required_perms_dict isn't provided
+            required_perms = getattr(view, 'required_permission', None)
+
         if not required_perms:
-            raise PermissionDenied(
-                "View does not specify required permission.")
+            return False
 
         # Get Personnel from request (set by HasBusinessBranchAccess)
         personnel = getattr(request, 'personnel', None)
