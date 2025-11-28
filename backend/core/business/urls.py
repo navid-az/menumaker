@@ -1,5 +1,6 @@
 from django.urls import path
-from business.views import BusinessesView, BusinessDetailView, BranchesView, BranchDetailView, TablesView, TableDetailView, CategoriesView, CategoryDetailView, ItemsView, ItemDetailView,  RoleView
+from business.views import (BusinessesView, BusinessDetailView, BranchesView, BranchDetailView, TablesView, TableDetailView,
+                            TableSessionView, CallWaiterView, CallWaiterDetailView, CategoriesView, CategoryDetailView, ItemsView, ItemDetailView,  RoleView)
 
 
 app_name = 'business'
@@ -24,17 +25,16 @@ urlpatterns = [
          TableDetailView.as_view(), name='branch-table-detail'),
 
 
-    # Needs to change !!!
-    # table session endpoints
-    #     path('tables/<str:table_code>/check-session/',
-    #          CheckTableSessionView.as_view(), name='check-session'),
+    # Table Session endpoints
+    path('<str:business_slug>/branches/<str:branch_slug>/tables/<str:table_code>/session/',
+         TableSessionView.as_view(), name='table-session'),
 
-    #     # Needs to change !!!
-    #     # call waiter endpoints
-    #     path('table-sessions/<str:session_code>/call-waiter/create/',
-    #          CallWaiterCreateView.as_view(), name='call-waiter-create'),
-    #     path('table-sessions/<str:session_code>/call-waiter/resolve/',
-    #          CallWaiterResolveView.as_view(), name='call-waiter-resolve'),
+
+    # call waiter endpoints
+    path('<str:business_slug>/branches/<str:branch_slug>/tables/<str:table_code>/sessions/<str:session_code>/call/',
+         CallWaiterView.as_view(), name='call-waiter'),
+    path('<str:business_slug>/branches/<str:branch_slug>/tables/<str:table_code>/sessions/<str:session_code>/call/<int:call_id>/',
+         CallWaiterDetailView.as_view(), name='call-waiter-detail'),
 
     # Category endpoints
     path('<str:business_slug>/categories/',
