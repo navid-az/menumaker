@@ -207,51 +207,108 @@ class TableDetailView(MethodBasedPermissionsMixin, APIView):
         return Response(status.HTTP_204_NO_CONTENT)
 
 
-class CheckTableSessionView(APIView):
-    def get(self, request, table_code):
+class TableSessionView(MethodBasedPermissionsMixin, APIView):
+    permission_classes_by_method = {'POST': [
+        IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess)]}
+    required_permission_by_method = {
+        'POST': ['business.add_tablesession'],
+    }
+
+    def get(self, request, table_code, *args, **kwargs):
         table = get_object_or_404(Table, code=table_code)
 
         # Look for an existing active session for this table
         session = TableSession.objects.filter(
             table=table, is_active=True).first()
+
         # If there is a session, check if it's still valid
         if session and not session.is_expired():
             return Response({
                 "status": "active_session",
                 "session_code": session.code,
                 "table_code": table.code
-            }, status=status.HTTP_200_OK)
-        # If no valid session, deactivate old one if exists
-        if session:
-            session.is_active = False
-            session.save()
-        # Create a new session
-        new_session = TableSession.objects.create(
-            table=table, is_active=True)
+            })
+        return Response({
+            "status": "no_active_session",
+            "table_code": table.code
+        }, status=status.HTTP_404_NOT_FOUND)
 
-        # Send data to client in-real-time
+    def post(self, request, table_code, *args, **kwargs):
+        table = get_object_or_404(Table, code=table_code)
+
+        # check business ownership
+        self.check_object_permissions(request, table.branch.business)
+
+        # Check for existing valid session first
+        existing_session = TableSession.objects.filter(
+            table=table,
+            is_active=True
+        ).first()
+
+        if existing_session:
+            # deactivate existing session if expired
+            if existing_session.is_expired():
+                existing_session.is_active = False
+                existing_session.save()
+            return Response({
+                "status": "active",
+                "session_code": existing_session.code,
+                "table_code": table.code,
+                "expires_at": existing_session.expires_at.isoformat()
+            })
+
+        # Create new session atomically
+        with transaction.atomic():
+            TableSession.objects.filter(
+                table=table,
+                is_active=True
+            ).update(is_active=False)
+
+            new_session = TableSession.objects.create(
+                table=table,
+                is_active=True
+            )
+
+        self._notify_dashboard(new_session)
+
+        return Response({
+            "status": "created",
+            "session_code": new_session.code,
+            "table_code": table.code,
+            "expires_at": new_session.expires_at.isoformat()
+        }, status=status.HTTP_201_CREATED)
+
+    def _notify_dashboard(self, session):
+        """Send real-time update to dashboard."""
         channel_layer = get_channel_layer()
+        group_name = (
+            f"dashboard_{session.table.branch.business.slug}_"
+            f"{session.table.branch.slug}"
+        )
+
         async_to_sync(channel_layer.group_send)(
-            f"dashboard_{new_session.table.branch.business.slug}_{new_session.table.branch.slug}", {
+            group_name,
+            {
                 "type": "dashboard.update",
                 "event": "create_session",
                 "payload": {
-                    "code": new_session.table.code,
-                    "started_at": new_session.started_at.isoformat(),
-                    "expires_at": new_session.expires_at.isoformat(),
-                    "is_active": new_session.is_active,
+                    "code": session.table.code,
+                    "started_at": session.started_at.isoformat(),
+                    "expires_at": session.expires_at.isoformat(),
+                    "is_active": session.is_active,
                 },
-            },)
-
-        return Response({
-            "status": "new_session",
-            "session_code": new_session.code,
-            "table_code": table.code
-        }, status=status.HTTP_201_CREATED)
+            }
+        )
 
 
-class CallWaiterCreateView(APIView):
-    def post(self, request, session_code):
+class CallWaiterView(MethodBasedPermissionsMixin, APIView):
+    permission_classes_by_method = {'POST': [
+        IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess)]}
+    required_permission_by_method = {
+        'POST': ['business.add_callwaiter'],
+    }
+
+    def post(self, request, session_code, *args, **kwargs):
         session = get_object_or_404(
             TableSession, code=session_code, is_active=True)
 
@@ -281,8 +338,15 @@ class CallWaiterCreateView(APIView):
         return Response({"message": "Waiter called.", "call_id": call.id}, status=status.HTTP_201_CREATED)
 
 
-class CallWaiterResolveView(APIView):
-    def post(self, request, session_code):
+class CallWaiterDetailView(MethodBasedPermissionsMixin, APIView):
+    permission_classes_by_method = {'PATCH': [
+        IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess)]}
+    required_permission_by_method = {
+        'PATCH': ['business.change_callwaiter'],
+    }
+
+    # Resolve an active call waiter request
+    def patch(self, request, session_code, *args, **kwargs):
         session = get_object_or_404(
             TableSession, code=session_code, is_active=True)
 
@@ -305,7 +369,6 @@ class CallWaiterResolveView(APIView):
 
         return Response(
             {"detail": "Call resolved successfully."},
-            status=status.HTTP_200_OK
         )
 
 
