@@ -54,7 +54,7 @@ class BusinessesView(APIView):
 
 
 class BusinessDetailView(APIView):
-    permission_classes_by_method = {'GET': [IsAuthenticated], }
+    permission_classes_by_method = {'GET': [IsAuthenticated]}
 
     # Retrieve business details
     def get(self, request, business_slug):
@@ -106,13 +106,13 @@ class BranchDetailView(MethodBasedPermissionsMixin, APIView):
     }
 
     # Update branch details
-    def patch(self, request, business_slug, branch_slug):
+    def patch(self, request, branch_slug):
         # check branch availability
         branch = get_object_or_404(
-            Branch, business__slug=business_slug, slug=branch_slug)
+            Branch, slug=branch_slug)
 
         # check business ownership
-        self.check_object_permissions(request, branch.business)
+        self.check_object_permissions(request, branch)
 
         ser_data = BranchCreateUpdateSerializer(
             instance=branch, data=request.data, partial=True)
@@ -122,13 +122,13 @@ class BranchDetailView(MethodBasedPermissionsMixin, APIView):
         return Response(ser_data.errors, status.HTTP_400_BAD_REQUEST)
 
     # Delete a branch
-    def delete(self, request, business_slug, branch_slug):
+    def delete(self, request, branch_slug):
         # check branch availability
         branch = get_object_or_404(
-            Branch, business__slug=business_slug, slug=branch_slug)
+            Branch, slug=branch_slug)
 
         # check business ownership
-        self.check_object_permissions(request, branch.business)
+        self.check_object_permissions(request, branch)
 
         branch.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -143,23 +143,23 @@ class TablesView(MethodBasedPermissionsMixin, APIView):
     }
 
     # List all tables of a branch
-    def get(self, request, business_slug, branch_slug):
+    def get(self, request, branch_slug):
         # check branch availability
         branch = get_object_or_404(
-            Branch, business__slug=business_slug, slug=branch_slug)
+            Branch, slug=branch_slug)
 
         tables = Table.objects.filter(branch=branch)
         ser_data = TablesSerializer(instance=tables, many=True)
         return Response(ser_data.data)
 
     # Create a new table for a branch
-    def post(self, request, business_slug, branch_slug):
+    def post(self, request, branch_slug):
         # check branch availability
         branch = get_object_or_404(
-            Branch, business__slug=business_slug, slug=branch_slug)
+            Branch, slug=branch_slug)
 
         # check business ownership
-        self.check_object_permissions(request, branch.business)
+        self.check_object_permissions(request, branch)
 
         ser_data = TableCreateUpdateSerializer(data=request.data)
         if ser_data.is_valid():
@@ -178,13 +178,13 @@ class TableDetailView(MethodBasedPermissionsMixin, APIView):
     }
 
     # Update table details
-    def patch(self, request, business_slug, branch_slug, table_id):
+    def patch(self, request, table_id):
         # check table availability
         table = get_object_or_404(
-            Table, branch__business__slug=business_slug, branch__slug=branch_slug, pk=table_id)
+            Table, pk=table_id)
 
         # check business ownership
-        self.check_object_permissions(request, table.branch.business)
+        self.check_object_permissions(request, table.branch)
 
         ser_data = TableCreateUpdateSerializer(
             instance=table, data=request.data, partial=True)
@@ -195,16 +195,16 @@ class TableDetailView(MethodBasedPermissionsMixin, APIView):
         return Response(ser_data.errors, status.HTTP_400_BAD_REQUEST)
 
     # Delete a table
-    def delete(self, request, business_slug, branch_slug, table_id):
+    def delete(self, request, table_id):
         # check table availability
         table = get_object_or_404(
-            Table, branch__business__slug=business_slug, branch__slug=branch_slug, pk=table_id)
+            Table, pk=table_id)
 
         # check business ownership
-        self.check_object_permissions(request, table.branch.business)
+        self.check_object_permissions(request, table.branch)
 
         table.delete()
-        return Response(status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class TableSessionView(MethodBasedPermissionsMixin, APIView):
@@ -237,7 +237,7 @@ class TableSessionView(MethodBasedPermissionsMixin, APIView):
         table = get_object_or_404(Table, code=table_code)
 
         # check business ownership
-        self.check_object_permissions(request, table.branch.business)
+        self.check_object_permissions(request, table.branch)
 
         # Check for existing valid session first
         existing_session = TableSession.objects.filter(
@@ -302,11 +302,6 @@ class TableSessionView(MethodBasedPermissionsMixin, APIView):
 
 
 class CallWaiterView(MethodBasedPermissionsMixin, APIView):
-    permission_classes_by_method = {'POST': [
-        IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess)]}
-    required_permission_by_method = {
-        'POST': ['business.add_callwaiter'],
-    }
 
     def post(self, request, session_code, *args, **kwargs):
         session = get_object_or_404(
@@ -526,11 +521,19 @@ class ItemsView(MethodBasedPermissionsMixin, APIView):
 
 
 class ItemDetailView(MethodBasedPermissionsMixin, APIView):
-    def patch(self, request, business_slug, item_id):
+    permission_classes_by_method = {'PATCH': [
+        IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess)],
+        'DELETE': [IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess)]}
+    required_permission_by_method = {
+        'PATCH': ['business.change_item'],
+        'DELETE': ['business.delete_item'],
+    }
+
+    def patch(self, request, item_id):
         branch_slug = request.query_params.get('branch_slug')
         # check item availability
         item = get_object_or_404(
-            Item, business__slug=business_slug, pk=item_id)
+            Item, pk=item_id)
 
         # check business ownership
         self.check_object_permissions(request, item.business)
@@ -581,16 +584,16 @@ class ItemDetailView(MethodBasedPermissionsMixin, APIView):
             return Response(ser_data.data)
         return Response(ser_data.errors, status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, business_slug, item_id):
+    def delete(self, request, item_id):
         # check item availability
         item = get_object_or_404(
-            Item, business__slug=business_slug, pk=item_id)
+            Item, pk=item_id)
 
         # check business ownership
         self.check_object_permissions(request, item.business)
 
         item.delete()
-        return Response(status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 # move to personnel app !!!
