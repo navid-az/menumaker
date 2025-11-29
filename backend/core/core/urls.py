@@ -8,10 +8,9 @@ urlpatterns = [
     path("accounts/", include("accounts.urls", namespace="accounts")),
     path("pickers/", include("pickers.urls", namespace="pickers")),
     path("", include("business.urls", namespace="business")),
-    path("menu/", include("menu.urls", namespace="menu")),
+    path("", include("menu.urls", namespace="menu")),
     path('personnel/', include('personnel.urls', namespace='personnel')),
     path('subscriptions/', include('subscriptions.urls', namespace='subscriptions'))
-    # path("dashboard/", include("dashboard.urls", namespace="dashboard")),
 ]
 
 if settings.DEBUG:
