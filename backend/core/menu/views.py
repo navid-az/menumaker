@@ -7,56 +7,36 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from permissions import IsOwner
+from mixins import MethodBasedPermissionsMixin
 
 # dependencies
 from .models import Menu, MenuGlobalStyling
 from business.models import Business
 from .serializers import MenuCreateSerializer, MenuListSerializer, MenuGlobalStylingSerializer, MenuSerializer, MenuImageCreateSerializer
 
-from rest_framework.parsers import MultiPartParser
 
 User = get_user_model()
 
 
-# get list of all menus
-class MenuListView(APIView):
-    def get(self, request):
-        all_menus = Menu.objects.all()
-        srz_data = MenuListSerializer(instance=all_menus, many=True)
-        return Response(data=srz_data.data)
+class MenuView(MethodBasedPermissionsMixin, APIView):
+    permission_classes_by_method = {'POST': [IsAuthenticated, IsOwner]}
+    required_permission_by_method = {
+        'POST': ['business.add_menu'],
+    }
 
+    def get(self, request, business_slug):
+        menu = get_object_or_404(Menu, business__slug=business_slug)
 
-class MenuView(APIView):
-    def get(self, request, slug):
-        menu = Menu.objects.get(business__slug=slug)
         srz_data = MenuSerializer(instance=menu)
         return Response(data=srz_data.data)
 
+    def post(self, request, business_slug):
+        business = get_object_or_404(Business, slug=business_slug)
 
-# get all global stylings for the provided Menu
-class MenuGlobalStylingView(APIView):
-    def get(self, request, slug):
-        try:
-            menu = Menu.objects.get(business__slug=slug)
-            styles = MenuGlobalStyling.objects.get(menu=menu)
-            srz_data = MenuGlobalStylingSerializer(instance=styles)
-            return Response(data=srz_data.data)
-        except Menu.DoesNotExist:
-            return Response({
-                "error": "Business with the provided slug was not found.",
-                "detail": "Unable to retrieve the menu's global styling data."
-            }, status=status.HTTP_404_NOT_FOUND)
-
-
-class MenuCreateView(APIView):
-    permission_classes = [IsAuthenticated, IsOwner]
-
-    def post(self, request, slug):
-        business = get_object_or_404(Business, slug=slug)
-        serializer = MenuCreateSerializer(data=request.data)
-
+        # Check business ownership
         self.check_object_permissions(request, business)
 
+        serializer = MenuCreateSerializer(data=request.data)
         if business.menus.exists():
             return Response(
                 {"error": "A menu already exists for this business."},
@@ -70,8 +50,17 @@ class MenuCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class MenuImageCreateView(APIView):
+# get all global stylings for the provided Menu
+class MenuGlobalStylingView(APIView):
+    def get(self, request, menu_id):
+        menu = get_object_or_404(Menu, pk=menu_id)
+        styles = get_object_or_404(MenuGlobalStyling, menu=menu)
 
+        srz_data = MenuGlobalStylingSerializer(instance=styles)
+        return Response(data=srz_data.data)
+
+
+class MenuImageCreateView(APIView):
     def post(self, request, *args, **kwargs):
         images = request.FILES.getlist("images")
         if not images:
