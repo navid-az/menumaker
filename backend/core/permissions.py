@@ -9,94 +9,67 @@ class IsOwner(BasePermission):
     message = 'you have to be the owner to get access'
 
     def has_object_permission(self, request, view, obj):
-        return obj.owner == request.user
+        if isinstance(obj, Business):
+            return obj.owner == request.user
+        elif isinstance(obj, Branch):
+            return obj.business.owner == request.user
 
 
 class HasBusinessBranchAccess(BasePermission):
-    def has_permission(self, request, view):
-        # Extract business_slug from URL kwargs
-        business_slug = view.kwargs.get('business_slug')
-        if not business_slug:
-            raise ValidationError(
-                {"error": "Business slug must be provided in the URL."})
+    """
+    check if the user has access to the business and optionally to the branch. 
+    """
 
-        # Validate business_slug
-        try:
-            business = Business.objects.get(slug=business_slug)
-        except Business.DoesNotExist:
-            raise PermissionDenied("Invalid business slug.")
+    def has_object_permission(self, request, view, obj):
+        # Resolve business & optional branch
+        business, branch = None, None
 
-        # Extract branch_slug (optional, from query params or body)
-        if request.method in ['POST', 'PATCH', 'PUT']:
-            branch_slug = request.data.get(
-                'branch_slug') or request.query_params.get('branch_slug')
+        if isinstance(obj, Branch):
+            # CASE 1: Object is Branch → immediate and final
+            branch = obj
+            business = obj.business
+
         else:
-            branch_slug = request.query_params.get(
-                'branch_slug') or request.data.get('branch_slug')
+            # CASE 2 & 3: obj is Business or None → attempt branch fallback
 
-        # If branch_slug is provided, validate it
-        branch = None
-        if branch_slug:
-            try:
-                branch = Branch.objects.get(
-                    slug=branch_slug, business=business)
-            except Branch.DoesNotExist:
-                raise PermissionDenied(
-                    "Invalid branch slug or branch does not belong to the specified business.")
+            if isinstance(obj, Business):
+                business = obj
 
-        # Check Personnel assignment
-        assignment_query = request.user.assignments.filter(
-            business=business)
+            # attempt fallback branch_slug lookup
+            branch_slug = (
+                request.query_params.get("branch_slug")
+                or request.data.get("branch_slug")
+            )
+
+            if branch_slug:
+                try:
+                    branch = Branch.objects.select_related("business").get(
+                        slug=branch_slug
+                    )
+                    business = branch.business
+                except Branch.DoesNotExist:
+                    raise PermissionDenied(
+                        "Invalid branch slug or branch does not belong to this business."
+                    )
+
+        # Business-level assignment
+        assignment_qs = request.user.assignments.filter(business=business)
+        if not assignment_qs.exists():
+            raise PermissionDenied("No access to this business.")
+        personnel = assignment_qs.first()
+
+        # Branch-level restriction (only if branch exists)
         if branch:
-            assignment_query = assignment_query.filter(branches=branch)
-        if not assignment_query.exists():
-            raise PermissionDenied("No access to this business/branch.")
+            if not personnel.branches.filter(id=branch.id).exists():
+                raise PermissionDenied("No access to this branch.")
 
-        # Store Personnel instance for HasMethodAccess
-        request.personnel = assignment_query.first()
+        # Set request.personnel to the Personnel instance if access is granted.
+        request.personnel = personnel
         return True
-
-    # def has_object_permission(self, request, view, obj):
-    #     # Extract business_slug from URL kwargs
-    #     slug = view.kwargs.get('slug')
-    #     if not slug:
-    #         return False
-
-    #     # Validate business_slug
-    #     try:
-    #         business = Business.objects.get(slug=slug)
-    #     except Business.DoesNotExist:
-    #         return False
-
-    #     # Extract branch_slug (optional, from query params or body)
-    #     if request.method in ['PATCH', 'PUT']:
-    #         branch_slug = request.data.get(
-    #             'branch_slug') or request.query_params.get('branch_slug')
-    #     else:
-    #         branch_slug = request.query_params.get(
-    #             'branch_slug') or request.data.get('branch_slug')
-
-    #     # If branch_slug is provided, validate it
-    #     branch = None
-    #     if branch_slug:
-    #         try:
-    #             branch = Branch.objects.get(
-    #                 slug=branch_slug, business=business)
-    #         except Branch.DoesNotExist:
-    #             return False
-
-    #     # Check object belongs to business/branch and user has assignment
-    #     assignment_query = request.user.assignments.filter(
-    #         business=business)
-    #     if branch:
-    #         assignment_query = assignment_query.filter(branches=branch)
-    #         if not hasattr(obj, 'branch') or obj.branch != branch:
-    #             return False
-    #     return assignment_query.exists()
 
 
 class HasMethodAccess(BasePermission):
-    def has_permission(self, request, view):
+    def has_object_permission(self, request, view, obj):
         # Get required permission(s)
         required_perms_dict = getattr(
             view, 'required_permission_by_method', None)

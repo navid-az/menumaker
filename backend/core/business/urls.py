@@ -7,39 +7,39 @@ app_name = 'business'
 
 urlpatterns = [
     # Business endpoints
-    path('', BusinessesView.as_view(),
+    path('businesses/', BusinessesView.as_view(),
          name='businesses-list-create'),
-    path('<str:business_slug>/',
+    path('businesses/<str:business_slug>/',
          BusinessDetailView.as_view(), name='business-detail'),
 
     # Branch endpoints
-    path('<str:business_slug>/branches/',
+    path('businesses/<str:business_slug>/branches/',
          BranchesView.as_view(), name='business-branches'),
-    path('<str:business_slug>/branches/<str:branch_slug>/',
+    path('branches/<str:branch_slug>/',
          BranchDetailView.as_view(), name='business-branch-detail'),
 
     # Table endpoints
-    path('<str:business_slug>/branches/<str:branch_slug>/tables/',
+    path('branches/<str:branch_slug>/tables/',
          TablesView.as_view(), name='branch-tables'),
-    path('<str:business_slug>/branches/<str:branch_slug>/tables/<int:table_id>/',
-         TableDetailView.as_view(), name='branch-table-detail'),
+    path('tables/<int:table_id>/',
+         TableDetailView.as_view(), name='table-detail'),
 
 
     # Table Session endpoints
-    path('<str:business_slug>/branches/<str:branch_slug>/tables/<str:table_code>/session/',
+    path('tables/<str:table_code>/sessions/',
          TableSessionView.as_view(), name='table-session'),
 
 
     # call waiter endpoints
-    path('<str:business_slug>/branches/<str:branch_slug>/tables/<str:table_code>/sessions/<str:session_code>/call/',
+    path('sessions/<str:session_code>/calls/',
          CallWaiterView.as_view(), name='call-waiter'),
-    path('<str:business_slug>/branches/<str:branch_slug>/tables/<str:table_code>/sessions/<str:session_code>/call/<int:call_id>/',
+    path('calls/<int:call_id>/',
          CallWaiterDetailView.as_view(), name='call-waiter-detail'),
 
     # Category endpoints
-    path('<str:business_slug>/categories/',
+    path('businesses/<str:business_slug>/categories/',
          CategoriesView.as_view(), name='business-categories'),
-    path('<str:business_slug>/categories/<int:category_id>/',
+    path('categories/<int:category_id>/',
          CategoryDetailView.as_view(), name='business-category-detail'),
 
     # Items API endpoints
@@ -62,9 +62,9 @@ urlpatterns = [
     #   GET /businesses/cafe-delight/items/?branch=main-hall&scope=hidden  → hidden items
 
     # Item endpoints
-    path('<str:business_slug>/items/',
+    path('businesses/<str:business_slug>/items/',
          ItemsView.as_view(), name='business-items'),
-    path('<str:business_slug>/items/<int:item_id>/',
+    path('items/<int:item_id>/',
          ItemDetailView.as_view(), name='business-item-detail'),
 
     # Needs to move to personnel app !!!
