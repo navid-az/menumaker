@@ -16,7 +16,7 @@ const getAssetGroups = async () => {
 
 const getCategories = async (businessSlug: string) => {
   const res = await fetch(
-    `http://127.0.0.1:8000/business/${businessSlug}/categories`
+    `http://127.0.0.1:8000/businesses/${businessSlug}/categories`
   );
   if (!res.ok) {
     throw new Error(
@@ -26,10 +26,9 @@ const getCategories = async (businessSlug: string) => {
   return await res.json();
 };
 
-
 async function getBranches(business_slug: string) {
   const data = await fetch(
-    `http://127.0.0.1:8000/business/${business_slug}/branches/`,
+    `http://127.0.0.1:8000/businesses/${business_slug}/branches/`,
     {
       next: { tags: ["branches"] },
     }
@@ -51,7 +50,6 @@ export default async function DashboardPanelLayout(props: {
   const categories = await getCategories(params.business_slug);
   const branches = await getBranches(params.business_slug);
 
-
   const branchOptions = branches.map(
     (branch: { id: number; name: string }) => ({
       id: branch.id,
@@ -66,7 +64,11 @@ export default async function DashboardPanelLayout(props: {
         branch_slug={params.branch_slug}
       ></DashboardHeader>
       <div className="bg-white p-4 flex-1 overflow-y-auto! rounded-tr-3xl">
-        <ToolBar branches={branches} categories={categories} assetGroups={assetGroups}></ToolBar>
+        <ToolBar
+          branches={branches}
+          categories={categories}
+          assetGroups={assetGroups}
+        ></ToolBar>
         {children}
       </div>
     </div>

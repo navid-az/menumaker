@@ -3,8 +3,8 @@
 //components
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import PriceTag from "@/app/(menu)/[menu_id]/menu/components/PriceTag";
-import AddToCartBtn from "@/app/(menu)/[menu_id]/menu/components/AddToCartBtn";
+import PriceTag from "@/app/(menu)/[business_slug]/menu/components/PriceTag";
+import AddToCartBtn from "@/app/(menu)/[business_slug]/menu/components/AddToCartBtn";
 
 //SVGs
 import { Heart } from "lucide-react";
@@ -58,18 +58,18 @@ export function MenuItemPreview({
               globalBorderRadius === "full"
                 ? "20px"
                 : globalBorderRadius === "lg"
-                ? "14px"
-                : globalBorderRadius === "md"
-                ? "7px"
-                : "3px",
+                  ? "14px"
+                  : globalBorderRadius === "md"
+                    ? "7px"
+                    : "3px",
             borderBottomRightRadius:
               globalBorderRadius === "full"
                 ? "20px"
                 : globalBorderRadius === "lg"
-                ? "14px"
-                : globalBorderRadius === "md"
-                ? "7px"
-                : "3px",
+                  ? "14px"
+                  : globalBorderRadius === "md"
+                    ? "7px"
+                    : "3px",
           }}
           className={`absolute bottom-0 right-0 z-20 flex w-full flex-col justify-between gap-2 rounded-b-3xl p-4 transition-all duration-300`}
         >
@@ -112,18 +112,18 @@ export function MenuItemPreview({
                 globalBorderRadius === "full"
                   ? "20px"
                   : globalBorderRadius === "lg"
-                  ? "14px"
-                  : globalBorderRadius === "md"
-                  ? "7px"
-                  : "4px",
+                    ? "14px"
+                    : globalBorderRadius === "md"
+                      ? "7px"
+                      : "4px",
               borderTopRightRadius:
                 globalBorderRadius === "full"
                   ? "20px"
                   : globalBorderRadius === "lg"
-                  ? "14px"
-                  : globalBorderRadius === "md"
-                  ? "7px"
-                  : "4px",
+                    ? "14px"
+                    : globalBorderRadius === "md"
+                      ? "7px"
+                      : "4px",
             }}
           ></Image>
         </div>
@@ -135,18 +135,18 @@ export function MenuItemPreview({
               globalBorderRadius === "full"
                 ? "20px"
                 : globalBorderRadius === "lg"
-                ? "14px"
-                : globalBorderRadius === "md"
-                ? "7px"
-                : "3px",
+                  ? "14px"
+                  : globalBorderRadius === "md"
+                    ? "7px"
+                    : "3px",
             borderBottomRightRadius:
               globalBorderRadius === "full"
                 ? "20px"
                 : globalBorderRadius === "lg"
-                ? "14px"
-                : globalBorderRadius === "md"
-                ? "7px"
-                : "3px",
+                  ? "14px"
+                  : globalBorderRadius === "md"
+                    ? "7px"
+                    : "3px",
           }}
           className={`flex w-full basis-5/12 flex-col justify-end gap-3 p-2 transition-all duration-300`}
         >

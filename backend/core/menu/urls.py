@@ -7,9 +7,9 @@ urlpatterns = [
     # Menu endpoints
     path('businesses/<str:business_slug>/menu/',
          MenuView.as_view(), name='business-menu'),
-    path('menu/<int:menu_id>/global-styling/', MenuGlobalStylingView.as_view(),
+    path('businesses/<str:business_slug>/menu/global-styling/', MenuGlobalStylingView.as_view(),
          name='menu-global-styling'),
 
-    path('create/image/', MenuImageCreateView.as_view(),
+    path('menu/images/', MenuImageCreateView.as_view(),
          name='menu-image-create'),
 ]

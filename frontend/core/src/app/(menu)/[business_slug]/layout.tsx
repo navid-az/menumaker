@@ -4,10 +4,10 @@ import React from "react";
 import MenuWrapper from "./components/MenuWrapper";
 
 // GET menu global stylings
-export async function getGlobalStyling(menu_id: string) {
+export async function getGlobalStyling(business_slug: string) {
   try {
     let res = await fetch(
-      `http://127.0.0.1:8000/menu/${menu_id}/global-styling/`
+      `http://127.0.0.1:8000/businesses/${business_slug}/menu/global-styling`
     );
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
@@ -19,11 +19,11 @@ export async function getGlobalStyling(menu_id: string) {
 }
 
 export default async function MenuLayout(props: {
-  params: Promise<{ menu_id: string }>;
+  params: Promise<{ business_slug: string }>;
   children: React.ReactNode;
 }) {
   const params = await props.params;
-  const globalStyling = await getGlobalStyling(params.menu_id);
+  const globalStyling = await getGlobalStyling(params.business_slug);
 
   return <MenuWrapper config={globalStyling}>{props.children}</MenuWrapper>;
 }

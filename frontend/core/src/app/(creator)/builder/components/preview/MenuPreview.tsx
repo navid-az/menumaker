@@ -3,15 +3,15 @@
 import React, { useRef } from "react";
 
 //components
-import MenuLayout from "@/app/(menu)/[menu_id]/components/MenuLayout";
-import HomeLayout from "@/app/(menu)/[menu_id]/home/components/HomeLayout";
-import CartLayout from "@/app/(menu)/[menu_id]/orders/components/CartLayout";
+import MenuLayout from "@/app/(menu)/[business_slug]/components/MenuLayout";
+import HomeLayout from "@/app/(menu)/[business_slug]/home/components/HomeLayout";
+import CartLayout from "@/app/(menu)/[business_slug]/orders/components/CartLayout";
 
 //libraries
 import { useFormContext } from "react-hook-form";
 
 //utils
-import { generateStyleVars } from "@/app/(menu)/[menu_id]/utilities/styleVars";
+import { generateStyleVars } from "@/app/(menu)/[business_slug]/utilities/styleVars";
 import { formToMenuGlobalStyling } from "../../utils/formToMenuGlobalStyling";
 
 //types

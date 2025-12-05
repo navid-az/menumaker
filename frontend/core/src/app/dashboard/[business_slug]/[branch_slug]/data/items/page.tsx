@@ -13,7 +13,7 @@ async function getVisibleItems(
   branch_slug: string
 ): Promise<MenuItem[]> {
   const data = await fetch(
-    `http://127.0.0.1:8000/business/${business_slug}/items/visible/?branch_slug=${branch_slug}`,
+    `http://127.0.0.1:8000/businesses/${business_slug}/items/?branch_slug=${branch_slug}&scope=visible`,
     {
       next: { tags: ["items"] },
     }
@@ -28,7 +28,7 @@ async function getHiddenItems(
   branch_slug: string
 ): Promise<MenuItem[]> {
   const data = await fetch(
-    `http://127.0.0.1:8000/business/${business_slug}/items/hidden/?branch_slug=${branch_slug}`,
+    `http://127.0.0.1:8000/businesses/${business_slug}/items/?branch_slug=${branch_slug}&scope=hidden`,
     {
       next: { tags: ["items"] },
     }
@@ -44,7 +44,7 @@ async function getMenuCategoriesData(
   business_slug: string
 ): Promise<MenuCategory[]> {
   const data = await fetch(
-    `http://127.0.0.1:8000/business/${business_slug}/categories/`,
+    `http://127.0.0.1:8000/businesses/${business_slug}/categories`,
     {
       next: { tags: ["categories"] },
     }

@@ -145,14 +145,16 @@ export function MenuItemCard({
                 "border-3 shadow-[4px_4px_0px_0px_var(--secondary)]"
             )}
           >
-            <div className="relative flex basis-6/6 w-full">
-              <Image
-                className="rounded-t-(--radius-exception) object-cover absolute -z-5 transition-all duration-300"
-                src={`http://127.0.0.1:8000${image}`}
-                alt={name}
-                fill
-              ></Image>
-            </div>
+            {image && (
+              <div className="relative flex basis-6/6 w-full">
+                <Image
+                  className="rounded-t-(--radius-exception) object-cover absolute -z-5 transition-all duration-300"
+                  src={`http://127.0.0.1:8000${image}`}
+                  alt={name}
+                  fill
+                ></Image>
+              </div>
+            )}
             <div
               className={cn(
                 `relative bottom-0 flex w-full flex-none shrink-0 basis-5/12 flex-col justify-between gap-3 rounded-b-(--radius-exception) bg-(--primary) p-2 text-(--secondary) transition-[border-radius] duration-300`,

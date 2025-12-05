@@ -32,7 +32,7 @@ export default function MenuHeader({
   async function callWaiter() {
     const sessionCode = sessionStorage.getItem("session_code");
     const res = await fetch(
-      `http://127.0.0.1:8000/business/table-sessions/${sessionCode}/call-waiter/create/`,
+      `http://127.0.0.1:8000/sessions/${sessionCode}/calls/`,
       { method: "POST" }
     );
     if (!res.ok) {
