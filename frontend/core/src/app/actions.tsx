@@ -102,7 +102,7 @@ export async function createCategory(
 
   try {
     const res = await fetch(
-      `http://localhost:8000/business/${businessSlug}/categories/create/`,
+      `http://localhost:8000/businesses/${businessSlug}/categories/`,
       {
         method: "POST",
         headers: {
@@ -138,17 +138,14 @@ export async function updateCategory(
 ) {
   const accessToken = (await cookies()).get("access");
   try {
-    const res = await fetch(
-      `http://127.0.0.1:8000/business/${businessSlug}/categories/${categoryId}/update/`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken?.value}`,
-        },
-        body: JSON.stringify(data),
-      }
-    );
+    const res = await fetch(`http://127.0.0.1:8000/categories/${categoryId}/`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+      body: JSON.stringify(data),
+    });
     if (!res.ok) {
       const errorData = await res.json();
       console.log("errorData:", errorData);
@@ -172,16 +169,13 @@ export async function updateCategory(
 export async function deleteCategory(businessSlug: string, categoryId: number) {
   const accessToken = (await cookies()).get("access");
   try {
-    const res = await fetch(
-      `http://127.0.0.1:8000/business/${businessSlug}/categories/${categoryId}/delete/`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken?.value}`,
-        },
-      }
-    );
+    const res = await fetch(`http://127.0.0.1:8000/categories/${categoryId}/`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
     if (!res.ok) {
       const errorData = await res.json();
       return {
@@ -215,7 +209,7 @@ export async function createItem(businessSlug: string, data: FormData) {
 
   try {
     const res = await fetch(
-      `http://127.0.0.1:8000/business/${businessSlug}/items/create/`,
+      `http://127.0.0.1:8000/businesses/${businessSlug}/items/`,
       {
         method: "POST",
         headers: {
@@ -254,11 +248,11 @@ export async function updateItem(
 
   try {
     const res = await fetch(
-      `http://127.0.0.1:8000/business/${businessSlug}/items/${itemId}/update/${
+      `http://127.0.0.1:8000/items/${itemId}/${
         branchSlug ? `?branch_slug=${branchSlug}` : ""
       }`,
       {
-        method: "PUT",
+        method: "PATCH",
         headers: {
           Authorization: `Bearer ${accessToken?.value}`,
         },
@@ -288,16 +282,13 @@ export async function updateItem(
 export async function deleteItem(businessSlug: string, itemId: number) {
   const accessToken = (await cookies()).get("access");
   try {
-    const res = await fetch(
-      `http://127.0.0.1:8000/business/${businessSlug}/items/${itemId}/delete/`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken?.value}`,
-        },
-      }
-    );
+    const res = await fetch(`http://127.0.0.1:8000/items/${itemId}/`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
     if (!res.ok) {
       const errorData = await res.json();
       return {
@@ -343,7 +334,7 @@ export async function createMenu(businessSlug: string, data: MenuType) {
 
   try {
     const res = await fetch(
-      `http://localhost:8000/menu/create/${businessSlug}/`,
+      `http://localhost:8000/businesses/${businessSlug}/menu/`,
       {
         method: "POST",
         headers: {
@@ -379,7 +370,7 @@ export async function createBusiness(data: SetupSchemaType) {
   const accessToken = (await cookies()).get("access");
 
   try {
-    const res = await fetch("http://localhost:8000/business/create/", {
+    const res = await fetch("http://localhost:8000/businesses/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -417,7 +408,7 @@ export async function createBranch(
 
   try {
     const res = await fetch(
-      `http://localhost:8000/business/${business_slug}/branches/create/`,
+      `http://localhost:8000/businesses/${business_slug}/branches/`,
       {
         method: "POST",
         headers: {
@@ -447,24 +438,17 @@ export async function createBranch(
   }
 }
 
-export async function updateBranch(
-  branchId: number,
-  business_slug: string,
-  data: BranchFormType
-) {
+export async function updateBranch(branch_slug: string, data: BranchFormType) {
   const accessToken = (await cookies()).get("access");
   try {
-    const res = await fetch(
-      `http://localhost:8000/business/${business_slug}/branches/${branchId}/update/`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken?.value}`,
-        },
-        body: JSON.stringify(data),
-      }
-    );
+    const res = await fetch(`http://localhost:8000/branches/${branch_slug}/`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+      body: JSON.stringify(data),
+    });
     if (!res.ok) {
       const errorData = await res.json();
       console.log(errorData);
@@ -491,7 +475,7 @@ export async function createTable(data: any, branch_slug: string) {
 
   try {
     const res = await fetch(
-      `http://localhost:8000/business/${branch_slug}/tables/create/`,
+      `http://localhost:8000/branches/${branch_slug}/tables/`,
       {
         method: "POST",
         headers: {
@@ -529,17 +513,14 @@ export async function updateTable(
   const accessToken = (await cookies()).get("access");
 
   try {
-    const res = await fetch(
-      `http://localhost:8000/business/${branch_slug}/tables/${tableId}/update/`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken?.value}`,
-        },
-        body: JSON.stringify(data),
-      }
-    );
+    const res = await fetch(`http://localhost:8000/tables/${tableId}/`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+      body: JSON.stringify(data),
+    });
     if (!res.ok) {
       const errorData = await res.json();
       console.log(errorData);
@@ -564,16 +545,13 @@ export async function deleteTable(branch_slug: string, tableId: number) {
   const accessToken = (await cookies()).get("access");
 
   try {
-    const res = await fetch(
-      `http://localhost:8000/business/${branch_slug}/tables/${tableId}/delete/`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken?.value}`,
-        },
-      }
-    );
+    const res = await fetch(`http://localhost:8000/tables/${tableId}/`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
     if (!res.ok) {
       const errorData = await res.json();
       return {
@@ -594,7 +572,7 @@ export async function deleteTable(branch_slug: string, tableId: number) {
 // image upload
 export async function uploadImage(data: FormData) {
   try {
-    const res = await fetch("http://localhost:8000/menu/create/image/", {
+    const res = await fetch("http://localhost:8000/menu/images/", {
       method: "POST",
       body: data,
     });

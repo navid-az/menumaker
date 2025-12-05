@@ -7,9 +7,11 @@ import { type MenuGlobalStyling } from "@/app/types/api/menu";
 export type ValidItemType = { item: MenuItem; count?: number };
 
 // GET menu items
-async function getItems(menu_id: string) {
+async function getItems(business_slug: string) {
   try {
-    let res = await fetch(`http://127.0.0.1:8000/business/${menu_id}/items`);
+    let res = await fetch(
+      `http://127.0.0.1:8000/businesses/${business_slug}/items`
+    );
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
     }
@@ -20,10 +22,10 @@ async function getItems(menu_id: string) {
 }
 
 // GET menu global stylings
-export async function getGlobalStyling(menu_id: string) {
+export async function getGlobalStyling(business_slug: string) {
   try {
     let res = await fetch(
-      `http://127.0.0.1:8000/menu/${menu_id}/global-styling/`
+      `http://127.0.0.1:8000/businesses/${business_slug}/menu/global-styling`
     );
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
@@ -35,19 +37,19 @@ export async function getGlobalStyling(menu_id: string) {
 }
 
 export default async function Page(props: {
-  params: Promise<{ menu_id: string }>;
+  params: Promise<{ business_slug: string }>;
 }) {
   const params = await props.params;
-  const data: MenuItem[] = await getItems(params.menu_id);
+  const data: MenuItem[] = await getItems(params.business_slug);
   const globalStyling: MenuGlobalStyling = await getGlobalStyling(
-    params.menu_id
+    params.business_slug
   );
 
   return (
     <CartLayout
       items={data}
       globalStyling={globalStyling}
-      businessSlug={params.menu_id}
+      businessSlug={params.business_slug}
     ></CartLayout>
   );
 }

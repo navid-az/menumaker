@@ -39,7 +39,7 @@ export type MenuGlobalStyling = {
 
 export type MenuItem = {
   id: number;
-  image: string;
+  image?: string;
   name: string;
   description: string;
   category: number;

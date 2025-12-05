@@ -29,13 +29,15 @@ class BusinessesView(APIView):
     permission_classes_by_method = {
         'GET': [IsAuthenticated], 'POST': [IsAuthenticated]}
 
-    # List all businesses owned by the user
+    # List all businesses user is associated with
     def get(self, request):
         user = request.user
-        owned_businesses = user.businesses.all()
+        businesses = Business.objects.filter(
+            Q(owner=user) | Q(personnel__user=user)
+        ).distinct()
 
         ser_data = BusinessesSerializer(
-            instance=owned_businesses, many=True)
+            instance=businesses, many=True)
         return Response(data=ser_data.data)
 
     # Create a new business
@@ -208,11 +210,6 @@ class TableDetailView(MethodBasedPermissionsMixin, APIView):
 
 
 class TableSessionView(MethodBasedPermissionsMixin, APIView):
-    permission_classes_by_method = {'POST': [
-        IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess)]}
-    required_permission_by_method = {
-        'POST': ['business.add_tablesession'],
-    }
 
     def get(self, request, table_code, *args, **kwargs):
         table = get_object_or_404(Table, code=table_code)
@@ -231,7 +228,7 @@ class TableSessionView(MethodBasedPermissionsMixin, APIView):
         return Response({
             "status": "no_active_session",
             "table_code": table.code
-        }, status=status.HTTP_404_NOT_FOUND)
+        })
 
     def post(self, request, table_code, *args, **kwargs):
         table = get_object_or_404(Table, code=table_code)
@@ -409,10 +406,10 @@ class CategoryDetailView(APIView):
         'DELETE': ['business.delete_category'],
     }
 
-    def patch(self, request, business_slug, category_id):
+    def patch(self, request, category_id):
         # check category availability
         category = get_object_or_404(
-            Category, business__slug=business_slug, pk=category_id)
+            Category, pk=category_id)
 
         # check business ownership
         self.check_object_permissions(request, category.business)
@@ -424,10 +421,10 @@ class CategoryDetailView(APIView):
             return Response(ser_data.data)
         return Response(ser_data.errors, status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, business_slug, category_id):
+    def delete(self, request, category_id):
         # check category availability
         category = get_object_or_404(
-            Category, business__slug=business_slug, pk=category_id)
+            Category, pk=category_id)
 
         # check business ownership
         self.check_object_permissions(request, category.business)

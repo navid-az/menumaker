@@ -122,7 +122,7 @@ export function BranchSelector({
                       فعال
                     </span>
                     <CreateBranchForm
-                      branchId={branch.id}
+                      branch_slug={branch.slug}
                       defaultValues={branch}
                       business_slug={params.business_slug}
                     >

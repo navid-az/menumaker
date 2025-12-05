@@ -10,7 +10,7 @@ async function getMenuCategoriesData(
   business_slug: string
 ): Promise<MenuCategory[]> {
   const data = await fetch(
-    `http://127.0.0.1:8000/business/${business_slug}/categories/`,
+    `http://127.0.0.1:8000/businesses/${business_slug}/categories/`,
     {
       next: { tags: ["categories"] },
     }

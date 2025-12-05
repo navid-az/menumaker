@@ -40,7 +40,7 @@ export type BranchFormType = z.infer<typeof FormSchema>;
 type CreateBranchFormType = {
   business_slug: string;
   defaultValues?: BranchFormType;
-  branchId?: number;
+  branch_slug?: string;
   children: React.ReactNode;
 };
 
@@ -61,7 +61,7 @@ const FormSchema = z.object({
 export default function CreateBranchForm({
   defaultValues,
   business_slug,
-  branchId,
+  branch_slug,
   children,
 }: CreateBranchFormType) {
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -90,8 +90,8 @@ export default function CreateBranchForm({
   }, [defaultValues]);
 
   async function onSubmit(data: BranchFormType) {
-    if (defaultValues && branchId) {
-      const res = await updateBranch(branchId, business_slug, data);
+    if (defaultValues && branch_slug) {
+      const res = await updateBranch(branch_slug, data);
       if (res?.success) {
         //wait for route revalidation to happen first
         setTimeout(() => {

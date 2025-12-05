@@ -6,9 +6,11 @@ import { type MenuGlobalStyling } from "@/app/types/api/menu";
 import { type Menu as MenuData } from "@/app/types/api/menu";
 
 // GET menu data
-export async function getMenuData(menu_id: string) {
+export async function getMenuData(business_slug: string) {
   try {
-    let res = await fetch(`http://127.0.0.1:8000/menu/${menu_id}/`);
+    let res = await fetch(
+      `http://127.0.0.1:8000/businesses/${business_slug}/menu/`
+    );
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
     }
@@ -19,10 +21,10 @@ export async function getMenuData(menu_id: string) {
 }
 
 // GET menu global stylings
-export async function getGlobalStyling(menu_id: string) {
+export async function getGlobalStyling(business_slug: string) {
   try {
     let res = await fetch(
-      `http://127.0.0.1:8000/menu/${menu_id}/global-styling/`
+      `http://127.0.0.1:8000/businesses/${business_slug}/menu/global-styling/`
     );
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
@@ -34,10 +36,10 @@ export async function getGlobalStyling(menu_id: string) {
 }
 
 // GET menu categories
-export async function getMenuCategories(menu_id: string) {
+export async function getMenuCategories(business_slug: string) {
   try {
     let res = await fetch(
-      `http://127.0.0.1:8000/business/${menu_id}/categories/`
+      `http://127.0.0.1:8000/businesses/${business_slug}/categories/`
     );
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
@@ -49,16 +51,16 @@ export async function getMenuCategories(menu_id: string) {
 }
 
 export default async function Page(props: {
-  params: Promise<{ menu_id: string }>;
+  params: Promise<{ business_slug: string }>;
 }) {
   const params = await props.params;
 
-  const menuData: MenuData = await getMenuData(params.menu_id);
+  const menuData: MenuData = await getMenuData(params.business_slug);
   const globalStyling: MenuGlobalStyling = await getGlobalStyling(
-    params.menu_id
+    params.business_slug
   );
-  const categories = await getMenuCategories(params.menu_id);
-  const businessSlug = params.menu_id;
+  const categories = await getMenuCategories(params.business_slug);
+  const businessSlug = params.business_slug;
 
   return (
     <MenuLayout

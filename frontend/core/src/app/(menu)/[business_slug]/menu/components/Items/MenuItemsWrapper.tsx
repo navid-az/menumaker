@@ -33,25 +33,43 @@ export default function MenuItemsWrapper({
   // if not, check the session for the tableCode
   useEffect(() => {
     if (!tableCode) return;
-    const checkSession = async () => {
+
+    const checkOrCreateSession = async () => {
       try {
-        const res = await fetch(
-          `http://localhost:8000/business/tables/${tableCode}/check-session/`,
+        // First, check for existing session
+        const getRes = await fetch(
+          `http://localhost:8000/tables/${tableCode}/sessions/`,
           { method: "GET" }
         );
-        const data = await res.json();
-        if (res.ok) {
-          // Store session_code in localStorage
-          sessionStorage.setItem("session_code", data.session_code);
+        const getData = await getRes.json();
+
+        if (getRes.ok) {
+          if (getData.session_code) {
+            // Active session exists, store it
+            sessionStorage.setItem("session_code", getData.session_code);
+          } else if (getData.status === "no_active_session") {
+            // No active session, create one
+            const postRes = await fetch(
+              `http://localhost:8000/tables/${tableCode}/sessions/`,
+              { method: "POST" }
+            );
+            const postData = await postRes.json();
+
+            if (postRes.ok && postData.session_code) {
+              sessionStorage.setItem("session_code", postData.session_code);
+            } else {
+              console.error("Failed to create session:", postData);
+            }
+          }
         } else {
-          console.error(data);
+          console.error("Failed to check session:", getData);
         }
       } catch (error) {
-        console.error("Error checking table session:", error);
+        console.error("Error checking/creating table session:", error);
       }
     };
 
-    checkSession();
+    checkOrCreateSession();
   }, [tableCode]);
 
   const { updateActiveCategory } = useCategoryBtn();

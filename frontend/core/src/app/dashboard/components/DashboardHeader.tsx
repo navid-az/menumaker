@@ -6,7 +6,7 @@ import { UserProfile } from "@/components/global/UserProfile";
 // get all branches of active business
 async function getBranches(business_slug: string) {
   const data = await fetch(
-    `http://127.0.0.1:8000/business/${business_slug}/branches/`,
+    `http://127.0.0.1:8000/businesses/${business_slug}/branches/`,
     {
       next: { tags: ["branches"] },
     }

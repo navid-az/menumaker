@@ -212,15 +212,19 @@ export default function CategoryBtn({
             className={`${isIconOnly ? "ml-0" : "ltr:mr-2 rtl:ml-2"} ${
               !isIconOnly && size === "lg" ? "ml-4" : ""
             }`}
-            src={"http://localhost:8000" + icon}
+            src={"http://localhost:8000" + icon.image}
             width={size === "lg" ? 28 : size === "sm" ? 22 : 24}
             height={size === "lg" ? 28 : size === "sm" ? 22 : 24}
             alt={name || "icon"}
           ></Image>
         )}
-        <p className={`${size === "lg" ? " text-lg font-bold" : "text-base"}`}>
-          {name}
-        </p>
+        {name && (
+          <p
+            className={`${size === "lg" ? " text-lg font-bold" : "text-base"}`}
+          >
+            {name}
+          </p>
+        )}
       </Button>
     </div>
   );

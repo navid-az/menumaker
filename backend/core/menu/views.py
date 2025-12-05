@@ -52,8 +52,8 @@ class MenuView(MethodBasedPermissionsMixin, APIView):
 
 # get all global stylings for the provided Menu
 class MenuGlobalStylingView(APIView):
-    def get(self, request, menu_id):
-        menu = get_object_or_404(Menu, pk=menu_id)
+    def get(self, request, business_slug):
+        menu = get_object_or_404(Menu, business__slug=business_slug)
         styles = get_object_or_404(MenuGlobalStyling, menu=menu)
 
         srz_data = MenuGlobalStylingSerializer(instance=styles)

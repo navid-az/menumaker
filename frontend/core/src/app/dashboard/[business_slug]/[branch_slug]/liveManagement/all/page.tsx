@@ -32,7 +32,7 @@ export type TableType = {
 
 const getTables = async (branchSlug: string) => {
   const res = await fetch(
-    `http://127.0.0.1:8000/business/${branchSlug}/tables`
+    `http://127.0.0.1:8000/branches/${branchSlug}/tables`
   );
   if (!res.ok) {
     throw new Error(
