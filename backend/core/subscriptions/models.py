@@ -7,16 +7,20 @@ from dateutil.relativedelta import relativedelta
 class FeatureCategory(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
+    code = models.CharField(max_length=50)
 
     def __str__(self):
         return self.name
 
 
 class Feature(models.Model):
-    category = models.ForeignKey(
-        FeatureCategory, related_name="features", on_delete=models.SET_NULL, null=True
-    )
     code = models.CharField(max_length=50, unique=True)
+    category = models.ForeignKey(
+        FeatureCategory,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name="features"
+    )
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
 
@@ -27,7 +31,8 @@ class Feature(models.Model):
 class Plan(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
-    features = models.ManyToManyField(Feature, through="PlanFeature")
+    features = models.ManyToManyField(
+        Feature, through="PlanFeature", related_name='plans')
     is_active = models.BooleanField(default=True)
 
     # Check if plan has a given feature code enabled
@@ -50,8 +55,8 @@ class PlanFeature(models.Model):
     feature = models.ForeignKey(
         Feature, related_name="plan_features", on_delete=models.CASCADE
     )
-    is_enabled = models.BooleanField(default=True)
     limit_value = models.IntegerField(null=True, blank=True)
+    is_enabled = models.BooleanField(default=True)
 
     class Meta:
         constraints = [
@@ -64,11 +69,11 @@ class PlanFeature(models.Model):
 
 
 class PlanDuration(models.Model):
+    name = models.CharField(max_length=50)
     days = models.PositiveIntegerField(unique=True)
-    label = models.CharField(max_length=50)
 
     def __str__(self):
-        return self.label
+        return self.name
 
 
 class PlanPricing(models.Model):
@@ -84,17 +89,21 @@ class PlanPricing(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.plan.name} - {self.duration.label}: {self.price}"
+        return f"{self.plan.name} - {self.duration.name}: {self.price}"
 
 
 class Subscription(models.Model):
+    STATUS_CHOICES = [('active', 'Active'), ('pending', 'Pending'),
+                      ('expired', 'Expired'), ('paused', 'Paused'), ('canceled', 'Canceled')]
+
     business = models.OneToOneField(
         "business.Business", on_delete=models.CASCADE, related_name="subscription")
     plan = models.ForeignKey(Plan, on_delete=models.PROTECT)
     pricing = models.ForeignKey(PlanPricing, on_delete=models.PROTECT)
     start_date = models.DateTimeField(default=timezone.now)
     end_date = models.DateTimeField(blank=True)
-    is_active = models.BooleanField(default=True)
+    status = models.CharField(choices=STATUS_CHOICES,
+                              default='active', max_length=20)
 
     def save(self, *args, **kwargs):
         # auto-calculate end_date based on chosen duration
@@ -104,4 +113,4 @@ class Subscription(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.business.name} → {self.plan.name} ({self.pricing.duration.label})"
+        return f"{self.business.name} → {self.plan.name} ({self.pricing.duration.name})"
