@@ -14,7 +14,7 @@ from personnel.models import Personnel
 # rest_framework dependencies
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from permissions import IsOwner, HasBusinessBranchAccess, HasMethodAccess
+from permissions import IsOwner, HasBusinessBranchAccess, HasMethodAccess, HasActiveSubscription, HasFeatureAccess
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -69,10 +69,11 @@ class BusinessDetailView(APIView):
 # Branch CRUD views
 class BranchesView(MethodBasedPermissionsMixin, APIView):
     permission_classes_by_method = {'POST': [
-        IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess)]}
+        IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess), HasActiveSubscription & HasFeatureAccess]}
     required_permission_by_method = {
         'POST': ['business.add_branch'],
     }
+    required_feature = ['branch_management']
 
     # List all branches of a business
     def get(self, request, business_slug):
@@ -100,12 +101,13 @@ class BranchesView(MethodBasedPermissionsMixin, APIView):
 
 class BranchDetailView(MethodBasedPermissionsMixin, APIView):
     permission_classes_by_method = {'PATCH': [
-        IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess)],
-        'DELETE': [IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess)]}
+        IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess), HasActiveSubscription & HasFeatureAccess],
+        'DELETE': [IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess), HasActiveSubscription & HasFeatureAccess]}
     required_permission_by_method = {
         'PATCH': ['business.change_branch'],
         'DELETE': ['business.delete_branch'],
     }
+    required_feature = ['branch_management']
 
     # Update branch details
     def patch(self, request, branch_slug):
@@ -139,10 +141,11 @@ class BranchDetailView(MethodBasedPermissionsMixin, APIView):
 # Table CRUD views
 class TablesView(MethodBasedPermissionsMixin, APIView):
     permission_classes_by_method = {'POST': [
-        IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess)]}
+        IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess), HasActiveSubscription & HasFeatureAccess]}
     required_permission_by_method = {
         'POST': ['business.add_table'],
     }
+    required_feature = ['table_management']
 
     # List all tables of a branch
     def get(self, request, branch_slug):
@@ -172,12 +175,13 @@ class TablesView(MethodBasedPermissionsMixin, APIView):
 
 class TableDetailView(MethodBasedPermissionsMixin, APIView):
     permission_classes_by_method = {'PATCH': [
-        IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess)],
-        'DELETE': [IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess)]}
+        IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess), HasActiveSubscription & HasFeatureAccess],
+        'DELETE': [IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess), HasActiveSubscription & HasFeatureAccess]}
     required_permission_by_method = {
         'PATCH': ['business.change_table'],
         'DELETE': ['business.delete_table'],
     }
+    required_feature = ['table_management']
 
     # Update table details
     def patch(self, request, table_id):

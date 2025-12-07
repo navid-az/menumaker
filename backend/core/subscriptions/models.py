@@ -105,6 +105,18 @@ class Subscription(models.Model):
     status = models.CharField(choices=STATUS_CHOICES,
                               default='active', max_length=20)
 
+    def is_expired(self):
+        """
+        Check if the subscription is expired based on end_date
+        """
+        return self.end_date and timezone.now() > self.end_date
+
+    def get_features(self):
+        """
+        Returns a queryset of Feature objects available in this subscription's plan.
+        """
+        return self.plan.features.all()
+
     def save(self, *args, **kwargs):
         # auto-calculate end_date based on chosen duration
         if not self.end_date and self.start_date and self.pricing.duration:

@@ -99,3 +99,47 @@ class HasMethodAccess(BasePermission):
             if has_perm:
                 return True  # At least one required permission is present
         return False  # No required permissions found in role
+
+
+class HasActiveSubscription(BasePermission):
+    message = 'Business does not have an active subscription.'
+
+    def has_object_permission(self, request, view, obj):
+        # Try to extract business from object
+        if isinstance(obj, Business):
+            business = obj
+        else:
+            business = getattr(obj, 'business', None)
+
+        if not business:
+            return False  # No business context
+
+        subscription = getattr(business, 'subscription', None)
+
+        if not subscription or subscription.is_expired():
+            return False
+
+        return True
+
+
+class HasFeatureAccess(BasePermission):
+    message = "Your current subscription plan does not support this feature."
+
+    def has_object_permission(self, request, view, obj):
+        required_features = getattr(view, 'required_feature', [])
+
+        business = getattr(
+            obj, "business", obj if isinstance(obj, Business) else None)
+        if not business:
+            return False
+
+        subscription = getattr(business, 'subscription', None)
+        if not subscription:
+            return False
+
+        for feature in required_features:
+            if feature not in subscription.get_features().values_list('code', flat=True):
+                print('table management is not one of the features')
+                return False
+
+        return True
