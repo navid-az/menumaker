@@ -16,7 +16,7 @@ async function getPersonnel(
 ) {
   try {
     const data = await fetch(
-      `http://127.0.0.1:8000/business/${business_slug}/personnel/all/?branch_slug=${branch_slug}`,
+      `http://127.0.0.1:8000/businesses/${business_slug}/personnel/?branch_slug=${branch_slug}`,
 
       {
         headers: {

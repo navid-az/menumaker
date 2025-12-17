@@ -1,6 +1,7 @@
 from django.urls import path
 from business.views import (BusinessesView, BusinessDetailView, BranchesView, BranchDetailView, TablesView, TableDetailView,
                             TableSessionView, CallWaiterView, CallWaiterDetailView, CategoriesView, CategoryDetailView, ItemsView, ItemDetailView,  RoleView)
+from personnel.views import PersonnelListView
 
 
 app_name = 'business'
@@ -75,6 +76,8 @@ urlpatterns = [
 
     #     path('<str:business_slug>/personnel/<int:personnel_id>/',
     #          PersonnelDetailView.as_view(), name='business-personnel-detail'),
+    path('businesses/<str:business_slug>/personnel/',
+         PersonnelListView.as_view(), name='business-personnel'),
 
     # Needs to change !!!
     # Needs to move to personnel app !!!

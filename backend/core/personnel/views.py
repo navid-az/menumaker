@@ -19,9 +19,9 @@ class PersonnelListView(APIView):
                           (HasBusinessBranchAccess & HasMethodAccess)]
     required_permission = ['personnel.view_personnel']
 
-    def get(self, request, slug):
+    def get(self, request, business_slug):
         branch_slug = request.query_params.get('branch_slug')
-        business = get_object_or_404(Business, slug=slug)
+        business = get_object_or_404(Business, slug=business_slug)
 
         # Check object permissions
         self.check_object_permissions(request, business)
