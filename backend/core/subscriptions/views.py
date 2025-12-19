@@ -30,7 +30,7 @@ class SubscriptionView(APIView):
         # check if there are more than one subscription instance for this business
         try:
             subscription = Subscription.objects.get(
-                business=business, is_active=True)
+                business=business, status='active')
         except Subscription.DoesNotExist:
             return Response({"error": "There are no active subscriptions for this business"}, status.HTTP_404_NOT_FOUND)
         except Subscription.MultipleObjectsReturned:
