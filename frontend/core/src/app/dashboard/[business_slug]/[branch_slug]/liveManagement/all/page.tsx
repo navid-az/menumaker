@@ -1,6 +1,10 @@
 import React from "react";
 
+//functions
+import { checkFeatureAccess } from "@/lib/guards/checkFeatureAccess";
+
 //components
+import UpgradePlanAlertDialog from "@/app/dashboard/components/UpgradePlanAlertDialog";
 import LiveCards from "@/app/dashboard/components/LiveCards";
 
 //SVGs
@@ -46,11 +50,20 @@ export default async function Page(props: {
   params: Promise<{ business_slug: string; branch_slug: string }>;
 }) {
   const { business_slug, branch_slug } = await props.params;
+  const { hasFeature } = await checkFeatureAccess(
+    business_slug,
+    "live_management_access"
+  );
   const tables = await getTables(branch_slug);
 
   return (
     <div className="flex flex-col gap-4 justify-end">
       <section className="flex gap-4 flex-row-reverse flex-wrap w-full">
+        <UpgradePlanAlertDialog
+          businessSlug={business_slug}
+          hasFeature={hasFeature}
+        ></UpgradePlanAlertDialog>
+
         <LiveCards
           businessSlug={business_slug}
           branchSlug={branch_slug}

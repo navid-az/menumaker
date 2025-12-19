@@ -1,7 +1,9 @@
 //components
-import { BusinessType } from "../layout";
 import { BranchSelector } from "./BranchSelector";
 import { UserProfile } from "@/components/global/UserProfile";
+
+//functions
+import { checkFeatureAccess } from "@/lib/guards/checkFeatureAccess";
 
 // get all branches of active business
 async function getBranches(business_slug: string) {
@@ -24,13 +26,16 @@ export async function DashboardHeader({
   business_slug: string;
   branch_slug: string;
 }) {
-  //hard codded for now
+  const { hasFeature } = await checkFeatureAccess(
+    business_slug,
+    "multi_branch"
+  );
   const branches = await getBranches(business_slug);
 
   return (
     <header className="flex flex-none justify-between bg-primary px-6 py-4">
       <section className="flex justify-between items-center flex-1">
-        <BranchSelector branches={branches}></BranchSelector>
+        {hasFeature && <BranchSelector branches={branches}></BranchSelector>}
         <UserProfile></UserProfile>
       </section>
     </header>

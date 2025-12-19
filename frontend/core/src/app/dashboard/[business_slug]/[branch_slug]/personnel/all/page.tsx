@@ -1,7 +1,11 @@
 import React from "react";
 
-//components
+//functions
 import { cookies } from "next/headers";
+import { checkFeatureAccess } from "@/lib/guards/checkFeatureAccess";
+
+//components
+import UpgradePlanAlertDialog from "@/app/dashboard/components/UpgradePlanAlertDialog";
 import PersonnelClientWrapper from "./components/PersonnelClientWrapper";
 
 //types
@@ -42,6 +46,10 @@ export default async function Page(props: {
   const cookieStore = await cookies();
   const params = await props.params;
 
+  const { hasFeature } = await checkFeatureAccess(
+    params.business_slug,
+    "personnel_access"
+  );
   const personnelData = await getPersonnel(
     params.business_slug,
     params.branch_slug,
@@ -49,9 +57,15 @@ export default async function Page(props: {
   );
 
   return (
-    <PersonnelClientWrapper
-      businessSlug={params.business_slug}
-      personnel={personnelData}
-    ></PersonnelClientWrapper>
+    <>
+      <PersonnelClientWrapper
+        businessSlug={params.business_slug}
+        personnel={personnelData}
+      ></PersonnelClientWrapper>
+      <UpgradePlanAlertDialog
+        hasFeature={hasFeature}
+        businessSlug={params.business_slug}
+      ></UpgradePlanAlertDialog>
+    </>
   );
 }
