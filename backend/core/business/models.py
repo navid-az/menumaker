@@ -6,6 +6,7 @@ from pickers.models import Asset
 from datetime import timedelta
 import string
 import random
+from django.core.validators import RegexValidator
 
 # external dependencies
 from colorfield.fields import ColorField
@@ -154,6 +155,102 @@ class CallWaiter(models.Model):
 
     def __str__(self):
         return f"session: {self.table_session.code} called waiter"
+
+
+class Reservation(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('confirmed', 'Confirmed'),
+        ('cancelled', 'Cancelled'),
+        ('completed', 'Completed'),
+        ('no_show', 'No Show'),
+    ]
+
+    phone_regex = RegexValidator(
+        regex=r'^\+?1?\d{9,15}$',
+        message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed."
+    )
+    table = models.ForeignKey(
+        Table, on_delete=models.CASCADE, related_name='reservations')
+
+    # Customer Information
+    name = models.CharField(max_length=200)
+    email = models.EmailField(null=True, blank=True)
+    phone_number = models.CharField(validators=[phone_regex], max_length=17)
+
+    # Reservation Details
+    reservation_date = models.DateField()
+    reservation_time = models.TimeField()
+    number_of_guests = models.PositiveIntegerField()
+    duration_minutes = models.PositiveIntegerField(
+        default=60, help_text="Expected duration in minutes")
+
+    # Optional Details
+    special_requests = models.TextField(
+        blank=True, help_text="Dietary restrictions, accessibility needs, etc.")
+    table_preference = models.CharField(
+        max_length=100, blank=True, help_text="e.g., window seat, outdoor, private room")
+
+    # Status and Tracking
+    status = models.CharField(
+        max_length=20, choices=STATUS_CHOICES, default='pending')
+    confirmation_code = models.CharField(
+        max_length=50, unique=True, blank=True)
+
+    # Internal Notes
+    internal_notes = models.TextField(
+        blank=True, help_text="Staff notes not visible to customer")
+
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    confirmed_at = models.DateTimeField(null=True, blank=True)
+    cancelled_at = models.DateTimeField(null=True, blank=True)
+
+    # Cancellation Details
+    cancellation_reason = models.TextField(blank=True)
+    cancelled_by = models.CharField(
+        max_length=100, blank=True, help_text="Customer or Staff name")
+
+    class Meta:
+        ordering = ['-reservation_date', '-reservation_time']
+        # indexes = [
+        #     models.Index(fields=['branch', 'reservation_date', 'status']),
+        #     models.Index(fields=['customer_email']),
+        #     models.Index(fields=['confirmation_code']),
+        # ]
+
+    def __str__(self):
+        return f"{self.name} - {self.reservation_date} {self.reservation_time} - at table ({self.table.id})"
+
+    def save(self, *args, **kwargs):
+        # Generate confirmation code if not exists
+        if not self.confirmation_code:
+            self.confirmation_code = generate_unique_code()
+
+        # Set confirmed_at timestamp when status changes to confirmed
+        if self.status == 'confirmed' and not self.confirmed_at:
+            self.confirmed_at = timezone.now()
+
+        # Set cancelled_at timestamp when status changes to cancelled
+        if self.status == 'cancelled' and not self.cancelled_at:
+            self.cancelled_at = timezone.now()
+
+        super().save(*args, **kwargs)
+
+    @property
+    def is_upcoming(self):
+        """Check if reservation is in the future"""
+        from datetime import datetime
+        reservation_datetime = timezone.make_aware(
+            datetime.combine(self.reservation_date, self.reservation_time)
+        )
+        return reservation_datetime > timezone.now() and self.status not in ['cancelled', 'completed', 'no_show']
+
+    @property
+    def can_cancel(self):
+        """Check if reservation can still be cancelled"""
+        return self.is_upcoming and self.status not in ['cancelled', 'completed']
 
 
 class Category(models.Model):

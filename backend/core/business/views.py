@@ -5,10 +5,10 @@ from django.db import transaction
 from django.db.models import Q
 from mixins import MethodBasedPermissionsMixin
 
-from .serializers import (BusinessesSerializer, BusinessCreateSerializer, BranchesSerializer, BranchCreateUpdateSerializer,
+from .serializers import (BusinessesSerializer, BusinessCreateSerializer, BranchesSerializer, BranchCreateUpdateSerializer, ReservationsSerializer,
                           TablesSerializer, TableCreateUpdateSerializer, CategoriesSerializer, CategoryCreateUpdateSerializer,
                           ItemsSerializer, ItemCreateUpdateSerializer, RoleSerializer)
-from .models import Business, Branch, Table, TableSession, CallWaiter, Category, Item, ItemBranch
+from .models import Business, Branch, Table, TableSession, CallWaiter, Reservation, Category, Item, ItemBranch
 from personnel.models import Personnel
 
 # rest_framework dependencies
@@ -366,6 +366,21 @@ class CallWaiterDetailView(MethodBasedPermissionsMixin, APIView):
         return Response(
             {"detail": "Call resolved successfully."},
         )
+
+
+class Reservations(MethodBasedPermissionsMixin, APIView):
+    permission_classes_by_method = {'POST': [IsAuthenticated]}
+
+    def get(self, request, table_id):
+        # check table availability
+        table = get_object_or_404(Table, pk=table_id)
+        reservations = Reservation.objects.filter(table=table)
+        ser_data = ReservationsSerializer(instance=reservations, many=True)
+        return Response(ser_data.data)
+
+
+class ReservationDetailView(MethodBasedPermissionsMixin, APIView):
+    pass
 
 
 # Category CRUD views

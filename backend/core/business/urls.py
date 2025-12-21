@@ -1,6 +1,6 @@
 from django.urls import path
 from business.views import (BusinessesView, BusinessDetailView, BranchesView, BranchDetailView, TablesView, TableDetailView,
-                            TableSessionView, CallWaiterView, CallWaiterDetailView, CategoriesView, CategoryDetailView, ItemsView, ItemDetailView,  RoleView)
+                            TableSessionView, CallWaiterView, CallWaiterDetailView, Reservations, ReservationDetailView, CategoriesView, CategoryDetailView, ItemsView, ItemDetailView,  RoleView)
 from personnel.views import PersonnelListView
 
 
@@ -36,6 +36,11 @@ urlpatterns = [
          CallWaiterView.as_view(), name='call-waiter'),
     path('calls/<int:call_id>/',
          CallWaiterDetailView.as_view(), name='call-waiter-detail'),
+
+    path('tables/<str:table_id>/reservations/',
+         Reservations.as_view(), name='table-reservations'),
+    path('reservations/<int:reservation_id>/',
+         ReservationDetailView.as_view(), name='table-reservation-detail'),
 
     # Category endpoints
     path('businesses/<str:business_slug>/categories/',

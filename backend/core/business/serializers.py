@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.utils import timezone
 from django.utils.text import slugify
 
-from .models import Business, Branch, Table, TableSession, CallWaiter, Category, Item, ItemBranch
+from .models import Business, Branch, Table, TableSession, CallWaiter, Reservation, Category, Item, ItemBranch
 from pickers.models import Asset
 from personnel.models import Personnel
 
@@ -59,6 +59,20 @@ class TableCreateUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Table
         exclude = ['branch', 'created', 'updated']
+
+
+# reservation serializers
+class ReservationsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reservation
+        fields = '__all__'
+
+
+class ReservationCreateUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reservation
+        exclude = ['table',
+                   'confirmation_code', 'created', 'updated']
 
 
 # branch serializers
