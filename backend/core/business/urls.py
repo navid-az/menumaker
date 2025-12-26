@@ -1,6 +1,6 @@
 from django.urls import path
 from business.views import (BusinessesView, BusinessDetailView, BranchesView, BranchDetailView, TablesView, TableDetailView,
-                            TableSessionView, CallWaiterView, CallWaiterDetailView, Reservations, ReservationDetailView, CategoriesView, CategoryDetailView, ItemsView, ItemDetailView,  RoleView)
+                            TableSessionView, CheckTableAvailability, CallWaiterView, CallWaiterDetailView, Reservations, ReservationDetailView, CategoriesView, CategoryDetailView, ItemsView, ItemDetailView,  RoleView)
 from personnel.views import PersonnelListView
 
 
@@ -24,6 +24,8 @@ urlpatterns = [
          TablesView.as_view(), name='branch-tables'),
     path('tables/<int:table_id>/',
          TableDetailView.as_view(), name='table-detail'),
+    path('tables/check-availability/',
+         CheckTableAvailability.as_view(), name='check-table-availability'),
 
 
     # Table Session endpoints

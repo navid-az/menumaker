@@ -5,8 +5,8 @@ from django.db import transaction
 from django.db.models import Q
 from mixins import MethodBasedPermissionsMixin
 
-from .serializers import (BusinessesSerializer, BusinessCreateSerializer, BranchesSerializer, BranchCreateUpdateSerializer, ReservationsSerializer,
-                          TablesSerializer, TableCreateUpdateSerializer, CategoriesSerializer, CategoryCreateUpdateSerializer,
+from .serializers import (BusinessesSerializer, BusinessCreateSerializer, BranchesSerializer, BranchCreateUpdateSerializer, ReservationsSerializer, ReservationCreateUpdateSerializer,
+                          TablesSerializer, TableCreateUpdateSerializer, TableAvailabilityCheckSerializer, AvailableTableSerializer, CategoriesSerializer, CategoryCreateUpdateSerializer,
                           ItemsSerializer, ItemCreateUpdateSerializer, RoleSerializer)
 from .models import Business, Branch, Table, TableSession, CallWaiter, Reservation, Category, Item, ItemBranch
 from personnel.models import Personnel
@@ -302,6 +302,50 @@ class TableSessionView(MethodBasedPermissionsMixin, APIView):
         )
 
 
+class CheckTableAvailability(MethodBasedPermissionsMixin, APIView):
+    def post(self, request):
+        ser_data = TableAvailabilityCheckSerializer(data=request.data)
+
+        if ser_data.is_valid():
+            data = ser_data.validated_data
+            start_dt = data['start_dt']
+            branch_slug = data['branch_slug']
+            party_size = data['party_size']
+            duration = data['duration']
+            end_dt = start_dt + timezone.timedelta(minutes=duration)
+
+            # Get all tables for this business with enough seats
+            candidate_tables = Table.objects.filter(
+                branch__slug=branch_slug, seats__gte=party_size)
+
+            # Check for conflicting reservations
+            conflicting_reservations = Reservation.objects.filter(
+                table__branch__slug=branch_slug, status__in=[
+                    'pending', 'confirmed'],
+                reservation_start__lt=end_dt, reservation_end__gt=start_dt).values_list('table__id', flat=True)
+
+            # Find tables with table sessions overlapping the requested time
+            conflicting_session_table_ids = TableSession.objects.filter(
+                Q(expires_at__isnull=True) | Q(expires_at__gt=start_dt),
+                table__branch__slug=branch_slug,
+                is_active=True,
+                started_at__lt=end_dt,
+            ).values_list('table_id', flat=True)
+
+            blocked_table_ids = set(
+                conflicting_reservations) | set(conflicting_session_table_ids)
+
+            available_tables = candidate_tables.exclude(
+                id__in=blocked_table_ids)
+
+            # Serialize and return
+            # can use TablesSerializer serializer instead for more sophisticated data returns
+            tables_serializer = AvailableTableSerializer(
+                instance=available_tables, many=True)
+            return Response(tables_serializer.data, status=status.HTTP_200_OK)
+        return Response(ser_data.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class CallWaiterView(MethodBasedPermissionsMixin, APIView):
 
     def post(self, request, session_code, *args, **kwargs):
@@ -377,6 +421,16 @@ class Reservations(MethodBasedPermissionsMixin, APIView):
         reservations = Reservation.objects.filter(table=table)
         ser_data = ReservationsSerializer(instance=reservations, many=True)
         return Response(ser_data.data)
+
+    def post(self, request, table_id):
+        # check table availability
+        table = get_object_or_404(Table, pk=table_id)
+
+        ser_data = ReservationCreateUpdateSerializer(data=request.data)
+        if ser_data.is_valid():
+            ser_data.save(table=table)
+            return Response(ser_data.data, status=status.HTTP_201_CREATED)
+        return Response(ser_data.errors, status.HTTP_400_BAD_REQUEST)
 
 
 class ReservationDetailView(MethodBasedPermissionsMixin, APIView):

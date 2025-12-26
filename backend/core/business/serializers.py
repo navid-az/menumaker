@@ -56,9 +56,31 @@ class TablesSerializer(serializers.ModelSerializer):
 
 
 class TableCreateUpdateSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Table
         exclude = ['branch', 'created', 'updated']
+
+
+class TableAvailabilityCheckSerializer(serializers.Serializer):
+    branch_slug = serializers.CharField(max_length=100)
+    start_dt = serializers.DateTimeField()
+    party_size = serializers.IntegerField(
+        min_value=1, max_value=50)
+    duration = serializers.IntegerField(
+        min_value=30, max_value=480)
+
+    def validate_start_dt(self, value):
+        if value < timezone.now():
+            raise serializers.ValidationError(
+                "Cannot check availability for past times.")
+        return value
+
+
+class AvailableTableSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Table
+        fields = ['id', 'name', 'seats']
 
 
 # reservation serializers
@@ -69,10 +91,11 @@ class ReservationsSerializer(serializers.ModelSerializer):
 
 
 class ReservationCreateUpdateSerializer(serializers.ModelSerializer):
+    table = serializers.PrimaryKeyRelatedField(read_only=True)
+
     class Meta:
         model = Reservation
-        exclude = ['table',
-                   'confirmation_code', 'created', 'updated']
+        exclude = ['confirmation_code', 'reservation_end']
 
 
 # branch serializers

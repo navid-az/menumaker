@@ -179,9 +179,9 @@ class Reservation(models.Model):
     phone_number = models.CharField(validators=[phone_regex], max_length=17)
 
     # Reservation Details
-    reservation_date = models.DateField()
-    reservation_time = models.TimeField()
-    number_of_guests = models.PositiveIntegerField()
+    reservation_start = models.DateTimeField()
+    reservation_end = models.DateTimeField(blank=True)
+    party_size = models.PositiveIntegerField()
     duration_minutes = models.PositiveIntegerField(
         default=60, help_text="Expected duration in minutes")
 
@@ -213,7 +213,7 @@ class Reservation(models.Model):
         max_length=100, blank=True, help_text="Customer or Staff name")
 
     class Meta:
-        ordering = ['-reservation_date', '-reservation_time']
+        ordering = ['-reservation_start']
         # indexes = [
         #     models.Index(fields=['branch', 'reservation_date', 'status']),
         #     models.Index(fields=['customer_email']),
@@ -221,7 +221,7 @@ class Reservation(models.Model):
         # ]
 
     def __str__(self):
-        return f"{self.name} - {self.reservation_date} {self.reservation_time} - at table ({self.table.id})"
+        return f"{self.name} - {self.reservation_start} - at table ({self.table.id})"
 
     def save(self, *args, **kwargs):
         # Generate confirmation code if not exists
@@ -236,16 +236,18 @@ class Reservation(models.Model):
         if self.status == 'cancelled' and not self.cancelled_at:
             self.cancelled_at = timezone.now()
 
+        # Calculate reservation end if not provided
+        if self.reservation_end is None:
+            self.reservation_end = self.reservation_start + \
+                timedelta(minutes=self.duration_minutes)
+
         super().save(*args, **kwargs)
 
     @property
     def is_upcoming(self):
         """Check if reservation is in the future"""
-        from datetime import datetime
-        reservation_datetime = timezone.make_aware(
-            datetime.combine(self.reservation_date, self.reservation_time)
-        )
-        return reservation_datetime > timezone.now() and self.status not in ['cancelled', 'completed', 'no_show']
+
+        return self.reservation_start > timezone.now() and self.status not in ['cancelled', 'completed', 'no_show']
 
     @property
     def can_cancel(self):
