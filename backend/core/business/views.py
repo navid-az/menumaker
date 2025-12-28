@@ -311,7 +311,7 @@ class CheckTableAvailability(MethodBasedPermissionsMixin, APIView):
             start_dt = data['start_dt']
             branch_slug = data['branch_slug']
             party_size = data['party_size']
-            duration = data['duration']
+            duration = data['duration_minutes']
             end_dt = start_dt + timezone.timedelta(minutes=duration)
 
             # Get all tables for this business with enough seats

@@ -67,7 +67,7 @@ class TableAvailabilityCheckSerializer(serializers.Serializer):
     start_dt = serializers.DateTimeField()
     party_size = serializers.IntegerField(
         min_value=1, max_value=50)
-    duration = serializers.IntegerField(
+    duration_minutes = serializers.IntegerField(
         min_value=30, max_value=480)
 
     def validate_start_dt(self, value):
