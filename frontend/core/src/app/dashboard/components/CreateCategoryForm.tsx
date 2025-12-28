@@ -160,7 +160,7 @@ export function CreateCategoryForm({
             onSubmit={form.handleSubmit(onSubmit, onError)}
             id="category-form"
           >
-            <section className="flex w-full items-end gap-2 space-y-6">
+            <section className="flex w-full items-center gap-2 space-y-6">
               <FormField
                 control={form.control}
                 name="name"

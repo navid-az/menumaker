@@ -366,7 +366,9 @@ export function CreateUpdateReservationForm({
                           max={480}
                           step={30}
                           value={field.value}
-                          onChange={field.onChange}
+                          onChange={(e) =>
+                            field.onChange(e.target.valueAsNumber)
+                          }
                           className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
                         />
                       </FormControl>

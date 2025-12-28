@@ -53,7 +53,7 @@ type CreateTableFormType = {
 // import { createTable, updateTable } from "@/app/actions";
 
 const FormSchema = z.object({
-  name: z.string(),
+  name: z.string().min(1, "نام میز الزامی است."),
   seats: z.number(),
   location_description: z.string().optional(),
 });
@@ -117,7 +117,7 @@ export function CreateTableForm({
   }
 
   const onError = (errors: FieldErrors<any>) => {
-    alert(errors);
+    console.log("Form errors:", errors);
   };
 
   return (
@@ -131,8 +131,12 @@ export function CreateTableForm({
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit, onError)} id="table-form">
-            <section className="flex w-full items-end gap-2">
+          <form
+            noValidate
+            onSubmit={form.handleSubmit(onSubmit, onError)}
+            id="table-form"
+          >
+            <section className="flex w-full items-start gap-2">
               <FormField
                 control={form.control}
                 name="name"
@@ -161,6 +165,7 @@ export function CreateTableForm({
                         placeholder="تعداد صندلی"
                         type="number"
                         {...field}
+                        onChange={(e) => field.onChange(e.target.valueAsNumber)}
                       ></Input>
                     </FormControl>
                     <FormMessage />
