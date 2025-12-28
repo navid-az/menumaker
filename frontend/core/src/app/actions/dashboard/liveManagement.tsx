@@ -22,6 +22,13 @@ export async function createReservation(tableId: number, data: any) {
     if (!res.ok) {
       const errorData = await res.json();
       console.log(errorData);
+      if (res.status === 409) {
+        return {
+          status: 409,
+          success: false,
+          error: errorData.error || "Failed to reserve table",
+        };
+      }
 
       return {
         success: false,

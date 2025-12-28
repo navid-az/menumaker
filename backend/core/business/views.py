@@ -319,7 +319,7 @@ class CheckTableAvailability(MethodBasedPermissionsMixin, APIView):
                 branch__slug=branch_slug, seats__gte=party_size)
 
             # Check for conflicting reservations
-            conflicting_reservations = Reservation.objects.filter(
+            conflicting_reservations_table_ids = Reservation.objects.filter(
                 table__branch__slug=branch_slug, status__in=[
                     'pending', 'confirmed'],
                 reservation_start__lt=end_dt, reservation_end__gt=start_dt).values_list('table__id', flat=True)
@@ -333,7 +333,7 @@ class CheckTableAvailability(MethodBasedPermissionsMixin, APIView):
             ).values_list('table_id', flat=True)
 
             blocked_table_ids = set(
-                conflicting_reservations) | set(conflicting_session_table_ids)
+                conflicting_reservations_table_ids) | set(conflicting_session_table_ids)
 
             available_tables = candidate_tables.exclude(
                 id__in=blocked_table_ids)
@@ -413,7 +413,11 @@ class CallWaiterDetailView(MethodBasedPermissionsMixin, APIView):
 
 
 class Reservations(MethodBasedPermissionsMixin, APIView):
-    permission_classes_by_method = {'POST': [IsAuthenticated]}
+    permission_classes_by_method = {'POST': [
+        IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess), HasActiveSubscription & HasFeatureAccess]}
+    required_permission_by_method = {
+        'POST': ['business.add_reservation'],
+    }
 
     def get(self, request, table_id):
         # check table availability
@@ -423,12 +427,34 @@ class Reservations(MethodBasedPermissionsMixin, APIView):
         return Response(ser_data.data)
 
     def post(self, request, table_id):
-        # check table availability
-        table = get_object_or_404(Table, pk=table_id)
-
         ser_data = ReservationCreateUpdateSerializer(data=request.data)
+
         if ser_data.is_valid():
-            ser_data.save(table=table)
+            with transaction.atomic():
+                # Lock the table row to prevent race conditions
+                locked_table = Table.objects.select_for_update().get(pk=table_id)
+                self.check_object_permissions(request, locked_table.branch)
+
+                duration = ser_data.validated_data['duration_minutes']
+                start_dt = ser_data.validated_data['reservation_start']
+                end_dt = start_dt + timezone.timedelta(minutes=duration)
+
+                # Check for conflicting reservations
+                conflicting_reservations = Reservation.objects.filter(
+                    table=locked_table, status__in=[
+                        'pending', 'confirmed'],
+                    reservation_start__lt=end_dt, reservation_end__gt=start_dt).exists()
+
+                # Find tables with table sessions overlapping the requested time
+                conflicting_session = TableSession.objects.filter(
+                    Q(expires_at__isnull=True) | Q(expires_at__gt=start_dt),
+                    table=locked_table,
+                    is_active=True,
+                    started_at__lt=end_dt,
+                ).exists()
+                if conflicting_reservations or conflicting_session:
+                    return Response({"message": "The table no longer available"}, status=status.HTTP_409_CONFLICT)
+                ser_data.save(table=locked_table)
             return Response(ser_data.data, status=status.HTTP_201_CREATED)
         return Response(ser_data.errors, status.HTTP_400_BAD_REQUEST)
 

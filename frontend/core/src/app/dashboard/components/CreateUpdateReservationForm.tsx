@@ -96,8 +96,7 @@ export function CreateUpdateReservationForm({
   title,
   description,
   defaultValues,
-}: // tableId,
-CreateUpdateReservationFormType) {
+}: CreateUpdateReservationFormType) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: defaultValues
@@ -156,6 +155,13 @@ CreateUpdateReservationFormType) {
           toast.success("رزرو با موفقیت ایجاد شد");
           form.reset();
         } else {
+          // table conflict on submit
+          if (res.status === 409) {
+            toast.error(
+              "میز انتخاب شده دیگر در دسترس نمیباشد. لطفا میز دیگری را انتخاب کنید."
+            );
+            return;
+          }
           toast.error(res?.error || "خطایی در ایجاد رزرو رخ داد");
         }
       } else if (defaultValues && tableId) {
@@ -196,6 +202,7 @@ CreateUpdateReservationFormType) {
         </DialogHeader>
         <Form {...form}>
           <form
+            noValidate
             onSubmit={form.handleSubmit(onSubmit, onError)}
             id="category-form"
             className="grid gap-8 md:grid-cols-2"
@@ -326,7 +333,7 @@ CreateUpdateReservationFormType) {
                   )}
                 />
               </section>
-              <section className="flex gap-2 w-full">
+              <section className="flex gap-2 w-full items-start">
                 <FormField
                   control={form.control}
                   name="party_size"
