@@ -20,7 +20,7 @@ async function Navbar() {
   }
 
   return (
-    <nav className="container mx-auto flex w-full items-center justify-between pt-7 text-xl text-royal-green">
+    <nav className="container px-16 mx-auto flex w-full items-center justify-between pt-7 text-xl text-royal-green">
       <Link href="/">
         <Image
           src="/images/menumaker-logo.svg"
@@ -70,9 +70,9 @@ export default function LandingPageLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
+    <div>
       <Navbar></Navbar>
       {children}
-    </>
+    </div>
   );
 }

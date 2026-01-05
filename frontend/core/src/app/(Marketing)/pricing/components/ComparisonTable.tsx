@@ -26,7 +26,7 @@ const ComparisonTableHeader = ({
   return (
     <div
       className={cn(
-        "flex items-center h-32 top-0 bg-white sticky z-20 border-b-3 border-royal-green/5",
+        "flex items-center py-6 top-0 bg-white sticky z-20 border-b-3 border-royal-green/5",
         className
       )}
       {...props}
@@ -39,8 +39,10 @@ const ComparisonTableHeaderCell = ({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
-    <div className={cn("flex-1 h-20 flex items-center", className)} {...props}>
-      <h2 className="font-semibold text-4xl px-10">{props.children}</h2>
+    <div className={cn("flex-1 flex items-center", className)} {...props}>
+      <h2 className="font-semibold text-3xl lg:text-4xl px-2 lg:px-10">
+        {props.children}
+      </h2>
     </div>
   );
 };
@@ -76,8 +78,8 @@ const ComparisonTableSectionTrigger = ({
   ...props
 }: React.HTMLAttributes<HTMLButtonElement>) => {
   return (
-    <div className="sticky top-32 z-10">
-      <AccordionTrigger className="w-full bg-white cursor-pointer hover:bg-gray-50 flex text-royal-green items-center border-b-2 border-royal-green/5 h-20 px-10 font-semibold text-2xl">
+    <div className="sticky top-[84px] bg-white z-10 border-b-2 border-royal-green/5">
+      <AccordionTrigger className="w-full h-full py-6 cursor-pointer hover:bg-gray-50 flex text-royal-green items-center px-2 lg:px-10 font-semibold text-xl lg:text-2xl">
         {props.children}
       </AccordionTrigger>
     </div>
@@ -100,7 +102,7 @@ const ComparisonTableRow = ({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
-    <div className="w-full flex border-b-2 items-center transition-all duration-300 hover:bg-cyan-50 py-6 border-royal-green/5 h-10">
+    <div className="w-full flex border-b-2 items-center transition-all duration-300 hover:bg-cyan-50 py-2 border-royal-green/5">
       {props.children}
     </div>
   );
@@ -112,7 +114,7 @@ const ComparisonTableCell = ({
   ...props
 }: React.HTMLAttributes<HTMLDivElement> & { disabled?: boolean }) => {
   return (
-    <div className="flex-1 gap-3 h-10 flex items-center px-10">
+    <div className="flex-1 gap-3 h-10 flex items-center px-2 lg:px-10">
       {disabled ? (
         <CircleX className="size-5 text-royal-green opacity-60"></CircleX>
       ) : (
@@ -130,7 +132,7 @@ const ComparisonTableCellTitle = ({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
-    <p className={cn("text-base font-medium text-royal-green")}>
+    <p className={cn("lg:text-base text-sm font-medium text-royal-green")}>
       {props.children}
     </p>
   );
@@ -140,7 +142,7 @@ const ComparisonTableCellDescription = ({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
-    <p className={cn("text-base font-light text-[#256067]")}>
+    <p className={cn("lg:text-base text-sm font-light text-[#256067]")}>
       {props.children}
     </p>
   );

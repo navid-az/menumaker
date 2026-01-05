@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 export default function Home() {
   return (
     <main className="items-center">
-      {/* <Image
+      <Image
         src="/images/two-square.svg"
         width={465}
         height={390}
@@ -19,8 +19,8 @@ export default function Home() {
         height={630}
         alt="two square"
         className=" absolute -left-28 top-48 -z-10 -rotate-[11.92deg]"
-      ></Image> */}
-      <div className="container m-auto">
+      ></Image>
+      <div className="container px-16 mx-auto">
         <div className=" mt-60 flex flex-col gap-2 py-20">
           <h1 className="h-auto text-right text-5xl font-bold leading-normal text-royal-green">
             منو کسب و کار خود را تنها با <br /> چند کلیک ایجاد کنید
@@ -29,10 +29,10 @@ export default function Home() {
         </div>
       </div>
       {/* green section */}
-      <section className="flex w-full flex-col items-center justify-center bg-royal-green">
+      <section className="flex px-16 w-full flex-col items-center justify-center bg-royal-green">
         <div className="container -mt-80 flex items-end justify-between">
           <div className="flex flex-col gap-7">
-            <h2 className="text-right text-3xl font-medium leading-normal text-sky-blue">
+            <h2 className="text-right text-3xl font-medium leading-normal text-soft-blue">
               بزرگ ترین سامانه ساخت منو هوشمند برای
               <br />
               رستوران و کافی شاپ ها

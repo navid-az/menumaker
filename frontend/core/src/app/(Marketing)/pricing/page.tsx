@@ -240,8 +240,8 @@ const DEFAULT_OPEN_SECTIONS = PRICING_COMPARISON.map(
 
 export default async function page() {
   return (
-    <div className="flex container flex-col mx-auto items-center px-4 sm:px-6 lg:px-0 xl:px-16 2xl:gap-24 2xl:px-32 py-20">
-      <div className="flex flex-col lg:flex-row mx-auto justify-between w-full gap-4">
+    <div className="flexcontainer mx-auto flex-col items-center gap-24 xl:px-20 md:px-8 2xl:px-28">
+      <div className="flex w-full flex-col py-20 lg:flex-row flex-wrap items-center justify-between gap-4">
         {/* Subscription Plans */}
         <PlanCard className="bg-soft-blue text-royal-green border-royal-green/10 hover:border-royal-green/50">
           <PlanCardHeader>
@@ -272,7 +272,6 @@ export default async function page() {
             </Button>
           </PlanCardFooter>
         </PlanCard>
-
         <PlanCard className="bg-purple-100 2xl:scale-110 text-[#2C0065] border-[#2C0065]/10 hover:border-[#2C0065]/50">
           <PlanCardHeader>
             <PlanCardTitle>پرو</PlanCardTitle>
@@ -355,7 +354,7 @@ export default async function page() {
       </div>
 
       {/* Comparison Table */}
-      <ComparisonTable>
+      <ComparisonTable className="py-20">
         <ComparisonTableHeader>
           <ComparisonTableHeaderCell className="text-sky-blue">
             بیسیک

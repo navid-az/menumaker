@@ -116,7 +116,7 @@ const PlanCard = ({
   return (
     <div
       className={cn(
-        "w-full min-h-[600px] max-w-sm overflow-hidden relative flex flex-col gap-5 flex-1 hover:border-primary/40 transition-all duration-300 border-2 rounded-lg p-5",
+        "group w-full min-h-[600px] select-none max-w-sm overflow-hidden relative flex flex-col gap-5 flex-1 hover:border-primary/40 transition-all duration-300 border-2 rounded-lg p-5",
         // colors.bg,
         // colors.textPrimary,
         // colors.border,
@@ -271,7 +271,7 @@ const PlanCardShadowEffect = ({
 }: React.HTMLAttributes<HTMLHeadingElement>) => (
   <div
     className={cn(
-      "size-64 blur-[90px] rounded-full absolute -top-20 -right-20",
+      "size-64 blur-[90px] group-hover:blur-[110px] group-hover:size-72 group-hover:-bottom-10 group-hover:-left-20 group-hover:top-0 group-hover:right-0 rounded-full absolute -top-20 -right-20 transition-all duration-800",
       className
     )}
     {...props}
