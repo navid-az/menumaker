@@ -154,24 +154,57 @@ const PlanCardDescription = ({
 function PlanCardPricing({
   price,
   isFree = false,
-  offerPrice,
+  discount = 0,
   className,
 }: {
   price: number;
   isFree?: boolean;
-  offerPrice?: number;
+  discount?: number;
   className?: string;
 }) {
-  const formattedPrice = toPersianDigits(addCommas(price));
+  const FRDiscount = toPersianDigits(discount);
+  const discountAmount = (price * discount) / 100;
+  const finalPrice = price - discountAmount;
+  const formattedOriginalPrice = toPersianDigits(addCommas(price));
+  const formattedDiscountedPrice = toPersianDigits(addCommas(finalPrice));
 
   return (
     <div className={cn("flex gap-2 items-center z-10", className)}>
       {isFree ? (
         <p className="text-2xl md:text-4xl font-bold">رایگان!</p>
       ) : (
-        <div className="flex items-center gap-2">
-          <p className="text-2xl md:text-4xl font-bold">{formattedPrice}</p>
-          <p className="text-base md:text-2xl">تومان</p>
+        <div className="flex flex-col gap-2">
+          {discount > 0 && (
+            <div className="flex gap-2 items-center">
+              <div className="relative flex gap-2 items-center opacity-50 text-current">
+                <p
+                  className="relative text-lg md:text-2xl font-medium
+                before:content-['']
+                before:absolute
+                before:left-0
+                before:top-1/2
+                before:w-full
+                before:h-[2px]
+                before:bg-current
+                before:-rotate-12
+                before:-translate-y-1/2"
+                >
+                  {formattedOriginalPrice}
+                </p>
+                <p className="text-base md:text-lg">تومان</p>
+              </div>
+              <span className="bg-royal-green text-sm font-semibold rounded-full text-soft-blue px-2.5 py-1">
+                {FRDiscount}٪
+              </span>
+            </div>
+          )}
+
+          <div className="flex gap-2 items-center">
+            <p className="text-2xl md:text-4xl font-bold">
+              {formattedDiscountedPrice}
+            </p>
+            <p className="text-base md:text-2xl">تومان</p>
+          </div>
         </div>
       )}
     </div>
