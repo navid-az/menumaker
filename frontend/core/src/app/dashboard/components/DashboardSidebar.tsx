@@ -110,7 +110,11 @@ export default function DashboardSidebar({
           >
             <Users className={`${!isCollapsed && "ml-3"} h-6 w-6`}></Users>
           </DashboardNavbarBtn>
-          <DashboardNavbarBtn text="تنظیمات" isCollapsed={isCollapsed}>
+          <DashboardNavbarBtn
+            text="تنظیمات"
+            isCollapsed={isCollapsed}
+            basePath={`/dashboard/${params.business_slug}/${decodedBranchSlug}/settings`}
+          >
             <Settings
               className={`${!isCollapsed && "ml-3"} h-6 w-6`}
             ></Settings>
@@ -152,7 +156,8 @@ function DashboardNavbarBtn({
         isCollapsed &&
           (encodedBasePath == pathName ||
             dynamicPaths.includes(lastPathNamePart)) &&
-          "scale-125 px-4", isCollapsed?' justify-center':'justify-start'
+          "scale-125 px-4",
+        isCollapsed ? " justify-center" : "justify-start"
       )}
     >
       <Link

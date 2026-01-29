@@ -20,7 +20,7 @@ import { Filter, Plus } from "lucide-react";
 
 //types
 import { type AssetGroupType } from "@/components/global/AssetPicker";
-import { MenuCategory } from "@/app/types/api/category";
+import { type MenuCategory } from "@/app/types/api/menu";
 import { type Tag } from "@/components/global/TagSelector";
 
 export default function ToolBar({
@@ -41,107 +41,111 @@ export default function ToolBar({
   const parentSection = lastTwoSections[0];
   const childSection = lastTwoSections[1];
 
-  return (
-    <div className="sticky backdrop-blur-xl bg-sad-blue/60 border border-royal-green/20 top-0 z-40 flex h-max w-full items-center justify-between gap-2 rounded-full  p-2">
-      {/* section specific navigator */}
-      {parentSection === "data" ? (
-        <DashboardTabs>
-          <DashboardTabsTrigger
-            path="items"
-            title="آیتم ها"
-          ></DashboardTabsTrigger>
-          <DashboardTabsTrigger
-            path="categories"
-            title="دسته بندی ها"
-          ></DashboardTabsTrigger>
-          <DashboardTabsTrigger
-            disabled
-            path="offers"
-            title="تخفیف ها"
-          ></DashboardTabsTrigger>
-          <DashboardTabsTrigger
-            disabled
-            path="costs"
-            title="هزینه های مازاد"
-          ></DashboardTabsTrigger>
-        </DashboardTabs>
-      ) : parentSection === "liveManagement" && childSection === "all" ? (
-        <DashboardTabs>
-          <DashboardTabsTrigger path="all" title="همه"></DashboardTabsTrigger>
-          <DashboardTabsTrigger
-            path="in-person"
-            title="بر روی میز"
-          ></DashboardTabsTrigger>
-          <DashboardTabsTrigger
-            path="online"
-            title="سفارش آنلاین"
-          ></DashboardTabsTrigger>
-        </DashboardTabs>
-      ) : parentSection === "personnel" && childSection === "all" ? (
-        <DashboardTabs>
-          <DashboardTabsTrigger
-            path="all"
-            title="پرسنل مجموعه"
-          ></DashboardTabsTrigger>
-          <DashboardTabsTrigger
-            path="per-branch"
-            title="پرسنل شعبه"
-          ></DashboardTabsTrigger>
-        </DashboardTabs>
-      ) : (
-        ""
-      )}
-      {/* tab specific tools  */}
-      {parentSection === "data" && childSection === "items" && (
-        <div className="flex items-center gap-2">
-          <Button
-            size="icon"
-            className="scale-pro h-11 w-11 rounded-full border-2 border-primary bg-soft-blue font-bold text-primary transition-all duration-200 hover:scale-95 hover:bg-primary hover:text-primary-foreground data-[state=open]:scale-95 data-[state=open]:bg-primary data-[state=open]:text-primary-foreground"
+  if (childSection === "settings") {
+    return null;
+  } else {
+    return (
+      <div className="sticky backdrop-blur-xl bg-sad-blue/60 border border-royal-green/20 top-0 z-40 flex h-max w-full items-center justify-between gap-2 rounded-full  p-2">
+        {/* section specific navigator */}
+        {parentSection === "data" ? (
+          <DashboardTabs>
+            <DashboardTabsTrigger
+              path="items"
+              title="آیتم ها"
+            ></DashboardTabsTrigger>
+            <DashboardTabsTrigger
+              path="categories"
+              title="دسته بندی ها"
+            ></DashboardTabsTrigger>
+            <DashboardTabsTrigger
+              disabled
+              path="offers"
+              title="تخفیف ها"
+            ></DashboardTabsTrigger>
+            <DashboardTabsTrigger
+              disabled
+              path="costs"
+              title="هزینه های مازاد"
+            ></DashboardTabsTrigger>
+          </DashboardTabs>
+        ) : parentSection === "liveManagement" && childSection === "all" ? (
+          <DashboardTabs>
+            <DashboardTabsTrigger path="all" title="همه"></DashboardTabsTrigger>
+            <DashboardTabsTrigger
+              path="in-person"
+              title="بر روی میز"
+            ></DashboardTabsTrigger>
+            <DashboardTabsTrigger
+              path="online"
+              title="سفارش آنلاین"
+            ></DashboardTabsTrigger>
+          </DashboardTabs>
+        ) : parentSection === "personnel" && childSection === "all" ? (
+          <DashboardTabs>
+            <DashboardTabsTrigger
+              path="all"
+              title="پرسنل مجموعه"
+            ></DashboardTabsTrigger>
+            <DashboardTabsTrigger
+              path="per-branch"
+              title="پرسنل شعبه"
+            ></DashboardTabsTrigger>
+          </DashboardTabs>
+        ) : (
+          ""
+        )}
+        {/* tab specific tools  */}
+        {parentSection === "data" && childSection === "items" && (
+          <div className="flex items-center gap-2">
+            <Button
+              size="icon"
+              className="scale-pro h-11 w-11 rounded-full border-2 border-primary bg-soft-blue font-bold text-primary transition-all duration-200 hover:scale-95 hover:bg-primary hover:text-primary-foreground data-[state=open]:scale-95 data-[state=open]:bg-primary data-[state=open]:text-primary-foreground"
+            >
+              <Filter className="h-5 w-5"></Filter>
+            </Button>
+            <CreateItemForm
+              businessSlug={params.business_slug}
+              branchSlug={params.branch_slug}
+              categories={categories}
+              title="ایجاد آیتم"
+              description="با انتخاب گزینه های مورد نظر آیتم جدید به منو اضافه کنید"
+            ></CreateItemForm>
+          </div>
+        )}
+        {parentSection === "data" && childSection === "categories" && (
+          <CreateCategoryForm
+            businessSlug={businessSlug}
+            assetGroups={assetGroups}
+            title="ایجاد دسته بندی"
+            description="با انتخاب گزینه های مورد نظر دسته بندی جدید به منو اضافه کنید"
+          ></CreateCategoryForm>
+        )}
+        {parentSection === "liveManagement" && childSection === "all" && (
+          <CreateTableForm
+            branchSlug={params.branch_slug}
+            title="ایجاد میز"
+            description="با انتخاب گزینه های مورد نظر دسته بندی جدید به منو اضافه کنید"
           >
-            <Filter className="h-5 w-5"></Filter>
-          </Button>
-          <CreateItemForm
+            <Button
+              size="lg"
+              className="scale-pro rounded-full border-2 border-primary bg-soft-blue px-4 font-semibold text-primary transition-all duration-200 hover:scale-95 hover:bg-primary hover:text-primary-foreground data-[state=open]:scale-95 data-[state=open]:bg-primary data-[state=open]:text-primary-foreground"
+            >
+              <Plus className="ml-2 h-5 w-5"></Plus>
+              <p>ایجاد میز</p>
+            </Button>
+          </CreateTableForm>
+        )}
+        {parentSection === "personnel" && childSection === "all" && (
+          <CreateUpdatePersonnelForm
             businessSlug={params.business_slug}
             branchSlug={params.branch_slug}
-            categories={categories}
-            title="ایجاد آیتم"
-            description="با انتخاب گزینه های مورد نظر آیتم جدید به منو اضافه کنید"
-          ></CreateItemForm>
-        </div>
-      )}
-      {parentSection === "data" && childSection === "categories" && (
-        <CreateCategoryForm
-          businessSlug={businessSlug}
-          assetGroups={assetGroups}
-          title="ایجاد دسته بندی"
-          description="با انتخاب گزینه های مورد نظر دسته بندی جدید به منو اضافه کنید"
-        ></CreateCategoryForm>
-      )}
-      {parentSection === "liveManagement" && childSection === "all" && (
-        <CreateTableForm
-          branchSlug={params.branch_slug}
-          title="ایجاد میز"
-          description="با انتخاب گزینه های مورد نظر دسته بندی جدید به منو اضافه کنید"
-        >
-          <Button
-            size="lg"
-            className="scale-pro rounded-full border-2 border-primary bg-soft-blue px-4 font-semibold text-primary transition-all duration-200 hover:scale-95 hover:bg-primary hover:text-primary-foreground data-[state=open]:scale-95 data-[state=open]:bg-primary data-[state=open]:text-primary-foreground"
-          >
-            <Plus className="ml-2 h-5 w-5"></Plus>
-            <p>ایجاد میز</p>
-          </Button>
-        </CreateTableForm>
-      )}
-      {parentSection === "personnel" && childSection === "all" && (
-        <CreateUpdatePersonnelForm
-          businessSlug={params.business_slug}
-          branchSlug={params.branch_slug}
-          branches={branches}
-          title="ایجاد پرسنل"
-          description="اعضای جدید را به پرسنل مجموعه اضافه کنید"
-        ></CreateUpdatePersonnelForm>
-      )}
-      {/* add more here if needed */}
-    </div>
-  );
+            branches={branches}
+            title="ایجاد پرسنل"
+            description="اعضای جدید را به پرسنل مجموعه اضافه کنید"
+          ></CreateUpdatePersonnelForm>
+        )}
+        {/* add more here if needed */}
+      </div>
+    );
+  }
 }
