@@ -45,7 +45,7 @@ class Business(models.Model):
         'single', 'single'), ('multiple', 'multiple')], null=True, blank=True)
     branch_count = models.PositiveIntegerField(default=1)
     # ex: [{"Telegram":"[telegram link]", "Instagram":"[instagram link]", ...}]
-    social_links = models.JSONField(default=dict, blank=True)
+    social_links = models.JSONField(default=list, blank=True)
     phone_numbers = models.JSONField(default=list, blank=True)
     # ex: [{"number_1":[number], "number_2":[number], ...}]
     # ex: [{"branch-1":"[address]", "branch_2":"[address]", ...}]

@@ -28,9 +28,9 @@ export type BusinessType = {
   service_type: "online" | "in_person" | "both";
   primary_service_type?: "online" | "in_person";
   branch_count: number;
-  social_links?: {};
-  phone_numbers?: {};
-  locations?: {};
+  social_links?: [];
+  phone_numbers?: [];
+  locations?: [];
   branches: BranchType[];
 };
 

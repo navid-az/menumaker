@@ -51,12 +51,22 @@ export default function HomeFeatureStep({
                   ></Switch>
                 </SliderTabTitle>
                 <SliderTabBody isOpen={field.value}>
-                  <ItemAdder
-                    assetGroups={assetGroups}
-                    name="social_links"
-                    limit={4}
-                    placeholder="نام بخش"
-                  ></ItemAdder>
+                  <FormField
+                    control={control}
+                    name="business.social_links"
+                    render={({ field }) => (
+                      <FormControl>
+                        <ItemAdder
+                          assetGroups={assetGroups}
+                          name="social_links"
+                          limit={4}
+                          value={field.value}
+                          onChange={field.onChange}
+                          placeholder="لینک فضای مجازی"
+                        ></ItemAdder>
+                      </FormControl>
+                    )}
+                  />
                 </SliderTabBody>
               </SliderTab>
             </FormControl>
@@ -84,19 +94,29 @@ export default function HomeFeatureStep({
                   ></Switch>
                 </SliderTabTitle>
                 <SliderTabBody isOpen={field.value}>
-                  <ItemAdder
-                    assetGroups={assetGroups}
-                    name="phone_numbers"
-                    limit={3}
-                    placeholder="نام بخش"
-                  ></ItemAdder>
+                  <FormField
+                    control={control}
+                    name="business.phone_numbers"
+                    render={({ field }) => (
+                      <FormControl>
+                        <ItemAdder
+                          assetGroups={assetGroups}
+                          name="phone_numbers"
+                          limit={3}
+                          value={field.value}
+                          onChange={field.onChange}
+                          placeholder="شماره تماس"
+                        ></ItemAdder>
+                      </FormControl>
+                    )}
+                  />
                 </SliderTabBody>
               </SliderTab>
             </FormControl>
           </FormItem>
         )}
       />
-      <FormField
+      {/* <FormField
         control={control}
         name="show_branches"
         render={({ field }) => (
@@ -119,6 +139,14 @@ export default function HomeFeatureStep({
                 <SliderTabBody isOpen={field.value}>
                   <ItemAdder
                     assetGroups={assetGroups}
+                    name="location"
+                    limit={1}
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="آدرس بیزینس"
+                  ></ItemAdder>
+                  <ItemAdder
+                    assetGroups={assetGroups}
                     name="phone_numbers"
                     limit={3}
                     placeholder="نام بخش"
@@ -128,7 +156,7 @@ export default function HomeFeatureStep({
             </FormControl>
           </FormItem>
         )}
-      />
+      /> */}
     </SliderStep>
   );
 }
