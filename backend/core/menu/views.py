@@ -6,22 +6,24 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from permissions import IsOwner
+from permissions import IsOwner, HasBusinessBranchAccess, HasMethodAccess
 from mixins import MethodBasedPermissionsMixin
 
 # dependencies
 from .models import Menu, MenuGlobalStyling
 from business.models import Business
-from .serializers import MenuCreateSerializer, MenuListSerializer, MenuGlobalStylingSerializer, MenuSerializer, MenuImageCreateSerializer
+from .serializers import MenuCreateUpdateSerializer, MenuListSerializer, MenuGlobalStylingSerializer, MenuSerializer, MenuImageCreateSerializer
 
 
 User = get_user_model()
 
 
 class MenuView(MethodBasedPermissionsMixin, APIView):
-    permission_classes_by_method = {'POST': [IsAuthenticated, IsOwner]}
+    permission_classes_by_method = {
+        'POST': [IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess)], 'PATCH': [IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess)]}
     required_permission_by_method = {
         'POST': ['business.add_menu'],
+        'PATCH': ['business.change_menu']
     }
 
     def get(self, request, business_slug):
@@ -36,13 +38,28 @@ class MenuView(MethodBasedPermissionsMixin, APIView):
         # Check business ownership
         self.check_object_permissions(request, business)
 
-        serializer = MenuCreateSerializer(data=request.data)
+        serializer = MenuCreateUpdateSerializer(data=request.data)
         if business.menus.exists():
             return Response(
                 {"error": "A menu already exists for this business."},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+        if serializer.is_valid():
+            serializer.save(business=business)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def patch(self, request, business_slug):
+        business = get_object_or_404(Business, slug=business_slug)
+
+        # Check business ownership
+        self.check_object_permissions(request, business)
+        menu = business.menus.first()
+
+        serializer = MenuCreateUpdateSerializer(
+            instance=menu, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save(business=business)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
