@@ -8,10 +8,11 @@ export type Menu = {
   show_branches: boolean;
   items_page_layout: "horizontal" | "vertical";
   cart_btn_display_type: "default" | "compact";
-  categories_display_type: string;
+  categories_display_type: "slider" | "circular";
   items_display_type: ItemsDisplayType;
   call_waiter_enabled: boolean;
   searchbar_enabled: boolean;
+  // welcome_page_layout?: "single" | "couple" | "none";
   home_title?: string;
   home_subtitle?: string;
   primary_image?: string;
@@ -23,7 +24,7 @@ export type AnimationVariant = "ripple" | "tactile";
 
 export type MenuGlobalStyling = {
   id: number;
-  business: number;
+  menu: number;
   style: "default" | "retro";
   primary_color: string;
   secondary_color: string;
@@ -31,7 +32,7 @@ export type MenuGlobalStyling = {
   bg_color: string;
   unit_display_type: "default" | "compact" | "persian_abbr" | "english_abbr";
   border_radius: "sm" | "md" | "lg" | "full";
-  click_animation_enabled?: boolean;
+  click_animation_enabled: boolean;
   click_animation_type?: AnimationVariant[];
   updated: string;
   created: string;

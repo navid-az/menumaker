@@ -56,12 +56,14 @@ export function SliderNavigator({
 
   const nextBtnRef = useRef<HTMLButtonElement>(null);
   const prevBtnRef = useRef<HTMLButtonElement>(null);
+  const editBtnRef = useRef<HTMLButtonElement>(null);
   const submitBtnRef = useRef<HTMLButtonElement>(null);
   const buttonsContainerRef = useRef<HTMLDivElement>(null);
 
   // next/prev buttons animation
   useTactileAnimation(nextBtnRef, {});
   useTactileAnimation(prevBtnRef, {});
+  useTactileAnimation(editBtnRef, {});
   useTactileAnimation(submitBtnRef, {});
 
   // disable buttons if it's the first/last step of all the steps
@@ -173,9 +175,9 @@ export function SliderNavigator({
         )}
         {isEditing && (
           <Button
+            ref={editBtnRef}
             disabled={!isDirty}
-            ref={submitBtnRef}
-            className="h-9 select-none rounded-full transition-all duration-300 px-5 sm:h-10 sm:px-6"
+            className="h-9 select-none rounded-full transition-color duration-300 px-5 sm:h-10 sm:px-6"
             type="submit"
           >
             ویرایش منو
