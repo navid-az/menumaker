@@ -373,7 +373,11 @@ export default function BuilderTest({
           ref={ref}
           className="max-w-lg w-full flex items-center"
         >
-          <Slider isEditing={!!defaultValues} validSections={validSections}>
+          <Slider
+            isDirty={form.formState.isDirty}
+            isEditing={!!defaultValues}
+            validSections={validSections}
+          >
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={activeStep.id}

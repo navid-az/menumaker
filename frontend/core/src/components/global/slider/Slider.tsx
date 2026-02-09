@@ -18,6 +18,8 @@ import { Eye } from "lucide-react";
 
 //types
 type SliderType = {
+  isDirty?: boolean;
+  isEditing?: boolean;
   disableSubmitBtn?: boolean;
   submitBtnText?: string;
   children: React.ReactNode;
@@ -38,6 +40,8 @@ type stepType = {
 };
 
 export function Slider({
+  isDirty = false,
+  isEditing = false,
   disableSubmitBtn,
   submitBtnText,
   children,
@@ -87,6 +91,8 @@ export function Slider({
       </div>
       <footer className="flex w-full items-center justify-between">
         <SliderNavigator
+          isDirty={isDirty}
+          isEditing={isEditing}
           validSections={validSections}
           disableSubmitBtn={disableSubmitBtn}
           submitBtnText={submitBtnText}

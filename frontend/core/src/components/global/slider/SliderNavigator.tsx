@@ -16,6 +16,8 @@ import gsap from "gsap";
 type disabledStateType = "nextDisabled" | "prevDisabled" | "";
 type SliderNavigatorType = {
   disableSubmitBtn?: boolean;
+  isDirty?: boolean;
+  isEditing?: boolean;
   submitBtnText?: string;
   validSections: {
     title: string;
@@ -30,6 +32,8 @@ type SliderNavigatorType = {
 
 export function SliderNavigator({
   disableSubmitBtn = false,
+  isDirty = false,
+  isEditing = false,
   submitBtnText,
   validSections,
 }: SliderNavigatorType) {
@@ -73,7 +77,7 @@ export function SliderNavigator({
 
   // animate next/submit buttons according to disabled state
   useEffect(() => {
-    if (!disableSubmitBtn) {
+    if (!disableSubmitBtn && !isEditing) {
       if (disabled === "nextDisabled") {
         if (submitBtnRef.current) {
           submitBtnRef.current.style.display = "flex";
@@ -145,17 +149,19 @@ export function SliderNavigator({
           قبلی
         </Button>
       </div>
-      <div className="flex grow gap-1 rounded-full bg-soft-blue p-1 rtl:flex-row-reverse">
-        {Array.from({ length: stepCount }, (_, index) => (
-          <SliderNavigatorDot
-            index={index}
-            key={index}
-            active={stepIndex == index}
-          ></SliderNavigatorDot>
-        ))}
+      <div className="w-full flex justify-center">
+        <div className="flex w-max gap-1 rounded-full bg-soft-blue p-1 rtl:flex-row-reverse">
+          {Array.from({ length: stepCount }, (_, index) => (
+            <SliderNavigatorDot
+              index={index}
+              key={index}
+              active={stepIndex == index}
+            ></SliderNavigatorDot>
+          ))}
+        </div>
       </div>
-      <div ref={buttonsContainerRef} className="flex w-full basis-6/12 gap-2">
-        {!disableSubmitBtn && (
+      <div ref={buttonsContainerRef} className="flex gap-2">
+        {!disableSubmitBtn && !isEditing && (
           <Button
             ref={submitBtnRef}
             disabled={disabled != "nextDisabled"}
@@ -163,6 +169,16 @@ export function SliderNavigator({
             type="submit"
           >
             {submitBtnText ? submitBtnText : "ایجاد منو"}
+          </Button>
+        )}
+        {isEditing && (
+          <Button
+            disabled={!isDirty}
+            ref={submitBtnRef}
+            className="h-9 select-none rounded-full transition-all duration-300 px-5 sm:h-10 sm:px-6"
+            type="submit"
+          >
+            ویرایش منو
           </Button>
         )}
 
