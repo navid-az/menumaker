@@ -364,6 +364,41 @@ export async function createMenu(businessSlug: string, data: MenuType) {
     };
   }
 }
+export async function updateMenu(businessSlug: string, data: MenuType) {
+  const accessToken = (await cookies()).get("access");
+
+  try {
+    const res = await fetch(
+      `http://localhost:8000/businesses/${businessSlug}/menu/`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken?.value}`,
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      console.log("errorData:", errorData);
+
+      return {
+        success: false,
+        error: errorData.error || "Failed to update menu",
+      };
+    }
+
+    const responseData = await res.json();
+    return { success: true, data: responseData };
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.message || "An unexpected error occurred",
+    };
+  }
+}
 
 //create business
 export async function createBusiness(data: SetupSchemaType) {

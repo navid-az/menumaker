@@ -24,7 +24,7 @@ import MenuFeatureStep from "./steps/MenuFeatureStep";
 import { useSlider } from "@/lib/stores";
 
 //actions
-import { createMenu } from "@/app/actions";
+import { createMenu, updateMenu } from "@/app/actions";
 
 //libraries
 import * as z from "zod";
@@ -49,10 +49,11 @@ const InstanceSchema = z.array(
       .optional(),
   })
 );
+
 const BusinessSchema = z.object({
-  phone_numbers: InstanceSchema,
-  social_links: InstanceSchema,
-  branches: z.array(z.string()),
+  phone_numbers: InstanceSchema.optional(),
+  social_links: InstanceSchema.optional(),
+  // branches: z.array(z.string()),
 });
 const GlobalStylingSchema = z.object({
   style: z.enum(["default", "retro"]),
@@ -86,8 +87,8 @@ export const BuilderSchema = z.object({
       })
     )
     .optional(),
-  home_title: z.string(),
-  home_subtitle: z.string(),
+  home_title: z.string().optional(),
+  home_subtitle: z.string().optional(),
   welcome_page_layout: z.enum(["single", "couple", "none"]),
   menu_sections: InstanceSchema,
 
@@ -116,35 +117,39 @@ export type keyOfGlobalStylingSchemaType = keyof GlobalStylingType;
 
 export default function BuilderTest({
   ref,
+  defaultValues,
   businessData,
   assetGroups,
   onSuccess,
 }: {
-  ref: React.RefObject<HTMLFormElement | null>;
+  ref?: React.RefObject<HTMLFormElement | null>;
+  defaultValues?: BuilderFormType;
   businessData: BusinessType | null;
   assetGroups: AssetGroupType[];
-  onSuccess: () => void;
+  onSuccess?: () => void;
 }) {
   const form = useForm<BuilderFormType>({
     resolver: zodResolver(BuilderSchema),
-    defaultValues: {
-      business: { social_links: [], phone_numbers: [], branches: [] },
-      global_styling: {
-        style: "default",
-        color_palette: ["#0d3b66", "#faf0ca", "#f4d35e"],
-        border_radius: "full",
-        unit_display_type: "default",
-        click_animation_type: [],
-        click_animation_enabled: false,
-      },
-      items_page_layout: "horizontal",
-      items_display_type: "half-image-stacked",
-      cart_btn_display_type: "default",
-      menu_sections: [],
-      home_title: "",
-      home_subtitle: "",
-      home_images: [],
-    },
+    defaultValues: defaultValues
+      ? defaultValues
+      : {
+          business: { social_links: [], phone_numbers: [] },
+          global_styling: {
+            style: "default",
+            color_palette: ["#0d3b66", "#faf0ca", "#f4d35e"],
+            border_radius: "full",
+            unit_display_type: "default",
+            click_animation_type: [],
+            click_animation_enabled: false,
+          },
+          items_page_layout: "horizontal",
+          items_display_type: "half-image-stacked",
+          cart_btn_display_type: "default",
+          menu_sections: [],
+          home_title: "",
+          home_subtitle: "",
+          home_images: [],
+        },
   });
 
   const sections = [
@@ -296,15 +301,32 @@ export default function BuilderTest({
         bg_color,
       },
     };
+    console.log(data);
 
     //call server action
     if (businessData?.slug) {
-      const res = await createMenu(businessData.slug, data);
-      if (res.success) {
-        toast.success("Menu created successfully!");
-        onSuccess();
+      if (defaultValues) {
+        // update menu
+        const res = await updateMenu(businessData.slug, data);
+        if (res.success) {
+          toast.success("منو با موفقیت آپدیت شد!");
+          if (onSuccess) {
+            onSuccess();
+          }
+        } else {
+          toast.error(res.error);
+        }
       } else {
-        toast.error(res.error);
+        // create menu
+        const res = await createMenu(businessData.slug, data);
+        if (res.success) {
+          toast.success("منو با موفقیت ساخته شد!");
+          if (onSuccess) {
+            onSuccess();
+          }
+        } else {
+          toast.error(res.error);
+        }
       }
     }
   }
@@ -351,7 +373,7 @@ export default function BuilderTest({
           ref={ref}
           className="max-w-lg w-full flex items-center"
         >
-          <Slider validSections={validSections}>
+          <Slider isEditing={!!defaultValues} validSections={validSections}>
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={activeStep.id}
