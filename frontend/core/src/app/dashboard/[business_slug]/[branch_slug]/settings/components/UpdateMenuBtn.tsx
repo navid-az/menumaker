@@ -43,15 +43,19 @@ const rowHasHoverPush = [true, false, true, false];
 
 export default function UpdateMenuBtn({
   businessSlug,
+  branchSlug,
 }: {
   businessSlug: string;
+  branchSlug: string;
 }) {
   return (
     <Button
       asChild
       className="group w-full cursor-pointer h-60 relative flex justify-start px-20 overflow-hidden hover:bg-amber-50 hover:text-amber-950 rounded-3xl hover:border-royal-green duration-300 transition-all bg-soft-blue border-2 border-royal-green/20 text-royal-green "
     >
-      <Link href={`/${businessSlug}/menu/update`}>
+      <Link
+        href={`/${businessSlug}/menu/update?returnTo=/dashboard/${businessSlug}/${branchSlug}/settings`}
+      >
         <div className="flex items-start flex-col justify-between gap-4">
           <h4 className="font-semibold text-4xl">ویرایش منو دیجیتال</h4>
           <p className="">برای ویرایش منو دیجیتال کلیک کنید</p>

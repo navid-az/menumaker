@@ -140,19 +140,17 @@ export function SliderNavigator({
 
   return (
     <div className="flex w-full items-center justify-between rtl:flex-row-reverse">
-      <div className="flex basis-6/12 justify-end">
-        <Button
-          ref={prevBtnRef}
-          type="button"
-          disabled={disabled == "prevDisabled"}
-          onClick={goBack}
-          className="h-9 select-none rounded-full px-5 transition-opacity duration-300 sm:h-10 sm:px-6"
-        >
-          قبلی
-        </Button>
-      </div>
+      <Button
+        ref={prevBtnRef}
+        type="button"
+        disabled={disabled == "prevDisabled"}
+        onClick={goBack}
+        className="h-9 select-none rounded-full px-5 transition-opacity duration-300 sm:h-10 sm:px-6"
+      >
+        قبلی
+      </Button>
       <div className="w-full flex justify-center">
-        <div className="flex w-max gap-1 rounded-full bg-soft-blue p-1 rtl:flex-row-reverse">
+        <div className="flex w-max gap-2 border-1 border-royal-green/20 rounded-full bg-soft-blue p-2 rtl:flex-row-reverse">
           {Array.from({ length: stepCount }, (_, index) => (
             <SliderNavigatorDot
               index={index}

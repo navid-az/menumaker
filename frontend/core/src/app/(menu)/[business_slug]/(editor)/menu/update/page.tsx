@@ -1,12 +1,11 @@
-import BuilderTest, {
-  BuilderFormType,
-} from "@/app/(creator)/builder/components/builder/BuilderTest";
-import { BusinessType } from "@/app/dashboard/layout";
+//components
+import { MenuEditor } from "../components/MenuEditor";
 
 //types
+import { type BusinessType } from "@/app/dashboard/layout";
 import { type MenuGlobalStyling } from "@/app/types/api/menu";
 import { type Menu as MenuData } from "@/app/types/api/menu";
-import { redirect } from "next/navigation";
+import { type AssetGroupType } from "@/components/global/AssetPicker";
 
 // GET business data
 export async function getBusinessData(business_slug: string) {
@@ -62,7 +61,7 @@ const getAssetGroups = async () => {
 };
 
 export default async function page(props: {
-  params: Promise<{ business_slug: string; branch_slug: string }>;
+  params: Promise<{ business_slug: string }>;
 }) {
   const params = await props.params;
 
@@ -70,35 +69,20 @@ export default async function page(props: {
     params.business_slug
   );
   const menuData: MenuData = await getMenuData(params.business_slug);
-  const globalStyling: MenuGlobalStyling = await getGlobalStyling(
+
+  const globalStylingData: MenuGlobalStyling = await getGlobalStyling(
     params.business_slug
   );
-  const assetGroups = await getAssetGroups();
-
-  const colorPlatte = [
-    globalStyling.primary_color,
-    globalStyling.secondary_color,
-    globalStyling.tertiary_color,
-    globalStyling.bg_color,
-  ];
-
-  const normalizedData: BuilderFormType = {
-    ...menuData,
-    welcome_page_layout: "none",
-    menu_sections: [],
-    business: { ...businessData },
-    global_styling: { color_palette: colorPlatte, ...globalStyling },
-    frontend_only: { suggested_palette_enabled: false },
-  };
-  console.log(businessData);
+  const assetGroups: AssetGroupType[] = await getAssetGroups();
 
   return (
     <div className="h-screen overflow-hidden">
-      <BuilderTest
+      <MenuEditor
         businessData={businessData}
-        defaultValues={normalizedData}
+        menuData={menuData}
+        globalStylingData={globalStylingData}
         assetGroups={assetGroups}
-      ></BuilderTest>
+      ></MenuEditor>
     </div>
   );
 }
