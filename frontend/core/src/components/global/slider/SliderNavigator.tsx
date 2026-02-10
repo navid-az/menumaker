@@ -177,7 +177,7 @@ export function SliderNavigator({
           <Button
             ref={editBtnRef}
             disabled={!isDirty}
-            className="h-9 select-none rounded-full transition-color duration-300 px-5 sm:h-10 sm:px-6"
+            className="h-9 select-none rounded-full transition-opacity duration-300 px-5 sm:h-10 sm:px-6"
             type="submit"
           >
             ویرایش منو

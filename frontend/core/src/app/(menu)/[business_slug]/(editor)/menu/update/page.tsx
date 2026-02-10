@@ -93,9 +93,8 @@ export default async function page(props: {
   console.log(businessData);
 
   return (
-    <div>
+    <div className="h-screen overflow-hidden">
       <BuilderTest
-        // ref={updateFormRef}
         businessData={businessData}
         defaultValues={normalizedData}
         assetGroups={assetGroups}

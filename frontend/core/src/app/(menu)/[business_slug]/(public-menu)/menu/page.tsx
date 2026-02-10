@@ -1,5 +1,5 @@
 //components
-import MenuLayout from "../components/MenuLayout";
+import MenuLayout from "../../components/MenuLayout";
 
 //types
 import { type MenuGlobalStyling } from "@/app/types/api/menu";

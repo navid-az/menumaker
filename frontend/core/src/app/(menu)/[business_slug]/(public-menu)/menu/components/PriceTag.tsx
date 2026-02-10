@@ -6,14 +6,14 @@ import {
   toPersianDigits,
   addCommas,
   roundToThousands,
-} from "../../utilities/formatCurrency";
+} from "../../../utilities/formatCurrency";
 
 //libraries
 import { cn } from "@/lib/utils";
 import { cva } from "class-variance-authority";
 
 //SVGs
-import { Toman } from "../../components";
+import { Toman } from "../../../components";
 import { useEffect, useState } from "react";
 
 //types
@@ -72,8 +72,8 @@ export default function PriceTag({
               size === "sm"
                 ? "text-md font-medium"
                 : size === "lg"
-                  ? "text-3xl"
-                  : "text-2xl"
+                ? "text-3xl"
+                : "text-2xl"
             } sm:text-2xl`}
           >
             {validatedPrice}
@@ -90,8 +90,8 @@ export default function PriceTag({
                 size === "sm"
                   ? "h-6 w-6"
                   : size === "lg"
-                    ? "h-8 w-8"
-                    : "h-8 w-8"
+                  ? "h-8 w-8"
+                  : "h-8 w-8"
               }`}
             >
               <Toman className={`h-full w-full text-${secondaryColor}`}></Toman>

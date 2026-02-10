@@ -3,10 +3,10 @@
 import React from "react";
 
 //components
-import MenuHeader from "../menu/components/MenuHeader";
-import ItemsCategory from "../menu/components/ItemsCategory";
-import MenuItemsWrapper from "../menu/components/Items/MenuItemsWrapper";
-import CartBtn from "../menu/components/CartBtn";
+import MenuHeader from "../(public-menu)/menu/components/MenuHeader";
+import ItemsCategory from "../(public-menu)/menu/components/ItemsCategory";
+import MenuItemsWrapper from "../(public-menu)/menu/components/Items/MenuItemsWrapper";
+import CartBtn from "../(public-menu)/menu/components/CartBtn";
 
 //libraries
 import { cn } from "@/lib/utils";

@@ -4,8 +4,8 @@ import React, { useRef } from "react";
 
 //components
 import MenuLayout from "@/app/(menu)/[business_slug]/components/MenuLayout";
-import HomeLayout from "@/app/(menu)/[business_slug]/home/components/HomeLayout";
-import CartLayout from "@/app/(menu)/[business_slug]/orders/components/CartLayout";
+import HomeLayout from "@/app/(menu)/[business_slug]/(public-menu)/home/components/HomeLayout";
+import CartLayout from "@/app/(menu)/[business_slug]/(public-menu)/orders/components/CartLayout";
 
 //libraries
 import { useFormContext } from "react-hook-form";
@@ -203,7 +203,7 @@ export default function MenuPreview() {
     <div
       ref={screenRef}
       style={styleVars as React.CSSProperties}
-      className="relative overflow-hidden w-[450px] h-[760px] scale-[90%] rounded-(--radius-preview) border-3 border-(--tertiary) transition-all duration-300"
+      className="relative items-center flex h-screen overflow-hidden w-[450px] scale-[90%] rounded-(--radius-preview) border-4 border-(--tertiary) transition-all duration-300"
     >
       <div className="relative bg-(--bg) w-full h-full overflow-y-scroll overflow-hidden hide-scrollbar">
         <PreviewProvider

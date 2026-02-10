@@ -37,7 +37,7 @@ export type MenuItemCardProps = MenuItem & {
 };
 
 //utils
-import { generateStyleVars } from "../../../utilities/styleVars";
+import { generateStyleVars } from "../../../../utilities/styleVars";
 
 //libraries
 import { cn } from "@/lib/utils";
