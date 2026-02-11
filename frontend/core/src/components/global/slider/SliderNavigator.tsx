@@ -60,13 +60,20 @@ export function SliderNavigator({
   const submitBtnRef = useRef<HTMLButtonElement>(null);
   const buttonsContainerRef = useRef<HTMLDivElement>(null);
 
-  // next/prev buttons animation
+  // next/prev buttons animations
   useTactileAnimation(nextBtnRef, {});
   useTactileAnimation(prevBtnRef, {});
   useTactileAnimation(editBtnRef, {});
   useTactileAnimation(submitBtnRef, {});
 
-  // disable buttons if it's the first/last step of all the steps
+  // Initial section and step setter
+  // This will make sure initially first step of the first section is active
+  useEffect(() => {
+    setStepIndex(0);
+    setSectionIndex(0);
+  }, []);
+
+  // Disable next/prev buttons according to active step
   useEffect(() => {
     if (stepIndex == stepCount - 1 && sectionIndex == sectionCount - 1) {
       setDisabled("nextDisabled");
@@ -77,7 +84,7 @@ export function SliderNavigator({
     }
   }, [activeStep, sectionCount, stepCount]);
 
-  // animate next/submit buttons according to disabled state
+  // Animate next and submit buttons according to active step
   useEffect(() => {
     if (!disableSubmitBtn && !isEditing) {
       if (disabled === "nextDisabled") {
@@ -108,7 +115,7 @@ export function SliderNavigator({
     }
   }, [disabled]);
 
-  // go to next step
+  // Go to next step
   const goNext = () => {
     const isLastStepInSection = stepIndex === stepCount - 1;
     const isLastSection = sectionIndex === sectionCount - 1;
@@ -123,7 +130,7 @@ export function SliderNavigator({
     }
   };
 
-  //go to previous step
+  // Go to previous step
   const goBack = () => {
     const isFirstStepInSection = stepIndex === 0;
     const isFirstSection = sectionIndex === 0;
@@ -181,7 +188,6 @@ export function SliderNavigator({
             ویرایش منو
           </Button>
         )}
-
         <Button
           ref={nextBtnRef}
           type="button"
