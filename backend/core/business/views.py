@@ -614,17 +614,26 @@ class OrdersView(MethodBasedPermissionsMixin, APIView):
 
         return Response(ser_data.data)
 
-    def post(self, request, session_code):
-        table_session = get_object_or_404(
-            TableSession, code=session_code, is_active=True)
+    def post(self, request, branch_slug):
+        branch = get_object_or_404(Branch, slug=branch_slug)
 
-        ser_data = OrdersSerializer(data=request.data)
+        ser_data = OrdersSerializer(data=request.data, context={
+            'branch_slug': branch_slug,
+            'request': request,
+        })
 
         if ser_data.is_valid():
+            table_session = ser_data.context.get('table_session')
+
             ser_data.save(
-                table_session=table_session, branch=table_session.table.branch)
+                table_session=table_session, branch=branch)
             return Response(ser_data.data, status=status.HTTP_201_CREATED)
         return Response(ser_data.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class OrderDetailView(MethodBasedPermissionsMixin, APIView):
+    def get(self, request, order_id):
+        pass
 
 
 # move to personnel app !!!

@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.utils import timezone
 from django.utils.text import slugify
 from django.db import transaction
+from django.shortcuts import get_object_or_404
 
 from decimal import Decimal
 
@@ -260,9 +261,9 @@ class TableNestedSerializer(serializers.ModelSerializer):
 
 
 class OrdersSerializer(serializers.ModelSerializer):
-    branch = serializers.SlugRelatedField(read_only=True, slug_field='slug')
-    table_session = serializers.SlugRelatedField(
-        read_only=True, slug_field='code')
+    session_code = serializers.CharField(write_only=True, required=True)
+
+    branch = serializers.SlugRelatedField(read_only=True, slug_field='pk')
     table = TableNestedSerializer(read_only=True)
     items = OrderItemNestedSerializer(many=True)
 
@@ -273,6 +274,7 @@ class OrdersSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         items_data = validated_data.pop('items')
+        session_code = validated_data.pop('session_code')
 
         with transaction.atomic():
             order = Order.objects.create(**validated_data)
@@ -300,10 +302,24 @@ class OrdersSerializer(serializers.ModelSerializer):
 
             OrderItem.objects.bulk_create(order_items)
 
+            # Update order instance and attach total_price to it
             order.total_price = total_price
             order.save(update_fields=["total_price"])
 
         return order
+
+    def validate_session_code(self, value):
+        table_session = get_object_or_404(
+            TableSession,
+            code=value,
+            is_active=True,
+            table__branch__slug=self.context['branch_slug']
+
+        )
+        # attach table_session to context so we avoid refetching it in view
+        self.context['table_session'] = table_session
+
+        return value
 
 
 # return user's role and permissions

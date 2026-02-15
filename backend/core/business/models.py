@@ -133,7 +133,7 @@ class TableSession(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"table code: {self.table.code} - session code: {self.code}"
+        return f"table: {self.table.name} - session code: {self.code}"
 
 
 class Order(models.Model):
