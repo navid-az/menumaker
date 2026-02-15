@@ -136,6 +136,45 @@ class TableSession(models.Model):
         return f"table code: {self.table.code} - session code: {self.code}"
 
 
+class Order(models.Model):
+    STATUS_CHOICES = (
+        ("pending", "Pending"),
+        ("accepted", "Accepted"),
+        ("preparing", "Preparing"),
+        ("ready", "Ready"),
+        ("served", "Served"),
+        ("cancelled", "Cancelled"),
+    )
+    branch = models.ForeignKey(
+        Branch, on_delete=models.CASCADE, related_name='orders')
+    table_session = models.ForeignKey(
+        TableSession, on_delete=models.SET_NULL, null=True, blank=True)
+
+    status = models.CharField(
+        max_length=20, choices=STATUS_CHOICES, default="pending")
+    notes = models.TextField(blank=True)
+    total_price = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(
+        Order, related_name="items", on_delete=models.CASCADE)
+
+    item = models.ForeignKey(
+        'Item',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
+
+    name_snapshot = models.CharField(max_length=255)
+    price_snapshot = models.DecimalField(max_digits=8, decimal_places=2)
+    quantity = models.PositiveIntegerField(default=1)
+    notes = models.TextField(blank=True)
+
+
 class CallWaiter(models.Model):
     table_session = models.ForeignKey(
         TableSession, on_delete=models.CASCADE, related_name="waiter_calls")
