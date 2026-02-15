@@ -1,8 +1,11 @@
 from rest_framework import serializers
 from django.utils import timezone
 from django.utils.text import slugify
+from django.db import transaction
 
-from .models import Business, Branch, Table, TableSession, CallWaiter, Category, Item, ItemBranch
+from decimal import Decimal
+
+from .models import Business, Branch, Table, TableSession, CallWaiter, Category, Item, ItemBranch, Order, OrderItem
 from pickers.models import Asset
 from personnel.models import Personnel
 
@@ -224,6 +227,83 @@ class CategoryCreateUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = '__all__'
+
+
+# Full OrderItem serializer.
+# Used for standalone OrderItem endpoints where the parent order reference is required.
+class OrderItemSerializer(serializers.ModelSerializer):
+    items = ItemsSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = OrderItem
+        fields = '__all__'
+
+
+# Nested OrderItem serializer.
+# Used inside Order responses to avoid redundant `order` field since the parent order context is already known.
+class OrderItemNestedSerializer(serializers.ModelSerializer):
+    price_snapshot = serializers.DecimalField(
+        max_digits=10, decimal_places=2, read_only=True)
+    name_snapshot = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = OrderItem
+        exclude = ['order']
+
+
+# Minimal table representation for Order responses.
+# Exposes only fields relevant to order context.
+class TableNestedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Table
+        fields = ['id', 'name']
+
+
+class OrdersSerializer(serializers.ModelSerializer):
+    branch = serializers.SlugRelatedField(read_only=True, slug_field='slug')
+    table_session = serializers.SlugRelatedField(
+        read_only=True, slug_field='code')
+    table = TableNestedSerializer(read_only=True)
+    items = OrderItemNestedSerializer(many=True)
+
+    class Meta:
+        model = Order
+        fields = '__all__'
+        read_only_fields = ['total_price']
+
+    def create(self, validated_data):
+        items_data = validated_data.pop('items')
+
+        with transaction.atomic():
+            order = Order.objects.create(**validated_data)
+
+            order_items = []
+            total_price = Decimal("0.00")
+
+            for item_data in items_data:
+                item_instance = item_data['item']
+                quantity = item_data['quantity']
+
+                line_total = item_instance.price * quantity
+                total_price += line_total
+
+                order_items.append(
+                    OrderItem(
+                        order=order,
+                        item=item_instance,
+                        quantity=item_data['quantity'],
+                        notes=item_data.get('notes', ''),
+                        name_snapshot=item_instance.name,
+                        price_snapshot=item_instance.price,
+                    )
+                )
+
+            OrderItem.objects.bulk_create(order_items)
+
+            order.total_price = total_price
+            order.save(update_fields=["total_price"])
+
+        return order
 
 
 # return user's role and permissions

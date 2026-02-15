@@ -7,7 +7,7 @@ from mixins import MethodBasedPermissionsMixin
 
 from .serializers import (BusinessesSerializer, BusinessCreateSerializer, BranchesSerializer, BranchCreateUpdateSerializer,
                           TablesSerializer, TableCreateUpdateSerializer, CategoriesSerializer, CategoryCreateUpdateSerializer,
-                          ItemsSerializer, ItemCreateUpdateSerializer, RoleSerializer)
+                          ItemsSerializer, ItemCreateUpdateSerializer, OrdersSerializer, RoleSerializer)
 from .models import Business, Branch, Table, TableSession, CallWaiter, Category, Item, ItemBranch
 from personnel.models import Personnel
 
@@ -595,6 +595,36 @@ class ItemDetailView(MethodBasedPermissionsMixin, APIView):
 
         item.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class OrdersView(MethodBasedPermissionsMixin, APIView):
+    permission_classes_by_method = {'GET': [
+        IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess)], }
+    required_permission_by_method = {
+        'GET': ['business.view_order'],
+    }
+
+    def get(self, request, branch_slug):
+        branch = get_object_or_404(Branch, slug=branch_slug)
+
+        # check business ownership
+        self.check_object_permissions(request, branch.business)
+
+        ser_data = OrdersSerializer(instance=branch.orders, many=True)
+
+        return Response(ser_data.data)
+
+    def post(self, request, session_code):
+        table_session = get_object_or_404(
+            TableSession, code=session_code, is_active=True)
+
+        ser_data = OrdersSerializer(data=request.data)
+
+        if ser_data.is_valid():
+            ser_data.save(
+                table_session=table_session, branch=table_session.table.branch)
+            return Response(ser_data.data, status=status.HTTP_201_CREATED)
+        return Response(ser_data.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # move to personnel app !!!
