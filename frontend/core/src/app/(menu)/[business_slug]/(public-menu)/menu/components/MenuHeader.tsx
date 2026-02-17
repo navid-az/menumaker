@@ -17,8 +17,9 @@ import { type MenuUI } from "@/app/types/ui/menu";
 //libraries
 import { cn } from "@/lib/utils";
 
-//provider
+//hooks
 import { usePreview } from "@/app/(creator)/builder/components/preview/PreviewContext";
+import { useSearchParams } from "next/navigation";
 
 export default function MenuHeader({
   globalStyling,
@@ -39,6 +40,8 @@ export default function MenuHeader({
       console.error("wtf just happened");
     }
   }
+  const searchParams = useSearchParams();
+  const table_code = searchParams.get("t");
 
   const { isPreview, setActivePage } = usePreview();
   return (
@@ -81,7 +84,7 @@ export default function MenuHeader({
               )}
             ></House>
           ) : (
-            <Link href={`/${businessSlug}/home`}>
+            <Link href={`/${businessSlug}/home?t=${table_code}`}>
               <House
                 className={cn(
                   "text-(--secondary) transition-all duration-300",

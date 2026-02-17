@@ -1,0 +1,32 @@
+//types
+import { type Order } from "@/app/types/api/menu";
+
+export async function placeOrder(branchSlug: string, order: Order) {
+  try {
+    const res = await fetch(
+      `http://localhost:8000/branches/${branchSlug}/orders/`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(order),
+      }
+    );
+    if (!res.ok) {
+      const errorData = await res.json();
+      console.error("API Error:", errorData);
+
+      return {
+        success: false,
+        detail: errorData.detail || "Failed to invite personnel",
+      };
+    }
+    return { success: true, detail: "Order placed successfully" };
+  } catch (error: any) {
+    return {
+      success: false,
+      detail: error?.detail || "An unexpected error occurred",
+    };
+  }
+}

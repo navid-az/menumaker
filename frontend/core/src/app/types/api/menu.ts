@@ -64,3 +64,11 @@ export type MenuCategory = {
   icon?: { id: number; name: string; image: string };
   is_active: boolean;
 };
+
+export type OrderItem = { item: number; quantity: number; notes?: string }[];
+
+export type Order = {
+  session_code: string;
+  notes?: string;
+  items: OrderItem;
+};

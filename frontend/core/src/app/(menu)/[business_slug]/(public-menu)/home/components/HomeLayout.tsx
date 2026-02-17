@@ -16,6 +16,9 @@ import { AlignLeft } from "lucide-react";
 //types
 import { type MenuUI, type MenuGlobalStylingUI } from "@/app/types/ui/menu";
 
+//hooks
+import { useSearchParams } from "next/navigation";
+
 //provider
 import { usePreview } from "@/app/(creator)/builder/components/preview/PreviewContext";
 
@@ -29,6 +32,9 @@ export default function HomeLayout({
   globalStyling: MenuGlobalStylingUI;
 }) {
   const { isPreview, setActivePage } = usePreview();
+
+  const searchParams = useSearchParams();
+  const table_code = searchParams.get("t");
 
   return (
     <div className="relative flex h-full w-full flex-col justify-between overflow-x-hidden bg-(--primary) transition-all duration-300">
@@ -147,7 +153,7 @@ export default function HomeLayout({
               <div className="text-4xl">↓</div>
             </div>
           ) : (
-            <Link href={`/${businessSlug}/menu`}>
+            <Link href={`/${businessSlug}/menu?t=${table_code}`}>
               <span className="-rotate-90 transform text-xl">ورود به منو</span>
               <div className="text-4xl">↓</div>
             </Link>
