@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 import mapAnimationsToConfigs from "@/lib/mapAnimationsToConfigs";
 
 //hooks
-import { useItemCart } from "@/lib/stores";
+import { useCart } from "@/lib/stores";
 
 //types
 import { type AnimationConfigType } from "@/components/global/InteractiveWrapper";
@@ -36,23 +36,23 @@ export default function AddToCartBtn({
   globalStyling,
 }: ButtonProps) {
   const {
-    items,
+    cartItems,
     incrementItemCount,
     decrementItemCount,
     removeItem,
     updateItems,
-  } = useItemCart();
+  } = useCart();
 
   const [quantity, setQuantity] = useState(0);
 
   useEffect(() => {
-    const item = items.find((item) => item.id === itemId);
+    const item = cartItems.find((item) => item.id === itemId);
     if (item) {
-      setQuantity(item.count);
+      setQuantity(item.quantity);
     } else {
       setQuantity(0);
     }
-  }, [items]);
+  }, [cartItems]);
 
   const handleIncrement = () => {
     incrementItemCount(itemId);

@@ -201,42 +201,48 @@ export const useCategoryBtn = create<CategoryBtn>()((set) => ({
 }));
 
 //~~~~ItemCart~~~~
-type ItemCartType = { id: number; count: number };
+type ItemCartType = { id: number; quantity: number };
 type ItemCart = {
-  items: ItemCartType[];
+  cartItems: ItemCartType[];
   incrementItemCount: (id: number) => void;
   decrementItemCount: (id: number) => void;
   removeItem: (id: number) => void;
   updateItems: (id: number) => void;
+  resetCart: () => void;
 };
-export const useItemCart = create<ItemCart>()((set) => ({
-  items: [],
+export const useCart = create<ItemCart>()((set) => ({
+  cartItems: [],
   updateItems: (newItemId) => {
     set((state) => ({
-      items: [...state.items, { id: newItemId, count: 1 }],
+      cartItems: [...state.cartItems, { id: newItemId, quantity: 1 }],
     }));
   },
   incrementItemCount: (id) => {
     set((state) => ({
-      items: state.items.map((cartItem) =>
+      cartItems: state.cartItems.map((cartItem) =>
         cartItem.id === id
-          ? { ...cartItem, count: cartItem.count + 1 }
+          ? { ...cartItem, quantity: cartItem.quantity + 1 }
           : cartItem
       ),
     }));
   },
   decrementItemCount: (id) => {
     set((state) => ({
-      items: state.items.map((cartItem) =>
+      cartItems: state.cartItems.map((cartItem) =>
         cartItem.id === id
-          ? { ...cartItem, count: cartItem.count - 1 }
+          ? { ...cartItem, quantity: cartItem.quantity - 1 }
           : cartItem
       ),
     }));
   },
   removeItem: (id) => {
     set((state) => {
-      return { items: state.items.filter((item) => item.id != id) };
+      return { cartItems: state.cartItems.filter((item) => item.id != id) };
+    });
+  },
+  resetCart: () => {
+    set((state) => {
+      return { cartItems: [] };
     });
   },
 }));

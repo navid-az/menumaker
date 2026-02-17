@@ -7,7 +7,7 @@ import CartItem from "./CartItem";
 import PriceTag from "../../menu/components/PriceTag";
 
 //hooks
-import { useItemCart } from "@/lib/stores";
+import { useCart } from "@/lib/stores";
 
 //SVGs
 import { ShoppingBag } from "lucide-react";
@@ -24,7 +24,7 @@ export default function OrderList({
   data: MenuItem[];
   globalStyling: MenuGlobalStylingUI;
 }) {
-  const cartItems = useItemCart((state) => state.items);
+  const { cartItems } = useCart();
 
   const [totalPrice, setTotalPrice] = useState(0);
   const [validItems, setValidItems] = useState<ValidItemType[]>();
@@ -33,7 +33,7 @@ export default function OrderList({
     //total items price
     const pr = cartItems.reduce((total, cartItem) => {
       let item = data?.find((item) => item.id === cartItem.id);
-      return total + (item?.price || 0) * cartItem.count;
+      return total + (item?.price || 0) * cartItem.quantity;
     }, 0);
     setTotalPrice(pr);
 
@@ -48,7 +48,7 @@ export default function OrderList({
         );
         return {
           item: menuItem,
-          count: matchingCartItem?.count,
+          count: matchingCartItem?.quantity,
         };
       });
     setValidItems(validatedItems);

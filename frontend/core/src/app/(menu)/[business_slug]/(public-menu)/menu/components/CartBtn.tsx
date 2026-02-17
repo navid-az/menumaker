@@ -15,7 +15,8 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
 //hooks
-import { useItemCart } from "@/lib/stores";
+import { useSearchParams } from "next/navigation";
+import { useCart } from "@/lib/stores";
 import { useMenuItemDrawer } from "@/lib/stores";
 import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
 
@@ -40,10 +41,14 @@ export default function CartBtn({
   categories,
   globalStyling,
 }: CartBtnType) {
+  // Get table code
+  const searchParams = useSearchParams();
+  const sessionCode = searchParams.get("t");
+
   const cartBtnRef = useRef<HTMLButtonElement>(null);
 
-  const DrawerIsOpen = useMenuItemDrawer((state) => state.isOpen);
-  const cartItems = useItemCart((state) => state.items);
+  const drawerIsOpen = useMenuItemDrawer((state) => state.isOpen);
+  const { cartItems } = useCart();
 
   const { setActivePage, isPreview } = usePreview();
 
@@ -64,7 +69,7 @@ export default function CartBtn({
                 item: matchingItem,
                 count:
                   cartItems.find((cartItem) => cartItem.id === matchingItem.id)
-                    ?.count || 0,
+                    ?.quantity || 0,
               }))
           );
         } else {
@@ -76,7 +81,7 @@ export default function CartBtn({
 
   //show/hide cart button according to MenuItem Drawer & items count
   useEffect(() => {
-    if (DrawerIsOpen) {
+    if (drawerIsOpen) {
       gsap.to(cartBtnRef.current, {
         duration: 0.3,
         y: 0,
@@ -100,11 +105,11 @@ export default function CartBtn({
     if (type === "compact") {
       autoTactile();
     }
-  }, [cartItems, DrawerIsOpen]);
+  }, [cartItems, drawerIsOpen]);
 
   //total number of selected items
   const totalItemCount = cartItems.reduce(
-    (accumulator, currentValue) => accumulator + currentValue.count,
+    (accumulator, currentValue) => accumulator + currentValue.quantity,
     0
   );
 
@@ -182,7 +187,9 @@ export default function CartBtn({
             {CartButtonContent}
           </div>
         ) : (
-          <Link href={`/${businessSlug}/orders`}>{CartButtonContent}</Link>
+          <Link href={`/${businessSlug}/orders?t=${sessionCode}`}>
+            {CartButtonContent}
+          </Link>
         )}
       </Button>
     );
@@ -218,7 +225,7 @@ export default function CartBtn({
               )}
             </div>
           ) : (
-            <Link href={`/${businessSlug}/orders`}>
+            <Link href={`/${businessSlug}/orders?t=${sessionCode}`}>
               <ShoppingBag className="h-6 w-6 text-(--secondary)"></ShoppingBag>
               {totalItemCount >= 1 && (
                 <div
