@@ -195,7 +195,7 @@ export default function LiveCard({
         {showCode ? (
           <div className="flex items-center justify-center w-full h-full">
             <QrCodeGenerator
-              url={`http://localhost:3000/${businessSlug}/menu?t=${table.code}`}
+              url={`http://localhost:3000/${businessSlug}/menu?branch=${branchSlug}&t=${table.code}`}
             ></QrCodeGenerator>
           </div>
         ) : table.active_session ? (

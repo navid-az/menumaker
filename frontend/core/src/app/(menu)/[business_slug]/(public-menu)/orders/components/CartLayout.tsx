@@ -46,7 +46,8 @@ export default function CartLayout({
   const [sessionCode, setSessionCode] = useState<string | null>(null);
 
   const searchParams = useSearchParams();
-  const table_code = searchParams.get("t");
+  const tableCode = searchParams.get("t");
+  const branchSlug = searchParams.get("branch");
 
   // Get table session code form sessionStorage
   useEffect(() => {
@@ -55,7 +56,7 @@ export default function CartLayout({
   }, []);
 
   const handlePlaceOrder = async () => {
-    if (!sessionCode) {
+    if (!sessionCode || !branchSlug) {
       toast.error("کد سشن دریافت نشد، لطفا مجددا QR کد را اسکن کنید");
     } else {
       const orderData: Order = {
@@ -66,7 +67,7 @@ export default function CartLayout({
           quantity: cartItem.quantity,
         })),
       };
-      const res = await placeOrder("niavaran-1-1", orderData);
+      const res = await placeOrder(branchSlug, orderData);
       if (res.success) {
         resetCart();
         toast.success("سفارش شما به آشپزخانه ارسال شد");
@@ -97,7 +98,9 @@ export default function CartLayout({
               )}
             ></ArrowLeft>
           ) : (
-            <Link href={`/${businessSlug}/menu?t=${table_code}`}>
+            <Link
+              href={`/${businessSlug}/menu?branch=${branchSlug}&t=${tableCode}`}
+            >
               <ArrowLeft></ArrowLeft>
             </Link>
           )}

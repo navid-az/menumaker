@@ -43,7 +43,8 @@ export default function CartBtn({
 }: CartBtnType) {
   // Get table code
   const searchParams = useSearchParams();
-  const sessionCode = searchParams.get("t");
+  const tableCode = searchParams.get("t");
+  const branchSlug = searchParams.get("branch");
 
   const cartBtnRef = useRef<HTMLButtonElement>(null);
 
@@ -187,7 +188,9 @@ export default function CartBtn({
             {CartButtonContent}
           </div>
         ) : (
-          <Link href={`/${businessSlug}/orders?t=${sessionCode}`}>
+          <Link
+            href={`/${businessSlug}/orders?branch=${branchSlug}&t=${tableCode}`}
+          >
             {CartButtonContent}
           </Link>
         )}
@@ -225,7 +228,9 @@ export default function CartBtn({
               )}
             </div>
           ) : (
-            <Link href={`/${businessSlug}/orders?t=${sessionCode}`}>
+            <Link
+              href={`/${businessSlug}/orders?branch=${branchSlug}&t=${tableCode}`}
+            >
               <ShoppingBag className="h-6 w-6 text-(--secondary)"></ShoppingBag>
               {totalItemCount >= 1 && (
                 <div

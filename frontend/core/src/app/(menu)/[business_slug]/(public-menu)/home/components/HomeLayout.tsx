@@ -34,7 +34,8 @@ export default function HomeLayout({
   const { isPreview, setActivePage } = usePreview();
 
   const searchParams = useSearchParams();
-  const table_code = searchParams.get("t");
+  const tableCode = searchParams.get("t");
+  const branchSlug = searchParams.get("branch");
 
   return (
     <div className="relative flex h-full w-full flex-col justify-between overflow-x-hidden bg-(--primary) transition-all duration-300">
@@ -153,7 +154,9 @@ export default function HomeLayout({
               <div className="text-4xl">↓</div>
             </div>
           ) : (
-            <Link href={`/${businessSlug}/menu?t=${table_code}`}>
+            <Link
+              href={`/${businessSlug}/menu?branch=${branchSlug}&t=${tableCode}`}
+            >
               <span className="-rotate-90 transform text-xl">ورود به منو</span>
               <div className="text-4xl">↓</div>
             </Link>

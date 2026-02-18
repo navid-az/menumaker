@@ -41,7 +41,8 @@ export default function MenuHeader({
     }
   }
   const searchParams = useSearchParams();
-  const table_code = searchParams.get("t");
+  const tableCode = searchParams.get("t");
+  const branchSlug = searchParams.get("branch");
 
   const { isPreview, setActivePage } = usePreview();
   return (
@@ -84,7 +85,9 @@ export default function MenuHeader({
               )}
             ></House>
           ) : (
-            <Link href={`/${businessSlug}/home?t=${table_code}`}>
+            <Link
+              href={`/${businessSlug}/home?branch=${branchSlug}&t=${tableCode}`}
+            >
               <House
                 className={cn(
                   "text-(--secondary) transition-all duration-300",
