@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
 //utils
-import { formatElapsedTime } from "@/lib/formatElapsedTime";
 import { formatTime } from "@/lib/formatTime";
+import { formatElapsedTime } from "@/lib/formatElapsedTime";
 import { toPersianDigits } from "../(menu)/[business_slug]/utilities/formatCurrency";
 
 // hook to calculate progress between two timestamps
@@ -10,8 +10,9 @@ import { toPersianDigits } from "../(menu)/[business_slug]/utilities/formatCurre
 export function useProgress(
   startTime: string,
   endTime: string,
-  onExpire?: () => void,
-  formatDigits: boolean = false
+  formatElapsed: boolean = false,
+  mode: "countdown" | "countup" = "countdown",
+  onExpire?: () => void
 ) {
   const [progress, setProgress] = useState(100);
   const [remainingMs, setRemainingMs] = useState(0);
@@ -25,14 +26,21 @@ export function useProgress(
     const tick = () => {
       const now = Date.now();
       const elapsed = now - start;
-      const remaining = Math.max(end - now, 0);
-      const newProgress = Math.max(100 - (elapsed / total) * 100, 0);
+      let remaining = 0;
+      let progress = 0;
 
-      setProgress(newProgress);
+      if (mode === "countdown" && end && total) {
+        remaining = Math.max(end - now, 0);
+        progress = Math.max(100 - (elapsed / total) * 100, 0);
+        if (remaining <= 0) onExpire?.();
+      } else {
+        const maxForFill = 20 * 60 * 1000; // 20 min in ms – adjust to your needs
+        progress = Math.min((elapsed / maxForFill) * 100, 100);
+      }
+
+      setProgress(progress);
       setRemainingMs(remaining);
       setElapsedMs(elapsed);
-
-      if (remaining <= 0) onExpire?.();
     };
 
     tick(); // initial call
@@ -42,12 +50,10 @@ export function useProgress(
 
   const result = {
     progress: progress,
-    formattedRemaining: formatDigits
-      ? toPersianDigits(formatTime(remainingMs))
-      : formatTime(remainingMs),
-    formattedElapsed: formatDigits
-      ? formatElapsedTime(elapsedMs)
-      : toPersianDigits(formatElapsedTime(elapsedMs)),
+    remainingMs: toPersianDigits(formatTime(remainingMs)),
+    elapsedMs: toPersianDigits(
+      formatElapsed ? formatElapsedTime(elapsedMs) : formatTime(elapsedMs)
+    ),
   };
 
   return {

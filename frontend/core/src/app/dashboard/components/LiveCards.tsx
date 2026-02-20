@@ -23,6 +23,7 @@ export default function LiveCards({
       {
         active_session?: TableType["active_session"];
         active_call?: TableType["active_call"];
+        order?: TableType["order"];
       }
     >
   >({});
@@ -69,6 +70,14 @@ export default function LiveCards({
             active_call: payload,
           },
         }));
+      } else if (evt === "new_order") {
+        setLiveOverlay((prev) => ({
+          ...prev,
+          [payload.code]: {
+            ...prev[payload.code],
+            order: payload,
+          },
+        }));
       }
     };
 
@@ -76,7 +85,7 @@ export default function LiveCards({
   }, [branchSlug]);
 
   return (
-    <div className="flex gap-4">
+    <div className="flex gap-4 flex-wrap justify-end">
       {mergedTables.map((table: TableType) => (
         <LiveCard
           businessSlug={businessSlug}
