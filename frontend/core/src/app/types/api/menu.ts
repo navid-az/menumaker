@@ -65,10 +65,27 @@ export type MenuCategory = {
   is_active: boolean;
 };
 
-export type OrderItem = { item: number; quantity: number; notes?: string }[];
+export type OrderItem = {
+  id: number;
+  price_snapshot: string;
+  name_snapshot: string;
+  quantity: number;
+  notes?: string;
+  item: number;
+};
 
 export type Order = {
+  id: number;
+  status?:
+    | "pending"
+    | "accepted"
+    | "preparing"
+    | "ready"
+    | "served"
+    | "cancelled";
   session_code: string;
   notes?: string;
-  items: OrderItem;
+  items: OrderItem[];
+  total_price: string;
+  created_at: string;
 };

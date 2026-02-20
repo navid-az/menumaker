@@ -1,7 +1,7 @@
 //types
-import { type Order } from "@/app/types/api/menu";
+import { CreateOrder } from "@/app/types/payloads/menu";
 
-export async function placeOrder(branchSlug: string, order: Order) {
+export async function placeOrder(branchSlug: string, order: CreateOrder) {
   try {
     const res = await fetch(
       `http://localhost:8000/branches/${branchSlug}/orders/`,

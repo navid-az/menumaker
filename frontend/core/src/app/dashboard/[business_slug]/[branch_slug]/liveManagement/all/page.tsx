@@ -11,6 +11,7 @@ import LiveCards from "@/app/dashboard/components/LiveCards";
 import { Plus } from "lucide-react";
 
 //types
+import { Order } from "@/app/types/api/menu";
 export type TableType = {
   id: number;
   code: string;
@@ -25,6 +26,7 @@ export type TableType = {
     created_at: string;
     expires_at: string;
   };
+  order?: Order;
   name: string;
   seats: number;
   location_description?: string;
@@ -69,10 +71,10 @@ export default async function Page(props: {
           branchSlug={branch_slug}
           tables={tables}
         ></LiveCards>
-        <div className="border-[3px] text-primary font-normal w-60 gap-2 bg-soft-blue h-[346px] border-dashed transition-all duration-300 scale-pro hover:scale-105 hover:shadow-xl border-sad-blue hover:border-royal-green flex items-center flex-col justify-center rounded-3xl p-4">
+        {/* <div className="border-[3px] text-primary font-normal w-60 gap-2 bg-soft-blue h-[346px] border-dashed transition-all duration-300 scale-pro hover:scale-105 hover:shadow-xl border-sad-blue hover:border-royal-green flex items-center flex-col justify-center rounded-3xl p-4">
           <Plus className="w-14 h-14 text-royal-green" strokeWidth={1}></Plus>
           میز جدید
-        </div>
+        </div> */}
       </section>
     </div>
   );

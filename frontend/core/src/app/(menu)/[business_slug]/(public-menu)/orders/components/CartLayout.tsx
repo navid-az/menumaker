@@ -27,6 +27,7 @@ import { useCart } from "@/lib/stores";
 //types
 import { type MenuItem, type Order } from "@/app/types/api/menu";
 import { type MenuGlobalStylingUI } from "@/app/types/ui/menu";
+import { CreateOrder } from "@/app/types/payloads/menu";
 type CartLayoutProps = {
   items: MenuItem[];
   globalStyling: MenuGlobalStylingUI;
@@ -59,7 +60,7 @@ export default function CartLayout({
     if (!sessionCode || !branchSlug) {
       toast.error("کد سشن دریافت نشد، لطفا مجددا QR کد را اسکن کنید");
     } else {
-      const orderData: Order = {
+      const orderData: CreateOrder = {
         session_code: sessionCode,
         notes: "",
         items: cartItems.map((cartItem) => ({
