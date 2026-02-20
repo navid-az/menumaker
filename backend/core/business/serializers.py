@@ -30,6 +30,7 @@ class CallWaiterSerializer(serializers.ModelSerializer):
 class TablesSerializer(serializers.ModelSerializer):
     active_session = serializers.SerializerMethodField()
     active_call = serializers.SerializerMethodField()
+    order = serializers.SerializerMethodField()
 
     class Meta:
         model = Table
@@ -56,6 +57,19 @@ class TablesSerializer(serializers.ModelSerializer):
         ).first()
         if call:
             return CallWaiterSerializer(call).data
+        return None
+
+    def get_order(self, obj):
+        session = obj.session.filter(
+            is_active=True,
+            expires_at__gt=timezone.now()
+        ).first()
+        if not session:
+            return None
+
+        order = session.orders.first()
+        if order:
+            return OrdersSerializer(order).data
         return None
 
 

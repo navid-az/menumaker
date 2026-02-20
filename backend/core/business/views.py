@@ -625,8 +625,32 @@ class OrdersView(MethodBasedPermissionsMixin, APIView):
         if ser_data.is_valid():
             table_session = ser_data.context.get('table_session')
 
-            ser_data.save(
+            new_order = ser_data.save(
                 table_session=table_session, branch=branch)
+
+            # Send data to client in-real-time
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                f"dashboard_{branch.business.slug}_{branch.slug}", {
+                    "type": "dashboard.update",
+                    "event": "new_order",
+                    "payload": {
+                        "code": new_order.table_session.table.code,
+                        "id": new_order.id,
+                        "status": new_order.status,
+                        "total_price": str(new_order.total_price),
+                        "created_at": new_order.created_at.isoformat(),
+                        "items": [
+                            {
+                                "name_snapshot": item.name_snapshot,
+                                "price_snapshot": str(item.price_snapshot),
+                                "quantity": item.quantity,
+                                "notes": item.notes or None,
+                            }
+                            # or .items if related_name
+                            for item in new_order.items.all()
+                        ]}
+                },)
             return Response(ser_data.data, status=status.HTTP_201_CREATED)
         return Response(ser_data.errors, status=status.HTTP_400_BAD_REQUEST)
 
