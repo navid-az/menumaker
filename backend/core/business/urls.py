@@ -33,8 +33,8 @@ urlpatterns = [
     # Order endpoints
     path('branches/<str:branch_slug>/orders/',
          OrdersView.as_view(), name='branch-orders'),
-    #     path('sessions/<str:session_code>/orders/',
-    #          OrdersView.as_view(), name='place-order'),
+    path('orders/<int:order_id>/',
+         OrderDetailView.as_view(), name='order-detail'),
 
     # call waiter endpoints
     path('sessions/<str:session_code>/calls/',

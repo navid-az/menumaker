@@ -7,8 +7,8 @@ from mixins import MethodBasedPermissionsMixin
 
 from .serializers import (BusinessesSerializer, BusinessCreateSerializer, BranchesSerializer, BranchCreateUpdateSerializer,
                           TablesSerializer, TableCreateUpdateSerializer, CategoriesSerializer, CategoryCreateUpdateSerializer,
-                          ItemsSerializer, ItemCreateUpdateSerializer, OrdersSerializer, RoleSerializer)
-from .models import Business, Branch, Table, TableSession, CallWaiter, Category, Item, ItemBranch
+                          ItemsSerializer, ItemCreateUpdateSerializer, OrdersSerializer, OrderUpdateSerializer, RoleSerializer)
+from .models import Business, Branch, Table, TableSession, CallWaiter, Category, Item, ItemBranch, Order
 from personnel.models import Personnel
 
 # rest_framework dependencies
@@ -656,8 +656,54 @@ class OrdersView(MethodBasedPermissionsMixin, APIView):
 
 
 class OrderDetailView(MethodBasedPermissionsMixin, APIView):
+    permission_classes_by_method = {'PATCH': [
+        IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess)],
+        'DELETE': [IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess)]}
+    required_permission_by_method = {
+        'PATCH': ['business.change_order'],
+        'DELETE': ['business.delete_order'],
+    }
+
     def get(self, request, order_id):
         pass
+
+    def patch(self, request, order_id):
+        # Check order availability
+        order = get_object_or_404(Order, id=order_id)
+
+        ser_data = OrderUpdateSerializer(
+            instance=order, data=request.data, partial=True)
+
+        if ser_data.is_valid():
+            # Check business ownership
+            self.check_object_permissions(request, order.branch.business)
+
+            new_order = ser_data.save()
+            # Send data to client in-real-time
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                f"dashboard_{new_order.branch.business.slug}_{new_order.branch.slug}", {
+                    "type": "dashboard.update",
+                    "event": "update_order_status",
+                    "payload": {
+                        "code": new_order.table_session.table.code,
+                        "id": new_order.id,
+                        "status": new_order.status,
+                    }
+                },)
+            return Response(ser_data.data)
+        return Response(ser_data.errors, status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, order_id):
+        # check order availability
+        order = get_object_or_404(
+            Order, pk=order_id)
+
+        # check business ownership
+        self.check_object_permissions(request, order.branch.business)
+
+        order.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 # move to personnel app !!!
