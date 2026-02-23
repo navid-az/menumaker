@@ -30,7 +30,7 @@ import {
 import ProgressBar from "./ProgressBar";
 import { CreateTableForm } from "./CreateTableForm";
 import QrCodeGenerator from "@/components/global/QrCodeGenerator";
-import { OrderList } from "./OrderList";
+import { OrderDataDialog, OrderList } from "./OrderList";
 
 //SVGs
 import {
@@ -60,10 +60,9 @@ import { toPersianDigits } from "@/app/(menu)/[business_slug]/utilities/formatCu
 import { deleteTable } from "@/app/actions";
 
 //hooks
-import { useProgress } from "@/app/hooks/useProgress";
+import { useActiveTimer } from "@/app/hooks/useActiveTimer";
 
 // types
-import { useActiveTimer } from "@/app/hooks/useActiveTimer";
 type LiveCardType = {
   table: TableType;
   businessSlug: string;
@@ -153,7 +152,7 @@ export default function LiveCard({
         const timeoutId = setTimeout(() => {
           setShowOrder(true);
           setState("default");
-          setTitle("");
+          setTitle("سفارش فعال");
         }, 5000);
 
         return () => {
@@ -167,6 +166,7 @@ export default function LiveCard({
     } else {
       setState("default");
       setTitle("");
+      setShowOrder(false);
     }
   }, [progressType]);
 
@@ -183,7 +183,7 @@ export default function LiveCard({
           branchSlug={branchSlug}
           table={table}
           orderAge={progress}
-          elapsedOrderDuration={elapsedDuration}
+          elapsedDuration={elapsedDuration}
         ></LiveCardHeader>
         {showCode ? (
           <QRCodeView
@@ -191,11 +191,11 @@ export default function LiveCard({
             branchSlug={branchSlug}
             tableCode={table.code}
           ></QRCodeView>
-        ) : table.active_session ? (
+        ) : progressType != "none" ? (
           <motion.div
             className={cn(
-              "flex flex-col w-full justify-center h-full items-center gap-4",
-              showOrder ? "justify-start pt-2" : "justify-center"
+              "flex flex-col w-full justify-center h-full items-center",
+              showOrder ? "justify-start pt-2 gap-0" : "justify-center gap-4"
             )}
             transition={{ duration: 0.6, ease: "easeOut" }}
           >
@@ -216,7 +216,8 @@ export default function LiveCard({
                   "flex absolute w-full left-1/2 top-1/2 transition-all duration-100 -translate-x-1/2 -translate-y-1/2 gap-2 flex-col items-center justify-center text-2xl font-semibold mx-auto text-(--livecard-text)"
                 )}
               >
-                {title && (
+                {/* central progress text  */}
+                {title && !showOrder && (
                   <p className="line-clamp-2 text-center text-[clamp(16px,20px,24px)] block group-hover:hidden">
                     {title}
                   </p>
@@ -226,7 +227,7 @@ export default function LiveCard({
                     "font-normal transition-all duration-300",
                     showOrder
                       ? "text-lg block"
-                      : "text-xl hidden group-hover:block"
+                      : "text-2xl hidden group-hover:block"
                   )}
                 >
                   {showOrder ? elapsedDuration : remainingDuration}
@@ -235,9 +236,16 @@ export default function LiveCard({
               {progressType === "order" && (
                 <Button
                   onClick={() => setShowOrder((prev) => !prev)}
-                  className="group-hover:opacity-100 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-100 absolute opacity-0 flex size-[76%] font-semibold rounded-full bg-green-300 text-green-950"
+                  className="left-1/2 hidden group-hover:flex top-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-100 absolute size-[76%] font-semibold rounded-full bg-green-300 text-green-950"
                 >
-                  <p>تکمیل</p>
+                  <p
+                    className={cn(
+                      "font-semibold transition-all duration-300",
+                      showOrder ? "text-sm" : "text-2xl"
+                    )}
+                  >
+                    تکمیل
+                  </p>
                 </Button>
               )}
               <ProgressBar
@@ -248,7 +256,12 @@ export default function LiveCard({
               ></ProgressBar>
             </motion.div>
             {table.order && showOrder ? (
-              <OrderList table={table}></OrderList>
+              <OrderList
+                table={table}
+                elapsedDuration={
+                  progressType === "order" ? elapsedDuration : ""
+                }
+              ></OrderList>
             ) : (
               <div className={cn("flex gap-1 transition-all duration-300")}>
                 <CircleAlert className="w-4 h-4 text-(--livecard-text)"></CircleAlert>
@@ -344,12 +357,13 @@ export function LiveCardHeader({
   table,
   branchSlug,
   setShowCode,
+  elapsedDuration,
 }: {
   table: TableType;
   branchSlug: string;
   setShowCode: React.Dispatch<React.SetStateAction<boolean>>;
   orderAge: number;
-  elapsedOrderDuration: string;
+  elapsedDuration: string;
 }) {
   async function handleTableDelete() {
     const res = await deleteTable(branchSlug, table.id);
@@ -389,10 +403,16 @@ export function LiveCardHeader({
                 <Info></Info>
                 مشخصات میز
               </DropdownMenuItem>
-              <DropdownMenuItem disabled={!table.order}>
-                <ScrollText></ScrollText>
-                مشخصات سفارش
-              </DropdownMenuItem>
+              <OrderDataDialog table={table} elapsedDuration={elapsedDuration}>
+                <DropdownMenuItem
+                  disabled={!table.order}
+                  onSelect={(e) => e.preventDefault()}
+                >
+                  <ScrollText></ScrollText>
+                  مشخصات سفارش
+                </DropdownMenuItem>
+              </OrderDataDialog>
+
               <DropdownMenuItem onClick={handleViewQrCode}>
                 <QrCode></QrCode>
                 مشاهده QR کد
@@ -522,7 +542,7 @@ export function LiveCardFooter({
       case "call":
         return "درخواست فعال";
       default:
-        return "سفارش جدید"; // or "", "Waiting...", etc.
+        return "سفارش جدید";
     }
   };
 

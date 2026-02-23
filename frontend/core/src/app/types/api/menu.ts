@@ -76,7 +76,7 @@ export type OrderItem = {
 
 export type Order = {
   id: number;
-  status?:
+  status:
     | "pending"
     | "accepted"
     | "preparing"
