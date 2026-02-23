@@ -86,6 +86,6 @@ export type Order = {
   session_code: string;
   notes?: string;
   items: OrderItem[];
-  total_price: string;
+  total_price: number;
   created_at: string;
 };

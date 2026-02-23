@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 
+import { motion } from "motion/react";
+
 //components
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -11,12 +13,7 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -66,12 +63,12 @@ import { deleteTable } from "@/app/actions";
 import { useProgress } from "@/app/hooks/useProgress";
 
 // types
-import { type Order } from "@/app/types/api/menu";
+import { useActiveTimer } from "@/app/hooks/useActiveTimer";
 type LiveCardType = {
   table: TableType;
   businessSlug: string;
   branchSlug: string;
-  type?: ServiceType;
+  serviceType?: ServiceType;
   status?: "occupied" | "reserved" | "canceled" | "notice";
   seats?: number;
   hasSession?: boolean;
@@ -126,7 +123,7 @@ const stateColors: Record<LiveCardState, Record<string, string>> = {
 
 export default function LiveCard({
   table,
-  type,
+  serviceType,
   status = "notice",
   seats,
   hasSession,
@@ -135,95 +132,49 @@ export default function LiveCard({
 }: LiveCardType) {
   const [showCode, setShowCode] = useState(false);
   const [state, setState] = useState<LiveCardState>("default");
-  const [view, setView] = useState<
-    "emptyView" | "QRcodeView" | "OrderListView"
-  >("emptyView");
   const [footerAlert, setFooterAlert] = useState("سفارش روی میز");
-  const [ServiceType, setServiceType] = useState<ServiceType | undefined>();
   const [title, setTitle] = useState("مشاهده منو");
-  const now = new Date();
+  const [showOrder, setShowOrder] = useState(false);
 
-  //calculate session progress
-  const {
-    progress: sessionProgress,
-    remainingMs: remainingSessionDuration,
-    elapsedMs: elapsedSessionDuration,
-  } = useProgress(
-    table.active_session?.started_at || "",
-    table.active_session?.expires_at || "",
-    true,
-    "countdown"
-  );
-
-  //calculate waiter call progress
-  const {
-    progress: waiterCallProgress,
-    remainingMs: remainingWaiterDuration,
-    elapsedMs: elapsedWaiterDuration,
-  } = useProgress(
-    table.active_call?.created_at || "",
-    table.active_call?.expires_at || "",
-    true,
-    "countdown"
-  );
-
-  const { progress: orderAge, elapsedMs: elapsedOrderDuration } = useProgress(
-    table.order?.created_at || "",
-    "",
-    false,
-    "countup"
-  );
-
-  //set back to default state when waiter call is done
-  useEffect(() => {
-    if (waiterCallProgress === 0) {
-      setState("default");
-    }
-  }, [waiterCallProgress]);
-
-  const activeCallValid =
-    table.active_call &&
-    !table.active_call.resolved &&
-    new Date(table.active_call.expires_at) > now;
-
-  const activeSessionIsValid =
-    table.active_session && new Date(table.active_session.expires_at) > now;
-
-  // useEffect(() => {
-  //   if (table.active_session?.code) {
-  //     setTitle("مشاهده منو");
-  //     if (table.order) {
-  //       setFooterAlert("سفارش جدید");
-  //       setState("attention");
-  //     }
-  //     if (activeCallValid) {
-  //       setState("attention");
-  //       setTitle("سالن دار!");
-  //     }
-  //   }
-  // }, [activeCallValid, table.active_session]);
+  const { progress, remainingDuration, elapsedDuration, progressType } =
+    useActiveTimer(table);
 
   useEffect(() => {
-    if (activeSessionIsValid) {
-      if (activeCallValid) {
+    if (progressType) {
+      if (progressType === "call") {
         setState("attention");
+        setShowOrder(false);
         setTitle("سالن دار!");
-      } else if (table.order) {
+      }
+      if (progressType === "order") {
         setState("attention");
         setTitle("سفارش جدید");
-      } else setState("default");
+
+        const timeoutId = setTimeout(() => {
+          setShowOrder(true);
+          setState("default");
+          setTitle("");
+        }, 5000);
+
+        return () => {
+          clearTimeout(timeoutId);
+        };
+      }
+      if (progressType === "session") {
+        setState("default");
+        setTitle("مشاهده منو");
+      }
     } else {
       setState("default");
-      setTitle("مشاهده منو");
-      setView("emptyView");
+      setTitle("");
     }
-  }, [table]);
+  }, [progressType]);
 
   return (
     <div
       style={stateColors[state]}
       className={cn(
-        "relative border-[3px]  overflow-clip border-(--livecard-primary) bg-(--livecard-primary) text-(--livecard-accent) min-h-[350px] font-normal w-60 transition-all duration-300 justify-end flex items-center flex-col rounded-[26px]"
+        "relative border-[3px] overflow-clip border-(--livecard-primary) bg-(--livecard-primary) text-(--livecard-accent) min-h-[350px] font-normal w-60 transition-all duration-300 justify-end flex items-center flex-col rounded-[26px]"
       )}
     >
       <LiveCardBody table={table}>
@@ -231,8 +182,8 @@ export default function LiveCard({
           setShowCode={setShowCode}
           branchSlug={branchSlug}
           table={table}
-          orderAge={orderAge}
-          elapsedOrderDuration={elapsedOrderDuration}
+          orderAge={progress}
+          elapsedOrderDuration={elapsedDuration}
         ></LiveCardHeader>
         {showCode ? (
           <QRCodeView
@@ -240,58 +191,94 @@ export default function LiveCard({
             branchSlug={branchSlug}
             tableCode={table.code}
           ></QRCodeView>
-        ) : table.order ? (
-          <OrderListView orderData={table.order}></OrderListView>
         ) : table.active_session ? (
-          <div className="flex flex-col justify-center h-full items-center gap-4">
-            <div className="group relative flex flex-col justify-center items-center">
+          <motion.div
+            className={cn(
+              "flex flex-col w-full justify-center h-full items-center gap-4",
+              showOrder ? "justify-start pt-2" : "justify-center"
+            )}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          >
+            <motion.div
+              initial={{ width: "180px", height: "180px" }}
+              animate={
+                showOrder
+                  ? { width: "80px", height: "80px", marginTop: "-56px" }
+                  : { width: "180px", height: "180px" }
+              }
+              transition={{
+                ease: "easeOut",
+              }}
+              className="group flex relative justify-center items-center rounded-full"
+            >
               <div
                 className={cn(
-                  "absolute flex gap-2 flex-col items-center justify-center text-2xl font-semibold mx-auto text-(--livecard-text)"
+                  "flex absolute w-full left-1/2 top-1/2 transition-all duration-100 -translate-x-1/2 -translate-y-1/2 gap-2 flex-col items-center justify-center text-2xl font-semibold mx-auto text-(--livecard-text)"
                 )}
               >
-                <p className="line-clamp-2 text-center text-[clamp(16px,20px,24px)] block group-hover:hidden">
-                  {title}
-                </p>
-                <p className="text-xl font-normal hidden group-hover:block">
-                  {activeCallValid
-                    ? remainingWaiterDuration
-                    : remainingSessionDuration}
+                {title && (
+                  <p className="line-clamp-2 text-center text-[clamp(16px,20px,24px)] block group-hover:hidden">
+                    {title}
+                  </p>
+                )}
+                <p
+                  className={cn(
+                    "font-normal transition-all duration-300",
+                    showOrder
+                      ? "text-lg block"
+                      : "text-xl hidden group-hover:block"
+                  )}
+                >
+                  {showOrder ? elapsedDuration : remainingDuration}
                 </p>
               </div>
+              {progressType === "order" && (
+                <Button
+                  onClick={() => setShowOrder((prev) => !prev)}
+                  className="group-hover:opacity-100 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-100 absolute opacity-0 flex size-[76%] font-semibold rounded-full bg-green-300 text-green-950"
+                >
+                  <p>تکمیل</p>
+                </Button>
+              )}
               <ProgressBar
-                // className="-mt-48"
                 outerColor="var(--livecard-secondary)"
                 innerColor="var(--livecard-primary)"
-                size={190}
-                progress={
-                  activeCallValid ? waiterCallProgress : sessionProgress
-                }
+                size={"100%"}
+                progress={progress}
               ></ProgressBar>
-            </div>
-            <div className={cn("flex gap-1 transition-all duration-300")}>
-              <CircleAlert className="w-4 h-4 text-(--livecard-text)"></CircleAlert>
-              {activeCallValid ? (
-                <p className={cn("text-xs text-(--livecard-text)")}>
-                  مشتری {elapsedWaiterDuration} پیش صدا زده
-                </p>
-              ) : (
-                <p className={cn("text-xs text-(--livecard-text)")}>
-                  مشتری {elapsedSessionDuration} پیش اسکن کرده
-                </p>
-              )}
-            </div>
-          </div>
+            </motion.div>
+            {table.order && showOrder ? (
+              <OrderList table={table}></OrderList>
+            ) : (
+              <div className={cn("flex gap-1 transition-all duration-300")}>
+                <CircleAlert className="w-4 h-4 text-(--livecard-text)"></CircleAlert>
+                {progressType === "call" ? (
+                  <p className={cn("text-xs text-(--livecard-text)")}>
+                    مشتری {elapsedDuration} پیش صدا زده
+                  </p>
+                ) : progressType === "order" ? (
+                  <p className={cn("text-xs text-(--livecard-text)")}>
+                    مشتری {elapsedDuration} پیش سفارش داده
+                  </p>
+                ) : (
+                  <p className={cn("text-xs text-(--livecard-text)")}>
+                    مشتری {elapsedDuration} پیش اسکن کرده
+                  </p>
+                )}
+              </div>
+            )}
+          </motion.div>
         ) : (
           <EmptyView table={table}></EmptyView>
         )}
       </LiveCardBody>
-      {table.order && <p>wtf is this shits</p>}
 
       <LiveCardFooter
         table={table}
         footerAlert={footerAlert}
-        type={type}
+        setFooterAlert={setFooterAlert}
+        progressType={progressType}
+        serviceType={serviceType}
       ></LiveCardFooter>
     </div>
   );
@@ -308,10 +295,6 @@ function EmptyView({ table }: { table: TableType }) {
       </p>
     </div>
   );
-}
-
-function OrderListView({ orderData }: { orderData: Order }) {
-  return <OrderList orderData={orderData}></OrderList>;
 }
 
 function QRCodeView({
@@ -348,7 +331,7 @@ export function LiveCardBody({
   return (
     <div
       className={cn(
-        "flex absolute z-10 top-0 items-center gap-2 flex-col justify-between flex-1 transition-all duration-300 bg-primary-foreground shadow-lg w-full rounded-3xl p-2",
+        "flex absolute z-10 top-0 items-center overflow-hidden gap-2 flex-col justify-between flex-1 transition-all duration-300 bg-primary-foreground shadow-lg w-full rounded-3xl p-2",
         activeSessionValid ? "bottom-10" : "bottom-0"
       )}
     >
@@ -361,8 +344,6 @@ export function LiveCardHeader({
   table,
   branchSlug,
   setShowCode,
-  orderAge,
-  elapsedOrderDuration,
 }: {
   table: TableType;
   branchSlug: string;
@@ -476,21 +457,6 @@ export function LiveCardHeader({
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
-        {orderAge && elapsedOrderDuration ? (
-          <div className="group relative flex flex-col justify-center items-center">
-            <ProgressBar
-              outerColor="var(--livecard-secondary)"
-              innerColor="var(--livecard-primary)"
-              size={62}
-              progress={orderAge}
-            ></ProgressBar>
-            <p className="text-sm text-primary absolute font-normal">
-              {elapsedOrderDuration}
-            </p>
-          </div>
-        ) : (
-          ""
-        )}
 
         <div className="flex justify-between gap-2">
           <Button
@@ -531,18 +497,71 @@ export function LiveCardHeader({
   );
 }
 
+type TextState = "initial" | "loading" | "final";
+
 export function LiveCardFooter({
   table,
   footerAlert,
-  type,
+  setFooterAlert,
+  progressType,
+  serviceType,
 }: {
   table: TableType;
   footerAlert: string;
-  type?: "in-person" | "on-table" | "online";
+  setFooterAlert: React.Dispatch<React.SetStateAction<string>>;
+  progressType: string;
+  serviceType?: ServiceType;
 }) {
+  // What should be shown right now according to props/state
+  const getTargetText = (): string => {
+    switch (progressType) {
+      case "order":
+        return "سفارش جدید";
+      case "session":
+        return "سفارش روی میز";
+      case "call":
+        return "درخواست فعال";
+      default:
+        return "سفارش جدید"; // or "", "Waiting...", etc.
+    }
+  };
+
+  const [isBlurred, setIsBlurred] = useState(false);
+
+  // Whenever progressType changes → check if text should update
+  useEffect(() => {
+    const target = getTargetText();
+
+    // Only animate if the text actually needs to change
+    if (target !== footerAlert) {
+      setIsBlurred(true);
+
+      const timer = setTimeout(() => {
+        setFooterAlert(target);
+        setIsBlurred(false);
+      }, 600); // stay blurred ~1.8s → feels like ~2s total with fade-in/out
+
+      return () => clearTimeout(timer);
+    }
+  }, [progressType, footerAlert]);
+
   return (
     <div className="h-10 w-full flex justify-between items-center px-2 py-2 rounded-full">
-      <p className="font-semibold">{footerAlert}</p>
+      {/* <p className="font-semibold blur-2xl">{footerAlert}</p> */}
+      <motion.p
+        animate={{
+          filter: isBlurred ? "blur(40px)" : "blur(0px)",
+          opacity: isBlurred ? 0.3 : 1,
+        }}
+        exit="blurred"
+        transition={{
+          duration: isBlurred ? 0.45 : 0.65,
+          ease: isBlurred ? "easeIn" : "easeOut",
+        }}
+        className="font-semibold blur-2xl"
+      >
+        {footerAlert}
+      </motion.p>
       <div
         className={cn(
           "rounded-full bg-(--livecard-accent) text-(--livecard-primary) h-full text-xs px-2 flex items-center hover:scale-105 duration-300 transition-all scale-pro cursor-pointer"

@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 //types
 type ProgressBarProps = {
   progress: number; // 0 - 100
-  size?: number; // any size (default: 175)
+  size?: number | string; // any size (default: 175)
   outerColor?: string;
   innerColor?: string;
   className?: string;
@@ -31,7 +31,7 @@ export default function ProgressBar({
       viewBox="0 0 100 100"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
-      className={cn("", className)}
+      className={cn("transition-all duration-300", className)}
     >
       {/* Outer gray ring */}
       <circle
