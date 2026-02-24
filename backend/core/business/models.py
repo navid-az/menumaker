@@ -155,7 +155,45 @@ class Order(models.Model):
     notes = models.TextField(blank=True)
     total_price = models.DecimalField(
         max_digits=10, decimal_places=2, default=0)
+
+    # timestamps
     created_at = models.DateTimeField(auto_now_add=True)
+    accepted_at = models.DateTimeField(null=True, blank=True)
+    ready_at = models.DateTimeField(null=True, blank=True)
+    served_at = models.DateTimeField(null=True, blank=True)
+    cancelled_at = models.DateTimeField(null=True, blank=True)
+
+    # Transition and update related timestamps
+    def transition_to(self, new_status):
+        now = timezone.now()
+        update_fields = ["status"]
+
+        if new_status == "accepted" and self.status == "pending":
+            self.accepted_at = now
+            update_fields.append("accepted_at")
+
+        elif new_status == "ready" and self.status in ("accepted", "preparing"):
+            self.ready_at = now
+            update_fields.append("ready_at")
+
+        elif new_status == "served" and self.status == "ready":
+            self.served_at = now
+            update_fields.append("served_at")
+
+        elif new_status == "cancelled" and self.status != "cancelled":
+            self.cancelled_at = now
+            update_fields.append("cancelled_at")
+
+        self.status = new_status
+        self.save(update_fields=update_fields)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['branch', 'status']),
+            models.Index(fields=['status', 'ready_at']),
+            models.Index(fields=['table_session', 'status']),
+        ]
+        ordering = ['-created_at']
 
 
 class OrderItem(models.Model):

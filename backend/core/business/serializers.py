@@ -344,6 +344,20 @@ class OrderUpdateSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'total_price',
                             'created_at', 'branch', 'table_session', 'items',]
 
+    def update(self, instance, validated_data):
+        new_status = validated_data.pop('status', None)
+
+        # if status has been changed, update timestamps accordingly
+        if new_status is not None and new_status != instance.status:
+            instance.transition_to(new_status)
+
+        # Apply any other allowed fields (notes, etc.)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+        return instance
+
 
 # return user's role and permissions
 class RoleSerializer(serializers.ModelSerializer):

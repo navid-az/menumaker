@@ -678,18 +678,37 @@ class OrderDetailView(MethodBasedPermissionsMixin, APIView):
             # Check business ownership
             self.check_object_permissions(request, order.branch.business)
 
-            new_order = ser_data.save()
+            updated_order = ser_data.save()
+
+            payload = {
+                "code": updated_order.table_session.table.code,
+                "id": updated_order.id,
+                "status": updated_order.status,
+            }
+
+            # Add the relevant timestamp based on the new status
+            timestamp = None
+            if updated_order.status == "accepted" and updated_order.accepted_at:
+                timestamp = updated_order.accepted_at
+            elif updated_order.status == "ready" and updated_order.ready_at:
+                timestamp = updated_order.ready_at
+            elif updated_order.status == "served" and updated_order.served_at:
+                timestamp = updated_order.served_at
+            elif updated_order.status == "cancelled" and updated_order.cancelled_at:
+                timestamp = updated_order.cancelled_at
+
+            if timestamp:
+                # Add a dynamic key like "ready_at": "2026-02-23T14:35:22.123456+00:00"
+                field_name = f"{updated_order.status}_at"
+                payload[field_name] = timestamp.isoformat()
+
             # Send data to client in-real-time
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
-                f"dashboard_{new_order.branch.business.slug}_{new_order.branch.slug}", {
+                f"dashboard_{updated_order.branch.business.slug}_{updated_order.branch.slug}", {
                     "type": "dashboard.update",
                     "event": "update_order_status",
-                    "payload": {
-                        "code": new_order.table_session.table.code,
-                        "id": new_order.id,
-                        "status": new_order.status,
-                    }
+                    "payload": payload
                 },)
             return Response(ser_data.data)
         return Response(ser_data.errors, status.HTTP_400_BAD_REQUEST)
