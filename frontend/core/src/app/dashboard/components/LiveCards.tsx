@@ -36,7 +36,7 @@ export default function LiveCards({
       const overlay = liveOverlay[table.code] || {};
       return {
         ...table,
-        ...overlay, // overwrite only active_session and active_call
+        ...overlay, // overwrite only active_session and active_call and order
       };
     });
   }, [tables, liveOverlay]);
@@ -78,6 +78,18 @@ export default function LiveCards({
             order: payload,
           },
         }));
+      } else if (evt === "update_order_status") {
+        setLiveOverlay((prev) => ({
+          ...prev,
+          [payload.code]: {
+            ...prev[payload.code],
+            order: {
+              ...prev[payload.code].order,
+              status: payload.status,
+              [`${payload.status}_at`]: payload[`${payload.status}_at`],
+            },
+          },
+        }));
       }
     };
 
@@ -90,7 +102,7 @@ export default function LiveCards({
         <LiveCard
           businessSlug={businessSlug}
           branchSlug={branchSlug}
-          type="online"
+          serviceType="online"
           table={table}
           key={table.id}
         ></LiveCard>

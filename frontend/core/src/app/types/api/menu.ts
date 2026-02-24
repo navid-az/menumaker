@@ -74,6 +74,14 @@ export type OrderItem = {
   item: number;
 };
 
+export type OrderStatus =
+  | "pending"
+  | "accepted"
+  | "preparing"
+  | "ready"
+  | "served"
+  | "cancelled";
+
 export type Order = {
   id: number;
   status:
@@ -88,4 +96,8 @@ export type Order = {
   items: OrderItem[];
   total_price: number;
   created_at: string;
+  accepted_at?: string;
+  ready_at?: string;
+  served_at?: string;
+  cancelled_at?: string;
 };
