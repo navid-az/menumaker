@@ -57,12 +57,14 @@ import { cn } from "@/lib/utils";
 import { toPersianDigits } from "@/app/(menu)/[business_slug]/utilities/formatCurrency";
 
 //actions
+import { updateOrder } from "@/app/actions/dashboard/live-management";
 import { deleteTable } from "@/app/actions";
 
 //hooks
-import { useActiveTimer } from "@/app/hooks/useActiveTimer";
+import { progressType, useActiveTimer } from "@/app/hooks/useActiveTimer";
 
 // types
+import { type UpdateOrder } from "@/app/types/payloads/menu";
 type LiveCardType = {
   table: TableType;
   businessSlug: string;
@@ -135,8 +137,19 @@ export default function LiveCard({
   const [title, setTitle] = useState("مشاهده منو");
   const [showOrder, setShowOrder] = useState(false);
 
-  const { progress, remainingDuration, elapsedDuration, progressType } =
-    useActiveTimer(table);
+  const now = new Date();
+  const activeSessionValid =
+    table.active_session &&
+    table.active_session?.is_active &&
+    new Date(table.active_session.expires_at) > now;
+
+  const {
+    progress,
+    remainingDuration,
+    elapsedDuration,
+    progressType,
+    progressMessage,
+  } = useActiveTimer(table);
 
   useEffect(() => {
     if (progressType) {
@@ -145,7 +158,7 @@ export default function LiveCard({
         setShowOrder(false);
         setTitle("سالن دار!");
       }
-      if (progressType === "order") {
+      if (progressType === "pendingOrder") {
         setState("attention");
         setTitle("سفارش جدید");
 
@@ -159,16 +172,57 @@ export default function LiveCard({
           clearTimeout(timeoutId);
         };
       }
+      if (progressType === "readyOrder") {
+        setShowOrder(false);
+        setState("attention");
+        setTitle("سفارش آماده");
+      }
+      if (progressType === "servedOrder") {
+        setState("success");
+        setTitle("سرو شد!");
+        setFooterAlert("سفارش روی میز");
+      }
       if (progressType === "session") {
         setState("default");
         setTitle("مشاهده منو");
       }
+      if (progressType === "none") {
+        setState("default");
+      }
     } else {
       setState("default");
       setTitle("");
-      setShowOrder(false);
     }
   }, [progressType]);
+
+  async function handleUpdateOrder() {
+    if (!table.order?.id) return;
+
+    let data: Partial<UpdateOrder> = {};
+
+    if (progressType === "pendingOrder") {
+      data = {
+        status: "ready",
+        ready_at: new Date().toISOString(),
+      };
+    } else if (progressType === "readyOrder") {
+      data = {
+        status: "served",
+        served_at: new Date().toISOString(),
+      };
+    }
+
+    if (Object.keys(data).length === 0) {
+      console.warn("No changes to send");
+      return;
+    }
+
+    const res = await updateOrder(table.order.id, data);
+
+    if (!res.success) {
+      toast.error("خطایی در انجام عملیات رخ داد، لطفا مجددا امتحان کنید");
+    }
+  }
 
   return (
     <div
@@ -177,13 +231,14 @@ export default function LiveCard({
         "relative border-[3px] overflow-clip border-(--livecard-primary) bg-(--livecard-primary) text-(--livecard-accent) min-h-[350px] font-normal w-60 transition-all duration-300 justify-end flex items-center flex-col rounded-[26px]"
       )}
     >
-      <LiveCardBody table={table}>
+      <LiveCardBody activeSessionValid={!!activeSessionValid} table={table}>
         <LiveCardHeader
           setShowCode={setShowCode}
           branchSlug={branchSlug}
           table={table}
           orderAge={progress}
           elapsedDuration={elapsedDuration}
+          progressType={progressType}
         ></LiveCardHeader>
         {showCode ? (
           <QRCodeView
@@ -191,7 +246,7 @@ export default function LiveCard({
             branchSlug={branchSlug}
             tableCode={table.code}
           ></QRCodeView>
-        ) : progressType != "none" ? (
+        ) : activeSessionValid ? (
           <motion.div
             className={cn(
               "flex flex-col w-full justify-center h-full items-center",
@@ -230,12 +285,15 @@ export default function LiveCard({
                       : "text-2xl hidden group-hover:block"
                   )}
                 >
-                  {showOrder ? elapsedDuration : remainingDuration}
+                  {progressType === "call" || progressType === "session"
+                    ? remainingDuration
+                    : elapsedDuration}
                 </p>
               </div>
-              {progressType === "order" && (
+              {(progressType === "readyOrder" ||
+                progressType === "pendingOrder") && (
                 <Button
-                  onClick={() => setShowOrder((prev) => !prev)}
+                  onClick={handleUpdateOrder}
                   className="left-1/2 hidden group-hover:flex top-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-100 absolute size-[76%] font-semibold rounded-full bg-green-300 text-green-950"
                 >
                   <p
@@ -248,6 +306,7 @@ export default function LiveCard({
                   </p>
                 </Button>
               )}
+              {/* <p className="absolute top-0 text-red-600">{progressType}</p> */}
               <ProgressBar
                 outerColor="var(--livecard-secondary)"
                 innerColor="var(--livecard-primary)"
@@ -255,29 +314,14 @@ export default function LiveCard({
                 progress={progress}
               ></ProgressBar>
             </motion.div>
-            {table.order && showOrder ? (
-              <OrderList
-                table={table}
-                elapsedDuration={
-                  progressType === "order" ? elapsedDuration : ""
-                }
-              ></OrderList>
+            {showOrder ? (
+              <OrderList table={table}></OrderList>
             ) : (
               <div className={cn("flex gap-1 transition-all duration-300")}>
                 <CircleAlert className="w-4 h-4 text-(--livecard-text)"></CircleAlert>
-                {progressType === "call" ? (
-                  <p className={cn("text-xs text-(--livecard-text)")}>
-                    مشتری {elapsedDuration} پیش صدا زده
-                  </p>
-                ) : progressType === "order" ? (
-                  <p className={cn("text-xs text-(--livecard-text)")}>
-                    مشتری {elapsedDuration} پیش سفارش داده
-                  </p>
-                ) : (
-                  <p className={cn("text-xs text-(--livecard-text)")}>
-                    مشتری {elapsedDuration} پیش اسکن کرده
-                  </p>
-                )}
+                <p className={cn("text-xs text-(--livecard-text)")}>
+                  {progressMessage}
+                </p>
               </div>
             )}
           </motion.div>
@@ -331,16 +375,12 @@ function QRCodeView({
 export function LiveCardBody({
   table,
   children,
+  activeSessionValid,
 }: {
   table: TableType;
   children: React.ReactNode;
+  activeSessionValid: boolean;
 }) {
-  const now = new Date();
-  const activeSessionValid =
-    table.active_session &&
-    table.active_session?.is_active &&
-    new Date(table.active_session.expires_at) > now;
-
   return (
     <div
       className={cn(
@@ -358,12 +398,14 @@ export function LiveCardHeader({
   branchSlug,
   setShowCode,
   elapsedDuration,
+  progressType,
 }: {
   table: TableType;
   branchSlug: string;
   setShowCode: React.Dispatch<React.SetStateAction<boolean>>;
   orderAge: number;
   elapsedDuration: string;
+  progressType: progressType;
 }) {
   async function handleTableDelete() {
     const res = await deleteTable(branchSlug, table.id);
@@ -403,9 +445,9 @@ export function LiveCardHeader({
                 <Info></Info>
                 مشخصات میز
               </DropdownMenuItem>
-              <OrderDataDialog table={table} elapsedDuration={elapsedDuration}>
+              <OrderDataDialog table={table}>
                 <DropdownMenuItem
-                  disabled={!table.order}
+                  disabled={!table.order || progressType === "none"}
                   onSelect={(e) => e.preventDefault()}
                 >
                   <ScrollText></ScrollText>
@@ -529,18 +571,22 @@ export function LiveCardFooter({
   table: TableType;
   footerAlert: string;
   setFooterAlert: React.Dispatch<React.SetStateAction<string>>;
-  progressType: string;
+  progressType: progressType;
   serviceType?: ServiceType;
 }) {
   // What should be shown right now according to props/state
   const getTargetText = (): string => {
     switch (progressType) {
-      case "order":
+      case "pendingOrder":
         return "سفارش جدید";
       case "session":
         return "سفارش روی میز";
       case "call":
         return "درخواست فعال";
+      case "readyOrder":
+        return "آماده تحویل";
+      case "servedOrder":
+        return "در سف پرداخت";
       default:
         return "سفارش جدید";
     }

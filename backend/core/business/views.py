@@ -642,6 +642,7 @@ class OrdersView(MethodBasedPermissionsMixin, APIView):
                         "created_at": new_order.created_at.isoformat(),
                         "items": [
                             {
+                                "id": item.id,
                                 "name_snapshot": item.name_snapshot,
                                 "price_snapshot": str(item.price_snapshot),
                                 "quantity": item.quantity,
@@ -680,11 +681,25 @@ class OrderDetailView(MethodBasedPermissionsMixin, APIView):
 
             updated_order = ser_data.save()
 
+            # isn't supposed to pass the whole order data, but just the relevant fields that changed (e.g. status and timestamps).
+            # For simplicity, I'm sending the whole order data here. Can optimize later if needed.
             payload = {
                 "code": updated_order.table_session.table.code,
                 "id": updated_order.id,
                 "status": updated_order.status,
-            }
+                "total_price": str(updated_order.total_price),
+                "created_at": updated_order.created_at.isoformat(),
+                "items": [
+                    {
+                        "id": item.id,
+                        "name_snapshot": item.name_snapshot,
+                        "price_snapshot": str(item.price_snapshot),
+                        "quantity": item.quantity,
+                        "notes": item.notes or None,
+                    }
+                    # or .items if related_name
+                    for item in updated_order.items.all()
+                ]}
 
             # Add the relevant timestamp based on the new status
             timestamp = None

@@ -83,11 +83,7 @@ export default function LiveCards({
           ...prev,
           [payload.code]: {
             ...prev[payload.code],
-            order: {
-              ...prev[payload.code].order,
-              status: payload.status,
-              [`${payload.status}_at`]: payload[`${payload.status}_at`],
-            },
+            order: payload,
           },
         }));
       }

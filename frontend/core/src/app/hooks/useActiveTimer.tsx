@@ -3,6 +3,13 @@ import { useProgress } from "./useProgress";
 
 //types
 import { type TableType } from "../dashboard/[business_slug]/[branch_slug]/liveManagement/all/page";
+export type progressType =
+  | "call"
+  | "pendingOrder"
+  | "readyOrder"
+  | "servedOrder"
+  | "session"
+  | "none";
 
 // Get table's active_call, active_session and order data
 // Return progress of the alert with highest priority
@@ -10,12 +17,18 @@ export function useActiveTimer(table: TableType): {
   progress: number;
   remainingDuration: string;
   elapsedDuration: string;
-  progressType: "call" | "order" | "session" | "none";
+  progressType: progressType;
+  progressMessage: string;
   // color: string;
 } {
   const now = new Date();
 
-  const activeOrderValid = !!table.order;
+  const activeOrderValid = !!table.order && table.order.status != "cancelled";
+
+  const orderIsReady = table.order?.status === "ready";
+
+  const orderIsServed =
+    table.order?.served_at && new Date(table.order.served_at) < now;
 
   const activeCallValid =
     table.active_call &&
@@ -49,12 +62,26 @@ export function useActiveTimer(table: TableType): {
     "countdown"
   );
 
-  //calculate order age progress
+  //calculate order created_at progress
   const {
     progress: orderAge,
     remainingMs: remainingOrderDuration,
     elapsedMs: elapsedOrderDuration,
   } = useProgress(table.order?.created_at || "", "", false, "countup");
+
+  //calculate order ready_at progress
+  const {
+    progress: orderReady,
+    remainingMs: remainingOrderReadyDuration,
+    elapsedMs: elapsedOrderReadyDuration,
+  } = useProgress(table.order?.ready_at || "", "", false, "countup");
+
+  //calculate order served_at progress
+  const {
+    progress: orderServed,
+    remainingMs: remainingOrderServedDuration,
+    elapsedMs: elapsedOrderServedDuration,
+  } = useProgress(table.order?.served_at || "", "", false, "countup");
 
   if (activeCallValid) {
     return {
@@ -62,18 +89,36 @@ export function useActiveTimer(table: TableType): {
       remainingDuration: remainingWaiterDuration,
       elapsedDuration: elapsedWaiterDuration,
       progressType: "call",
-      // color: "var(--urgent-call)",
+      progressMessage: `مشتری ${elapsedWaiterDuration} پیش صدا زده`,
     };
   }
 
   if (activeOrderValid) {
-    return {
-      progress: orderAge,
-      remainingDuration: remainingOrderDuration,
-      elapsedDuration: elapsedOrderDuration,
-      progressType: "order",
-      // color: "var(--order-age)",
-    };
+    if (orderIsReady) {
+      return {
+        progress: orderReady,
+        remainingDuration: remainingOrderReadyDuration,
+        elapsedDuration: elapsedOrderReadyDuration,
+        progressType: "readyOrder",
+        progressMessage: `سفارش ${elapsedOrderReadyDuration} پیش آماده شده`,
+      };
+    } else if (orderIsServed) {
+      return {
+        progress: 100,
+        remainingDuration: "",
+        elapsedDuration: elapsedOrderServedDuration,
+        progressType: "servedOrder",
+        progressMessage: `سفارش ${elapsedOrderServedDuration} پیش سرور شد`,
+      };
+    } else {
+      return {
+        progress: orderAge,
+        remainingDuration: remainingOrderDuration,
+        elapsedDuration: elapsedOrderDuration,
+        progressType: "pendingOrder",
+        progressMessage: `مشتری ${elapsedOrderDuration} پیش سفارش داده`,
+      };
+    }
   }
 
   if (activeSessionValid) {
@@ -82,7 +127,7 @@ export function useActiveTimer(table: TableType): {
       remainingDuration: remainingSessionDuration,
       elapsedDuration: elapsedSessionDuration,
       progressType: "session",
-      // color: "var(--session)",
+      progressMessage: `مشتری ${elapsedSessionDuration} پیش اسکن کرده`,
     };
   }
 
@@ -91,6 +136,6 @@ export function useActiveTimer(table: TableType): {
     remainingDuration: "",
     elapsedDuration: "",
     progressType: "none",
-    // color: "var(--neutral)",
+    progressMessage: "",
   };
 }

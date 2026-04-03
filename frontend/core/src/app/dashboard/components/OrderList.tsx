@@ -12,6 +12,9 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
+//hooks
+import { useProgress } from "@/app/hooks/useProgress";
+
 //types
 import { type TableType } from "../[business_slug]/[branch_slug]/liveManagement/all/page";
 import {
@@ -39,7 +42,7 @@ const orderStatus = {
     color: "text-blue-500",
   },
   served: {
-    text: "تحویل شده",
+    text: "تحویل داده شده",
     color: "text-green-500",
   },
   cancelled: {
@@ -48,13 +51,9 @@ const orderStatus = {
   },
 };
 
-export function OrderList({
-  table,
-  elapsedDuration,
-}: {
-  table: TableType;
-  elapsedDuration: string;
-}) {
+export function OrderList({ table }: { table: TableType }) {
+  //calculate order created_at progress
+
   return (
     <div className="w-full h-max">
       <div className="w-full flex p-2">
@@ -66,10 +65,10 @@ export function OrderList({
         ))}
       </ul>
       {table.order && table.order?.items.length > 3 && (
-        <OrderDataDialog table={table} elapsedDuration={elapsedDuration}>
+        <OrderDataDialog table={table}>
           <Button
             size="lg"
-            className="scale-pro w-full text-primary bg-gray-100 border-2 border-primary/40 hover:scale-95 hover:bg-primary hover:text-white justify-center text-base rounded-full mt-[5px] transition-all duration-200"
+            className="scale-pro w-full text-primary bg-gray-100 border-2 border-primary/40 hover:scale-95 hover:bg-primary hover:text-white justify-center text-base rounded-b-3xl transition-all duration-200"
           >
             <div className="flex items-end gap-0.5 pt-0.5">
               <span className="font-normal">+</span>
@@ -94,7 +93,6 @@ function ItemRow({
 }) {
   return (
     <li
-      key={item.id}
       className={cn(
         "flex items-center w-full gap-2 p-2 border-b-1 border-primary/10",
         lastDashed && "last:border-dashed last:border-b-2"
@@ -114,12 +112,18 @@ function ItemRow({
 export function OrderDataDialog({
   children,
   table,
-  elapsedDuration,
 }: {
   children: React.ReactNode;
   table: TableType;
-  elapsedDuration: string;
 }) {
+  //calculate order created_at progress
+  const { elapsedMs: elapsedOrderDuration } = useProgress(
+    table.order?.created_at || "",
+    "",
+    false,
+    "countup"
+  );
+
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -163,7 +167,7 @@ export function OrderDataDialog({
               <div className="flex gap-2 flex-col flex-1 rounded-md border-2 bg-gray-50 border-primary/5 p-4">
                 <p className=" text-lg">ثبت سفارش</p>
                 <p className="text-base font-normal text-gray-500">
-                  {elapsedDuration} پیش
+                  {elapsedOrderDuration} پیش
                 </p>
               </div>
             </section>
