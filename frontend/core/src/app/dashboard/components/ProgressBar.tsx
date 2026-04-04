@@ -56,7 +56,7 @@ export default function ProgressBar({
         strokeLinecap="round"
         fill="none"
         strokeDasharray={circumference}
-        strokeDashoffset={offset}
+        strokeDashoffset={offset || 0}
         style={{
           transform: "rotate(-90deg)",
           transformOrigin: "50% 50%",

@@ -10,13 +10,12 @@ import { Check, Copy, Download } from "lucide-react";
 
 //libraries
 import QRCodeStyling, { Options, FileExtension } from "qr-code-styling";
-import { cn } from "@/lib/utils";
 import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
 
 export default function QrCodeGenerator({ url }: { url: string }) {
   const [options, setOptions] = useState<Options>({
-    width: 180,
-    height: 180,
+    width: 170,
+    height: 170,
     type: "svg",
     data: url,
     image: "",
@@ -98,27 +97,27 @@ export default function QrCodeGenerator({ url }: { url: string }) {
   };
 
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div className="flex flex-col items-center gap-2 justify-between">
       <div
         onClick={handleQRclick}
-        className="border-2 p-1 border-sad-blue rounded-xl  hover:border-royal-green transition-all duration-300 cursor-pointer"
+        className="border-2 p-2.5 flex flex-1 w-full items-center justify-center border-sad-blue rounded-xl hover:border-royal-green transition-all duration-300 cursor-pointer"
       >
         <div ref={ref} />
       </div>
-      <div className="gap-2 flex justify-between">
+      <div className="gap-2 w-full flex justify-between">
         <Button
           ref={downloadBtnRef}
           onClick={onDownloadClick}
-          className="rounded-full bg-soft-blue border-sad-blue border-2 text-royal-green/50 hover:text-royal-green hover:border-royal-green scale-pro"
+          className="rounded-full transition-all duration-300 basis-2/3 bg-soft-blue border-sad-blue border-2 text-royal-green/50 hover:text-royal-green hover:border-royal-green scale-pro"
         >
-          <Download className="w-5 h-5" />
-          دانلود QR کد
+          <Download className="w-4 h-4" />
+          <p>دانلود QR کد</p>
         </Button>
         <Button
           ref={copyBtnRef}
           disabled={copied}
           onClick={onCopyClick}
-          className="rounded-full bg-soft-blue border-sad-blue border-2 text-royal-green/50 hover:text-royal-green hover:border-royal-green scale-pro"
+          className="rounded-full transition-all duration-300 basis-1/3 bg-soft-blue border-sad-blue border-2 text-royal-green/50 hover:text-royal-green hover:border-royal-green scale-pro"
         >
           {copied ? (
             <Check className="w-5 h-5"></Check>
