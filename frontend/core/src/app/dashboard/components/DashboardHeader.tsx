@@ -4,6 +4,13 @@ import { UserProfile } from "@/components/global/UserProfile";
 
 //functions
 import { checkFeatureAccess } from "@/lib/guards/checkFeatureAccess";
+import SubscriptionPopOver from "./SubscriptionPopOver";
+
+//libs
+import { getBusinessSubscription } from "@/lib/subscription/getBusinessSubscription";
+
+//types
+import { type Subscription } from "@/app/types/api/subscription";
 
 // get all branches of active business
 async function getBranches(business_slug: string) {
@@ -32,11 +39,20 @@ export async function DashboardHeader({
   );
   const branches = await getBranches(business_slug);
 
+  const subscription: Subscription = await getBusinessSubscription(
+    business_slug
+  );
+
   return (
     <header className="flex flex-none justify-between bg-primary px-6 py-4">
       <section className="flex justify-between items-center flex-1">
         {hasFeature && <BranchSelector branches={branches}></BranchSelector>}
-        <UserProfile></UserProfile>
+        <div className="flex gap-2">
+          <SubscriptionPopOver
+            subscription={subscription}
+          ></SubscriptionPopOver>
+          <UserProfile></UserProfile>
+        </div>
       </section>
     </header>
   );
