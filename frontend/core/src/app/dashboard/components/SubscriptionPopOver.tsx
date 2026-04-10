@@ -25,14 +25,18 @@ export default function SubscriptionPopOver({
   const { progress } = useProgress(
     subscription.start_date,
     subscription.end_date,
-    undefined,
-    true
+    undefined
   );
 
-  // Calculate subscription duration in months
   const start = new Date(subscription.start_date).getTime();
   const end = new Date(subscription.end_date).getTime();
+  const now = new Date().getTime();
+
+  // Calculate subscription duration in months
   const durationInMonths = Math.floor((end - start) / 1000 / 60 / 60 / 24 / 30);
+
+  // Calculate subscription's remaining days
+  const daysLeft = Math.max(0, Math.ceil((end - now) / 86400000));
 
   type planType = "Franchiser" | "Pro" | "Basic";
   const plans: Record<
@@ -76,7 +80,7 @@ export default function SubscriptionPopOver({
             <div className="absolute flex flex-col items-center justify-center font-semibold mx-auto text-(--livecard-text)">
               <p className="text-center text-lg font-medium">
                 {/* needs to change */}
-                {toPersianDigits(245)} روز
+                {toPersianDigits(daysLeft)} روز
               </p>
               <p className="text-xs font-normal">باقی مانده</p>
             </div>
