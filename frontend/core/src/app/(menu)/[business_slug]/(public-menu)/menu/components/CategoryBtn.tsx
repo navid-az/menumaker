@@ -78,9 +78,11 @@ export default function CategoryBtn({
   const buttonRef = useRef<HTMLDivElement>(null);
   const rippleRef = useRef<HTMLDivElement>(null);
 
+  const [rippleColor, setRippleColor] = useState(globalStyling.secondary_color);
+
   //component specific animation settings
   const AddToCartBtnAnimationConfigs: AnimationConfigType = {
-    ripple: { duration: 1200, size: 100, color: globalStyling.secondary_color },
+    ripple: { duration: 1200, size: 100, color: rippleColor },
     tactile: {},
   };
   const ripple = useRippleAnimation(
@@ -98,6 +100,15 @@ export default function CategoryBtn({
 
   const { activeCategory, updateActiveCategory, updateIsAutoScrolling } =
     useCategoryBtn();
+
+  // Change ripple effect's color depending on category button's state
+  useEffect(() => {
+    if (activeCategory === id) {
+      setRippleColor(globalStyling.primary_color);
+    } else {
+      setRippleColor(globalStyling.secondary_color);
+    }
+  }, [activeCategory]);
 
   const shouldAutoAnimate = useCategoryBtn((state) => state.shouldAutoAnimate);
   const updateShouldAutoAnimate = useCategoryBtn(
@@ -185,17 +196,17 @@ export default function CategoryBtn({
             : undefined
         }
         className={cn(
-          "scale-pro h-10 flex-none relative select-none rounded-(--radius-base) border-2 bg-(--primary) px-4 py-2 text-(--secondary) transition-[color,box-shadow,border-radius,border-color,font-size] duration-300",
+          "scale-pro h-10 flex-none bg-(--primary) rounded-(--radius-base) overflow-hidden relative select-none border-2 px-4 py-2 text-(--secondary) transition-[background-color,color,box-shadow,border-radius,border-color,font-size] duration-300",
           globalStyling.style === "retro" &&
             "border-3 !border-(--secondary) shadow-[4px_4px_0px_0px_var(--secondary)] font-bold",
           globalStyling.style === "retro" &&
             parentType === "vertical" &&
             " shadow-[-4px_-4px_0px_0px_var(--secondary)]",
           activeCategory === id
-            ? " border-(--tertiary) shadow-[0px_0px_0px_0px_var(--secondary)]"
+            ? "bg-(--tertiary) border-(--category-btn-text) text-(--category-btn-text) shadow-[0px_0px_0px_0px_var(--secondary)]"
             : globalStyling.style === "retro"
-              ? "border-(--secondary)"
-              : "border-(--secondary)/20",
+            ? "border-(--secondary)"
+            : "border-(--secondary)/20",
           parentType === "vertical" &&
             "h-auto w-10 flex items-center justify-center p-4",
           className
@@ -204,7 +215,7 @@ export default function CategoryBtn({
         <div
           onClick={handleClick}
           ref={rippleRef}
-          className="absolute w-full h-full scale-pro rounded-(--radius-base)"
+          className="absolute w-full h-full scale-pro"
         ></div>
         {icon && (
           <Image

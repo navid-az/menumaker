@@ -72,6 +72,9 @@ export default function AddToCartBtn({
       onClick={(e) => e.stopPropagation()}
       className={cn(
         "flex h-10 w-full justify-center gap-2 rounded-(--radius-inner) bg-[var(--cart-btn-bg)] text-[var(--cart-btn-text)] transition-all duration-300",
+        globalStyling.style === "retro" &&
+          globalStyling.tertiary_color &&
+          "border-[2.5px] border-secondary h-11",
         className
       )}
     >

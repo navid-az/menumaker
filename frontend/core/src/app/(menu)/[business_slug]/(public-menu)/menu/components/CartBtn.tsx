@@ -132,7 +132,7 @@ export default function CartBtn({
           <div
             key={item.item.id}
             className={cn(
-              "relative h-11 w-11 bg-(--bg) -ml-4 first:ml-0 rounded-(--radius-base) border-2 border-(--secondary) shadow-sm transition-all duration-300 xs:h-12 xs:w-12",
+              "relative h-11 w-11 bg-(--bg) -ml-4 first:ml-0 rounded-(--radius-base) border-(--secondary) border-2 shadow-sm transition-all duration-300 xs:h-12 xs:w-12",
               globalStyling.style === "retro" &&
                 "border-3 shadow-[2px_2px_0px_0px_var(--secondary)]"
             )}
@@ -145,7 +145,7 @@ export default function CartBtn({
             />
             <div
               className={cn(
-                "absolute z-10 h-4.5 w-4.5 flex justify-center items-center rounded-(--radius-inner-alt) border-2 border-(--secondary) text-center text-xs pt-0.5 font-normal bg-[var(--footer-cart-counter-bg)] text-[var(--footer-cart-counter-text)] transition-all duration-300",
+                "absolute z-10 h-4.5 w-4.5 flex justify-center items-center rounded-(--radius-inner-alt) border border-(--footer-cart-border) text-center text-xs pt-0.5 font-normal bg-(--footer-cart-counter-bg) text-(--footer-cart-counter-text) transition-all duration-300",
                 globalStyling.border_radius === "full"
                   ? "-left-0.5 -top-0.5"
                   : "-left-1.5 -top-1.5",
@@ -158,7 +158,13 @@ export default function CartBtn({
         ))}
 
         {matchingItems.length > 3 && (
-          <div className="h-11 w-11 rounded-(--radius-base) z-10 -ml-4 border-2 border-(--primary) bg-(--secondary) pt-3 text-center text-(--primary) shadow-sm transition-all duration-300 xs:h-12 xs:w-12">
+          <div
+            className={cn(
+              "h-11 w-11 rounded-(--radius-base) z-10 -ml-4 border-2 border-(--footer-cart-border) bg-(--secondary) pt-3 text-center text-(--primary) shadow-sm transition-all duration-300 xs:h-12 xs:w-12",
+              globalStyling.style === "retro" &&
+                "border-3 bg-(--primary) text-(--secondary) border-(--secondary) shadow-[2px_2px_0px_0px_var(--secondary)]"
+            )}
+          >
             <p>{matchingItems.length - 3}+</p>
           </div>
         )}
@@ -216,7 +222,7 @@ export default function CartBtn({
               {totalItemCount >= 1 && (
                 <div
                   className={cn(
-                    "absolute z-10 h-[22px] w-[22px] flex justify-center items-center rounded-[var(--radius-inner-alt)] border-[var(--secondary)] bg-[var(--footer-cart-counter-bg)] text-[var(--footer-cart-counter-text)] text-center text-xs pt-0.5 font-normal transition-all duration-300",
+                    "absolute z-10 h-[22px] w-[22px] flex justify-center items-center rounded-[var(--radius-inner-alt)] border-2 border-(--bg) bg-[var(--footer-cart-counter-bg)] text-[var(--footer-cart-counter-text)] text-center text-xs pt-0.5 font-normal transition-all duration-300",
                     globalStyling.border_radius === "full"
                       ? "-left-0.5 -top-0.5"
                       : "-left-1.5 -top-1.5",
@@ -235,7 +241,7 @@ export default function CartBtn({
               {totalItemCount >= 1 && (
                 <div
                   className={cn(
-                    "absolute z-10 h-5.5 w-5.5 flex justify-center items-center rounded-(--radius-inner-alt) border-(--secondary) bg-[var(--footer-cart-counter-bg)] text-[var(--footer-cart-counter-text)] text-center text-xs pt-0.5 font-normal transition-all duration-300",
+                    "absolute z-10 h-5.5 w-5.5 flex justify-center items-center rounded-(--radius-inner-alt) border-2 border-(--bg) bg-[var(--footer-cart-counter-bg)] text-[var(--footer-cart-counter-text)] text-center text-xs pt-0.5 font-normal transition-all duration-300",
                     globalStyling.border_radius === "full"
                       ? "-left-0.5 -top-0.5"
                       : "-left-1.5 -top-1.5",

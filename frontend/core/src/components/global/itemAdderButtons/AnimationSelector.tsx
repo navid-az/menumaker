@@ -18,6 +18,13 @@ import { Check, Sparkles } from "lucide-react";
 //libraries
 import { useFormContext } from "react-hook-form";
 
+//utils
+import { formToMenuGlobalStyling } from "@/app/(creator)/builder/utils/formToMenuGlobalStyling";
+import { generateStyleVars } from "@/app/(menu)/[business_slug]/utilities/styleVars";
+
+//types
+import { type BuilderFormType } from "@/app/(creator)/builder/components/builder/BuilderTest";
+
 export default function AnimationSelector({
   defaultValue = [],
   value,
@@ -36,10 +43,20 @@ export default function AnimationSelector({
   const tactileBtnRef = useRef<HTMLButtonElement>(null);
   const rippleBtnRef = useRef<HTMLButtonElement>(null);
 
-  const { watch } = useFormContext();
+  const { watch } = useFormContext<BuilderFormType>();
+  const data = watch();
 
-  //match preview button with the selected theme
-  const theme = watch("global_styling.color_palette");
+  //separates and normalizes form data
+  const { globalStyling, menu } = formToMenuGlobalStyling(data);
+
+  //generate style variables
+  const colors = [
+    globalStyling.primary_color,
+    globalStyling.secondary_color,
+    globalStyling.tertiary_color,
+    globalStyling.bg_color,
+  ];
+  const styleVars = generateStyleVars(colors, globalStyling.border_radius);
 
   //animation for option buttons(default animation for app's buttons)
   useTactileAnimation(rippleBtnRef, { scale: 0.02 });
@@ -48,12 +65,12 @@ export default function AnimationSelector({
   //initial animations mount
   const triggerRippleAnimation = useRippleAnimation(
     previewBtnRef,
-    { color: theme[0] },
+    { duration: 1200, size: 100, color: globalStyling.primary_color },
     selected.includes("ripple")
   );
   const triggerTactileAnimation = useTactileAnimation(
     previewBtnRef,
-    { scale: 0.04 },
+    {},
     selected.includes("tactile")
   );
 
@@ -83,15 +100,11 @@ export default function AnimationSelector({
   return (
     <div className="flex h-max w-full flex-col items-end gap-4 rounded-md">
       <Button
+        style={styleVars as React.CSSProperties}
         type="button"
         disabled={!selected.length}
         ref={previewBtnRef}
-        className="scale-pro flex gap-2 border-2 shadow-sm transition-opacity duration-300"
-        style={{
-          backgroundColor: theme ? theme[1] : "pink",
-          color: theme ? theme[0] : "brown",
-          borderColor: theme ? theme[0] : "pink",
-        }}
+        className="scale-pro flex gap-2 border-2 rounded-(--radius-base) bg-(--tertiary) border-(--category-btn-text) text-(--category-btn-text) transition-[background-color,color,box-shadow,border-radius,border-color,opacity] duration-300"
       >
         <Sparkles className="h-5 w-5"></Sparkles>
         <p className="font-normal">نمونه افکت</p>

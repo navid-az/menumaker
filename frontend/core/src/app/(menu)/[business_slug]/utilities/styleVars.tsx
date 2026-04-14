@@ -23,6 +23,9 @@ export function generateStyleVars(
     "--text-main": primary,
     "--text-alt": secondary,
 
+    /* Category Button */
+    "--category-btn-text": hasTertiary ? secondary : primary,
+
     /* Add to Cart Button */
     "--cart-btn-bg": hasTertiary ? tertiary : secondary,
     "--cart-btn-text": hasTertiary ? secondary : primary,
@@ -40,8 +43,9 @@ export function generateStyleVars(
     /* Footer Cart */
     "--footer-cart-bg": hasTertiary ? tertiary : primary,
     "--footer-cart-text": secondary,
+    "--footer-cart-border": hasTertiary ? tertiary : primary,
     "--footer-cart-counter-bg": secondary,
-    "--footer-cart-counter-text": hasTertiary ? tertiary : primary,
+    "--footer-cart-counter-text": primary,
 
     /* Border Radius System */
     ...getRadiusVars(globalBorderRadius),
