@@ -48,9 +48,11 @@ export async function DashboardHeader({
       <section className="flex justify-between items-center flex-1">
         {hasFeature && <BranchSelector branches={branches}></BranchSelector>}
         <div className="flex gap-2">
-          <SubscriptionPopOver
-            subscription={subscription}
-          ></SubscriptionPopOver>
+          {subscription && (
+            <SubscriptionPopOver
+              subscription={subscription}
+            ></SubscriptionPopOver>
+          )}
           <UserProfile></UserProfile>
         </div>
       </section>
