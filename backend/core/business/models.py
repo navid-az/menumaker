@@ -272,6 +272,24 @@ class Item(models.Model):
         return f"{self.name} - {self.business}"
 
 
+class ItemOption(models.Model):
+    ITEM_OPTION_CHOICES_TYPE = (
+        ("checkbox", "Checkbox"),
+        ("radio", "Radio"),
+    )
+    item = models.ForeignKey(
+        Item, on_delete=models.CASCADE, related_name='options')
+    type = models.CharField(max_length=20, choices=ITEM_OPTION_CHOICES_TYPE)
+    value = models.CharField(max_length=100)
+
+
+class ItemOptionChoice(models.Model):
+    item_option = models.ForeignKey(
+        ItemOption, on_delete=models.CASCADE, related_name='choices')
+    value = models.CharField(max_length=100)
+    price = models.IntegerField(default=0)
+
+
 class ItemBranch(models.Model):
     item = models.ForeignKey(
         Item, on_delete=models.CASCADE, related_name='branch_overrides')

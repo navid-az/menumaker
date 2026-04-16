@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Business, Branch, Table, TableSession, CallWaiter, Category, Item, ItemBranch, Order, OrderItem
+from .models import Business, Branch, Table, TableSession, CallWaiter, Category, Item, ItemBranch, ItemOption, ItemOptionChoice, Order, OrderItem
 
 admin.site.register(Branch)
 admin.site.register(Table)
@@ -8,6 +8,8 @@ admin.site.register(CallWaiter)
 admin.site.register(Category)
 admin.site.register(Item)
 admin.site.register(ItemBranch)
+admin.site.register(ItemOption)
+admin.site.register(ItemOptionChoice)
 admin.site.register(Order)
 admin.site.register(OrderItem)
 

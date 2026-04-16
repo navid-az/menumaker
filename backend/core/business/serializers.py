@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 
 from decimal import Decimal
 
-from .models import Business, Branch, Table, TableSession, CallWaiter, Category, Item, ItemBranch, Order, OrderItem
+from .models import Business, Branch, Table, TableSession, CallWaiter, Category, Item, ItemBranch, ItemOption, ItemOptionChoice, Order, OrderItem
 from pickers.models import Asset
 from personnel.models import Personnel
 
@@ -133,9 +133,25 @@ class ItemBranchSerializer(serializers.ModelSerializer):
         fields = ["branch", "is_active", "is_available"]
 
 
+class ItemOptionChoicesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ItemOptionChoice
+        exclude = ['item_option']
+
+
+class ItemOptionsSerializer(serializers.ModelSerializer):
+    choices = ItemOptionChoicesSerializer(
+        many=True, read_only=True)
+
+    class Meta:
+        model = ItemOption
+        fields = ['id', 'value', 'choices']
+
+
 class ItemsSerializer(serializers.ModelSerializer):
     business = serializers.SlugRelatedField(slug_field='slug', read_only=True)
     branch_exceptions = serializers.SerializerMethodField()
+    options = ItemOptionsSerializer(many=True)
 
     class Meta:
         model = Item
