@@ -145,7 +145,7 @@ class ItemOptionsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ItemOption
-        fields = ['id', 'value', 'choices']
+        fields = ['id', 'name', 'type', 'choices', 'required']
 
 
 class ItemsSerializer(serializers.ModelSerializer):

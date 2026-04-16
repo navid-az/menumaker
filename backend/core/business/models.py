@@ -274,20 +274,35 @@ class Item(models.Model):
 
 class ItemOption(models.Model):
     ITEM_OPTION_CHOICES_TYPE = (
-        ("checkbox", "Checkbox"),
+        ("multi_select", "Multi Select"),
         ("radio", "Radio"),
+        ('counter', 'Counter')
     )
     item = models.ForeignKey(
         Item, on_delete=models.CASCADE, related_name='options')
+    name = models.CharField(max_length=200)
     type = models.CharField(max_length=20, choices=ITEM_OPTION_CHOICES_TYPE)
-    value = models.CharField(max_length=100)
+    required = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.item.name} - {self.name}"
 
 
 class ItemOptionChoice(models.Model):
     item_option = models.ForeignKey(
         ItemOption, on_delete=models.CASCADE, related_name='choices')
-    value = models.CharField(max_length=100)
-    price = models.IntegerField(default=0)
+    name = models.CharField(max_length=200)
+
+    # Price modifier relative to item.price
+    price_modifier = models.IntegerField(
+        default=0
+    )
+
+    # Used only for RADIO options
+    is_default = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.item_option.name} - {self.name}"
 
 
 class ItemBranch(models.Model):
