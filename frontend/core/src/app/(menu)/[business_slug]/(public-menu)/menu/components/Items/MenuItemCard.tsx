@@ -23,7 +23,7 @@ import { useRippleAnimation } from "@/app/hooks/useRippleAnimation";
 import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
 
 //SVGs
-import { Plus, Minus } from "lucide-react";
+import { Plus, Minus, CheckCircle2 } from "lucide-react";
 
 //functions
 import mapAnimationsToConfigs from "@/lib/mapAnimationsToConfigs";
@@ -34,7 +34,12 @@ import {
   type AnimationVariantType,
 } from "@/components/global/InteractiveWrapper";
 import { type MenuGlobalStylingUI } from "@/app/types/ui/menu";
-import { type ItemsDisplayType, type MenuItem } from "@/app/types/api/menu";
+import {
+  ItemOption,
+  OptionChoice,
+  type ItemsDisplayType,
+  type MenuItem,
+} from "@/app/types/api/menu";
 export type MenuItemCardProps = MenuItem & {
   style: ItemsDisplayType;
   globalStyling: MenuGlobalStylingUI;
@@ -51,6 +56,7 @@ import { generateStyleVars } from "../../../../utilities/styleVars";
 
 //libraries
 import { cn } from "@/lib/utils";
+import { array } from "zod";
 
 export function MenuItemCard({
   id,
@@ -79,9 +85,129 @@ export function MenuItemCard({
   // const handleDrawer = () => {
   //   updateIsOpen();
   // };
+
+  // Inner and Outer drawer states
   const [innerOpen, setInnerOpen] = React.useState(false);
   const [outerOpen, setOuterOpen] = React.useState(false);
   const { setDrawerOpen } = useMenuItemDrawer();
+
+  const [activeChoices, setActiveChoices] = useState<ActiveChoices>({});
+  useEffect(() => {
+    const defaults = getDefaultActiveChoices();
+    setActiveChoices(defaults);
+  }, [options]);
+
+  // Get Initial active choices based on fetched data
+  function getDefaultActiveChoices() {
+    const result: Record<string, any> = {};
+
+    if (!options) return result;
+
+    options.forEach((option) => {
+      const optId = String(option.id);
+
+      switch (option.type) {
+        case "radio": {
+          const def = option.choices.find((c) => c.is_default);
+          if (def) result[optId] = def.id;
+          break;
+        }
+
+        case "multi_select": {
+          const defaults = option.choices
+            .filter((c) => c.is_default)
+            .map((c) => c.id);
+
+          // Only set if any defaults exist
+          if (defaults.length > 0) {
+            result[optId] = defaults;
+          } else {
+            result[optId] = []; // safe empty default
+          }
+          break;
+        }
+
+        case "counter": {
+          const counters: Record<number, number> = {};
+
+          option.choices.forEach((c) => {
+            // You can also use "is_default" if you prefer
+            const qty = 0;
+            if (qty > 0) counters[c.id] = qty;
+          });
+
+          result[optId] = counters;
+          break;
+        }
+
+        default:
+          break;
+      }
+    });
+
+    return result;
+  }
+
+  // Check if an specific option choice is active
+  function isChoiceActive(option: ItemOption, choice: OptionChoice) {
+    const value = activeChoices[option.id];
+
+    if (option.type === "radio") return value === choice.id;
+    if (option.type === "multi_select")
+      return Array.isArray(value) && value.includes(choice.id);
+    if (option.type === "counter")
+      if (typeof value === "object" && !Array.isArray(value)) {
+        return (value as Record<number, number>)[choice.id] > 0;
+      }
+
+    return false;
+  }
+
+  function handleChoiceSelect(optionId: number, choiceId: number) {
+    setActiveChoices((prev) => {
+      const option = options?.find((option) => option.id === optionId);
+      if (!option) return prev;
+
+      const current = prev[option.id];
+
+      switch (option.type) {
+        // RADIO: replace the old value with the new choice
+        case "radio":
+          return { ...prev, [option.id]: choiceId };
+
+        // MULTI_SELECT: toggle choice on/off
+        case "multi_select":
+          const array = Array.isArray(current) ? current : [];
+          const exists = array.includes(choiceId);
+
+          // toggle
+          const newArr = exists
+            ? array.filter((id) => id !== choiceId)
+            : [...array, choiceId];
+
+          return {
+            ...prev,
+            [optionId]: newArr,
+          };
+
+        // COUNTER: increment quantity
+        case "counter": {
+          const counters =
+            typeof current === "object" && current !== null ? current : {};
+
+          const qty = counters[choiceId] ?? 0;
+
+          return {
+            ...prev,
+            [optionId]: {
+              ...counters,
+              [choiceId]: qty + 1, // increment
+            },
+          };
+        }
+      }
+    });
+  }
 
   const animationRef = useRef(null);
 
@@ -339,19 +465,32 @@ export function MenuItemCard({
                       </div>
                     ) : (
                       <Button
+                        onClick={() => handleChoiceSelect(option.id, choice.id)}
                         className={cn(
-                          "py-6 px-4 w-full flex justify-between rounded-(--radius-inner) transition-all duration-300 border-2 border-(--tertiary)/20 bg-white text-(--secondary)",
-                          false
+                          "h-14 px-4 w-full flex justify-between overflow-hidden rounded-(--radius-inner) transition-all duration-300 border-2 border-(--tertiary)/20 bg-white text-(--secondary)",
+                          isChoiceActive(option, choice)
                             ? "border-(--tertiary) bg-(--tertiary)/40 hover:bg-(--tertiary)/40 border-2"
                             : " hover:border-(--tertiary)/60"
                         )}
                       >
-                        <div>{choice.name}</div>
-                        {!choice.is_default && (
+                        <div className="flex gap-2 items-center">
+                          <CheckCircle2
+                            className={cn(
+                              "transition-all duration-300",
+                              isChoiceActive(option, choice)
+                                ? "opacity-100 mr-0"
+                                : "opacity-0 -mr-7"
+                            )}
+                          ></CheckCircle2>
+                          <div>{choice.name}</div>
+                        </div>
+                        {!choice.is_default ? (
                           <PriceTag
                             size="sm"
                             price={choice.price_modifier}
                           ></PriceTag>
+                        ) : (
+                          <p className="font-semibold">پیش‌فرض</p>
                         )}
                       </Button>
                     )}

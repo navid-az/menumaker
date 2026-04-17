@@ -38,6 +38,20 @@ export type MenuGlobalStyling = {
   created: string;
 };
 
+export type OptionChoice = {
+  id: number;
+  name: string;
+  price_modifier: number;
+  is_default?: boolean;
+};
+
+export type ItemOption = {
+  id: number;
+  type: "radio" | "multi_select" | "counter";
+  name: string;
+  required: boolean;
+  choices: OptionChoice[];
+};
 export type MenuItem = {
   id: number;
   image?: string;
@@ -54,18 +68,7 @@ export type MenuItem = {
     is_available: boolean;
     is_active: boolean;
   } | null;
-  options?: {
-    id: number;
-    type: "radio" | "multi_select" | "counter";
-    name: string;
-    required: boolean;
-    choices: {
-      id: number;
-      name: string;
-      price_modifier: number;
-      is_default?: boolean;
-    }[];
-  }[];
+  options?: ItemOption[];
 };
 
 export type MenuCategory = {
