@@ -249,16 +249,12 @@ export const useCart = create<ItemCart>()((set) => ({
 
 //~~~~MenuItem/item-info-drawer~~~~
 type useMenuItemDrawerType = {
-  isOpen: boolean;
-  updateIsOpen: () => void;
+  isDrawerOpen: boolean;
+  setDrawerOpen: (open: boolean) => void;
 };
 export const useMenuItemDrawer = create<useMenuItemDrawerType>()((set) => ({
-  isOpen: false,
-  updateIsOpen: () => {
-    set((state) => {
-      return { isOpen: !state.isOpen };
-    });
-  },
+  isDrawerOpen: false,
+  setDrawerOpen: (open) => set({ isDrawerOpen: open }),
 }));
 
 //~~~~ColorPalette~~~~

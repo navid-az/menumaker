@@ -25,6 +25,7 @@ import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
 type AddToCartBtnType = {
   itemId: number;
   globalStyling: MenuGlobalStylingUI;
+  itemHasOptions?: boolean;
 };
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -34,6 +35,8 @@ export default function AddToCartBtn({
   itemId,
   className,
   globalStyling,
+  itemHasOptions = false,
+  onClick,
 }: ButtonProps) {
   const {
     cartItems,
@@ -64,14 +67,16 @@ export default function AddToCartBtn({
       removeItem(itemId);
     }
   };
-  const handleAdd = () => {
+  const handleAdd = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation();
+    onClick?.(e);
+    if (itemHasOptions) return;
     updateItems(itemId);
   };
   return (
     <div
-      onClick={(e) => e.stopPropagation()}
       className={cn(
-        "flex h-10 w-full justify-center gap-2 rounded-(--radius-inner) bg-[var(--cart-btn-bg)] text-[var(--cart-btn-text)] transition-all duration-300",
+        "flex w-full justify-center gap-2 rounded-(--radius-inner) bg-[var(--cart-btn-bg)] text-[var(--cart-btn-text)] transition-all duration-300",
         globalStyling.style === "retro" &&
           globalStyling.tertiary_color &&
           "border-[2.5px] border-secondary h-11",
@@ -79,7 +84,12 @@ export default function AddToCartBtn({
       )}
     >
       {quantity > 0 ? (
-        <div className="flex w-full items-center justify-between gap-3 p-1">
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+          className="flex w-full items-center justify-between gap-3 p-1"
+        >
           <StepperBtn
             name="increase"
             action={handleIncrement}
@@ -98,8 +108,10 @@ export default function AddToCartBtn({
         </div>
       ) : (
         <Button
-          className="h-full w-full rounded-(--radius-inner) bg-[var(--cart-btn-bg)] text-[var(--cart-btn-text)]"
-          onClick={handleAdd}
+          className={cn(
+            "h-full w-full rounded-(--radius-inner) bg-[var(--cart-btn-bg)] text-[var(--cart-btn-text)]"
+          )}
+          onClick={(e) => handleAdd(e)}
         >
           <Plus
             className={cn(
@@ -160,8 +172,8 @@ const StepperBtn = ({
   return (
     <Button
       ref={buttonRef}
-      name={name}
       onClick={action}
+      name={name}
       size="icon"
       className={cn(
         "scale-pro h-full w-24 flex-initial rounded-(--radius-inner-alt) bg-[var(--cart-counter-bg)] text-[var(--cart-counter-text)] transition-[border-radius] duration-300",

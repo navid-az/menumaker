@@ -48,7 +48,7 @@ export default function CartBtn({
 
   const cartBtnRef = useRef<HTMLButtonElement>(null);
 
-  const drawerIsOpen = useMenuItemDrawer((state) => state.isOpen);
+  const { isDrawerOpen } = useMenuItemDrawer();
   const { cartItems } = useCart();
 
   const { setActivePage, isPreview } = usePreview();
@@ -82,7 +82,9 @@ export default function CartBtn({
 
   //show/hide cart button according to MenuItem Drawer & items count
   useEffect(() => {
-    if (drawerIsOpen) {
+    gsap.killTweensOf(cartBtnRef.current);
+
+    if (isDrawerOpen) {
       gsap.to(cartBtnRef.current, {
         duration: 0.3,
         y: 0,
@@ -106,7 +108,7 @@ export default function CartBtn({
     if (type === "compact") {
       autoTactile();
     }
-  }, [cartItems, drawerIsOpen]);
+  }, [cartItems, isDrawerOpen]);
 
   //total number of selected items
   const totalItemCount = cartItems.reduce(
