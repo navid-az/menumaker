@@ -56,7 +56,6 @@ import { generateStyleVars } from "../../../../utilities/styleVars";
 
 //libraries
 import { cn } from "@/lib/utils";
-import { array } from "zod";
 
 export function MenuItemCard({
   id,
@@ -207,6 +206,53 @@ export function MenuItemCard({
         }
       }
     });
+  }
+
+  function calculateTotalPrice(): number {
+    let totalPrice = price;
+
+    if (!options) return totalPrice;
+
+    for (const option of options) {
+      const value = activeChoices[option.id];
+
+      switch (option.type) {
+        case "radio": {
+          const selected = option.choices.find((c) => c.id === value);
+          if (selected) {
+            totalPrice += selected.price_modifier;
+          }
+          break;
+        }
+
+        case "multi_select": {
+          if (Array.isArray(value)) {
+            for (const choiceId of value) {
+              const selected = option.choices.find((c) => c.id === choiceId);
+              if (selected) {
+                totalPrice += selected.price_modifier;
+              }
+            }
+          }
+          break;
+        }
+
+        case "counter": {
+          if (typeof value === "object" && !Array.isArray(value)) {
+            for (const [choiceIdStr, qty] of Object.entries(value)) {
+              const choiceId = Number(choiceIdStr);
+              const choice = option.choices.find((c) => c.id === choiceId);
+              if (choice && qty > 0) {
+                totalPrice += choice.price_modifier * qty;
+              }
+            }
+          }
+          break;
+        }
+      }
+    }
+
+    return totalPrice;
   }
 
   const animationRef = useRef(null);
@@ -449,8 +495,8 @@ export function MenuItemCard({
           </DrawerHeader>
           <div className="flex flex-col gap-4 px-4">
             {options?.map((option) => (
-              <div key={option.id} className="flex flex-col gap-2 px-4">
-                <p>{option.name}</p>
+              <div key={option.id} className="flex flex-col gap-2 mb-4">
+                <p className="px-4">{option.name}</p>
                 {option.choices.map((choice) => (
                   <div key={choice.id}>
                     {option.type === "counter" ? (
@@ -502,7 +548,13 @@ export function MenuItemCard({
 
           <DrawerFooter className="flex flex-row justify-between items-center">
             <Button
-              className="w-4/12 h-12 rounded-(--radius-inner) bg-[var(--cart-btn-bg)] text-[var(--cart-btn-text)]"
+              className={cn(
+                "w-4/12 h-12 rounded-(--radius-inner) bg-[var(--cart-btn-bg)] text-[var(--cart-btn-text)]",
+                globalStyling.style === "retro" &&
+                  "border-3 !border-(--secondary) shadow-[4px_4px_0px_0px_var(--secondary)] font-bold",
+                globalStyling.tertiary_color &&
+                  "border-[2.5px] border-secondary h-11"
+              )}
               onClick={handleAddOption}
             >
               <Plus
@@ -520,7 +572,11 @@ export function MenuItemCard({
                 افزودن
               </p>
             </Button>
-            <PriceTag price={0}></PriceTag>
+            <PriceTag
+              size="lg"
+              unitDisplayType="compact"
+              price={calculateTotalPrice()}
+            ></PriceTag>
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
