@@ -1,7 +1,11 @@
+//types
+import { type BusinessType } from "@/app/dashboard/layout";
+
+//functions
 import { cookies } from "next/headers";
 
 //get user's businesses(as the owner or as the personnel)
-export async function getUserBusinesses(userId: number) {
+export async function getUserBusinesses() {
   const accessToken = (await cookies()).get("access");
   const res = await fetch(`http://127.0.0.1:8000/businesses/`, {
     headers: {
@@ -11,5 +15,5 @@ export async function getUserBusinesses(userId: number) {
   if (!res.ok) {
     throw new Error("Failed to fetch data");
   }
-  return res.json();
+  return res.json() as Promise<BusinessType[]>;
 }

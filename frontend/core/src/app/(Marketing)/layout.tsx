@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React from "react";
 
 //components
 import Link from "next/link";
@@ -63,6 +63,7 @@ async function Navbar() {
     </nav>
   );
 }
+import { Navbar } from "@/components/global/NavBar";
 
 export default function LandingPageLayout({
   children,

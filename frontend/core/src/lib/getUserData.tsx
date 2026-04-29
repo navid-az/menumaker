@@ -1,14 +1,12 @@
-import { cookies } from "next/headers";
+//functions
 import jwtDecoder from "./jwtDecoder";
 
-// get user data
-export async function getUserData() {
-  const accessToken = (await cookies()).get("access");
-  if (!accessToken) {
-    return null;
-  }
+//types
+import { type User } from "@/app/types/api/auth";
 
-  const userObj = jwtDecoder(accessToken.value);
+// get user data
+export async function getUserData(accessToken: string) {
+  const userObj = jwtDecoder(accessToken);
   if (!userObj) {
     return null;
   }
@@ -20,5 +18,5 @@ export async function getUserData() {
   if (!res.ok) {
     throw new Error("Failed to fetch data");
   }
-  return res.json();
+  return res.json() as Promise<User>;
 }

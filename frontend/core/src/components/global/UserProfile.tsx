@@ -1,14 +1,13 @@
-//component
-import Link from "next/link";
+"use client";
 
-//functions
-import { getUserData } from "@/lib/getUserData";
-import { getUserBusinesses } from "@/lib/getUserBusinesses";
+//hooks
+import { useRouter } from "next/navigation";
 
 //actions
 import { logOut } from "@/app/actions/auth/register";
 
 //components
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -19,58 +18,81 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
+//SVGs
 import {
-  BarChart,
+  Plus,
   Power,
-  Radar,
+  User2Icon,
   Settings,
-} from "@/app/dashboard/components/svg";
+  Users,
+  ChartColumn,
+  Radio,
+} from "lucide-react";
 
 //types
-import type { BusinessType } from "@/app/dashboard/layout";
-import { Plus, User, User2Icon } from "lucide-react";
+import { User } from "@/app/types/api/auth";
 
-export async function UserProfile() {
-  const { pk, phone_number } = await getUserData();
-  const businesses: BusinessType = await getUserBusinesses(pk);
+export function UserProfile({
+  user,
+  businesses,
+}: {
+  user: User;
+  businesses: any;
+}) {
+  const router = useRouter();
+
+  async function handleLogout() {
+    const res = await logOut();
+
+    if (res?.loggedOut) {
+      router.refresh();
+    }
+  }
 
   return (
     <DropdownMenu dir="rtl" modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button size="icon">
-          <User2Icon className="h-6 w-6"></User2Icon>
+        <Button size="icon" className="bg-royal-green">
+          <User2Icon className="h-6 w-6 text-soft-blue"></User2Icon>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="w-56 bg-primary text-primary-foreground"
+        className="w-56 bg-primary-foreground text-primary"
         align="end"
       >
-        <DropdownMenuLabel>{phone_number}</DropdownMenuLabel>
+        <DropdownMenuLabel>{user.phone_number}</DropdownMenuLabel>
         <DropdownMenuSeparator />
 
-        {businesses.length ? (
+        {businesses && businesses.length ? (
           <DropdownMenuGroup>
-            <DropdownMenuItem asChild className="flex gap-2 py-2">
-              <Link href={`/dashboard/${businesses[0].slug}/insights`}>
-                <BarChart className="h-5 w-5"></BarChart>
+            <DropdownMenuItem asChild className="group flex gap-2 py-2">
+              <Link
+                href={`/dashboard/${businesses[0].slug}/${businesses[0].branches[0].slug}/insights`}
+              >
+                <ChartColumn></ChartColumn>
                 <p>داشبورد</p>
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild className="flex gap-2 py-2">
-              <Link href={`/dashboard/${businesses[0].slug}/liveManagement`}>
-                <Radar className="h-5 w-5"></Radar>
+              <Link
+                href={`/dashboard/${businesses[0].slug}/${businesses[0].branches[0].slug}/liveManagement/all`}
+              >
+                <Radio></Radio>
                 <p>مدیریت زنده</p>
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild className="flex gap-2 py-2">
-              <Link href={`/dashboard/${businesses[0].slug}/liveManagement`}>
-                <User className="h-5 w-5"></User>
+              <Link
+                href={`/dashboard/${businesses[0].slug}/${businesses[0].branches[0].slug}/personnel/all`}
+              >
+                <Users></Users>
                 <p>پرسنل</p>
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild className="flex gap-2 py-2">
               <Link href={`/dashboard/${businesses[0].slug}/liveManagement`}>
-                <Settings className="h-5 w-5"></Settings>
+                <Settings></Settings>
                 <p>تنضیمات</p>
               </Link>
             </DropdownMenuItem>
@@ -87,13 +109,13 @@ export async function UserProfile() {
         )}
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem className="p-0">
-            <form action={logOut} className="h-full w-full">
+          <DropdownMenuItem asChild className="p-0 focus:bg-red-50">
+            <form className="h-full w-full" action={handleLogout}>
               <Button
                 type="submit"
-                className="h-full w-full items-end justify-start bg-inherit px-2 hover:text-primary"
+                className="h-full w-full text-red-600 focus:text-red-600 justify-start items-center bg-inherit px-2"
               >
-                <Power className="ml-2 h-5 w-5"></Power>
+                <Power className="size-5"></Power>
                 <p>خروج از حساب کاربری</p>
               </Button>
             </form>
