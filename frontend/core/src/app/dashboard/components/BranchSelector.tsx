@@ -71,7 +71,7 @@ export function BranchSelector({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="group min-w-72 justify-between transition-colors duration-300 bg-soft-blue border-sad-blue"
+          className="group shrink w-72 justify-between transition-colors duration-300 bg-soft-blue border-sad-blue"
         >
           <div className="flex gap-2">
             <MapPin className="w-5 h-5"></MapPin>
@@ -83,7 +83,7 @@ export function BranchSelector({
           <ChevronsUpDown className="opacity-50 group-hover:opacity-100 transition-opacity duration-300" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="min-w-72 p-0">
+      <PopoverContent className="w-72 p-0">
         <Command
           filter={(value, search) => {
             const item = branches.find((branch) => branch.slug === value);

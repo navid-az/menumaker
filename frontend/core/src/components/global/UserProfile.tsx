@@ -1,5 +1,7 @@
 "use client";
 
+import React from "react";
+
 //hooks
 import { useRouter } from "next/navigation";
 
@@ -36,9 +38,11 @@ import { User } from "@/app/types/api/auth";
 export function UserProfile({
   user,
   businesses,
+  children,
 }: {
   user: User;
   businesses: any;
+  children: React.ReactNode;
 }) {
   const router = useRouter();
 
@@ -52,11 +56,7 @@ export function UserProfile({
 
   return (
     <DropdownMenu dir="rtl" modal={false}>
-      <DropdownMenuTrigger asChild>
-        <Button size="icon" className="bg-royal-green">
-          <User2Icon className="h-6 w-6 text-soft-blue"></User2Icon>
-        </Button>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
       <DropdownMenuContent
         className="w-56 bg-primary-foreground text-primary"
         align="end"

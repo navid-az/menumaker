@@ -19,6 +19,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ResizablePanel } from "@/components/ui/resizable";
 import MyBusinessesTab from "./MyBusinessesTab";
+import Logo from "@/components/global/Logo";
 
 //types
 import { BusinessType } from "@/app/dashboard/layout";
@@ -58,19 +59,35 @@ export default function DashboardSidebar({
       }}
     >
       <section className="flex w-full flex-col items-end bg-primary text-soft-blue px-2">
-        {!isCollapsed && (
-          <section className="flex bg-ping-200 justify-center py-4 lg:py-9 items-center w-full">
+        <div
+          className={cn(
+            "w-full flex p-4 pb-8 transition-all duration-300",
+            isCollapsed ? "justify-center" : "justify-start"
+          )}
+        >
+          <Link
+            className={cn(
+              "transition-all relative duration-300",
+              isCollapsed ? "w-10 h-10" : "w-32 h-10"
+            )}
+            href="/"
+          >
+            <Logo
+              primary="#edfdff"
+              secondary="#94d9e2"
+              full={isCollapsed ? false : true}
+            ></Logo>
+          </Link>
+        </div>
+
+        {/* {!isCollapsed && (
+          <section className="flex bg-ping-200 justify-center py-4 lg:py-4 items-center w-full">
             <h2 className="font-extrabold text-primary-foreground lg:text-2xl">
               داشبورد مدیریت
             </h2>
           </section>
-        )}
-        <section
-          className={cn(
-            "flex gap-4 flex-col w-full",
-            isCollapsed && "pt-[104px]"
-          )}
-        >
+        )} */}
+        <section className={cn("flex gap-4 flex-col w-full")}>
           <MyBusinessesTab
             businesses={businesses}
             position="صاحب مجموعه"

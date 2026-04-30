@@ -7,7 +7,6 @@ import DashboardSidebar from "./components/DashboardSidebar";
 import DashboardPanel from "./components/DashboardPanel";
 
 //functions
-import { getUserData } from "@/lib/getUserData";
 import { getUserBusinesses } from "@/lib/getUserBusinesses";
 
 export type BranchType = {
@@ -39,8 +38,7 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const user = await getUserData();
-  const businesses: BusinessType[] = await getUserBusinesses(user.pk);
+  const businesses: BusinessType[] = await getUserBusinesses();
   return (
     <div className="flex h-screen flex-col bg-primary">
       <ResizablePanelGroup

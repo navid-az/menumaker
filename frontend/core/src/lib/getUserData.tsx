@@ -1,12 +1,19 @@
 //functions
+import { cookies } from "next/headers";
 import jwtDecoder from "./jwtDecoder";
 
 //types
 import { type User } from "@/app/types/api/auth";
 
 // get user data
-export async function getUserData(accessToken: string) {
-  const userObj = jwtDecoder(accessToken);
+export async function getUserData() {
+  const accessToken = (await cookies()).get("access");
+
+  if (accessToken === undefined) {
+    return null;
+  }
+
+  const userObj = jwtDecoder(accessToken?.value);
   if (!userObj) {
     return null;
   }

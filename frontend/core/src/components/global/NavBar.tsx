@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 
 //components
 import Link from "next/link";
-import Image from "next/image";
 import { Button } from "../ui/button";
 import {
   Sheet,
@@ -17,6 +16,7 @@ import {
   SheetFooter,
 } from "../ui/sheet";
 import AuthSection from "./AuthSection";
+import Logo from "./Logo";
 
 //SVGs
 import { ChevronLeft, Menu, X } from "lucide-react";
@@ -109,7 +109,7 @@ export function Navbar() {
           </Sheet>
 
           <Link href="/" className="relative w-32 h-10">
-            <Image src="/images/full-logo.svg" fill alt="menomaker logo" />
+            <Logo></Logo>
           </Link>
         </div>
         <div className="hidden justify-between items-center flex-1 lg:flex">

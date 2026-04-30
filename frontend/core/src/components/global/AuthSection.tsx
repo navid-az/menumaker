@@ -9,6 +9,9 @@ import { cn } from "@/lib/utils";
 import { type User } from "@/app/types/api/auth";
 import { type BusinessType } from "@/app/dashboard/layout";
 
+//SVGs
+import { User2 } from "lucide-react";
+
 //components
 import Link from "next/link";
 import { Button } from "../ui/button";
@@ -18,6 +21,13 @@ export default function AuthSection() {
   const [user, setUser] = useState<User | null>();
   const [businesses, setBusinesses] = useState<BusinessType[] | null>();
   const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    if (user && businesses) {
+      setIsAuthenticated(true);
+    }
+  }, [user, businesses]);
 
   useEffect(() => {
     async function checkAuth() {
@@ -41,22 +51,24 @@ export default function AuthSection() {
     <div
       className={cn(
         "transition-all duration-300",
-        isLoading ? "backdrop-blur-xl" : "backdrop-blur-none"
+        isLoading ? "blur-sm" : "blur-none",
+        isAuthenticated ? "w-10" : "w-[111px]"
       )}
     >
-      <div
-        className={cn(
-          "relative justify-end flex gap-2 w-auto transition-all duration-300"
-        )}
-      >
-        {user && businesses ? (
-          <UserProfile user={user} businesses={businesses}></UserProfile>
-        ) : (
-          <Button className="text-lg" asChild>
-            <Link href="/register">ورود | ثبت نام</Link>
+      {user && businesses ? (
+        <UserProfile user={user} businesses={businesses}>
+          <Button disabled={isLoading} size="icon" className=" bg-royal-green">
+            <User2 className="h-6 w-6 text-soft-blue"></User2>
           </Button>
-        )}
-      </div>
+        </UserProfile>
+      ) : (
+        <Button
+          disabled={isLoading}
+          className=" bg-royal-green text-soft-blue hover:scale-105 transition-all duration-300 scale-pro"
+        >
+          <Link href="/register">ورود | ثبت نام</Link>
+        </Button>
+      )}
     </div>
   );
 }
