@@ -12,9 +12,17 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+env = environ.Env()
+PROJECT_ROOT = BASE_DIR.parent.parent  # project root
+environ.Env.read_env(BASE_DIR / ".env")
+
+KAVENEGAR_API_KEY = env("KAVENEGAR_API_KEY")
+DUMMY_PHONE_NUMBER = env('DUMMY_PHONE_NUMBER')
 
 
 # Quick-start development settings - unsuitable for production

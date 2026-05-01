@@ -1,8 +1,11 @@
-import random
+import secrets
 from django.contrib.auth import authenticate, login, get_user_model
+from django.contrib.auth.hashers import make_password, check_password
+from django.utils import timezone
 
-from django.db.models import Q
+from django.conf import settings
 from django.shortcuts import get_object_or_404
+from .models import Otp, User
 from rest_framework_simplejwt.views import TokenViewBase, TokenRefreshView
 
 # rest dependencies
@@ -18,117 +21,98 @@ from .serializers import (
     CodeSerializer,
     getUserDataSerializer,
 )
-from .models import OtpCode, User
+
+# kavenegar API
+from kavenegar import *
 
 
-# Create your views here.
-class validateCredentialView(APIView):
-    # shows all the otp code stored in db
-    # def get(self, request):
-    #     codes = OtpCode.objects.all()
-    #     srz_data = validateCredentialSerializer(instance=codes, many=True)
-    #     return Response(data=srz_data.data)
-
+# Receive phone_number, generate OTP, send OTP to user
+class ValidateCredentialView(APIView):
     def post(self, request):
         srz_data = validateCredentialSerializer(data=request.data)
         if srz_data.is_valid():
-            phone_number = srz_data.data["phone_number"]
-            email = srz_data.data["email"]
+            phone_number = srz_data.validated_data["phone_number"]
 
-            if phone_number:
-                # create new otp code with the given phone_number
-                otp_code = OtpCode.objects.filter(phone_number=phone_number)
-                user = User.objects.filter(phone_number=phone_number)
-                new_code = random.randint(100000, 999999)
-                if otp_code.exists():
-                    OtpCode.objects.get(phone_number=phone_number).delete()
-                    OtpCode.objects.create(
-                        phone_number=phone_number, password=new_code)
-                    return Response(
-                        f"last otp code has been deleted, new otp code has been generated and sended to '{phone_number}'",
-                        status.HTTP_201_CREATED,
-                    )
-                else:
-                    OtpCode.objects.create(
-                        phone_number=phone_number, password=new_code)
-                    return Response(
-                        f"user with '{phone_number}' phone number {user.exists()}, new opt code has been generated and sended to '{phone_number}'",
-                        status.HTTP_201_CREATED,
-                    )
-            elif email:
-                user = User.objects.filter(email=email)
+            # Delete previous otp instance if exists
+            Otp.objects.filter(phone_number=phone_number).delete()
 
-                if user.exists():
-                    return Response(
-                        f"user with '{email}' email exists, user should provide password"
-                    )
-                else:
-                    return Response(
-                        f"user with '{email}' email doesn't exist, user should create new password"
-                    )
-            return Response("unsupported credential")
-        print(srz_data.errors)
+            # create new otp code with the given phone_number
+            random_code = secrets.randbelow(900000) + 100000
+            hashed_code = make_password(str(random_code))
+
+            Otp.objects.create(
+                phone_number=phone_number, hashed_otp=hashed_code)
+
+            # Send OTP to receptor
+            try:
+                api = KavenegarAPI(settings.KAVENEGAR_API_KEY)
+                params = {
+                    'receptor': settings.DUMMY_PHONE_NUMBER if settings.DEBUG else phone_number,
+                    'template': 'verifycode',
+                    'token': random_code,
+                    'type': 'sms',
+                }
+                response = api.verify_lookup(params)
+                print(response)
+            except APIException as e:
+                return Response('API OTP send failed')
+            except HTTPException as e:
+                return Response('HTTP request failed')
+
+            return Response("Verification code sent", status=status.HTTP_200_OK)
         return Response(srz_data.errors, status.HTTP_400_BAD_REQUEST)
 
 
-# validating the received code
-class ValidateOtpCodeView(APIView):
+# Validate OTP
+class ValidateOtpView(APIView):
     def post(self, request):
-        srz_code = CodeSerializer(data=request.data)
+        serializer = CodeSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        if srz_code.is_valid():
-            srz_code_email = srz_code.data["email"]
-            srz_code_phone_number = srz_code.data["phone_number"]
-            srz_code_code = srz_code.data["password"]
+        phone_number = serializer.validated_data["phone_number"]
+        otp_code = serializer.validated_data["otp"]
 
-            saved_code = OtpCode.objects.filter(
-                Q(phone_number=srz_code_phone_number) | Q(email=srz_code_email),
-                password=srz_code_code,
+        otp_obj = Otp.objects.filter(phone_number=phone_number).first()
+
+        # unified failure response (prevents enumeration)
+        def invalid():
+            return Response(
+                {"detail": "Invalid or expired verification code."},
+                status=status.HTTP_400_BAD_REQUEST
             )
-            # check if the given code is the same as the one which is store in db
-            if saved_code.exists():
-                # change user's pass to the new otp code
-                old_user = get_object_or_404(
-                    User,
-                    Q(phone_number=srz_code_phone_number) | Q(
-                        email=srz_code_email),
-                )
-                old_user.set_password(str(srz_code_code))
-                old_user.save()
-                print("DONE%" * 50, old_user)
-                user = authenticate(
-                    phone_number=srz_code_phone_number,
-                    password=str(srz_code_code),
-                )
-                if user is not None:
-                    login(request, user)
-                    refresh = RefreshToken.for_user(old_user)
-                    OtpCode.objects.get(
-                        Q(email=srz_code_email) | Q(
-                            phone_number=srz_code_phone_number),
-                        password=srz_code_code,
-                    ).delete()
-                    return Response(
-                        f"'refresh': {str(refresh)}, 'access': {str(refresh.access_token)}"
-                    )  # this is for branch jwt-auth
-                else:
-                    new_user = User.objects.create_user(
-                        phone_number=srz_code_phone_number,
-                        email=srz_code_email,
-                        full_name="",
-                        password=str(srz_code_code),
-                    )
-                    refresh = RefreshToken.for_user(new_user)
-                    OtpCode.objects.get(
-                        Q(email=srz_code_email) | Q(
-                            phone_number=srz_code_phone_number),
-                        password=srz_code_code,
-                    ).delete()
-                    return Response(
-                        f"'refresh': {str(refresh)}, 'access': {str(refresh.access_token)}"
-                    )
-            return Response("this is not correct")
-        return Response(srz_code.errors)
+
+        if not otp_obj:
+            return invalid()
+
+        # expiration check
+        if otp_obj.expires_at < timezone.now():
+            otp_obj.delete()
+            return invalid()
+
+        # check OTP hash
+        if not check_password(str(otp_code), otp_obj.hashed_otp):
+            return invalid()
+
+        # OTP is valid → delete immediately
+        otp_obj.delete()
+
+        # get or create user
+        user, created = User.objects.get_or_create(
+            phone_number=phone_number,
+            defaults={"full_name": ""}
+        )
+
+        # issue JWT
+        refresh = RefreshToken.for_user(user)
+
+        return Response(
+            {
+                "refresh": str(refresh),
+                "access": str(refresh.access_token),
+            },
+            status=status.HTTP_200_OK
+        )
 
 
 # Token pair generator
