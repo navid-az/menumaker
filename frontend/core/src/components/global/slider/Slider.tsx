@@ -54,15 +54,16 @@ export function Slider({ children, validSections }: SliderType) {
 
   return (
     <section className="flex h-screen w-full flex-col items-center justify-center gap-4 transition-all duration-300 ease-in-out sm:gap-7">
-      <header className="flex w-full gap-1 justify-between items-center">
-        <SliderTitle></SliderTitle>
-        <Button className="lg:hidden rounded-full">
-          <Eye></Eye>
-          مشاهده منو
-        </Button>
-      </header>
       {children}
     </section>
+  );
+}
+
+export function SliderHeader({ children }: { children: React.ReactNode }) {
+  return (
+    <header className="flex w-full gap-1 justify-between items-center">
+      {children}
+    </header>
   );
 }
 
