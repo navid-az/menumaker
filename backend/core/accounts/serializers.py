@@ -3,7 +3,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import User, OtpCode
+from .models import User, Otp
 from personnel.models import Personnel
 import jwt
 from django.conf import settings
@@ -31,8 +31,7 @@ class validateCredentialSerializer(serializers.Serializer):
 class CodeSerializer(serializers.Serializer):
     phone_number = serializers.CharField(
         max_length=11, required=False, default="")
-    email = serializers.EmailField(min_length=11, required=False, default="")
-    password = serializers.IntegerField()
+    otp = serializers.IntegerField()
 
 
 # Get user business/branch permissions
@@ -87,8 +86,8 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         # Fetch OTP from DB
         try:
-            saved_otp = OtpCode.objects.get(phone_number=phone_number)
-        except OtpCode.DoesNotExist:
+            saved_otp = Otp.objects.get(phone_number=phone_number)
+        except Otp.DoesNotExist:
             raise serializers.ValidationError("OTP not found")
 
         # Compare OTPs

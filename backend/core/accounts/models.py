@@ -3,6 +3,8 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from .managers import UserManager
 from rest_framework_simplejwt.models import TokenUser
 from django.utils.functional import cached_property
+from django.utils import timezone
+from datetime import timedelta
 
 
 # change the default user model
@@ -28,17 +30,24 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.phone_number if self.phone_number else self.email
 
 
-class OtpCode(models.Model):
+class Otp(models.Model):
     phone_number = models.CharField(
         max_length=11, unique=True, null=True, blank=True)
     email = models.EmailField(
         max_length=255, unique=True, null=True, blank=True)
-    password = models.PositiveIntegerField()
-    created = models.DateTimeField(auto_now_add=True)
+    hashed_otp = models.CharField(max_length=128)
+    attempts_count = models.IntegerField(default=3)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField(blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.expires_at:
+            self.expires_at = timezone.now() + timedelta(minutes=3)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return (
-            f"code: {self.password} ---> num: {self.phone_number}   email: {self.email}"
+            f"otp for: {self.phone_number if self.phone_number else self.email} | expiry: {self.expires_at}"
         )
 
 
