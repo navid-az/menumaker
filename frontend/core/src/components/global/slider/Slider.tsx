@@ -4,7 +4,6 @@ import React, { useEffect, useRef } from "react";
 
 //components
 import { Button } from "@/components/ui/button";
-import { SliderNavigator } from "./SliderNavigator";
 import SliderTitle from "./SliderTitle";
 
 //hooks
@@ -18,10 +17,6 @@ import { Eye } from "lucide-react";
 
 //types
 type SliderType = {
-  isDirty?: boolean;
-  isEditing?: boolean;
-  disableSubmitBtn?: boolean;
-  submitBtnText?: string;
   children: React.ReactNode;
   validSections: {
     title: string;
@@ -39,29 +34,12 @@ type stepType = {
   children: React.ReactNode;
 };
 
-export function Slider({
-  isDirty = false,
-  isEditing = false,
-  disableSubmitBtn,
-  submitBtnText,
-  children,
-  validSections,
-}: SliderType) {
-  const sectionsContainerRef = useRef<HTMLDivElement>(null);
-
+export function Slider({ children, validSections }: SliderType) {
   const { updateTitle, updateSubtitle } = useSliderTitle();
-  const { setActiveStepId, stepIndex, sectionIndex, activeStepHeight } =
-    useSlider();
+  const { setActiveStepId, stepIndex, sectionIndex } = useSlider();
 
   const activeSection = validSections[sectionIndex];
   const activeStep = activeSection.steps[stepIndex];
-
-  //update slider height according to active step(step height change/active step change)
-  useEffect(() => {
-    if (sectionsContainerRef.current) {
-      sectionsContainerRef.current.style.height = `${activeStepHeight}px`;
-    }
-  }, [activeStepHeight]);
 
   useEffect(() => {
     if (activeStep?.id) {
@@ -83,22 +61,29 @@ export function Slider({
           مشاهده منو
         </Button>
       </header>
-      <div
-        ref={sectionsContainerRef}
-        className={`relative flex h-full w-full transition-all duration-300 ease-in-out`}
-      >
-        {children}
-      </div>
-      <footer className="flex w-full items-center justify-between">
-        <SliderNavigator
-          isDirty={isDirty}
-          isEditing={isEditing}
-          validSections={validSections}
-          disableSubmitBtn={disableSubmitBtn}
-          submitBtnText={submitBtnText}
-        ></SliderNavigator>
-      </footer>
+      {children}
     </section>
+  );
+}
+
+export function SliderBody({ children }: { children: React.ReactNode }) {
+  const sliderBodyRef = useRef<HTMLDivElement>(null);
+  const { activeStepHeight } = useSlider();
+
+  //Update slider body height based on active step's height
+  useEffect(() => {
+    if (sliderBodyRef.current) {
+      sliderBodyRef.current.style.height = `${activeStepHeight}px`;
+    }
+  }, [activeStepHeight]);
+
+  return (
+    <div
+      ref={sliderBodyRef}
+      className={`relative flex h-full w-full transition-all duration-300 ease-in-out`}
+    >
+      {children}
+    </div>
   );
 }
 
@@ -130,5 +115,13 @@ export function SliderStep({ stepId, className, children }: stepType) {
     >
       {children}
     </div>
+  );
+}
+
+export function SliderFooter({ children }: { children: React.ReactNode }) {
+  return (
+    <footer className="flex w-full items-center justify-between">
+      {children}
+    </footer>
   );
 }

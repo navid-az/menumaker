@@ -67,7 +67,7 @@ export default function SliderTitle() {
   }, [stepTitle]);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-2">
       <div className="flex justify-between">
         <h1
           ref={titleRef}
