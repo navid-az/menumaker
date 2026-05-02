@@ -5,15 +5,21 @@ import { LoadingSpinner } from "@/app/components/svgs/animated/loadingSpinner";
 type RegisterBtnType = {
   text: string;
   isLoading: boolean;
+  onClick?: () => void;
 };
 
-export default function RegisterBtn({ text, isLoading }: RegisterBtnType) {
+export default function RegisterBtn({
+  text,
+  isLoading,
+  onClick,
+}: RegisterBtnType) {
   return (
     <Button
       className="h-max w-full py-4 text-xl"
       type="submit"
       size="lg"
       disabled={isLoading ? true : false}
+      onClick={onClick}
     >
       <p className={` transition-all ${isLoading ? "" : "-translate-x-3"}`}>
         {text}

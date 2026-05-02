@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import Link from "next/link";
 
@@ -8,8 +6,6 @@ import { ArrowLeft } from "@/app/components/svgs";
 
 //components
 import { Button } from "@/components/ui/button";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { QueryClient } from "@tanstack/react-query";
 import LoginBanner from "./components/Banner";
 
 export default function RegisterLayout({
@@ -31,9 +27,7 @@ export default function RegisterLayout({
           </Link>
         </Button>
       </header>
-      <QueryClientProvider client={new QueryClient()}>
-        {children}
-      </QueryClientProvider>
+      {children}
       <LoginBanner></LoginBanner>
     </section>
   );

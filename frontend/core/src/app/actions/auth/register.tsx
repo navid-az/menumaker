@@ -1,0 +1,70 @@
+"use server";
+
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+
+// Validate credentials(phoneNumber only) and generate an OTP
+// Email validation will be added later on
+export async function validateCredentials(credential: {
+  phone_number?: string;
+  email?: string;
+}) {
+  try {
+    const res = await fetch(
+      "http://127.0.0.1:8000/accounts/validate-credential/",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(credential),
+      }
+    );
+    if (!res.ok) {
+      return { status: res.status, message: res.json() };
+    }
+    return { status: res.status, message: res.json() };
+  } catch (err: any) {
+    console.error("Fetch error:", err);
+    throw new Error(err.detail || "Failed to validate credentials");
+  }
+}
+
+type ValidateOtpSuccess = {
+  access: string;
+  refresh: string;
+};
+
+type ValidateOtpError = { detail: string } | Record<string, string[]>;
+
+// Validate otp
+export async function validateOtp(data: {
+  phone_number: string;
+  otp: number;
+  invitation_token?: string;
+}): Promise<
+  | { success: true; tokens: ValidateOtpSuccess }
+  | { success: false; error: ValidateOtpError }
+> {
+  try {
+    const res = await fetch("http://127.0.0.1:8000/accounts/validate-code", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    const resData = await res.json();
+    if (!res.ok) {
+      return {
+        success: false,
+        error: resData ?? { detail: "Unknown server error" },
+      };
+    }
+    return {
+      success: true,
+      tokens: { access: resData.access, refresh: resData.refresh },
+    };
+  } catch (err) {
+    return {
+      success: false,
+      error: { detail: "Network error. Please try again" },
+    };
+  }
+}

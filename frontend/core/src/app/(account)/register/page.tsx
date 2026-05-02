@@ -1,7 +1,33 @@
-import { CredentialForm } from "./components/CredentialForm";
+"use client";
+
+import { useEffect, useState } from "react";
+
+//components
+import {
+  Slider,
+  SliderBody,
+  SliderFooter,
+  SliderHeader,
+} from "@/components/global/slider/Slider";
+import SliderTitle from "@/components/global/slider/SliderTitle";
+import { Form } from "@/components/ui/form";
+import { toast } from "sonner";
+import RegisterBtn from "./components/RegisterBtn";
+import CredentialStep from "./components/CredentialStep";
+import OtpStep from "./components/OtpStep";
 
 //libraries
-import { jwtVerify } from "jose";
+import z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, FieldErrors } from "react-hook-form";
+import { motion, AnimatePresence } from "motion/react";
+
+//hooks
+import { useSlider } from "@/lib/stores";
+
+//functions
+import { validateCredentials, validateOtp } from "@/app/actions/auth/register";
+import { createCookie } from "@/app/actions";
 
 //types
 export type InviteData = {
@@ -11,58 +37,150 @@ export type InviteData = {
   lastName: string;
   exp: number;
 };
+type RegisterForm = {
+  phone_number: string;
+  otp: string;
+};
 
-export default async function Page({
-  searchParams,
-}: {
-  searchParams: Promise<{ token: string }>;
-}) {
-  // Secret key for verifying the JWT ~~~~NEEDS CHANGE~~~~
-  const secret = new TextEncoder().encode(
-    "django-insecure-&@-4_u6z^b7xaq)l=7a@dh*3b%ac)$7d$5t0lkf3f#2@ky2&6e"
-  );
+//schema
+const phoneSchema = z.object({
+  phone_number: z.string().min(11, "لطفا این قسمت را خالی نگذارید"),
+});
+const otpSchema = z.object({
+  phone_number: z
+    .string({ required_error: "لطفا این قسمت را خالی نگذارید" })
+    .min(10),
+  otp: z.string({ required_error: "لطفا این قسمت را خالی نگذارید" }),
+});
 
-  const { token } = await searchParams;
-  let inviteData: InviteData | undefined;
+export default function Page() {
+  //slider sections and steps
+  const sections = [
+    {
+      id: "register",
+      title: "ورود | ثبت نام",
+      steps: [
+        {
+          id: "credentials",
+          subtitle: "لطفا شماره موبایل خود را وارد کنید",
+          component: <CredentialStep stepId="credentials"></CredentialStep>,
+          show: true,
+        },
+        {
+          id: "otp",
+          subtitle: "کد ارسال شده به شماره موبایل خود را وارد کنید",
+          component: <OtpStep stepId="otp"></OtpStep>,
+          show: true,
+        },
+      ],
+    },
+  ];
 
-  if (token) {
-    try {
-      const { payload } = await jwtVerify(token, secret);
-      inviteData = {
-        personnelId: payload.personnel_id as number,
-        email: payload.email as string,
-        firstName: payload.first_name as string,
-        lastName: payload.last_name as string,
-        exp: payload.exp as number,
-      };
+  const { sectionIndex, stepIndex, setStepIndex, direction, reset } =
+    useSlider();
 
-      // If the token is valid, render the registration form with pre-filled email
-      return (
-        <section className="container flex h-screen w-full flex-col items-center justify-center gap-7 px-4 lg:w-5/12 lg:px-24">
-          <div className="flex w-full flex-col gap-2 text-right">
-            <h1 className="text-3xl font-black text-royal-green">
-              {inviteData.firstName} عزیز، خوش اومدی!
-            </h1>
-            <p className="text-royal-green-light">
-              لطفا ایمیل یا شماره تلفن خودت رو وارد کن
-            </p>
-          </div>
-          <CredentialForm inviteToken={token} inviteData={inviteData}></CredentialForm>
-        </section>
-      );
-    } catch (err) {
-      inviteData = undefined;
+  const activeSection = sections[sectionIndex];
+  const activeStep = activeSection.steps[stepIndex];
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  //form step state
+  const [step, setStep] = useState(1);
+
+  //reset slider states on mount
+  useEffect(() => {
+    reset();
+  }, []);
+
+  //clear errors(if any) between steps
+  useEffect(() => {
+    form.clearErrors();
+  }, [step]);
+
+  const form = useForm<RegisterForm>({
+    resolver: zodResolver(step === 1 ? phoneSchema : otpSchema),
+    defaultValues: { phone_number: "" },
+  });
+
+  // Animation variants for the step transitions
+  const variants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? 200 : -200,
+      opacity: 0,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+    },
+    exit: (direction: number) => ({
+      x: direction > 0 ? -200 : 200,
+      opacity: 0,
+    }),
+  };
+
+  async function onSubmit(data: RegisterForm) {
+    if (step === 1) {
+      setIsLoading(true);
+      await validateCredentials({ phone_number: data.phone_number });
+      setStep(2);
+      setIsLoading(false);
+      setStepIndex(1);
+      return;
+    }
+    if (step === 2) {
+      setIsLoading(true);
+      const result = await validateOtp({
+        phone_number: data.phone_number,
+        otp: Number(data.otp),
+      });
+      if (result.success) {
+        const { access, refresh } = result.tokens;
+        setIsLoading(false);
+        createCookie("access", access);
+        createCookie("refresh", refresh);
+        toast.success("ورود با موفقیت انجام شد");
+      } else {
+        toast.error("کد وارد شده اشتباه است");
+        setIsLoading(false);
+        form.setValue("otp", "");
+      }
     }
   }
+
   return (
-    <section className="container flex h-screen w-full flex-col items-center justify-center gap-7 px-4 lg:w-5/12 lg:px-24">
-      <div className="flex w-full flex-col gap-2 text-right">
-        <h1 className="text-3xl font-black text-royal-green">ورود | ثبت نام</h1>
-        <p className="text-royal-green-light">
-          لطفا ایمیل یا شماره تلفن خودت رو وارد کن
-        </p>
-      </div>
-      <CredentialForm inviteData={inviteData}></CredentialForm>
-    </section>
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="w-full flex px-16 flex-5/12 items-center overflow-hidden"
+      >
+        <Slider validSections={sections}>
+          <SliderHeader>
+            <SliderTitle></SliderTitle>
+          </SliderHeader>
+          <SliderBody>
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={activeStep.id}
+                variants={variants}
+                custom={direction}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.2 }}
+                className="absolute w-full"
+              >
+                {activeStep.component}
+              </motion.div>
+            </AnimatePresence>
+          </SliderBody>
+          <SliderFooter>
+            <RegisterBtn
+              text={step === 1 ? "دریافت کد" : "ورود"}
+              isLoading={isLoading}
+            ></RegisterBtn>
+          </SliderFooter>
+        </Slider>
+      </form>
+    </Form>
   );
 }
