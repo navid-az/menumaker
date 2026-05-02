@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { UserProfile } from "@/components/global/UserProfile";
 
 //actions and functions
-import { verifyToken } from "../actions";
+import { verifyToken } from "../actions/auth/register";
 import { getUserData } from "@/lib/getUserData";
 import { getUserBusinesses } from "@/lib/getUserBusinesses";
 

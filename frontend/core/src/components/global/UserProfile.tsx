@@ -6,7 +6,7 @@ import { getUserData } from "@/lib/getUserData";
 import { getUserBusinesses } from "@/lib/getUserBusinesses";
 
 //actions
-import { logOut } from "@/app/actions";
+import { logOut } from "@/app/actions/auth/register";
 
 //components
 import { Button } from "@/components/ui/button";

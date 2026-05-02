@@ -68,3 +68,41 @@ export async function validateOtp(data: {
     };
   }
 }
+
+// Cookie creator
+// Specifically used for access & refresh tokens
+export async function createCookie(
+  name: string,
+  value: string,
+  httpOnly = true
+) {
+  (await cookies()).set(name, value, { httpOnly: httpOnly });
+  redirect("/");
+}
+
+// LogOut user
+//needs improvements !!!
+export async function logOut() {
+  (await cookies()).delete("access");
+  (await cookies()).delete("refresh");
+  verifyToken();
+  redirect("/");
+}
+
+// Verify access token
+export async function verifyToken() {
+  const accessToken = (await cookies()).get("access");
+
+  const res = await fetch("http://127.0.0.1:8000/accounts/token/verify/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ token: accessToken?.value }),
+  });
+  if (res.ok) {
+    return true;
+  } else {
+    return false;
+  }
+}

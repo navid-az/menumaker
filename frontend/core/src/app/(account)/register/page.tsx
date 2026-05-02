@@ -27,7 +27,7 @@ import { useSlider } from "@/lib/stores";
 
 //functions
 import { validateCredentials, validateOtp } from "@/app/actions/auth/register";
-import { createCookie } from "@/app/actions";
+import { createCookie } from "@/app/actions/auth/register";
 
 //types
 export type InviteData = {

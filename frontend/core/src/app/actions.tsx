@@ -8,7 +8,6 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { SetupSchemaType } from "./(creator)/builder/components/setup/Setup";
 import { BuilderFormType } from "./(creator)/builder/components/builder/Builder";
 import { BranchFormType } from "./dashboard/components/CreateBranchForm";
-import { BranchType } from "./dashboard/layout";
 
 // import jwtDecoder from "@/lib/jwtDecoder";
 // type DecodedJwtType = {
@@ -19,68 +18,29 @@ import { BranchType } from "./dashboard/layout";
 //   user_id: number;
 // };
 
-export async function createCookie(
-  name: string,
-  value: string,
-  httpOnly = true
-) {
-  (await cookies()).set(name, value, { httpOnly: httpOnly });
-  redirect("/");
-}
-
-type ItemType = {
-  name: string;
-  category: number;
-};
-
-export async function signInUser(data: {
-  phone_number: string;
-  otp: string;
-  invitation_token?: string;
-}) {
-  try {
-    const res = await fetch("http://localhost:8000/accounts/token/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    const resData = await res.json();
-    if (!res.ok) {
-      console.error("Server error:", resData);
-      throw new Error("Failed to fetch data");
-    }
-    return resData;
-  } catch (err: any) {
-    console.error("Fetch error:", err);
-    throw new Error(err.detail || "Failed to fetch data");
-  }
-}
-
-//logOut user
-export async function logOut() {
-  (await cookies()).delete("access");
-  (await cookies()).delete("refresh");
-  verifyToken();
-  redirect("/");
-}
-
-//verify access token
-export async function verifyToken() {
-  const accessToken = (await cookies()).get("access");
-
-  const res = await fetch("http://127.0.0.1:8000/accounts/token/verify/", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ token: accessToken?.value }),
-  });
-  if (res.ok) {
-    return true;
-  } else {
-    return false;
-  }
-}
+//deprecated
+// export async function signInUser(data: {
+//   phone_number: string;
+//   otp: string;
+//   invitation_token?: string;
+// }) {
+//   try {
+//     const res = await fetch("http://localhost:8000/accounts/token/", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify(data),
+//     });
+//     const resData = await res.json();
+//     if (!res.ok) {
+//       console.error("Server error:", resData);
+//       throw new Error("Failed to fetch data");
+//     }
+//     return resData;
+//   } catch (err: any) {
+//     console.error("Fetch error:", err);
+//     throw new Error(err.detail || "Failed to fetch data");
+//   }
+// }
 
 //~~~~dashboard table mutation-related actions~~~
 
