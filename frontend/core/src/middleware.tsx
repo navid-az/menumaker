@@ -12,7 +12,10 @@ type jwtPayloadType = {
   iat: number;
   jti: string;
   user_id: number;
-  permissions: { business: string; branches?: string[]; isOwner: boolean }[];
+  roles: Record<
+    string,
+    { business: string; branches?: string[]; role: string }
+  >;
 };
 
 export async function middleware(request: NextRequest) {
@@ -43,9 +46,7 @@ export async function middleware(request: NextRequest) {
       const jwtPayload = payload as jwtPayloadType;
 
       // Find permissions for this business
-      const perm = jwtPayload.permissions.find(
-        (permission) => permission.business === businessSlug
-      );
+      const perm = jwtPayload.roles[businessSlug];
 
       if (!perm) {
         // User has no permissions for this business
@@ -53,7 +54,7 @@ export async function middleware(request: NextRequest) {
       }
 
       // Check if user has permissions for this branch
-      if (perm.isOwner || perm.branches?.includes(branchSlug)) {
+      if (perm.role === "owner" || perm.branches?.includes(branchSlug)) {
         return NextResponse.next();
       } else {
         return NextResponse.redirect(new URL("/unauthorized", request.url));
