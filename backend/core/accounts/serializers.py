@@ -1,11 +1,10 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
+from .models import User
+
+from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import User, Otp
-from personnel.models import Personnel
-import jwt
+from .models import User
 from django.conf import settings
 
 User = get_user_model()
@@ -34,20 +33,7 @@ class CodeSerializer(serializers.Serializer):
     otp = serializers.IntegerField()
 
 
-# Get user business/branch permissions
-def get_user_permissions(user):
-    permissions = []
-    for business in user.businesses.all():
-        permissions.append({"business": business.slug, "isOwner": True})
-    for personnel in user.assignments.all():
-        permissions.append({
-            "business": personnel.business.slug,
-            "isOwner": False,
-            "branches": [b.slug for b in personnel.branches.all()]
-        })
-    return permissions
-
-
+# Token refresher
 class CustomTokenRefreshSerializer(TokenRefreshSerializer):
     def validate(self, attrs):
         # Validate the incoming refresh token first
@@ -56,93 +42,109 @@ class CustomTokenRefreshSerializer(TokenRefreshSerializer):
         user_id = refresh['user_id']
         user = User.objects.get(id=user_id)
 
-        permissions = get_user_permissions(user)
+        roles = user.get_user_roles()
 
         # Create new access token and inject permissions
         access = refresh.access_token
-        access['permissions'] = permissions
+        access['roles'] = roles
         return {
             'access': str(access),
             'refresh': str(refresh),  # optionally return same refresh token
         }
 
 
-class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
-    username_field = "phone_number"
-    phone_number = serializers.CharField()
-    invitation_token = serializers.CharField(required=False)
-    otp = serializers.CharField()
+# ~Deprecated~
+# Get user business/branch permissions
+# def get_user_permissions(user):
+#     permissions = []
+#     for business in user.businesses.all():
+#         permissions.append({"business": business.slug, "isOwner": True})
+#     for personnel in user.assignments.all():
+#         permissions.append({
+#             "business": personnel.business.slug,
+#             "isOwner": False,
+#             "branches": [b.slug for b in personnel.branches.all()]
+#         })
+#     return permissions
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Remove password field entirely
-        if "password" in self.fields:
-            self.fields.pop("password")
 
-    def validate(self, attrs):
-        phone_number = attrs.get("phone_number")
-        invitation_token = attrs.get("invitation_token")
-        otp = attrs.get("otp")
+# ~Deprecated~
+# class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+#     username_field = "phone_number"
+#     phone_number = serializers.CharField()
+#     invitation_token = serializers.CharField(required=False)
+#     otp = serializers.CharField()
 
-        # Fetch OTP from DB
-        try:
-            saved_otp = Otp.objects.get(phone_number=phone_number)
-        except Otp.DoesNotExist:
-            raise serializers.ValidationError("OTP not found")
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#         # Remove password field entirely
+#         if "password" in self.fields:
+#             self.fields.pop("password")
 
-        # Compare OTPs
-        if str(otp) != str(saved_otp.password):
-            raise serializers.ValidationError("Invalid OTP")
+#     def validate(self, attrs):
+#         phone_number = attrs.get("phone_number")
+#         invitation_token = attrs.get("invitation_token")
+#         otp = attrs.get("otp")
 
-        # Fetch or create user
-        user = User.objects.filter(phone_number=phone_number).first()
-        if not user:
-            user = User.objects.create_user(phone_number=phone_number)
-            user.set_unusable_password()
-            user.save()
+#         # Fetch OTP from DB
+#         try:
+#             saved_otp = Otp.objects.get(phone_number=phone_number)
+#         except Otp.DoesNotExist:
+#             raise serializers.ValidationError("OTP not found")
 
-        # Validate invitation token if provided
-        if invitation_token:
-            try:
-                # decode JWT
-                payload = jwt.decode(
-                    invitation_token,
-                    settings.SECRET_KEY, algorithms=["HS256"]
-                )
-            except jwt.ExpiredSignatureError:
-                raise ValidationError({"detail": "Invitation link expired"})
-            except jwt.InvalidTokenError:
-                raise ValidationError({"detail": "Invalid invitation token"})
+#         # Compare OTPs
+#         if str(otp) != str(saved_otp.password):
+#             raise serializers.ValidationError("Invalid OTP")
 
-            # get personnel_id from token payload
-            personnel_id = payload.get("personnel_id")
-            if not personnel_id:
-                raise ValidationError({"detail": "Malformed invitation token"})
+#         # Fetch or create user
+#         user = User.objects.filter(phone_number=phone_number).first()
+#         if not user:
+#             user = User.objects.create_user(phone_number=phone_number)
+#             user.set_unusable_password()
+#             user.save()
 
-            try:
-                personnel = Personnel.objects.get(id=personnel_id)
-            except Personnel.DoesNotExist:
-                raise ValidationError(
-                    {"detail": "No personnel found for this token"})
+#         # Validate invitation token if provided
+#         if invitation_token:
+#             try:
+#                 # decode JWT
+#                 payload = jwt.decode(
+#                     invitation_token,
+#                     settings.SECRET_KEY, algorithms=["HS256"]
+#                 )
+#             except jwt.ExpiredSignatureError:
+#                 raise ValidationError({"detail": "Invitation link expired"})
+#             except jwt.InvalidTokenError:
+#                 raise ValidationError({"detail": "Invalid invitation token"})
 
-            # attach this user to the personnel and activate it
-            if not personnel.user:
-                personnel.user = user
-                personnel.is_active = True
-                personnel.save()
+#             # get personnel_id from token payload
+#             personnel_id = payload.get("personnel_id")
+#             if not personnel_id:
+#                 raise ValidationError({"detail": "Malformed invitation token"})
 
-        refresh = RefreshToken.for_user(user)
+#             try:
+#                 personnel = Personnel.objects.get(id=personnel_id)
+#             except Personnel.DoesNotExist:
+#                 raise ValidationError(
+#                     {"detail": "No personnel found for this token"})
 
-        permissions = get_user_permissions(user)
+#             # attach this user to the personnel and activate it
+#             if not personnel.user:
+#                 personnel.user = user
+#                 personnel.is_active = True
+#                 personnel.save()
 
-        access = refresh.access_token
-        access["permissions"] = permissions
-        saved_otp.delete()
+#         refresh = RefreshToken.for_user(user)
 
-        return {
-            "refresh": str(refresh),
-            "access": str(access),
-        }
+#         permissions = get_user_permissions(user)
+
+#         access = refresh.access_token
+#         access["permissions"] = permissions
+#         saved_otp.delete()
+
+#         return {
+#             "refresh": str(refresh),
+#             "access": str(access),
+#         }
 
 
 class CheckUserCredentialSerializer(serializers.Serializer):

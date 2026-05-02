@@ -23,6 +23,31 @@ class User(AbstractBaseUser, PermissionsMixin):
     # objects = UserManager()
     objects: UserManager = UserManager()
 
+    # get user roles for all businesses and branches
+    def get_user_roles(self):
+        access = {}
+
+        # owner businesses
+        for business in self.businesses.all():
+            access[business.slug] = {
+                "role": "owner"
+            }
+
+        # personnel assignments
+        for assignment in self.assignments.all():
+            business = assignment.business
+
+            # don't override owner
+            if business.slug in access:
+                continue
+
+            access[business.slug] = {
+                "role": assignment.role.name,
+                "branches": [b.slug for b in assignment.branches.all()]
+            }
+
+        return access
+
     USERNAME_FIELD = "phone_number"
     REQUIRED_FIELDS = ["email", "full_name"]
 

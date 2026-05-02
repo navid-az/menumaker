@@ -1,12 +1,11 @@
 import secrets
-from django.contrib.auth import authenticate, login, get_user_model
+from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password, check_password
 from django.utils import timezone
 
 from django.conf import settings
-from django.shortcuts import get_object_or_404
 from .models import Otp, User
-from rest_framework_simplejwt.views import TokenViewBase, TokenRefreshView
+from rest_framework_simplejwt.views import TokenRefreshView
 
 # rest dependencies
 from rest_framework.views import APIView
@@ -15,7 +14,6 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .serializers import (
-    CustomTokenObtainPairSerializer,
     CustomTokenRefreshSerializer,
     validateCredentialSerializer,
     CodeSerializer,
@@ -44,20 +42,23 @@ class ValidateCredentialView(APIView):
                 phone_number=phone_number, hashed_otp=hashed_code)
 
             # Send OTP to receptor
-            try:
-                api = KavenegarAPI(settings.KAVENEGAR_API_KEY)
-                params = {
-                    'receptor': settings.DUMMY_PHONE_NUMBER if settings.DEBUG else phone_number,
-                    'template': 'verifycode',
-                    'token': random_code,
-                    'type': 'sms',
-                }
-                response = api.verify_lookup(params)
-                print(response)
-            except APIException as e:
-                return Response('API OTP send failed')
-            except HTTPException as e:
-                return Response('HTTP request failed')
+            if not settings.DEBUG:
+                try:
+                    api = KavenegarAPI(settings.KAVENEGAR_API_KEY)
+                    params = {
+                        'receptor': settings.DUMMY_PHONE_NUMBER if settings.DEBUG else phone_number,
+                        'template': 'verifycode',
+                        'token': random_code,
+                        'type': 'sms',
+                    }
+                    response = api.verify_lookup(params)
+                    print(response)
+                except APIException as e:
+                    return Response('API OTP send failed')
+                except HTTPException as e:
+                    return Response('HTTP request failed')
+
+            print('random_code: ', random_code)
 
             return Response("Verification code sent", status=status.HTTP_200_OK)
         return Response(srz_data.errors, status.HTTP_400_BAD_REQUEST)
@@ -100,30 +101,37 @@ class ValidateOtpView(APIView):
         # get or create user
         user, created = User.objects.get_or_create(
             phone_number=phone_number,
-            defaults={"full_name": ""}
         )
+
+        if created:
+            user.set_unusable_password()
+            user.save()
 
         # issue JWT
         refresh = RefreshToken.for_user(user)
 
+        access = refresh.access_token
+
+        # Attach user roles to access token
+        access['roles'] = user.get_user_roles()
+
         return Response(
             {
                 "refresh": str(refresh),
-                "access": str(refresh.access_token),
+                "access": str(access),
             },
             status=status.HTTP_200_OK
         )
 
 
-# Token pair generator
-class CustomTokenObtainPairView(TokenViewBase):
-    serializer_class = CustomTokenObtainPairSerializer
-
 # Token refresher
-
-
 class CustomTokenRefreshView(TokenRefreshView):
     serializer_class = CustomTokenRefreshSerializer
+
+# ~Deprecated~
+# Token pair generator
+# class CustomTokenObtainPairView(TokenViewBase):
+#     serializer_class = CustomTokenObtainPairSerializer
 
 
 # gets user data
