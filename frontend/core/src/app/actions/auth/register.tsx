@@ -8,7 +8,7 @@ import { redirect } from "next/navigation";
 export async function validateCredentials(credential: {
   phone_number?: string;
   email?: string;
-}) {
+}): Promise<{ retry_after: number; detail: string }> {
   try {
     const res = await fetch(
       "http://127.0.0.1:8000/accounts/validate-credential/",
@@ -18,10 +18,15 @@ export async function validateCredentials(credential: {
         body: JSON.stringify(credential),
       }
     );
+    const resData = await res.json();
+    console.log(resData);
     if (!res.ok) {
-      return { status: res.status, message: res.json() };
+      if (res.status === 429) {
+        return { detail: resData.detail, retry_after: resData.retry_after };
+      }
+      return { detail: resData.detail, retry_after: resData.retry_after };
     }
-    return { status: res.status, message: res.json() };
+    return { detail: resData.detail, retry_after: resData.retry_after };
   } catch (err: any) {
     console.error("Fetch error:", err);
     throw new Error(err.detail || "Failed to validate credentials");

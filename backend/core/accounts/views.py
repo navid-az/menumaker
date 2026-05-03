@@ -2,6 +2,7 @@ import secrets
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password, check_password
 from django.utils import timezone
+from datetime import timedelta
 
 from django.conf import settings
 from .models import Otp, User
@@ -31,8 +32,26 @@ class ValidateCredentialView(APIView):
         if srz_data.is_valid():
             phone_number = srz_data.validated_data["phone_number"]
 
-            # Delete previous otp instance if exists
-            Otp.objects.filter(phone_number=phone_number).delete()
+            cooldown = timedelta(minutes=2)
+
+            latest_otp = Otp.objects.filter(
+                phone_number=phone_number).order_by('-created_at').first()
+
+            if latest_otp:
+                remaining: timedelta = (latest_otp.created_at + cooldown -
+                                        timezone.now()).total_seconds()
+
+                if remaining > 0:
+                    return Response(
+                        {
+                            "detail": "Please wait before requesting another code",
+                            "retry_after": int(remaining),
+                        },
+                        status=status.HTTP_429_TOO_MANY_REQUESTS
+                    )
+
+                # Delete previous otp instance if exists
+                latest_otp.delete()
 
             # create new otp code with the given phone_number
             random_code = secrets.randbelow(900000) + 100000
@@ -60,7 +79,10 @@ class ValidateCredentialView(APIView):
 
             print('random_code: ', random_code)
 
-            return Response("Verification code sent", status=status.HTTP_200_OK)
+            return Response({
+                "detail": "Verification code sent",
+                "retry_after": int(cooldown.total_seconds())
+            }, status=status.HTTP_200_OK)
         return Response(srz_data.errors, status.HTTP_400_BAD_REQUEST)
 
 

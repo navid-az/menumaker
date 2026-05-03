@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import RegisterBtn from "./components/RegisterBtn";
 import CredentialStep from "./components/CredentialStep";
 import OtpStep from "./components/OtpStep";
+import OtpCountdown from "./components/OtpCountdown";
 
 //libraries
 import z from "zod";
@@ -28,6 +29,8 @@ import { useSlider } from "@/lib/stores";
 //functions
 import { validateCredentials, validateOtp } from "@/app/actions/auth/register";
 import { createCookie } from "@/app/actions/auth/register";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 //types
 export type InviteData = {
@@ -86,6 +89,7 @@ export default function Page() {
 
   //form step state
   const [step, setStep] = useState(1);
+  const [retryAfter, setRetryAfter] = useState(0);
 
   //reset slider states on mount
   useEffect(() => {
@@ -121,9 +125,19 @@ export default function Page() {
   async function onSubmit(data: RegisterForm) {
     if (step === 1) {
       setIsLoading(true);
-      await validateCredentials({ phone_number: data.phone_number });
+
+      const res = await validateCredentials({
+        phone_number: data.phone_number,
+      });
       setStep(2);
+
+      // this is a better solution than res.retry_after
+      // because retry_after is always the same and that makes setter not re render the OtpCountdown component
+      setRetryAfter(Date.now() + res.retry_after * 1000);
+
       setIsLoading(false);
+
+      //next slider step
       setStepIndex(1);
       return;
     }
@@ -174,10 +188,37 @@ export default function Page() {
             </AnimatePresence>
           </SliderBody>
           <SliderFooter>
-            <RegisterBtn
-              text={step === 1 ? "دریافت کد" : "ورود"}
-              isLoading={isLoading}
-            ></RegisterBtn>
+            <div className="flex gap-4 flex-col w-full">
+              <div
+                className={cn(
+                  "flex justify-between w-full gap-4 transition-all duration-300",
+                  step === 2 ? "mb-0 opacity-100" : "-mb-16 opacity-0"
+                )}
+              >
+                <OtpCountdown
+                  onClick={() => {
+                    setStep(1);
+                    form.trigger();
+                  }}
+                  retryAfter={retryAfter}
+                  onFinish={() => console.log("yo")}
+                ></OtpCountdown>
+                <Button
+                  onClick={() => {
+                    setStepIndex(0);
+                    setStep(1);
+                  }}
+                  disabled={step === 1}
+                  className="flex-1 hover:scale-105 transition-all duration-300 scale-pro bg-sad-blue border-royal-green/10 border-2 text-royal-green rounded-full"
+                >
+                  ویرایش شماره موبایل
+                </Button>
+              </div>
+              <RegisterBtn
+                text={step === 1 ? "دریافت کد" : "ورود"}
+                isLoading={isLoading}
+              ></RegisterBtn>
+            </div>
           </SliderFooter>
         </Slider>
       </form>

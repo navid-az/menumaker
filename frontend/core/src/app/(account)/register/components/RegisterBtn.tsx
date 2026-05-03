@@ -15,7 +15,7 @@ export default function RegisterBtn({
 }: RegisterBtnType) {
   return (
     <Button
-      className="h-max w-full py-4 text-xl"
+      className="h-max w-full py-4 text-xl bg-royal-green text-soft-blue"
       type="submit"
       size="lg"
       disabled={isLoading ? true : false}
