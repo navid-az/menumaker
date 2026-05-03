@@ -45,7 +45,7 @@ type RegisterForm = {
   otp: string;
 };
 
-//schema
+//schemas
 const phoneSchema = z.object({
   phone_number: z.string().min(11, "لطفا این قسمت را خالی نگذارید"),
 });
@@ -57,6 +57,29 @@ const otpSchema = z.object({
 });
 
 export default function Page() {
+  const { sectionIndex, stepIndex, setStepIndex, direction, reset } =
+    useSlider();
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  //form step state
+  const [step, setStep] = useState(1);
+  const [retryAfter, setRetryAfter] = useState(0);
+
+  //reset slider states on mount
+  useEffect(() => {
+    reset();
+  }, []);
+
+  // clear errors(if any) between steps
+  // and set focus to the phone number input on step 1
+  useEffect(() => {
+    form.clearErrors();
+    if (step === 1) {
+      form.setFocus("phone_number");
+    }
+  }, [step]);
+
   //slider sections and steps
   const sections = [
     {
@@ -72,34 +95,14 @@ export default function Page() {
         {
           id: "otp",
           subtitle: "کد ارسال شده به شماره موبایل خود را وارد کنید",
-          component: <OtpStep stepId="otp"></OtpStep>,
+          component: <OtpStep focus={step === 2} stepId="otp"></OtpStep>,
           show: true,
         },
       ],
     },
   ];
-
-  const { sectionIndex, stepIndex, setStepIndex, direction, reset } =
-    useSlider();
-
   const activeSection = sections[sectionIndex];
   const activeStep = activeSection.steps[stepIndex];
-
-  const [isLoading, setIsLoading] = useState(false);
-
-  //form step state
-  const [step, setStep] = useState(1);
-  const [retryAfter, setRetryAfter] = useState(0);
-
-  //reset slider states on mount
-  useEffect(() => {
-    reset();
-  }, []);
-
-  //clear errors(if any) between steps
-  useEffect(() => {
-    form.clearErrors();
-  }, [step]);
 
   const form = useForm<RegisterForm>({
     resolver: zodResolver(step === 1 ? phoneSchema : otpSchema),
@@ -204,10 +207,6 @@ export default function Page() {
                   onFinish={() => console.log("yo")}
                 ></OtpCountdown>
                 <Button
-                  onClick={() => {
-                    setStepIndex(0);
-                    setStep(1);
-                  }}
                   disabled={step === 1}
                   className="flex-1 hover:scale-105 transition-all duration-300 scale-pro bg-sad-blue border-royal-green/10 border-2 text-royal-green rounded-full"
                 >

@@ -15,7 +15,13 @@ import {
 import { SliderStep } from "@/components/global/slider/Slider";
 import React from "react";
 
-export default function OtpStep({ stepId }: { stepId: string }) {
+export default function OtpStep({
+  focus,
+  stepId,
+}: {
+  focus: boolean;
+  stepId: string;
+}) {
   const { control } = useFormContext();
   return (
     <SliderStep stepId={stepId}>
@@ -25,7 +31,7 @@ export default function OtpStep({ stepId }: { stepId: string }) {
         render={({ field }) => (
           <FormItem>
             <FormControl>
-              <InputOTP {...field} maxLength={6} dir="ltr">
+              <InputOTP {...field} maxLength={6} dir="ltr" autoFocus={focus}>
                 <InputOTPGroup dir="ltr" className="px-16">
                   <InputOTPSlot index={0} />
                   <InputOTPSlot index={1} />
