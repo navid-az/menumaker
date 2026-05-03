@@ -66,7 +66,7 @@ export default function Page() {
   const [step, setStep] = useState(1);
   const [retryAfter, setRetryAfter] = useState(0);
 
-  //reset slider states on mount
+  // reset slider states on mount
   useEffect(() => {
     reset();
   }, []);
@@ -164,6 +164,14 @@ export default function Page() {
     }
   }
 
+  // reset form and slider states to initial values and set step to 1
+  const handleCredentialReset = () => {
+    setStep(1);
+    setStepIndex(0);
+    form.reset();
+    setRetryAfter(0);
+  };
+
   return (
     <Form {...form}>
       <form
@@ -207,6 +215,7 @@ export default function Page() {
                   onFinish={() => console.log("yo")}
                 ></OtpCountdown>
                 <Button
+                  onClick={handleCredentialReset}
                   disabled={step === 1}
                   className="flex-1 hover:scale-105 transition-all duration-300 scale-pro bg-sad-blue border-royal-green/10 border-2 text-royal-green rounded-full"
                 >

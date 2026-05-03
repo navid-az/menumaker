@@ -47,7 +47,7 @@ export default function OtpCountdown({
     <Button
       onClick={onClick}
       disabled={timeLeft > 0}
-      className="flex-1 hover:scale-105 transition-all duration-300 scale-pro bg-sad-blue border-royal-green/10 border-2 text-royal-green rounded-full"
+      className="flex-1 hover:scale-105 gap-1 transition-all duration-300 scale-pro bg-sad-blue border-royal-green/10 border-2 text-royal-green rounded-full"
     >
       <span
         className={cn(
