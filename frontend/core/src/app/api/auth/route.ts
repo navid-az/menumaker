@@ -1,4 +1,4 @@
-import { verifyToken } from "@/app/actions";
+import { verifyToken } from "@/app/actions/auth/register";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { getUserData } from "@/lib/getUserData";
@@ -13,14 +13,14 @@ export async function GET() {
   }
 
   // Verify the token
-  const isValid = await verifyToken(accessToken);
+  const isValid = await verifyToken();
 
   if (!isValid) {
     return NextResponse.json({}, { status: 401 });
   }
 
   // Fetch user data and businesses
-  const user = await getUserData(accessToken);
+  const user = await getUserData();
   const businesses = await getUserBusinesses();
 
   return NextResponse.json({ user: user, businesses: businesses });
