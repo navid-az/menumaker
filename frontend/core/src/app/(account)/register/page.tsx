@@ -109,6 +109,26 @@ export default function Page() {
     defaultValues: { phone_number: "" },
   });
 
+  const STORAGE_KEY = "otp_phone_number";
+  const phoneNumber = form.watch("phone_number");
+
+  // Load from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      form.setValue("phone_number", saved);
+    }
+  }, [form.setValue]);
+
+  // Save to localStorage when phone changes
+  useEffect(() => {
+    if (phoneNumber) {
+      localStorage.setItem(STORAGE_KEY, phoneNumber);
+    } else {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  }, [phoneNumber]);
+
   // Animation variants for the step transitions
   const variants = {
     enter: (direction: number) => ({
