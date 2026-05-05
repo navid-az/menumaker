@@ -5,8 +5,16 @@ import React, { useMemo } from "react";
 //components
 import { Form } from "@/components/ui/form";
 import { toast } from "sonner";
-import { Slider } from "@/components/global/slider/Slider";
+import {
+  Slider,
+  SliderBody,
+  SliderFooter,
+  SliderHeader,
+} from "@/components/global/slider/Slider";
+import { SliderNavigator } from "@/components/global/slider/SliderNavigator";
+import SliderTitle from "@/components/global/slider/SliderTitle";
 import { AssetGroupType } from "@/components/global/AssetPicker";
+import MenuPreview from "../preview/MenuPreview";
 import StyleStep from "./steps/StyleStep";
 import ThemeStep from "./steps/ThemeStep";
 import DetailStep from "./steps/DetailStep";
@@ -17,7 +25,6 @@ import CategoryStyleStep from "./steps/CategoryStyleStep";
 import ItemStyleStep from "./steps/ItemStyleStep";
 import CartStyleStep from "./steps/CartStyleStep";
 import HomeLayoutStep from "./steps/HomeLayoutStep";
-import MenuPreview from "../preview/MenuPreview";
 import MenuFeatureStep from "./steps/MenuFeatureStep";
 
 //hooks
@@ -373,25 +380,29 @@ export default function BuilderTest({
           ref={ref}
           className="max-w-lg w-full flex items-center"
         >
-          <Slider
-            isDirty={form.formState.isDirty}
-            isEditing={!!defaultValues}
-            validSections={validSections}
-          >
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={activeStep.id}
-                variants={variants}
-                custom={direction}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{ duration: 0.2 }}
-                className="absolute w-full"
-              >
-                {activeStep.component}
-              </motion.div>
-            </AnimatePresence>
+          <Slider validSections={validSections}>
+            <SliderHeader>
+              <SliderTitle></SliderTitle>
+            </SliderHeader>
+            <SliderBody>
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={activeStep.id}
+                  variants={variants}
+                  custom={direction}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.2 }}
+                  className="absolute w-full"
+                >
+                  {activeStep.component}
+                </motion.div>
+              </AnimatePresence>
+            </SliderBody>
+            <SliderFooter>
+              <SliderNavigator validSections={validSections}></SliderNavigator>
+            </SliderFooter>
           </Slider>
         </form>
         {/* live menu preview */}

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useActionState, useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 
 //libraries
 import * as z from "zod";
@@ -17,7 +17,15 @@ import {
 } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Input } from "@/components/ui/input";
-import { Slider, SliderStep } from "@/components/global/slider/Slider";
+import {
+  Slider,
+  SliderBody,
+  SliderFooter,
+  SliderHeader,
+  SliderStep,
+} from "@/components/global/slider/Slider";
+import { SliderNavigator } from "@/components/global/slider/SliderNavigator";
+import SliderTitle from "@/components/global/slider/SliderTitle";
 import Tile from "./Tile";
 import { toast } from "sonner";
 
@@ -26,9 +34,6 @@ import { useSlider } from "@/lib/stores";
 
 //actions
 import { createBusiness } from "@/app/actions";
-
-// functions
-import { slugify } from "@/lib/slugify";
 
 //libraries
 import { motion, AnimatePresence } from "motion/react";
@@ -406,21 +411,32 @@ export default function Setup({
         onSubmit={form.handleSubmit(onSubmit, onInvalid)}
         className="px-4 max-w-3xl w-full sm:px-12 md:px-16 lg:px-0 mx-auto"
       >
-        <Slider validSections={validSections} disableSubmitBtn>
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={activeStep.id}
-              variants={variants}
-              custom={direction}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.2 }}
-              className="absolute w-full"
-            >
-              {activeStep.component}
-            </motion.div>
-          </AnimatePresence>
+        <Slider validSections={validSections}>
+          <SliderHeader>
+            <SliderTitle></SliderTitle>
+          </SliderHeader>
+          <SliderBody>
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={activeStep.id}
+                variants={variants}
+                custom={direction}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.2 }}
+                className="absolute w-full"
+              >
+                {activeStep.component}
+              </motion.div>
+            </AnimatePresence>
+          </SliderBody>
+          <SliderFooter>
+            <SliderNavigator
+              disableSubmitBtn
+              validSections={validSections}
+            ></SliderNavigator>
+          </SliderFooter>
         </Slider>
       </form>
     </Form>
