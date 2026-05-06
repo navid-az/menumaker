@@ -196,7 +196,7 @@ export default function Page() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full flex px-16 flex-5/12 items-center overflow-hidden"
+        className="flex px-4 sm:px-20 z-50 lg:px-16 xl:px-12 flex-6/12 flex-shrink items-center overflow-hidden"
       >
         <Slider validSections={sections}>
           <SliderHeader>
@@ -222,8 +222,8 @@ export default function Page() {
             <div className="flex gap-4 flex-col w-full">
               <div
                 className={cn(
-                  "flex justify-between w-full gap-4 transition-all duration-300",
-                  step === 2 ? "mb-0 opacity-100" : "-mb-16 opacity-0"
+                  "flex flex-wrap justify-between w-full gap-4 transition-all duration-300 delay-300",
+                  step === 2 ? "mb-0 opacity-100" : "-mb-14 lg:-mb-16 opacity-0"
                 )}
               >
                 <OtpCountdown
@@ -232,7 +232,6 @@ export default function Page() {
                     form.trigger();
                   }}
                   retryAfter={retryAfter}
-                  onFinish={() => console.log("yo")}
                 ></OtpCountdown>
                 <Button
                   onClick={handleCredentialReset}

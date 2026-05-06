@@ -11,13 +11,13 @@ import { formatTime } from "@/lib/formatTime";
 import { cn } from "@/lib/utils";
 
 export default function OtpCountdown({
-  onClick,
   retryAfter,
+  onClick,
   onFinish,
 }: {
-  onClick: () => void;
   retryAfter: number;
-  onFinish: () => void;
+  onClick: () => void;
+  onFinish?: () => void;
 }) {
   const [timeLeft, setTimeLeft] = useState(retryAfter);
 
@@ -27,8 +27,6 @@ export default function OtpCountdown({
   }, [retryAfter]);
 
   useEffect(() => {
-    console.log(timeLeft);
-
     if (timeLeft <= 0) return;
     const timer = setInterval(() => {
       setTimeLeft((prev) => Math.max(0, prev - 1));
