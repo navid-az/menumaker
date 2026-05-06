@@ -34,6 +34,7 @@ import { useSlider } from "@/lib/stores";
 
 //actions
 import { createBusiness } from "@/app/actions";
+import { refreshToken } from "@/app/actions/auth/register";
 
 //libraries
 import { motion, AnimatePresence } from "motion/react";
@@ -354,6 +355,13 @@ export default function Setup({
       // pass newly made business data to parent state
       setBusinessData(res.data);
 
+      // refresh access token to inject new business role and permissions into the token payload
+      const refreshed = await refreshToken();
+
+      if (!refreshed.success) {
+        toast.error(refreshed.detail);
+        return;
+      }
       toast.success("مجموعه شما با موفقیت ثبت شد!");
     }
   }

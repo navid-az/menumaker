@@ -111,3 +111,30 @@ export async function verifyToken() {
     return false;
   }
 }
+
+// Refresh access token using refresh token
+export async function refreshToken() {
+  const refresh = (await cookies()).get("refresh")?.value;
+
+  const res = await fetch("http://localhost:8000/accounts/token/refresh/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ refresh: refresh }),
+  });
+  if (!res.ok) {
+    return { success: false, detail: "Can't refresh the given token" };
+  }
+
+  // Update token
+  const data = await res.json();
+
+  console.log("new access:", data.access);
+
+  // Set new access token
+  (await cookies()).set({
+    httpOnly: true,
+    name: "access",
+    value: data.access,
+  });
+  return { success: true, refreshed_token: data.access };
+}
