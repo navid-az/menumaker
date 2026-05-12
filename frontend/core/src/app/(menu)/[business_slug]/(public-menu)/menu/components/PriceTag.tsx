@@ -1,3 +1,5 @@
+"use client";
+
 //components
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -8,9 +10,8 @@ import {
   roundToThousands,
 } from "../../../utilities/formatCurrency";
 
-//libraries
+//functions
 import { cn } from "@/lib/utils";
-import { cva } from "class-variance-authority";
 
 //SVGs
 import { Toman } from "../../../components";
@@ -20,7 +21,7 @@ import { useEffect, useState } from "react";
 type PriceTagType = {
   price: number;
   unitDisplayType?: "default" | "compact" | "persian_abbr" | "english_abbr";
-  size?: "default" | "sm" | "lg";
+  size?: "sm" | "default" | "lg" | "xl";
   persianDigits?: boolean;
   removeZeroes?: boolean;
   isLoading?: boolean;
@@ -31,7 +32,7 @@ type PriceTagType = {
 export default function PriceTag({
   price,
   unitDisplayType = "default",
-  size,
+  size = "default",
   persianDigits = true,
   removeZeroes = false,
   isLoading,
@@ -66,45 +67,88 @@ export default function PriceTag({
       className={cn("flex w-max items-center justify-between gap-1", className)}
     >
       {!isLoading ? (
-        <div className="flex items-center gap-1">
+        <div className="flex items-end gap-1">
           <p
-            className={`text-${secondaryColor} mt-1 ${
+            className={cn(
+              `text-${secondaryColor}`,
               size === "sm"
-                ? "text-md font-medium"
+                ? "text-sm font-normal"
+                : size === "default"
+                ? "text-lg font-normal -mb-0.5"
                 : size === "lg"
-                ? "text-3xl"
-                : "text-2xl"
-            } sm:text-2xl`}
+                ? "text-2xl font-medium -mb-1"
+                : size === "xl"
+                ? "text-3xl font-semibold -mb-1"
+                : ""
+            )}
           >
             {validatedPrice}
           </p>
           {unitDisplayType == "persian_abbr" ? (
             <p
-              className={`text-${secondaryColor} text-base mt-0.5 font-medium sm:font-semibold sm:text-2xl`}
+              className={cn(
+                `text-${secondaryColor}`,
+                size === "sm"
+                  ? "text-sm font-normal"
+                  : size === "default"
+                  ? "text-base font-normal"
+                  : size === "lg"
+                  ? "text-2xl font-medium -mb-1"
+                  : size === "xl"
+                  ? "text-3xl font-semibold -mb-1"
+                  : ""
+              )}
             >
               ت
             </p>
           ) : unitDisplayType == "compact" ? (
             <span
-              className={`relative flex sm:h-8 sm:w-8 ${
+              className={cn(
+                "relative flex",
                 size === "sm"
-                  ? "h-6 w-6"
+                  ? "size-6"
+                  : size === "default"
+                  ? "size-6"
                   : size === "lg"
-                  ? "h-8 w-8"
-                  : "h-8 w-8"
-              }`}
+                  ? "size-7"
+                  : size === "xl"
+                  ? "size-8"
+                  : ""
+              )}
             >
               <Toman className={`h-full w-full text-${secondaryColor}`}></Toman>
             </span>
           ) : unitDisplayType == "english_abbr" ? (
             <p
-              className={`text-${secondaryColor} text-sm font-semibold sm:text-xl`}
+              className={cn(
+                `text-${secondaryColor}`,
+                size === "sm"
+                  ? "text-sm font-normal"
+                  : size === "default"
+                  ? "text-base font-normal"
+                  : size === "lg"
+                  ? "text-2xl font-medium -mb-1"
+                  : size === "xl"
+                  ? "text-3xl font-semibold -mb-1"
+                  : ""
+              )}
             >
               T
             </p>
           ) : unitDisplayType == "default" ? (
             <p
-              className={`text-${secondaryColor} text-sm font-semibold sm:text-xl`}
+              className={cn(
+                `text-${secondaryColor}`,
+                size === "sm"
+                  ? "text-xs font-normal"
+                  : size === "default"
+                  ? "text-sm font-normal"
+                  : size === "lg"
+                  ? "text-sm font-semibold"
+                  : size === "xl"
+                  ? "text-base font-semibold"
+                  : ""
+              )}
             >
               تومان
             </p>

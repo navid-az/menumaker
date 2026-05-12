@@ -383,7 +383,6 @@ export function MenuItemCard({
                   </p>
                   <PriceTag
                     unitDisplayType={globalStyling.unit_display_type}
-                    size="sm"
                     price={price}
                   ></PriceTag>
                 </div>
@@ -423,7 +422,6 @@ export function MenuItemCard({
                   <PriceTag
                     unitDisplayType={globalStyling.unit_display_type}
                     className="text-(--secondary)/80"
-                    size="sm"
                     price={price}
                   ></PriceTag>
                 </div>
@@ -446,7 +444,7 @@ export function MenuItemCard({
           className="rounded-t-3xl border-0 bg-(--bg,_#ffffff) pt-1.5"
         >
           {/* drawer handle */}
-          <div className="mx-auto mb-1.5 h-2 w-[100px] rounded-full bg-(--secondary)"></div>
+          <div className="mx-auto mb-1.5 h-2 w-[100px] rounded-full bg-(--tertiary)"></div>
 
           <div className="w-full px-1.5 backdrop-blur-4xl flex justify-center items-center">
             <Image
@@ -459,9 +457,11 @@ export function MenuItemCard({
           </div>
           <DrawerHeader className="flex flex-col text-right">
             <div className="flex w-full items-center justify-between text-(--primary)">
-              <DrawerTitle className="text-xl xss:text-2xl">{name}</DrawerTitle>
+              <DrawerTitle className="text-2xl xss:text-2xl">
+                {name}
+              </DrawerTitle>
               <PriceTag
-                size="lg"
+                size="xl"
                 price={price}
                 unitDisplayType="compact"
               ></PriceTag>
@@ -573,7 +573,7 @@ export function MenuItemCard({
               </p>
             </Button>
             <PriceTag
-              size="lg"
+              size="xl"
               unitDisplayType="compact"
               price={calculateTotalPrice()}
             ></PriceTag>
