@@ -106,24 +106,21 @@ import { Check, Star } from "lucide-react";
 //   },
 // };
 
-// PlanCard base component
 const PlanCard = ({
   className,
+  children,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => {
-  //   const colors = PLAN_THEMES[theme];
-
   return (
     <div
       className={cn(
-        "group w-full min-h-[600px] select-none max-w-sm overflow-hidden relative flex flex-col gap-5 flex-1 hover:border-primary/40 transition-all duration-300 border-2 rounded-lg p-5",
-        // colors.bg,
-        // colors.textPrimary,
-        // colors.border,
+        "group w-full min-h-[600px] select-none max-w-sm overflow-hidden relative flex flex-col gap-5 flex-1 transition-all duration-300 border-2 rounded-lg p-5",
         className
       )}
       {...props}
-    />
+    >
+      {children}
+    </div>
   );
 };
 
@@ -193,9 +190,9 @@ function PlanCardPricing({
                 </p>
                 <p className="text-base md:text-lg">تومان</p>
               </div>
-              <span className="bg-royal-green text-sm font-semibold rounded-full text-soft-blue px-2.5 py-1">
+              <p className="bg-royal-green text-xs font-medium rounded-full text-soft-blue px-2.5 py-0.5">
                 {FRDiscount}٪
-              </span>
+              </p>
             </div>
           )}
 

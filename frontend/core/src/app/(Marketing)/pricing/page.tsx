@@ -177,7 +177,7 @@ const DEFAULT_OPEN_SECTIONS = PRICING_COMPARISON.map(
 
 export default async function page() {
   return (
-    <div className="flex container mx-auto flex-col items-center gap-24 xl:px-20 md:px-8 2xl:px-28">
+    <div className="flex mx-auto flex-col items-center gap-24 xl:px-20 md:px-8 2xl:px-28">
       <PricingPlans></PricingPlans>
       {/* Comparison Table */}
       <ComparisonTable className="py-20">

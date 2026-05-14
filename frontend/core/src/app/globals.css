@@ -8,6 +8,7 @@
   --happy-yellow: #eee486;
   --dark-brown: #1f0e0b;
   --royal-green: #0f2c30;
+  --deep-purple: #2c0065;
   --sky-blue: #94d9e2;
   --soft-blue: #edfdff;
   --sad-blue: #c5e5e9;
@@ -91,6 +92,7 @@
   --color-sky-blue: var(--sky-blue);
   --color-soft-blue: var(--soft-blue);
   --color-sad-blue: var(--sad-blue);
+  --color-deep-purple: var(--deep-purple);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
