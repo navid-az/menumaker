@@ -37,6 +37,7 @@ import {
 
 const plans = [
   {
+    id: "basic",
     title: "بیسیک",
     pricing: [
       { months: 3, price: 2100000, discount: 0 },
@@ -45,9 +46,9 @@ const plans = [
     ],
     description: "شروعی راحت و بی دردسر برای مجموعه های کوچک و نوپا",
     features: ["سیستم هوشمند منو ساز", "ثبت بی‌نهایت آیتم و دسته‌بندی"],
-    theme: "blue",
   },
   {
+    id: "pro",
     title: "پرو",
     pricing: [
       { months: 3, price: 3900000, discount: 0 },
@@ -64,9 +65,9 @@ const plans = [
       "اعمال محدودیت و شخصی‌‌سازی دسترسی بر اساس سمت",
     ],
     popular: true,
-    theme: "purple",
   },
   {
+    id: "franchiser",
     title: "فرنچایزر",
     pricing: [
       { months: 3, price: 5500000, discount: 0 },
@@ -85,8 +86,6 @@ const plans = [
   },
 ];
 
-type Theme = "blue" | "purple" | "gold";
-
 const themeStyles: Record<
   string,
   {
@@ -99,14 +98,14 @@ const themeStyles: Record<
     tag?: string;
   }
 > = {
-  blue: {
+  basic: {
     bg: "bg-soft-blue",
     border: "border-royal-green/20 hover:border-royal-green",
     accent: "text-blue-700",
     title: "text-royal-green",
     btn: "text-soft-blue bg-royal-green",
   },
-  purple: {
+  pro: {
     bg: "bg-purple-50",
     border: "border-deep-purple/20 hover:border-deep-purple",
     accent: "text-purple-700",
@@ -115,7 +114,7 @@ const themeStyles: Record<
     shadow: "bg-purple-400 opacity-60",
     tag: "bg-deep-purple text-purple-200",
   },
-  gold: {
+  franchiser: {
     bg: "bg-yellow-50",
     border: "border-yellow-950/20 hover:border-yellow-950",
     accent: "text-amber-700",
@@ -150,9 +149,9 @@ export default function PricingPlans() {
         {plans.map((plan, index) => (
           <PlanCard
             className={cn(
-              themeStyles[plan.theme].bg,
-              themeStyles[plan.theme].title,
-              themeStyles[plan.theme].border,
+              themeStyles[plan.id].bg,
+              themeStyles[plan.id].title,
+              themeStyles[plan.id].border,
               plan.popular && "scale-100 2xl:scale-110"
             )}
             key={plan.title}
@@ -165,7 +164,7 @@ export default function PricingPlans() {
                   <div
                     className={cn(
                       "px-4 py-1.5 rounded-full flex items-center",
-                      themeStyles[plan.theme].tag
+                      themeStyles[plan.id].tag
                     )}
                   >
                     <p className="text-sm font-normal">محبوب ترین</p>
@@ -202,132 +201,26 @@ export default function PricingPlans() {
                 asChild
                 size="lg"
                 className={cn(
-                  themeStyles[plan.theme].btn,
+                  themeStyles[plan.id].btn,
                   "w-full py-3 h-max cursor-pointer hover:scale-105 duration-500 transition-all scale-pro"
                 )}
               >
-                <Link href="/builder">فعالسازی اشتراک</Link>
+                <Link
+                  href={`/checkout?plan=${
+                    plan.id
+                  }&duration=${planDuration}&price=${
+                    plan.pricing.find((p) => p.months === planDuration)?.price
+                  }`}
+                >
+                  فعالسازی اشتراک
+                </Link>
               </Button>
             </PlanCardFooter>
             <PlanCardShadowEffect
-              className={cn(themeStyles[plan.theme].shadow)}
+              className={cn(themeStyles[plan.id].shadow)}
             ></PlanCardShadowEffect>
           </PlanCard>
         ))}
-        {/* <PlanCard className="bg-soft-blue text-royal-green border-royal-green/10 hover:border-royal-green/50">
-          <PlanCardHeader>
-            <PlanCardTitle>بیسیک</PlanCardTitle>
-            <PlanCardDescription>
-              شروعی راحت و بی دردسر برای مجموعه های کوچک و نوپا
-            </PlanCardDescription>
-          </PlanCardHeader>
-          <PlanCardPricing price={1370000}></PlanCardPricing>
-          <PlanCardContent>
-            <PlanCardFeatureList>
-              {plans[0].features.map((feature, index) => (
-                <PlanCardFeature key={index}>{feature}</PlanCardFeature>
-              ))}
-            </PlanCardFeatureList>
-            <PlanCardFeaturesSummery>
-              <Palette className="w-5 h-5"></Palette>
-              <Radio className="w-5 h-5"></Radio>
-            </PlanCardFeaturesSummery>
-          </PlanCardContent>
-          <PlanCardFooter>
-            <Button
-              asChild
-              size="lg"
-              className="w-full py-3 h-max bg-royal-green text-soft-blue cursor-pointer hover:scale-105 duration-500 transition-all scale-pro"
-            >
-              <Link href="/builder">فعالسازی اشتراک</Link>
-            </Button>
-          </PlanCardFooter>
-        </PlanCard>
-        <PlanCard className="bg-purple-100 2xl:scale-110 text-[#2C0065] border-[#2C0065]/10 hover:border-[#2C0065]/50">
-          <PlanCardHeader>
-            <PlanCardTitle>پرو</PlanCardTitle>
-            <PlanCardDescription>
-              طراحی شده با توجه به نیاز های مجموعه هایی با یک یا چند شعبه
-            </PlanCardDescription>
-          </PlanCardHeader>
-          <PlanCardPricing
-            price={4250000}
-            discount={planDuration === 12 ? 30 : 0}
-          ></PlanCardPricing>
-          <PlanCardContent>
-            <div className="flex gap-2 items-center">
-              <CheckCheck className="w-4 h-4"></CheckCheck>
-              <p className="text-sm font-medium">
-                تمام امکانات بیسیک به همراه:
-              </p>
-            </div>
-            <PlanCardFeatureList>
-              {plans[1].features.map((feature, index) => (
-                <PlanCardFeature key={index}>{feature}</PlanCardFeature>
-              ))}
-            </PlanCardFeatureList>
-            <PlanCardFeaturesSummery>
-              <Palette className="w-5 h-5"></Palette>
-              <Radio className="w-5 h-5"></Radio>
-              <CalendarClock className="w-5 h-5"></CalendarClock>
-              <ClipboardList className="w-5 h-5"></ClipboardList>
-              <ShieldCheck className="w-5 h-5"></ShieldCheck>
-            </PlanCardFeaturesSummery>
-          </PlanCardContent>
-          <PlanCardFooter>
-            <Button
-              asChild
-              size="lg"
-              className="w-full py-3 h-max bg-[#2C0065] text-purple-100 cursor-pointer hover:scale-105 duration-500 transition-all scale-pro"
-            >
-              <Link href="/builder">فعالسازی اشتراک</Link>
-            </Button>
-          </PlanCardFooter>
-          <PlanCardShadowEffect className="bg-purple-400 opacity-60"></PlanCardShadowEffect>
-        </PlanCard>
-        <PlanCard className="bg-yellow-50 text-yellow-950 border-yellow-950/10 hover:border-yellow-950/50">
-          <PlanCardHeader>
-            <PlanCardTitle>فرنچایزر</PlanCardTitle>
-            <PlanCardDescription>
-              طراحی شده برای مجموعه های بزرگ با تمرکز بالا بر روی برندینگ و
-              کیفیت خدمات‌دهی
-            </PlanCardDescription>
-          </PlanCardHeader>
-          <PlanCardPricing
-            price={14200000}
-            discount={planDuration === 12 ? 30 : 0}
-          ></PlanCardPricing>
-          <PlanCardContent>
-            <div className="flex gap-2 items-center ">
-              <CheckCheck className="w-4 h-4"></CheckCheck>
-              <p className="text-sm font-medium">تمام امکانات پرو به همراه:</p>
-            </div>
-            <PlanCardFeatureList>
-              {plans[2].features.map((feature, index) => (
-                <PlanCardFeature key={index}>{feature}</PlanCardFeature>
-              ))}
-            </PlanCardFeatureList>
-            <PlanCardFeaturesSummery>
-              <Palette className="w-5 h-5"></Palette>
-              <Radio className="w-5 h-5"></Radio>
-              <CalendarClock className="w-5 h-5"></CalendarClock>
-              <ClipboardList className="w-5 h-5"></ClipboardList>
-              <ShieldCheck className="w-5 h-5"></ShieldCheck>
-              <ChartColumn className="w-5 h-5"></ChartColumn>
-              <Boxes className="w-5 h-5"></Boxes>
-            </PlanCardFeaturesSummery>
-          </PlanCardContent>
-          <PlanCardFooter>
-            <Button
-              asChild
-              size="lg"
-              className="w-full py-3 h-max bg-yellow-950 text-yellow-50 cursor-pointer hover:scale-105 duration-500 transition-all scale-pro"
-            >
-              <Link href="/builder">فعالسازی اشتراک</Link>
-            </Button>
-          </PlanCardFooter>
-          <PlanCardShadowEffect className="bg-yellow-400 opacity-60"></PlanCardShadowEffect>
-        </PlanCard> */}
       </div>
     </div>
   );
