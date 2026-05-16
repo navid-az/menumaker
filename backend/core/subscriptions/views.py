@@ -6,9 +6,23 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
 from permissions import IsOwner
-from .serializers import SubscriptionSerializer, SubscriptionCreateUpdateSerializer
-from .models import Subscription
+from .serializers import SubscriptionSerializer, SubscriptionCreateUpdateSerializer, PlanSerializer
+from .models import Subscription, Plan
 from business.models import Business
+
+
+class PlanView(APIView):
+    def get(self, request):
+        plans = Plan.objects.all()
+        ser_data = PlanSerializer(instance=plans, many=True)
+        return Response(ser_data.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        pass
+
+
+class PlanDetailView(APIView):
+    pass
 
 
 class SubscriptionView(APIView):
