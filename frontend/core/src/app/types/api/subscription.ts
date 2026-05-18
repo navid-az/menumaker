@@ -4,9 +4,18 @@ type SubscriptionFeature = {
   is_enabled: boolean;
 };
 
-type SubscriptionPlan = {
+export type SubscriptionPricing = {
+  duration: number;
+  price: number;
+  discount: number;
+};
+
+export type SubscriptionPlan = {
+  slug: string;
   name: string;
+  description: string;
   features: SubscriptionFeature[];
+  pricings: SubscriptionPricing[];
 };
 
 export type Subscription = {

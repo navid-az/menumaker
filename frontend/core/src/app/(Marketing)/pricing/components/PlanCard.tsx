@@ -149,12 +149,12 @@ const PlanCardDescription = ({
 );
 
 function PlanCardPricing({
-  price,
+  price = 0,
   isFree = false,
   discount = 0,
   className,
 }: {
-  price: number;
+  price?: number;
   isFree?: boolean;
   discount?: number;
   className?: string;

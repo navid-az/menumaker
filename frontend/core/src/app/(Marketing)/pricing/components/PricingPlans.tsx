@@ -35,26 +35,20 @@ import {
   Gem,
 } from "lucide-react";
 
-const plans = [
+//types
+import { type SubscriptionPlan } from "@/app/types/api/subscription";
+
+// static data for plans
+const planStaticData = [
   {
-    id: "basic",
+    slug: "basic",
     title: "بیسیک",
-    pricing: [
-      { months: 3, price: 2100000, discount: 0 },
-      { months: 6, price: 4200000, discount: 10 }, // 10% discount
-      { months: 12, price: 7300000, discount: 30 }, // 30% discount
-    ],
     description: "شروعی راحت و بی دردسر برای مجموعه های کوچک و نوپا",
     features: ["سیستم هوشمند منو ساز", "ثبت بی‌نهایت آیتم و دسته‌بندی"],
   },
   {
-    id: "pro",
+    slug: "pro",
     title: "پرو",
-    pricing: [
-      { months: 3, price: 3900000, discount: 0 },
-      { months: 6, price: 7800000, discount: 10 }, // 10% discount
-      { months: 12, price: 14000000, discount: 30 }, // 22% discount
-    ],
     description: "طراحی شده با توجه به نیاز های مجموعه هایی با یک یا چند شعبه",
     features: [
       "قابلیت ثبت و مدیریت چندین شعبه ",
@@ -67,13 +61,8 @@ const plans = [
     popular: true,
   },
   {
-    id: "franchiser",
+    slug: "franchiser",
     title: "فرنچایزر",
-    pricing: [
-      { months: 3, price: 5500000, discount: 0 },
-      { months: 6, price: 11000000, discount: 10 }, // 10% discount
-      { months: 12, price: 19800000, discount: 30 }, // 22% discount
-    ],
     description:
       "طراحی شده برای مجموعه های بزرگ با تمرکز بالا بر روی برندینگ و کیفیت خدمات‌دهی",
     features: [
@@ -124,11 +113,8 @@ const themeStyles: Record<
   },
 };
 
-export default function PricingPlans() {
-  const [planDuration, setPlanDuration] = useState<3 | 6 | 12>(3);
-  const getPlanPricing = (plan: (typeof plans)[0]) => {
-    return plan.pricing.find((p) => p.months === planDuration)!;
-  };
+export default function PricingPlans({ plans }: { plans: SubscriptionPlan[] }) {
+  const [planDuration, setPlanDuration] = useState<90 | 180 | 360>(90);
 
   return (
     <div className=" w-full flex flex-col gap-16 items-center mt-20">
@@ -146,81 +132,83 @@ export default function PricingPlans() {
         setPlanDuration={setPlanDuration}
       ></PlanDurationSelector>
       <div className="flex w-full flex-wrap flex-col pb-20 lg:flex-row items-center justify-between gap-4">
-        {plans.map((plan, index) => (
-          <PlanCard
-            className={cn(
-              themeStyles[plan.id].bg,
-              themeStyles[plan.id].title,
-              themeStyles[plan.id].border,
-              plan.popular && "scale-100 2xl:scale-110"
-            )}
-            key={plan.title}
-          >
-            <PlanCardHeader>
-              <div className="flex justify-between items-center">
-                <PlanCardTitle>{plan.title}</PlanCardTitle>
+        {planStaticData.map((plan, index) => {
+          const dynamicPlan = plans.find((p) => p.slug === plan.slug);
+          const planPricing = dynamicPlan?.pricings.find(
+            (p) => p.duration === planDuration
+          );
+          return (
+            <PlanCard
+              className={cn(
+                themeStyles[plan.slug].bg,
+                themeStyles[plan.slug].title,
+                themeStyles[plan.slug].border,
+                plan.popular && "scale-100 2xl:scale-110"
+              )}
+              key={plan.title}
+            >
+              <PlanCardHeader>
+                <div className="flex justify-between items-center">
+                  <PlanCardTitle>{plan.title}</PlanCardTitle>
 
-                {plan.popular && (
-                  <div
-                    className={cn(
-                      "px-4 py-1.5 rounded-full flex items-center",
-                      themeStyles[plan.id].tag
-                    )}
-                  >
-                    <p className="text-sm font-normal">محبوب ترین</p>
+                  {plan.popular && (
+                    <div
+                      className={cn(
+                        "px-4 py-1.5 rounded-full flex items-center",
+                        themeStyles[plan.slug].tag
+                      )}
+                    >
+                      <p className="text-sm font-normal">محبوب ترین</p>
+                    </div>
+                  )}
+                </div>
+                <PlanCardDescription>{plan.description}</PlanCardDescription>
+              </PlanCardHeader>
+              <PlanCardPricing
+                discount={planPricing?.discount}
+                price={planPricing?.price}
+              ></PlanCardPricing>
+              <PlanCardContent>
+                {index != 0 && (
+                  <div className="flex gap-2 items-center ">
+                    <CheckCheck className="w-4 h-4"></CheckCheck>
+                    <p className="text-sm font-medium">
+                      تمام امکانات {plans[index - 1].name} به همراه:
+                    </p>
                   </div>
                 )}
-              </div>
-              <PlanCardDescription>{plan.description}</PlanCardDescription>
-            </PlanCardHeader>
-            <PlanCardPricing
-              discount={getPlanPricing(plan).discount}
-              price={getPlanPricing(plan).price}
-            ></PlanCardPricing>
-            <PlanCardContent>
-              {index != 0 && (
-                <div className="flex gap-2 items-center ">
-                  <CheckCheck className="w-4 h-4"></CheckCheck>
-                  <p className="text-sm font-medium">
-                    تمام امکانات {plans[index - 1].title} به همراه:
-                  </p>
-                </div>
-              )}
-              <PlanCardFeatureList>
-                {plan.features.map((feature, index) => (
-                  <PlanCardFeature key={index}>{feature}</PlanCardFeature>
-                ))}
-              </PlanCardFeatureList>
-              <PlanCardFeaturesSummery>
-                <Palette className="w-5 h-5"></Palette>
-                <Radio className="w-5 h-5"></Radio>
-              </PlanCardFeaturesSummery>
-            </PlanCardContent>
-            <PlanCardFooter>
-              <Button
-                asChild
-                size="lg"
-                className={cn(
-                  themeStyles[plan.id].btn,
-                  "w-full py-3 h-max cursor-pointer hover:scale-105 duration-500 transition-all scale-pro"
-                )}
-              >
-                <Link
-                  href={`/checkout?plan=${
-                    plan.id
-                  }&duration=${planDuration}&price=${
-                    plan.pricing.find((p) => p.months === planDuration)?.price
-                  }`}
+                <PlanCardFeatureList>
+                  {plan.features.map((feature, index) => (
+                    <PlanCardFeature key={index}>{feature}</PlanCardFeature>
+                  ))}
+                </PlanCardFeatureList>
+                <PlanCardFeaturesSummery>
+                  <Palette className="w-5 h-5"></Palette>
+                  <Radio className="w-5 h-5"></Radio>
+                </PlanCardFeaturesSummery>
+              </PlanCardContent>
+              <PlanCardFooter>
+                <Button
+                  asChild
+                  size="lg"
+                  className={cn(
+                    themeStyles[plan.slug].btn,
+                    "w-full py-3 h-max cursor-pointer hover:scale-105 duration-500 transition-all scale-pro"
+                  )}
                 >
-                  فعالسازی اشتراک
-                </Link>
-              </Button>
-            </PlanCardFooter>
-            <PlanCardShadowEffect
-              className={cn(themeStyles[plan.id].shadow)}
-            ></PlanCardShadowEffect>
-          </PlanCard>
-        ))}
+                  <Link
+                    href={`/checkout?plan=${plan.slug}&duration=${planDuration}&price=${planPricing?.discount}`}
+                  >
+                    فعالسازی اشتراک
+                  </Link>
+                </Button>
+              </PlanCardFooter>
+              <PlanCardShadowEffect
+                className={cn(themeStyles[plan.slug].shadow)}
+              ></PlanCardShadowEffect>
+            </PlanCard>
+          );
+        })}
       </div>
     </div>
   );
@@ -230,37 +218,37 @@ function PlanDurationSelector({
   planDuration,
   setPlanDuration,
 }: {
-  planDuration: 3 | 6 | 12;
-  setPlanDuration: React.Dispatch<React.SetStateAction<3 | 6 | 12>>;
+  planDuration: 90 | 180 | 360;
+  setPlanDuration: React.Dispatch<React.SetStateAction<90 | 180 | 360>>;
 }) {
   return (
     <div className="w-4/12 flex gap-1.5 bg-gray-100 border-2 border-royal-green/20 p-1.5 rounded-full mt-12">
       <Button
-        onClick={() => setPlanDuration(3)}
+        onClick={() => setPlanDuration(90)}
         size="lg"
         className={cn(
           "flex-1 rounded-full bg-soft-blue text-lg font-medium h-12 transition-all duration-300 text-royal-green border-2 border-royal-green/20",
-          planDuration === 3 && "bg-royal-green text-soft-blue"
+          planDuration === 90 && "bg-royal-green text-soft-blue"
         )}
       >
         ۳ ماهه
       </Button>
       <Button
-        onClick={() => setPlanDuration(6)}
+        onClick={() => setPlanDuration(180)}
         size="lg"
         className={cn(
           "flex-1 rounded-full bg-soft-blue text-lg font-medium h-12 transition-all duration-300 text-royal-green border-2 border-royal-green/20",
-          planDuration === 6 && "bg-royal-green text-soft-blue"
+          planDuration === 180 && "bg-royal-green text-soft-blue"
         )}
       >
         ۶ ماهه
       </Button>
       <Button
-        onClick={() => setPlanDuration(12)}
+        onClick={() => setPlanDuration(360)}
         size="lg"
         className={cn(
           "flex-1 rounded-full bg-soft-blue text-lg font-medium h-12 transition-all duration-300 text-royal-green border-2 border-royal-green/20",
-          planDuration === 12 && "bg-royal-green text-soft-blue"
+          planDuration === 360 && "bg-royal-green text-soft-blue"
         )}
       >
         ۱۲ ماهه

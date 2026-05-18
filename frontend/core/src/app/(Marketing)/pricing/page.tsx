@@ -14,6 +14,9 @@ import {
 } from "./components/ComparisonTable";
 import PricingPlans from "./components/PricingPlans";
 
+//libs
+import getSubscriptionPlans from "@/lib/subscription/getSubscriptionPlans";
+
 export const PLANS = ["basic", "pro", "franchise"] as const;
 
 export const PRICING_COMPARISON = [
@@ -176,9 +179,11 @@ const DEFAULT_OPEN_SECTIONS = PRICING_COMPARISON.map(
 );
 
 export default async function page() {
+  const plans = await getSubscriptionPlans();
+
   return (
     <div className="flex mx-auto flex-col items-center gap-24 xl:px-20 md:px-8 2xl:px-28">
-      <PricingPlans></PricingPlans>
+      <PricingPlans plans={plans}></PricingPlans>
       {/* Comparison Table */}
       <ComparisonTable className="py-20">
         <ComparisonTableHeader>
