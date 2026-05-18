@@ -1,5 +1,15 @@
 from rest_framework import serializers
-from .models import Subscription, Plan, PlanFeature
+from .models import Subscription, Plan, PlanFeature, PlanDuration, PlanPricing
+
+
+class PlanPricingSerializer(serializers.ModelSerializer):
+    duration = serializers.IntegerField(source='duration.days', read_only=True)
+    discount = serializers.IntegerField(
+        source='duration.discount', read_only=True)
+
+    class Meta:
+        model = PlanPricing
+        fields = ['duration', 'price', 'discount']
 
 
 class PlanFeatureSerializer(serializers.ModelSerializer):
@@ -16,10 +26,11 @@ class PlanSerializer(serializers.ModelSerializer):
         many=True,
         read_only=True
     )
+    pricings = PlanPricingSerializer(many=True, read_only=True)
 
     class Meta:
         model = Plan
-        fields = ['name', 'description', 'features']
+        fields = ['slug', 'name', 'description', 'features', 'pricings']
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
