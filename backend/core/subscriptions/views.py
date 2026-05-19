@@ -22,7 +22,10 @@ class PlanView(APIView):
 
 
 class PlanDetailView(APIView):
-    pass
+    def get(self, request, plan_slug):
+        plan = get_object_or_404(Plan, slug=plan_slug)
+        ser_data = PlanSerializer(instance=plan)
+        return Response(ser_data.data, status=status.HTTP_200_OK)
 
 
 class SubscriptionView(APIView):

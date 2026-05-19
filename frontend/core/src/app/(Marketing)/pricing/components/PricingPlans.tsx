@@ -197,7 +197,7 @@ export default function PricingPlans({ plans }: { plans: SubscriptionPlan[] }) {
                   )}
                 >
                   <Link
-                    href={`/checkout?plan=${plan.slug}&duration=${planDuration}&price=${planPricing?.discount}`}
+                    href={`/checkout?plan=${plan.slug}&duration=${planDuration}`}
                   >
                     فعالسازی اشتراک
                   </Link>
