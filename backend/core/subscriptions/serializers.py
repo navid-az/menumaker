@@ -81,21 +81,19 @@ class SubscriptionCreateUpdateSerializer(serializers.ModelSerializer):
 
 
 class SubscriptionOrderCreateUpdateSerializer(serializers.ModelSerializer):
-    user_id = serializers.IntegerField(write_only=True, required=True)
     plan_slug = serializers.SlugField(write_only=True, required=True)
 
     class Meta:
         model = SubscriptionOrder
         fields = ['zarinpal_authority', 'zarinpal_ref_id',
-                  'price_snapshot', 'name_snapshot', 'duration_snapshot', 'paid_at', 'user_id', 'plan_slug']
+                  'price_snapshot', 'name_snapshot', 'duration_snapshot', 'paid_at', 'plan_slug']
 
     def create(self, validated_data):
         # Extract the identifiers to avoid errors
         # These fields aren't supposed stay inside validated_data
-        user_id = validated_data.pop('user_id')
         plan_slug = validated_data.pop('plan_slug')
 
-        user = get_object_or_404(User, id=user_id)
+        user = self.context["request"].user
         plan = get_object_or_404(Plan, slug=plan_slug)
 
         return SubscriptionOrder.objects.create(

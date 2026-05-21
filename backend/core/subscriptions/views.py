@@ -135,7 +135,8 @@ class SubscriptionOrderView(APIView):
 
     @transaction.atomic
     def post(self, request):
-        ser_data = SubscriptionOrderCreateUpdateSerializer(data=request.data)
+        ser_data = SubscriptionOrderCreateUpdateSerializer(
+            data=request.data, context={'request': request})
         if ser_data.is_valid():
 
             res = initiate_payment(
