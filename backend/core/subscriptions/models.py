@@ -2,6 +2,9 @@ from django.db import models
 from django.utils import timezone
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class FeatureCategory(models.Model):
@@ -129,3 +132,62 @@ class Subscription(models.Model):
 
     def __str__(self):
         return f"{self.business.name} → {self.plan.name} ({self.pricing.duration.name})"
+
+
+class SubscriptionOrder(models.Model):
+    """
+    Tracks subscription purchase attempts from plan selection through payment completion.
+    Created when user clicks 'pay', updated when Zarinpal confirms payment.
+    """
+
+    class OrderStatus(models.TextChoices):
+        PENDING = 'pending', 'Pending Payment'
+        PAID = 'paid', 'Payment Confirmed'
+        FAILED = 'failed', 'Payment Failed'
+        CANCELLED = 'cancelled', 'Cancelled'
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='subscription_orders',
+    )
+    # Link to created subscription
+    subscription = models.ForeignKey(
+        Subscription,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='orders',
+    )
+
+    plan = models.ForeignKey(
+        Plan, on_delete=models.PROTECT, related_name="orders")
+
+    # Plan details (snapshot at time of purchase)
+    name_snapshot = models.CharField(max_length=100)
+    duration_snapshot = models.PositiveIntegerField()  # in days
+    price_snapshot = models.IntegerField()
+
+    # Payment gateway fields
+    zarinpal_authority = models.CharField(
+        max_length=255,
+        unique=True,
+        blank=True,
+        null=True,
+    )
+    zarinpal_ref_id = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+    )
+
+    status = models.CharField(
+        max_length=50, blank=True, choices=OrderStatus.choices, default=OrderStatus.PENDING)
+
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    paid_at = models.DateTimeField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.user.phone_number} - {self.plan.name} ({self.status})"
