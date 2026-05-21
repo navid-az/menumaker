@@ -22,12 +22,14 @@ djangorestframework_simplejwt==5.5.1
 hyperlink==21.0.0
 idna==3.10
 incremental==24.7.2
+iniconfig==2.3.0
 isort==5.13.2
 kavenegar==1.1.2
 mccabe==0.7.0
 packaging==26.2
 pillow==12.2.0
 platformdirs==4.1.0
+pluggy==1.6.0
 pyasn1==0.6.1
 pyasn1_modules==0.4.2
 pycparser==2.22
@@ -36,11 +38,13 @@ pylint==3.0.3
 pylint-django==2.5.5
 pylint-plugin-utils==0.8.2
 pyOpenSSL==25.1.0
+pytest==8.3.4
 python-dateutil==2.9.0.post0
 pytz==2023.3
-requests==2.33.1
+requests==2.32.4
+requests-mock==1.12.1
 service-identity==24.2.0
-setuptools==82.0.1
+setuptools==75.8.0
 six==1.16.0
 sqlparse==0.5.5
 tomlkit==0.12.3
@@ -50,4 +54,5 @@ typing_extensions==4.14.1
 tzdata==2023.3
 urllib3==2.6.3
 wheel==0.47.0
+zarinpal-py-sdk==0.1.4
 zope.interface==7.2

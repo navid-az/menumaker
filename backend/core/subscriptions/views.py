@@ -5,11 +5,15 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
+from django.db import transaction
 
 from permissions import IsOwner
 from .serializers import SubscriptionSerializer, SubscriptionCreateUpdateSerializer, PlanSerializer, SubscriptionOrderCreateUpdateSerializer
-from .models import Subscription, Plan
+from .models import Subscription, SubscriptionOrder, Plan
 from business.models import Business
+
+# zarinpal imports
+from zarinpal import ZarinPal, Config
 
 User = get_user_model()
 
@@ -83,14 +87,72 @@ class SubscriptionCreateView(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
+# initiate zarinpal payment utility function
+def initiate_payment(amount: int, description: str, mobile: str, email: str):
+    try:
+        config = Config(
+            merchant_id="0e5a8a7a-2f7c-4a0f-b6d3-9c1a7e7d4c62",
+            sandbox=True,
+        )
+        zarinpal = ZarinPal(config)
+
+        response = zarinpal.payments.create({
+            "amount": amount,
+            "callback_url": "https://zarinpal.com/",
+            "description": description,
+            "mobile": mobile,
+            "email": email,
+        })
+
+        if "data" in response and "authority" in response["data"]:
+            authority = response["data"]["authority"]
+            payment_url = zarinpal.payments.generate_payment_url(authority)
+
+            return {
+                "success": True,
+                "authority": authority,
+                "payment_url": payment_url,
+                "raw": response
+            }
+
+        return {
+            "success": False,
+            "error": "Authority not found",
+            "raw": response
+        }
+
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+
 # This view is meant to be called when user attempts to purchase a subscription.
 # It creates a SubscriptionOrder instance which tracks the purchase attempt.
 class SubscriptionOrderView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @transaction.atomic
     def post(self, request):
         ser_data = SubscriptionOrderCreateUpdateSerializer(data=request.data)
         if ser_data.is_valid():
-            ser_data.save()
-            return Response(ser_data.data, status=status.HTTP_200_OK)
+
+            res = initiate_payment(
+                amount=ser_data.validated_data['price_snapshot'],
+                description=ser_data.validated_data['name_snapshot'],
+                mobile='',
+                email=''
+            )
+            if not res["success"]:
+                return Response(res, status=status.HTTP_400_BAD_REQUEST)
+
+            # Save authority
+            ser_data.save(
+                zarinpal_authority=res["authority"])
+
+            return Response({
+                "payment_url": res["payment_url"],
+                **ser_data.data
+            }, status=status.HTTP_200_OK)
         return Response(ser_data.errors, status=status.HTTP_400_BAD_REQUEST)
