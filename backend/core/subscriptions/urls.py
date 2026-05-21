@@ -1,9 +1,10 @@
 from django.urls import path
-from .views import PlanView, PlanDetailView, SubscriptionView, SubscriptionCreateView
+from .views import PlanView, PlanDetailView, SubscriptionView, SubscriptionCreateView, SubscriptionOrderView
 
 app_name = 'subscriptions'
 
 urlpatterns = [
+    path('orders/', SubscriptionOrderView.as_view(), name='subscription-orders'),
     path('plans/', PlanView.as_view(), name='plans'),
     path('plans/<str:plan_slug>', PlanDetailView.as_view(), name='plan-detail'),
     path('business/<slug:business_slug>/subscription/',

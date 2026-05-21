@@ -4,11 +4,14 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth import get_user_model
 
 from permissions import IsOwner
-from .serializers import SubscriptionSerializer, SubscriptionCreateUpdateSerializer, PlanSerializer
+from .serializers import SubscriptionSerializer, SubscriptionCreateUpdateSerializer, PlanSerializer, SubscriptionOrderCreateUpdateSerializer
 from .models import Subscription, Plan
 from business.models import Business
+
+User = get_user_model()
 
 
 class PlanView(APIView):
@@ -78,3 +81,16 @@ class SubscriptionCreateView(APIView):
         serializer.save()
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+# This view is meant to be called when user attempts to purchase a subscription.
+# It creates a SubscriptionOrder instance which tracks the purchase attempt.
+class SubscriptionOrderView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        ser_data = SubscriptionOrderCreateUpdateSerializer(data=request.data)
+        if ser_data.is_valid():
+            ser_data.save()
+            return Response(ser_data.data, status=status.HTTP_200_OK)
+        return Response(ser_data.errors, status=status.HTTP_400_BAD_REQUEST)
