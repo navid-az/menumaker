@@ -93,11 +93,11 @@ class SubscriptionOrderCreateUpdateSerializer(serializers.ModelSerializer):
         # These fields aren't supposed stay inside validated_data
         plan_slug = validated_data.pop('plan_slug')
 
-        user = self.context["request"].user
+        business = self.context["business"]
         plan = get_object_or_404(Plan, slug=plan_slug)
 
         return SubscriptionOrder.objects.create(
-            user=user,
+            business=business,
             plan=plan,
             **validated_data
         )

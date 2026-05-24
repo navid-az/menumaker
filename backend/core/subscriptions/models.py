@@ -3,6 +3,7 @@ from django.utils import timezone
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 from django.contrib.auth import get_user_model
+from business.models import Business
 
 User = get_user_model()
 
@@ -146,11 +147,9 @@ class SubscriptionOrder(models.Model):
         FAILED = 'failed', 'Payment Failed'
         CANCELLED = 'cancelled', 'Cancelled'
 
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='subscription_orders',
-    )
+    business = models.ForeignKey(
+        Business, on_delete=models.CASCADE, related_name='orders')
+
     # Link to created subscription
     subscription = models.ForeignKey(
         Subscription,
@@ -190,4 +189,4 @@ class SubscriptionOrder(models.Model):
     paid_at = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.user.phone_number} - {self.plan.name} ({self.status})"
+        return f"{self.business.name} - {self.plan.name} ({self.status})"

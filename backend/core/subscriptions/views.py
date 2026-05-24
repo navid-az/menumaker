@@ -191,8 +191,11 @@ class SubscriptionOrderView(APIView):
 
     @transaction.atomic
     def post(self, request):
+        business_slug = request.GET.get('business_slug')
+        business = get_object_or_404(Business, slug=business_slug)
+
         ser_data = SubscriptionOrderCreateUpdateSerializer(
-            data=request.data, context={'request': request})
+            data=request.data, context={'business': business})
         if ser_data.is_valid():
 
             res = initiate_payment(
@@ -243,13 +246,12 @@ class SubscriptionOrderVerifyView(APIView):
             subscription_order.paid_at = timezone.now()
             subscription_order.zarinpal_ref_id = res['raw']["data"]["ref_id"]
             subscription_order.save()
-            business = Business.objects.get(pk=1)  # should change
 
             # create subscription instance
             Subscription.objects.create(
-                business=business,  # should change
+                business=subscription_order.business,
                 plan=subscription_order.plan,
-                pricing=subscription_order.plan.pricings.first(),  # should change
+                pricing=subscription_order.plan.pricings.first(),
             )
             return redirect(
                 f'http://localhost:3000/pricing?status=OK&authority={authority}'
