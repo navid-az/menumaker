@@ -6,11 +6,13 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
 from django.db import transaction
+from django.shortcuts import redirect
 
 from permissions import IsOwner
 from .serializers import SubscriptionSerializer, SubscriptionCreateUpdateSerializer, PlanSerializer, SubscriptionOrderCreateUpdateSerializer
 from .models import Subscription, SubscriptionOrder, Plan
 from business.models import Business
+from django.utils import timezone
 
 # zarinpal imports
 from zarinpal import ZarinPal, Config
@@ -91,14 +93,14 @@ class SubscriptionCreateView(APIView):
 def initiate_payment(amount: int, description: str, mobile: str, email: str):
     try:
         config = Config(
-            merchant_id="0e5a8a7a-2f7c-4a0f-b6d3-9c1a7e7d4c62",
+            merchant_id="c3f7f0f4-2c49-4c2b-8db5-bb6c6b43b2b4",
             sandbox=True,
         )
         zarinpal = ZarinPal(config)
 
         response = zarinpal.payments.create({
             "amount": amount,
-            "callback_url": "https://zarinpal.com/",
+            "callback_url": "http://localhost:8000/subscriptions/orders/verify/",
             "description": description,
             "mobile": mobile,
             "email": email,
@@ -122,9 +124,63 @@ def initiate_payment(amount: int, description: str, mobile: str, email: str):
         }
 
     except Exception as e:
+        print("Error during payment creation:", e)
         return {
             "success": False,
             "error": str(e)
+        }
+
+
+def verify_payment(authority: str, amount: int, status: str):
+    if status == "OK":
+        if amount:
+            try:
+                config = Config(
+                    merchant_id="c3f7f0f4-2c49-4c2b-8db5-bb6c6b43b2b4",
+                    sandbox=True,
+                )
+                zarinpal = ZarinPal(config)
+                response = zarinpal.verifications.verify({
+                    "amount": amount,
+                    "authority": authority,
+                })
+
+                if response["data"]["code"] == 100:
+                    print("Payment Verified:")
+                    print("Reference ID:", response["data"]["ref_id"])
+                    print("Card PAN:", response["data"]["card_pan"])
+                    print("Fee:", response["data"]["fee"])
+                    return {
+                        "success": True,
+                        'raw': response
+                    }
+                elif response["data"]["code"] == 101:
+                    return {
+                        "success": False,
+                        "error": "Payment already verified.",
+                        "raw": response
+                    }
+                else:
+                    return {
+                        "success": False,
+                        "error": f"Transaction failed with code: {response["data"]["code"]}",
+                        "raw": response
+                    }
+
+            except Exception as e:
+                return {
+                    "success": False,
+                    "error": f"Payment Verification Failed: {e}",
+                }
+        else:
+            return {
+                "success": False,
+                "error": "No Matching Transaction Found For This Authority Code.",
+            }
+    else:
+        return {
+            "success": False,
+            "error": "Transaction was cancelled or failed.",
         }
 
 
@@ -157,3 +213,49 @@ class SubscriptionOrderView(APIView):
                 **ser_data.data
             }, status=status.HTTP_200_OK)
         return Response(ser_data.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# Verifies the subscription order payment
+# updates order status to PAID and creates a new subscription instance on OK
+# updates order status to FAILED on NOK
+class SubscriptionOrderVerifyView(APIView):
+
+    def get(self, request):
+        authority = request.GET.get('Authority')
+        payment_status = request.GET.get('Status')
+
+        if payment_status != 'OK':
+            # payment failed or user canceled
+            return redirect('http://localhost:3000/pricing?status=failed')
+
+        subscription_order = get_object_or_404(
+            SubscriptionOrder, zarinpal_authority=authority)
+
+        res = verify_payment(
+            authority=authority,
+            amount=subscription_order.price_snapshot,
+            status=payment_status
+        )
+
+        if res['success']:
+            # mark order as paid
+            subscription_order.status = SubscriptionOrder.OrderStatus.PAID
+            subscription_order.paid_at = timezone.now()
+            subscription_order.zarinpal_ref_id = res['raw']["data"]["ref_id"]
+            subscription_order.save()
+            business = Business.objects.get(pk=1)  # should change
+
+            # create subscription instance
+            Subscription.objects.create(
+                business=business,  # should change
+                plan=subscription_order.plan,
+                pricing=subscription_order.plan.pricings.first(),  # should change
+            )
+            return redirect(
+                f'http://localhost:3000/pricing?status=OK&authority={authority}'
+            )
+        # mark order as failed
+        subscription_order.status = SubscriptionOrder.OrderStatus.FAILED
+        subscription_order.save()
+        # payment failed or user canceled
+        return redirect('http://localhost:3000/pricing?status=failed')
