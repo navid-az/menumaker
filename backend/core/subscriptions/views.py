@@ -187,12 +187,14 @@ def verify_payment(authority: str, amount: int, status: str):
 # This view is meant to be called when user attempts to purchase a subscription.
 # It creates a SubscriptionOrder instance which tracks the purchase attempt.
 class SubscriptionOrderView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsOwner]
 
     @transaction.atomic
     def post(self, request):
         business_slug = request.GET.get('business_slug')
         business = get_object_or_404(Business, slug=business_slug)
+
+        self.check_object_permissions(request, business)
 
         ser_data = SubscriptionOrderCreateUpdateSerializer(
             data=request.data, context={'business': business})
