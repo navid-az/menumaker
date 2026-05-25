@@ -246,6 +246,7 @@ class SubscriptionOrderView(APIView):
             SubscriptionOrder.objects.create(
                 business=business,
                 plan=pricing.plan,
+                pricing=pricing,
                 name_snapshot=pricing.plan.name,
                 duration_snapshot=pricing.duration.days,
                 price_snapshot=total_price,
@@ -295,7 +296,7 @@ class SubscriptionOrderVerifyView(APIView):
             Subscription.objects.create(
                 business=subscription_order.business,
                 plan=subscription_order.plan,
-                pricing=subscription_order.plan.pricings.first(),
+                pricing=subscription_order.pricing,
             )
             return redirect(
                 f'http://localhost:3000/pricing?status=OK&authority={authority}'

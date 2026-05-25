@@ -159,6 +159,12 @@ class SubscriptionOrder(models.Model):
         related_name='orders',
     )
 
+    # Useful Links
+    pricing = models.ForeignKey(
+        PlanPricing,
+        on_delete=models.PROTECT,
+        related_name='subscription_orders',
+    )
     plan = models.ForeignKey(
         Plan, on_delete=models.PROTECT, related_name="orders")
 
