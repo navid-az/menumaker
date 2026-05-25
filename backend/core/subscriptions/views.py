@@ -14,6 +14,9 @@ from .models import Subscription, SubscriptionOrder, Plan, PlanPricing
 from business.models import Business
 from django.utils import timezone
 
+# types
+from typing import Literal
+
 # zarinpal imports
 from zarinpal import ZarinPal, Config
 
@@ -204,8 +207,30 @@ class SubscriptionOrderView(APIView):
                 duration_id=serializer.validated_data['duration_id']
             )
 
+            def _calculate_total_price(price, discount_percent=0, tax_rate=0.1, currency: Literal["IRR", "IRT"] = 'IRR'):
+                """
+                price: base price (number)
+                discount_percent: optional discount in %
+                """
+                # Apply optional discount
+                if discount_percent > 0:
+                    discount_amount = price * (discount_percent / 100)
+                    price_after_discount = price - discount_amount
+                else:
+                    price_after_discount = price
+
+                # Apply tax
+                tax_amount = price_after_discount * tax_rate
+                total = (price_after_discount + tax_amount) * \
+                    (10 if currency == 'IRR' else 1)
+
+                return total
+
+            total_price = _calculate_total_price(
+                pricing.price, discount_percent=pricing.duration.discount)
+
             res = initiate_payment(
-                amount=pricing.price,
+                amount=total_price,
                 description=pricing.plan.name,
                 mobile=request.user.phone_number or '',
                 email=request.user.email or '',
@@ -223,7 +248,7 @@ class SubscriptionOrderView(APIView):
                 plan=pricing.plan,
                 name_snapshot=pricing.plan.name,
                 duration_snapshot=pricing.duration.days,
-                price_snapshot=pricing.price,
+                price_snapshot=total_price,
                 zarinpal_authority=res["authority"]
             )
 
