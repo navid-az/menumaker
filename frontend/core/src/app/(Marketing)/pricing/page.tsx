@@ -17,6 +17,9 @@ import PricingPlans from "./components/PricingPlans";
 //libs
 import getSubscriptionPlans from "@/lib/subscription/getSubscriptionPlans";
 
+//SVGs
+import { Gem } from "lucide-react";
+
 export const PLANS = ["basic", "pro", "franchise"] as const;
 
 export const PRICING_COMPARISON = [
@@ -183,7 +186,18 @@ export default async function page() {
 
   return (
     <div className="flex mx-auto flex-col items-center gap-24 xl:px-20 md:px-8 2xl:px-28">
-      <PricingPlans plans={plans}></PricingPlans>
+      <section className="flex flex-col gap-16 mt-20 w-full">
+        <div className="w-full flex gap-4 items-center">
+          <Gem className="size-20 stroke-[1.5]"></Gem>
+          <div className="flex flex-col gap-3">
+            <h1 className="text-royal-green text-4xl font-bold">پلن ها</h1>
+            <h3 className="text-gray-400 text-2xl font-normal">
+              پلن‌های انعطاف‌پذیر متناسب با اندازه و نیاز کسب‌و‌کار شما
+            </h3>
+          </div>
+        </div>
+        <PricingPlans plans={plans}></PricingPlans>
+      </section>
       {/* Comparison Table */}
       <ComparisonTable className="py-20">
         <ComparisonTableHeader>

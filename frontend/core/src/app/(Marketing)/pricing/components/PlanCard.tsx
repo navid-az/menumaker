@@ -109,12 +109,14 @@ import { Check, Star } from "lucide-react";
 const PlanCard = ({
   className,
   children,
+  isCompact = false,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) => {
+}: React.HTMLAttributes<HTMLDivElement> & { isCompact?: boolean }) => {
   return (
     <div
       className={cn(
-        "group w-full min-h-[600px] select-none max-w-sm overflow-hidden relative flex flex-col gap-5 flex-1 transition-all duration-300 border-2 rounded-lg p-5",
+        "group w-full select-none justify-between overflow-hidden relative flex flex-col gap-5 flex-1 transition-all duration-300 border-2 rounded-lg p-5",
+        isCompact ? "min-h-80" : "min-h-[600px] max-w-sm",
         className
       )}
       {...props}

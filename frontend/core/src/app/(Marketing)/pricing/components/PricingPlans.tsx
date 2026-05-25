@@ -113,25 +113,27 @@ const themeStyles: Record<
   },
 };
 
-export default function PricingPlans({ plans }: { plans: SubscriptionPlan[] }) {
+export default function PricingPlans({
+  plans,
+  isCompact = false,
+}: {
+  plans: SubscriptionPlan[];
+  isCompact?: boolean;
+}) {
   const [planDuration, setPlanDuration] = useState<90 | 180 | 360>(90);
 
   return (
-    <div className=" w-full flex flex-col gap-16 items-center mt-20">
-      <div className="w-full flex gap-4 items-center">
-        <Gem className="size-20 stroke-[1.5]"></Gem>
-        <div className="flex flex-col gap-3">
-          <h1 className="text-royal-green text-4xl font-bold">پلن ها</h1>
-          <h3 className="text-gray-400 text-2xl font-normal">
-            پلن‌های انعطاف‌پذیر متناسب با اندازه و نیاز کسب‌و‌کار شما
-          </h3>
-        </div>
-      </div>
+    <div className="w-full flex flex-col gap-16 items-center">
       <PlanDurationSelector
         planDuration={planDuration}
         setPlanDuration={setPlanDuration}
       ></PlanDurationSelector>
-      <div className="flex w-full flex-wrap flex-col pb-20 lg:flex-row items-center justify-between gap-4">
+      <div
+        className={cn(
+          "flex w-full flex-wrap flex-col pb-20 lg:flex-row items-center gap-4",
+          isCompact ? "justify-center" : " justify-between"
+        )}
+      >
         {planStaticData.map((plan, index) => {
           const dynamicPlan = plans.find((p) => p.slug === plan.slug);
           const planPricing = dynamicPlan?.pricings.find(
@@ -139,61 +141,66 @@ export default function PricingPlans({ plans }: { plans: SubscriptionPlan[] }) {
           );
           return (
             <PlanCard
+              isCompact={isCompact}
               className={cn(
                 themeStyles[plan.slug].bg,
                 themeStyles[plan.slug].title,
                 themeStyles[plan.slug].border,
-                plan.popular && "scale-100 2xl:scale-110"
+                plan.popular && !isCompact && "scale-100 2xl:scale-110"
               )}
               key={plan.title}
             >
-              <PlanCardHeader>
-                <div className="flex justify-between items-center">
-                  <PlanCardTitle>{plan.title}</PlanCardTitle>
+              <div className="flex flex-col gap-5">
+                <PlanCardHeader>
+                  <div className="flex justify-between items-center">
+                    <PlanCardTitle>{plan.title}</PlanCardTitle>
 
-                  {plan.popular && (
-                    <div
-                      className={cn(
-                        "px-4 py-1.5 rounded-full flex items-center",
-                        themeStyles[plan.slug].tag
-                      )}
-                    >
-                      <p className="text-sm font-normal">محبوب ترین</p>
-                    </div>
-                  )}
-                </div>
-                <PlanCardDescription>{plan.description}</PlanCardDescription>
-              </PlanCardHeader>
-              <PlanCardPricing
-                discount={planPricing?.discount}
-                price={planPricing?.price}
-              ></PlanCardPricing>
-              <PlanCardContent>
-                {index != 0 && (
-                  <div className="flex gap-2 items-center ">
-                    <CheckCheck className="w-4 h-4"></CheckCheck>
-                    <p className="text-sm font-medium">
-                      تمام امکانات {plans[index - 1].name} به همراه:
-                    </p>
+                    {plan.popular && (
+                      <div
+                        className={cn(
+                          "px-4 py-1.5 rounded-full flex items-center",
+                          themeStyles[plan.slug].tag
+                        )}
+                      >
+                        <p className="text-sm font-normal">محبوب ترین</p>
+                      </div>
+                    )}
                   </div>
+                  <PlanCardDescription>{plan.description}</PlanCardDescription>
+                </PlanCardHeader>
+                <PlanCardPricing
+                  discount={planPricing?.discount}
+                  price={planPricing?.price}
+                ></PlanCardPricing>
+                {!isCompact && (
+                  <PlanCardContent>
+                    {index != 0 && (
+                      <div className="flex gap-2 items-center ">
+                        <CheckCheck className="w-4 h-4"></CheckCheck>
+                        <p className="text-sm font-medium">
+                          تمام امکانات {plans[index - 1].name} به همراه:
+                        </p>
+                      </div>
+                    )}
+                    <PlanCardFeatureList>
+                      {plan.features.map((feature, index) => (
+                        <PlanCardFeature key={index}>{feature}</PlanCardFeature>
+                      ))}
+                    </PlanCardFeatureList>
+                    <PlanCardFeaturesSummery>
+                      <Palette className="w-5 h-5"></Palette>
+                      <Radio className="w-5 h-5"></Radio>
+                    </PlanCardFeaturesSummery>
+                  </PlanCardContent>
                 )}
-                <PlanCardFeatureList>
-                  {plan.features.map((feature, index) => (
-                    <PlanCardFeature key={index}>{feature}</PlanCardFeature>
-                  ))}
-                </PlanCardFeatureList>
-                <PlanCardFeaturesSummery>
-                  <Palette className="w-5 h-5"></Palette>
-                  <Radio className="w-5 h-5"></Radio>
-                </PlanCardFeaturesSummery>
-              </PlanCardContent>
+              </div>
               <PlanCardFooter>
                 <Button
                   asChild
                   size="lg"
                   className={cn(
                     themeStyles[plan.slug].btn,
-                    "w-full py-3 h-max cursor-pointer hover:scale-105 duration-500 transition-all scale-pro"
+                    "w-full py-3 h-max cursor-pointer hover:scale-105 duration-500 transition-all scale-pro z-20 relative"
                   )}
                 >
                   <Link
