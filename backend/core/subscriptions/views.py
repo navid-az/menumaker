@@ -10,7 +10,7 @@ from django.shortcuts import redirect
 
 from permissions import IsOwner
 from .serializers import SubscriptionSerializer, SubscriptionCreateUpdateSerializer, PlanSerializer, SubscriptionOrderCreateUpdateSerializer
-from .models import Subscription, SubscriptionOrder, Plan
+from .models import Subscription, SubscriptionOrder, Plan, PlanPricing
 from business.models import Business
 from django.utils import timezone
 
@@ -189,35 +189,48 @@ def verify_payment(authority: str, amount: int, status: str):
 class SubscriptionOrderView(APIView):
     permission_classes = [IsAuthenticated, IsOwner]
 
-    @transaction.atomic
     def post(self, request):
         business_slug = request.GET.get('business_slug')
         business = get_object_or_404(Business, slug=business_slug)
 
         self.check_object_permissions(request, business)
 
-        ser_data = SubscriptionOrderCreateUpdateSerializer(
-            data=request.data, context={'business': business})
-        if ser_data.is_valid():
+        serializer = SubscriptionOrderCreateUpdateSerializer(data=request.data)
+        if serializer.is_valid():
+
+            pricing = get_object_or_404(
+                PlanPricing.objects.select_related('plan', 'duration'),
+                plan__slug=serializer.validated_data['plan_slug'],
+                duration_id=serializer.validated_data['duration_id']
+            )
 
             res = initiate_payment(
-                amount=ser_data.validated_data['price_snapshot'],
-                description=ser_data.validated_data['name_snapshot'],
-                mobile='',
-                email=''
+                amount=pricing.price,
+                description=pricing.plan.name,
+                mobile=request.user.phone_number or '',
+                email=request.user.email or '',
             )
-            if not res["success"]:
-                return Response(res, status=status.HTTP_400_BAD_REQUEST)
 
-            # Save authority
-            ser_data.save(
-                zarinpal_authority=res["authority"])
+            if not res["success"]:
+                return Response(
+                    {"detail": "Payment initiation failed. Please try again."},
+                    status=status.HTTP_502_BAD_GATEWAY,
+                )
+
+            # Save order first in PENDING state, before touching the payment gateway
+            SubscriptionOrder.objects.create(
+                business=business,
+                plan=pricing.plan,
+                name_snapshot=pricing.plan.name,
+                duration_snapshot=pricing.duration.days,
+                price_snapshot=pricing.price,
+                zarinpal_authority=res["authority"]
+            )
 
             return Response({
                 "payment_url": res["payment_url"],
-                **ser_data.data
             }, status=status.HTTP_200_OK)
-        return Response(ser_data.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # Verifies the subscription order payment
