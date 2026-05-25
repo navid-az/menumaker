@@ -267,12 +267,16 @@ class SubscriptionOrderVerifyView(APIView):
         authority = request.GET.get('Authority')
         payment_status = request.GET.get('Status')
 
-        if payment_status != 'OK':
-            # payment failed or user canceled
-            return redirect('http://localhost:3000/pricing?status=failed')
-
-        subscription_order = get_object_or_404(
+        sub_order = subscription_order = get_object_or_404(
             SubscriptionOrder, zarinpal_authority=authority)
+
+        if payment_status != 'OK':
+            # Set order status as CANCELED
+            sub_order.status = sub_order.OrderStatus.CANCELLED
+            sub_order.save()
+
+            # payment failed or user canceled
+            return redirect('http://localhost:3000/pricing?status=NOK')
 
         res = verify_payment(
             authority=authority,
@@ -296,8 +300,8 @@ class SubscriptionOrderVerifyView(APIView):
             return redirect(
                 f'http://localhost:3000/pricing?status=OK&authority={authority}'
             )
+
         # mark order as failed
         subscription_order.status = SubscriptionOrder.OrderStatus.FAILED
         subscription_order.save()
-        # payment failed or user canceled
-        return redirect('http://localhost:3000/pricing?status=failed')
+        return redirect('http://localhost:3000/pricing?status=NOK')
