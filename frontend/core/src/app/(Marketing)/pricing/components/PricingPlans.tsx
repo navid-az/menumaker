@@ -114,9 +114,11 @@ const themeStyles: Record<
 };
 
 export default function PricingPlans({
+  businessSlug,
   plans,
   isCompact = false,
 }: {
+  businessSlug?: string;
   plans: SubscriptionPlan[];
   isCompact?: boolean;
 }) {
@@ -204,7 +206,9 @@ export default function PricingPlans({
                   )}
                 >
                   <Link
-                    href={`/checkout?plan=${plan.slug}&duration=${planDuration}`}
+                    href={`/checkout?${
+                      businessSlug ? `business=${businessSlug}&` : ""
+                    }plan=${plan.slug}&duration=${planDuration}`}
                   >
                     فعالسازی اشتراک
                   </Link>

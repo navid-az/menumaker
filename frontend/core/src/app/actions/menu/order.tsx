@@ -1,3 +1,5 @@
+"use server";
+
 //types
 import { CreateOrder } from "@/app/types/payloads/menu";
 

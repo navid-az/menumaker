@@ -6,9 +6,12 @@ import Image from "next/image";
 import { SubscriptionPlan } from "@/app/types/api/subscription";
 import PriceTag from "@/app/(menu)/[business_slug]/(public-menu)/menu/components/PriceTag";
 
-// function
+// functions
 import { cn } from "@/lib/utils";
 import { toPersianDigits } from "@/app/(menu)/[business_slug]/utilities/formatCurrency";
+
+// actions
+import { initiatePayment } from "@/app/actions/subscription/checkout";
 
 const themeStyles: Record<
   string,
@@ -63,9 +66,17 @@ async function getPlanData(planSlug: string) {
 export default async function CheckoutForm({
   searchParams,
 }: {
-  searchParams: Promise<{ plan: string; duration: number }>;
+  searchParams: Promise<{
+    business: string;
+    plan: string;
+    duration: number;
+  }>;
 }) {
-  const { plan: planSlug, duration } = await searchParams;
+  const {
+    business: businessSlug,
+    plan: planSlug,
+    duration,
+  } = await searchParams;
 
   const planData: SubscriptionPlan = await getPlanData(planSlug);
   const planPricing = planData.pricings.find((p) => p.duration == duration);
@@ -77,8 +88,16 @@ export default async function CheckoutForm({
   const total = flatPrice + tax - discount;
   const durationInMonths = duration / 30;
 
+  // Pre-bind the arguments to the function
+  const initiatePaymentWithData = initiatePayment.bind(
+    null,
+    businessSlug,
+    planData.slug,
+    duration
+  );
+
   return (
-    <div className="flex flex-col bg-primary-foreground text-royal-green rounded-md p-4 w-full max-w-[470px] h-full max-h-[650px] gap-4 border border-primary/20 justify-between shadow-lg">
+    <div className="flex flex-col bg-zinc-50 text-royal-green rounded-md p-4 w-full max-w-[470px] h-full max-h-[650px] gap-4 border border-primary/20 justify-between shadow-lg">
       <div className="flex flex-col gap-10">
         <p className="text-center text-xl md:text-2xl font-semibold">
           جزییات صورتحساب
@@ -113,12 +132,15 @@ export default async function CheckoutForm({
           </div>
         </div>
       </div>
-      <Button
-        className="bg-royal-green text-soft-blue text-xl font-semibold h-14 w-full"
-        size="lg"
-      >
-        پرداخت
-      </Button>
+      <form>
+        <Button
+          formAction={initiatePaymentWithData}
+          className="bg-royal-green text-soft-blue text-xl font-semibold h-14 w-full"
+          size="lg"
+        >
+          پرداخت
+        </Button>
+      </form>
     </div>
   );
 }
