@@ -204,7 +204,7 @@ class SubscriptionOrderView(APIView):
             pricing = get_object_or_404(
                 PlanPricing.objects.select_related('plan', 'duration'),
                 plan__slug=serializer.validated_data['plan_slug'],
-                duration_id=serializer.validated_data['duration_id']
+                duration__days=serializer.validated_data['duration']
             )
 
             def _calculate_total_price(price, discount_percent=0, tax_rate=0.1, currency: Literal["IRR", "IRT"] = 'IRR'):
