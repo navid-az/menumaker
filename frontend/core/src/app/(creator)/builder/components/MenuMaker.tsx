@@ -6,6 +6,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Setup from "./setup/Setup";
 import BuilderTest from "./builder/BuilderTest";
 import SuccessPage from "./success/SuccessPage";
+import PricingPlans from "@/app/(Marketing)/pricing/components/PricingPlans";
 
 //hooks
 import { useSlider } from "@/lib/stores";
@@ -16,15 +17,18 @@ import { motion, AnimatePresence } from "motion/react";
 //types
 import { type AssetGroupType } from "@/components/global/AssetPicker";
 import { BusinessType } from "@/app/dashboard/layout";
+import { type SubscriptionPlan } from "@/app/types/api/subscription";
 
 export default function MenuMaker({
+  plans,
   assetGroups,
 }: {
+  plans: SubscriptionPlan[];
   assetGroups: AssetGroupType[];
 }) {
-  const [activeForm, setActiveForm] = useState<"setup" | "builder" | "qr">(
-    "setup"
-  );
+  const [activeForm, setActiveForm] = useState<
+    "setup" | "billing" | "builder" | "qr"
+  >("setup");
   const [businessData, setBusinessData] = useState<BusinessType | null>(null);
 
   const { reset } = useSlider();
@@ -67,10 +71,35 @@ export default function MenuMaker({
           >
             <Setup
               ref={setupFormRef}
-              handleCustomMenu={() => setActiveForm("builder")}
-              handlePreBuiltMenu={() => setActiveForm("builder")}
+              handleCustomMenu={() => setActiveForm("billing")}
+              handlePreBuiltMenu={() => setActiveForm("billing")}
               setBusinessData={setBusinessData}
             ></Setup>
+          </motion.div>
+        )}
+
+        {activeForm === "billing" && (
+          <motion.div
+            className="w-full px-20"
+            key="billing"
+            initial={{
+              opacity: 0,
+              x: 200,
+              filter: "blur(4px)",
+              transition: { delay: 0.8 },
+            }}
+            animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+            exit={{ opacity: 0, x: -200, filter: "blur(4px)" }}
+            transition={{
+              duration: 0.6,
+              ease: [0.25, 0.1, 0.25, 1],
+            }}
+          >
+            <PricingPlans
+              isCompact
+              businessSlug={businessData?.slug}
+              plans={plans}
+            ></PricingPlans>
           </motion.div>
         )}
 
