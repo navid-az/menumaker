@@ -58,7 +58,7 @@ export async function DashboardHeader({
       </div>
       <div className="flex gap-2 flex-none">
         <div className="flex gap-2">
-          {subscription && <SubscriptionPopOver subscription={subscription} />}
+          {/* {subscription && <SubscriptionPopOver subscription={subscription} />} */}
         </div>
         {user && businesses && (
           <UserProfile user={user} businesses={businesses}>

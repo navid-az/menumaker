@@ -31,20 +31,21 @@ export async function middleware(request: NextRequest) {
     "django-insecure-&@-4_u6z^b7xaq)l=7a@dh*3b%ac)$7d$5t0lkf3f#2@ky2&6e"
   );
 
-  if (pathname.startsWith("/dashboard/") && businessSlug) {
-    let token = request.cookies.get("access")?.value;
-    if (!token) {
-      console.log("NO ACCESS TOKEN FOUND");
-      return NextResponse.redirect(new URL("/register", request.url));
-    }
+  // if (pathname.startsWith("/dashboard/") && businessSlug) {
+  let token = request.cookies.get("access")?.value;
+  if (!token) {
+    console.log("NO ACCESS TOKEN FOUND");
+    return NextResponse.redirect(new URL("/register", request.url));
+  }
 
-    let jwtPayload: jwtPayloadType;
+  let jwtPayload: jwtPayloadType;
 
-    // Verify access token
-    try {
-      const { payload } = await jose.jwtVerify(token, secret);
-      const jwtPayload = payload as jwtPayloadType;
+  // Verify access token
+  try {
+    const { payload } = await jose.jwtVerify(token, secret);
+    const jwtPayload = payload as jwtPayloadType;
 
+    if (pathname.startsWith("/dashboard/") && businessSlug) {
       // Find permissions for this business
       const perm = jwtPayload.roles[businessSlug];
 
@@ -59,72 +60,97 @@ export async function middleware(request: NextRequest) {
       } else {
         return NextResponse.redirect(new URL("/unauthorized", request.url));
       }
-    } catch (error: any) {
-      // Handle expired token
-      if (error.code === "ERR_JWT_EXPIRED") {
-        // Attempt token refresh
+    }
+    if (pathname.startsWith("/register") && searchParams.has("token")) {
+      // Handle invitation token
+      const invitationToken = searchParams.get("token");
+      if (invitationToken) {
         try {
-          const refreshToken = request.cookies.get("refresh")?.value;
-
-          // No refresh tokens found
-          if (!refreshToken) {
-            return NextResponse.redirect(new URL("/register", request.url));
+          await jose.jwtVerify(invitationToken, secret);
+        } catch (error: any) {
+          if (error.code === "ERR_JWT_EXPIRED") {
+            return NextResponse.redirect(
+              new URL("/invitation-expired", request.url)
+            );
           }
+        }
+      }
+    }
+  } catch (error: any) {
+    // Handle expired token
+    if (error.code === "ERR_JWT_EXPIRED") {
+      // Attempt token refresh
+      try {
+        const refreshToken = request.cookies.get("refresh")?.value;
 
-          // Fetch new access token
-          const response = await fetch(
-            "http://localhost:8000/accounts/token/refresh/",
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ refresh: refreshToken }),
-            }
-          );
-          if (!response.ok) {
-            return NextResponse.redirect(new URL("/register", request.url));
+        // No refresh tokens found
+        if (!refreshToken) {
+          return NextResponse.redirect(new URL("/register", request.url));
+        }
+
+        // Fetch new access token
+        const response = await fetch(
+          "http://localhost:8000/accounts/token/refresh/",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ refresh: refreshToken }),
           }
+        );
+        if (!response.ok) {
+          return NextResponse.redirect(new URL("/register", request.url));
+        }
 
-          // Update token
-          const data = await response.json();
-          const refreshedToken = data.access;
+        // Update token
+        const data = await response.json();
+        const refreshedToken = data.access;
 
-          const responseWithNewToken = NextResponse.next();
-          responseWithNewToken.cookies.set({
-            httpOnly: true,
-            name: "access",
-            value: refreshedToken,
-          });
+        const responseWithNewToken = NextResponse.next();
+        responseWithNewToken.cookies.set({
+          httpOnly: true,
+          name: "access",
+          value: refreshedToken,
+        });
 
-          // Verify new access token
-          try {
-            const { payload } = await jose.jwtVerify(refreshedToken, secret);
-            jwtPayload = payload as jwtPayloadType;
-          } catch {
-            return NextResponse.redirect(new URL("/register", request.url));
-          }
-
-          return responseWithNewToken;
+        // Verify new access token
+        try {
+          const { payload } = await jose.jwtVerify(refreshedToken, secret);
+          jwtPayload = payload as jwtPayloadType;
         } catch {
           return NextResponse.redirect(new URL("/register", request.url));
         }
-      }
-      // If token is expired
-      return NextResponse.redirect(new URL("/register", request.url));
-    }
-  } else if (pathname.startsWith("/register") && searchParams.has("token")) {
-    // Handle invitation token
-    const invitationToken = searchParams.get("token");
-    if (invitationToken) {
-      try {
-        await jose.jwtVerify(invitationToken, secret);
-      } catch (error: any) {
-        if (error.code === "ERR_JWT_EXPIRED") {
-          return NextResponse.redirect(
-            new URL("/invitation-expired", request.url)
-          );
-        }
+
+        return responseWithNewToken;
+      } catch {
+        return NextResponse.redirect(new URL("/register", request.url));
       }
     }
+    // If token is expired
+    return NextResponse.redirect(new URL("/register", request.url));
   }
+  // } else if (pathname.startsWith("/register") && searchParams.has("token")) {
+  //   // Handle invitation token
+  //   const invitationToken = searchParams.get("token");
+  //   if (invitationToken) {
+  //     try {
+  //       await jose.jwtVerify(invitationToken, secret);
+  //     } catch (error: any) {
+  //       if (error.code === "ERR_JWT_EXPIRED") {
+  //         return NextResponse.redirect(
+  //           new URL("/invitation-expired", request.url)
+  //         );
+  //       }
+  //     }
+  //   }
+  // }
   return NextResponse.next();
 }
+
+export const config = {
+  matcher: [
+    "/dashboard/:path*",
+    "/builder/:path*",
+    "/checkout/:path*",
+    "/:businessSlug/menu/update/:path*",
+  ],
+};
