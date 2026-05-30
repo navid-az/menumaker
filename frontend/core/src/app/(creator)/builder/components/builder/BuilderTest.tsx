@@ -39,9 +39,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { motion, AnimatePresence } from "motion/react";
 
-//types
-import { BusinessType } from "@/app/dashboard/layout";
-
 //zod schemas
 const InstanceSchema = z.array(
   z.object({
@@ -125,13 +122,13 @@ export type keyOfGlobalStylingSchemaType = keyof GlobalStylingType;
 export default function BuilderTest({
   ref,
   defaultValues,
-  businessData,
+  businessSlug,
   assetGroups,
   onSuccess,
 }: {
   ref?: React.RefObject<HTMLFormElement | null>;
   defaultValues?: BuilderFormType;
-  businessData: BusinessType | null;
+  businessSlug: string;
   assetGroups: AssetGroupType[];
   onSuccess?: () => void;
 }) {
@@ -311,10 +308,10 @@ export default function BuilderTest({
     console.log(data);
 
     //call server action
-    if (businessData?.slug) {
+    if (businessSlug) {
       if (defaultValues) {
         // update menu
-        const res = await updateMenu(businessData.slug, data);
+        const res = await updateMenu(businessSlug, data);
         if (res.success) {
           toast.success("منو با موفقیت آپدیت شد!");
           if (onSuccess) {
@@ -325,7 +322,7 @@ export default function BuilderTest({
         }
       } else {
         // create menu
-        const res = await createMenu(businessData.slug, data);
+        const res = await createMenu(businessSlug, data);
         if (res.success) {
           toast.success("منو با موفقیت ساخته شد!");
           if (onSuccess) {

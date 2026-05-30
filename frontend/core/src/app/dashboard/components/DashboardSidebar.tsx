@@ -22,12 +22,12 @@ import MyBusinessesTab from "./MyBusinessesTab";
 import Logo from "@/components/global/Logo";
 
 //types
-import { BusinessType } from "@/app/dashboard/layout";
+import { type Business } from "@/app/types/api/business";
 
 export default function DashboardSidebar({
   businesses,
 }: {
-  businesses: BusinessType[];
+  businesses: Business[];
 }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const md = useMediaQuery("(min-width: 768px)");

@@ -1,10 +1,10 @@
 //types
-import { type BusinessType } from "@/app/dashboard/layout";
+import { type Business } from "@/app/types/api/business";
 
 //functions
 import { cookies } from "next/headers";
 
-//get user's businesses(as the owner or as the personnel)
+//get user's associated businesses(as the owner or as the personnel)
 export async function getUserBusinesses() {
   const accessToken = (await cookies()).get("access");
 
@@ -16,5 +16,5 @@ export async function getUserBusinesses() {
   if (!res.ok) {
     throw new Error("Failed to fetch data");
   }
-  return res.json() as Promise<BusinessType[]>;
+  return res.json() as Promise<Business[]>;
 }

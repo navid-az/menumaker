@@ -40,7 +40,7 @@ import { refreshToken } from "@/app/actions/auth/register";
 import { motion, AnimatePresence } from "motion/react";
 
 //types
-import { BusinessType } from "@/app/dashboard/layout";
+import { type Business } from "@/app/types/api/business";
 export type SetupSchemaType = z.infer<typeof SetupSchema>;
 
 //zod schema
@@ -69,7 +69,7 @@ export default function Setup({
   handleCustomMenu: () => void;
   handlePreBuiltMenu: () => void;
   ref: React.RefObject<HTMLFormElement | null>;
-  setBusinessData: React.Dispatch<React.SetStateAction<BusinessType | null>>;
+  setBusinessData: React.Dispatch<React.SetStateAction<Business | null>>;
 }) {
   const form = useForm<SetupSchemaType>({
     resolver: zodResolver(SetupSchema),

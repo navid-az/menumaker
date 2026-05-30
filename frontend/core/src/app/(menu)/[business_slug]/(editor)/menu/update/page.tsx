@@ -2,7 +2,7 @@
 import { MenuEditor } from "../components/MenuEditor";
 
 //types
-import { type BusinessType } from "@/app/dashboard/layout";
+import { type Business } from "@/app/types/api/business";
 import { type MenuGlobalStyling } from "@/app/types/api/menu";
 import { type Menu as MenuData } from "@/app/types/api/menu";
 import { type AssetGroupType } from "@/components/global/AssetPicker";
@@ -65,9 +65,7 @@ export default async function page(props: {
 }) {
   const params = await props.params;
 
-  const businessData: BusinessType = await getBusinessData(
-    params.business_slug
-  );
+  const businessData: Business = await getBusinessData(params.business_slug);
   const menuData: MenuData = await getMenuData(params.business_slug);
 
   const globalStylingData: MenuGlobalStyling = await getGlobalStyling(

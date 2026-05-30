@@ -11,12 +11,12 @@ import QrCodeGenerator from "@/components/global/QrCodeGenerator";
 import { LoaderCircle } from "lucide-react";
 
 //types
-import { BusinessType } from "@/app/dashboard/layout";
+import { type Business } from "@/app/types/api/business";
 
 export default function SuccessPage({
   businessData,
 }: {
-  businessData: BusinessType | null;
+  businessData: Business | null;
 }) {
   return (
     <div className="w-full h-full flex flex-col items-center justify-center">

@@ -9,12 +9,12 @@ import BuilderTest, {
 } from "@/app/(creator)/builder/components/builder/BuilderTest";
 
 //types
-import { type BusinessType } from "@/app/dashboard/layout";
+import { type Business } from "@/app/types/api/business";
 import { type Menu } from "@/app/types/api/menu";
 import { type AssetGroupType } from "@/components/global/AssetPicker";
 import { type MenuGlobalStyling } from "@/app/types/api/menu";
 type MenuEditorProps = {
-  businessData: BusinessType;
+  businessData: Business;
   menuData: Menu;
   globalStylingData: MenuGlobalStyling;
   assetGroups: AssetGroupType[];
@@ -52,7 +52,7 @@ export function MenuEditor({
   };
   return (
     <BuilderTest
-      businessData={businessData}
+      businessSlug={businessData.slug}
       defaultValues={normalizedData}
       assetGroups={assetGroups}
       onSuccess={handleSuccess}

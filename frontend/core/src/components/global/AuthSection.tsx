@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 //types
 import { type User } from "@/app/types/api/auth";
-import { type BusinessType } from "@/app/dashboard/layout";
+import { type Business } from "@/app/types/api/business";
 
 //SVGs
 import { User2 } from "lucide-react";
@@ -19,7 +19,7 @@ import { UserProfile } from "./UserProfile";
 
 export default function AuthSection() {
   const [user, setUser] = useState<User | null>();
-  const [businesses, setBusinesses] = useState<BusinessType[] | null>();
+  const [businesses, setBusinesses] = useState<Business[] | null>();
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -34,8 +34,7 @@ export default function AuthSection() {
       try {
         const res = await fetch("/api/auth", { method: "GET" });
         if (!res.ok) throw new Error();
-        const data: { user: User; businesses: BusinessType[] } =
-          await res.json();
+        const data: { user: User; businesses: Business[] } = await res.json();
         setUser(data.user);
         setBusinesses(data.businesses);
       } catch {

@@ -16,11 +16,11 @@ import { Building } from "./svg";
 import { ArrowLeft } from "lucide-react";
 
 //types
-import { BusinessType } from "../layout";
+import { type Business } from "@/app/types/api/business";
 
 type MyBusinessesTabType = {
   position: string;
-  businesses: BusinessType[];
+  businesses: Business[];
   isCollapsed: boolean;
   collapsePanel: () => void;
   //   venueType: "restaurant" | "cafe" | "buffet" | "food truck";
@@ -62,7 +62,7 @@ export default function MyBusinessesTab({
   };
 
   // change path on business select
-  const handleClick = (business: BusinessType) => {
+  const handleClick = (business: Business) => {
     const pathSegments = pathname.split("/");
 
     // update current path with new business_slug

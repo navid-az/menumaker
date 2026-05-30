@@ -9,6 +9,8 @@ from decimal import Decimal
 from .models import Business, Branch, Table, TableSession, CallWaiter, Category, Item, ItemBranch, ItemOption, ItemOptionChoice, Order, OrderItem
 from pickers.models import Asset
 from personnel.models import Personnel
+from menu.models import Menu
+from subscriptions.models import Subscription
 
 # table session serializers
 
@@ -94,11 +96,20 @@ class BranchCreateUpdateSerializer(serializers.ModelSerializer):
 
 # business serializers
 class BusinessesSerializer(serializers.ModelSerializer):
+    has_menu = serializers.SerializerMethodField()
+    subscription_status = serializers.SerializerMethodField()
     branches = BranchesSerializer(many=True, read_only=True)
 
     class Meta:
         model = Business
         fields = '__all__'
+
+    def get_has_menu(self, obj):
+        return Menu.objects.filter(business=obj).exists()
+
+    def get_subscription_status(self, obj):
+        sub = Subscription.objects.filter(business=obj).first()
+        return sub.status if sub else None
 
 
 class BusinessCreateSerializer(serializers.ModelSerializer):
