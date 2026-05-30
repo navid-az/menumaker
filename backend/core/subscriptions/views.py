@@ -299,7 +299,8 @@ class SubscriptionOrderVerifyView(APIView):
                 pricing=subscription_order.pricing,
             )
             return redirect(
-                f'http://localhost:3000/pricing?status=OK&authority={authority}'
+                # opt-out &authority={authority}
+                f'http://localhost:3000/builder?status=OK'
             )
 
         # mark order as failed

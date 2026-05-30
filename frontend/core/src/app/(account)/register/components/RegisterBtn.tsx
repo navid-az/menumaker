@@ -21,7 +21,7 @@ export default function RegisterBtn({
       disabled={isLoading ? true : false}
       onClick={onClick}
     >
-      <p className={` transition-all ${isLoading ? "" : "-translate-x-3"}`}>
+      <p className={` transition-all ${isLoading ? "" : "-translate-x-5"}`}>
         {text}
       </p>
       <span

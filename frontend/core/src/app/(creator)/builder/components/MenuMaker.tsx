@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 
 //components
+import { toast } from "sonner";
 import Setup from "./setup/Setup";
 import BuilderTest from "./builder/BuilderTest";
 import SuccessPage from "./success/SuccessPage";
@@ -21,7 +22,7 @@ import { type Business } from "@/app/types/api/business";
 type BuilderFormStep = "setup" | "billing" | "builder" | "qr";
 
 //hooks
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function MenuMaker({
   plans,
@@ -40,6 +41,8 @@ export default function MenuMaker({
 
   const setupFormRef = useRef(null);
   const builderFormRef = useRef(null);
+
+  const searchParams = useSearchParams();
 
   // Determine MenuMaker step based on business(s) has_menu and has_active_subscription status
   useEffect(() => {
@@ -68,6 +71,17 @@ export default function MenuMaker({
       router.push("/");
     }
   }, [businesses]);
+
+  // show success message if user is redirected via successful payment
+  useEffect(() => {
+    if (searchParams.get("status") === "OK") {
+      const timer = setTimeout(() => {
+        toast.success("پرداخت با موفقیت انجام شد");
+      }, 300);
+
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams]);
 
   // Reset slider states on form change and on initial mount
   useEffect(() => {

@@ -1,221 +1,59 @@
-import React from "react";
+"use client";
 
-// components
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
-import { SubscriptionPlan } from "@/app/types/api/subscription";
-import PriceTag from "@/app/(menu)/[business_slug]/(public-menu)/menu/components/PriceTag";
+import { useState } from "react";
 
-// functions
-import { cn } from "@/lib/utils";
-import { toPersianDigits } from "@/app/(menu)/[business_slug]/utilities/formatCurrency";
+//components
+import { toast } from "sonner";
+import RegisterBtn from "@/app/(account)/register/components/RegisterBtn";
 
-// actions
+//actions
 import { initiatePayment } from "@/app/actions/subscription/checkout";
 
-const themeStyles: Record<
-  string,
-  {
-    bg: string;
-    border: string;
-    accent: string;
-    title: string;
-    btn: string;
-    shadow?: string;
-    tag?: string;
+//hooks
+import { useSearchParams } from "next/navigation";
+
+//types
+import { type SubscriptionPlan } from "@/app/types/api/subscription";
+
+export default function CheckoutForm({
+  planData,
+}: {
+  planData: SubscriptionPlan;
+}) {
+  const searchParams = useSearchParams();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const businessSlug = searchParams.get("business");
+  const duration = searchParams.get("duration");
+
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    if (!businessSlug || !duration) {
+      onError(new Error("Missing required checkout parameters"));
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+
+      await initiatePayment(businessSlug, planData.slug, Number(duration));
+    } catch (error) {
+      onError(error);
+    } finally {
+      setIsLoading(false);
+    }
   }
-> = {
-  basic: {
-    bg: "bg-soft-blue",
-    border: "border-royal-green/20 hover:border-royal-green",
-    accent: "text-blue-700",
-    title: "text-royal-green",
-    btn: "text-soft-blue bg-royal-green",
-  },
-  pro: {
-    bg: "bg-purple-50",
-    border: "border-deep-purple/20 hover:border-deep-purple",
-    accent: "text-purple-700",
-    title: "text-deep-purple",
-    btn: "text-purple-50 bg-deep-purple",
-    shadow: "bg-purple-400 opacity-60",
-    tag: "bg-deep-purple text-purple-200",
-  },
-  franchiser: {
-    bg: "bg-yellow-50",
-    border: "border-yellow-950/20 hover:border-yellow-950",
-    accent: "text-amber-700",
-    title: "text-yellow-950",
-    btn: "bg-yellow-950 text-yellow-50",
-    shadow: "bg-yellow-400 opacity-60",
-  },
-};
 
-// Fetches plan data by slug from the backend API
-async function getPlanData(planSlug: string) {
-  const res = await fetch(
-    `http://localhost:8000/subscriptions/plans/${planSlug}`,
-    { method: "GET" }
-  );
-  if (!res.ok) {
-    throw new Error("Failed to fetch plan data");
+  function onError(error: unknown) {
+    console.error(error);
+
+    toast.error("خطا در شروع پرداخت");
   }
-  return res.json();
-}
-
-export default async function CheckoutForm({
-  searchParams,
-}: {
-  searchParams: Promise<{
-    business: string;
-    plan: string;
-    duration: number;
-  }>;
-}) {
-  const {
-    business: businessSlug,
-    plan: planSlug,
-    duration,
-  } = await searchParams;
-
-  const planData: SubscriptionPlan = await getPlanData(planSlug);
-  const planPricing = planData.pricings.find((p) => p.duration == duration);
-
-  const flatPrice = planPricing?.price || 0;
-  const tax = flatPrice * 0.1; // 10% tax
-  const discount =
-    flatPrice * (planPricing?.discount ? planPricing.discount / 100 : 0);
-  const total = flatPrice + tax - discount;
-  const durationInMonths = duration / 30;
-
-  // Pre-bind the arguments to the function
-  const initiatePaymentWithData = initiatePayment.bind(
-    null,
-    businessSlug,
-    planData.slug,
-    duration
-  );
 
   return (
-    <div className="flex flex-col bg-zinc-50 text-royal-green rounded-md p-4 w-full max-w-[470px] h-full max-h-[650px] gap-4 border border-primary/20 justify-between shadow-lg">
-      <div className="flex flex-col gap-10">
-        <p className="text-center text-xl md:text-2xl font-semibold">
-          جزییات صورتحساب
-        </p>
-        <div className="flex flex-col gap-4">
-          <PlanInfoTab
-            planSlug={planSlug}
-            name={planData.name}
-            planDuration={durationInMonths}
-            planPrice={flatPrice}
-          ></PlanInfoTab>
-          {discount > 0 && (
-            <ExpenseLine title="تخفیف اشتراک" price={discount}></ExpenseLine>
-          )}
-          <ExpenseLine title="مالیات بر ارزش افزوده" price={tax}></ExpenseLine>
-          <ExpenseLine
-            size="lg"
-            title="مبلغ قابل پرداخت"
-            price={total}
-          ></ExpenseLine>
-        </div>
-        <div className="flex flex-col gap-2">
-          <p>درگاه پرداخت</p>
-          <div className="w-full flex gap-2 justify-start items-center bg-white p-1 border border-primary/20 rounded-md">
-            <Image
-              src={"/images/zarinpal-logo.png"}
-              width={50}
-              height={50}
-              alt="zarinpal-logo"
-            ></Image>
-            <p className="text-2xl font-medium">زرین پال</p>
-          </div>
-        </div>
-      </div>
-      <form>
-        <Button
-          formAction={initiatePaymentWithData}
-          className="bg-royal-green text-soft-blue text-xl font-semibold h-14 w-full"
-          size="lg"
-        >
-          پرداخت
-        </Button>
-      </form>
-    </div>
-  );
-}
-
-export function PlanInfoTab({
-  name,
-  planSlug,
-  planDuration,
-  planPrice,
-}: {
-  name: string;
-  planSlug: string;
-  planDuration: number;
-  planPrice: number;
-}) {
-  return (
-    <div
-      className={cn(
-        themeStyles[planSlug].bg,
-        themeStyles[planSlug].title,
-        themeStyles[planSlug].border,
-        "group overflow-hidden transition-all duration-600 hover:border-y-purple-950 relative flex px-3 md:px-4 py-2 justify-between rounded-full items-center border"
-      )}
-    >
-      <div
-        className={cn(
-          themeStyles[planSlug].shadow,
-          "size-24 blur-2xl rounded-full absolute right-0 z-10 group-hover:size-52 group-hover:blur-3xl transition-all duration-600 ease-in"
-        )}
-      />
-      <div className="flex gap-2 md:gap-4 items-center z-40">
-        <div className="flex gap-1 items-center">
-          <p className="text-base font-light">اشتراک</p>
-          <p className="text-lg font-black">{name}</p>
-        </div>
-        <div
-          className={cn(
-            themeStyles[planSlug].btn,
-            "rounded-full gap-0.5 text-xs font-normal flex justify-center items-center px-3 h-6"
-          )}
-        >
-          <p>{planDuration === 12 ? "۱" : toPersianDigits(planDuration)}</p>
-          {planDuration === 12 ? <p>ساله</p> : <p>ماهه</p>}
-        </div>
-      </div>
-      <PriceTag price={planPrice}></PriceTag>
-    </div>
-  );
-}
-
-export function ExpenseLine({
-  price,
-  title,
-  size = "default",
-}: {
-  price: number;
-  title: string;
-  size?: "sm" | "default" | "lg";
-}) {
-  return (
-    <div className="flex justify-between items-center px-3 md:px-4">
-      <p
-        className={cn(
-          size === "sm"
-            ? "text-sm font-light"
-            : size === "default"
-            ? "text-base font-normal"
-            : size === "lg"
-            ? "text-xl font-semibold"
-            : ""
-        )}
-      >
-        {title}
-      </p>
-      <PriceTag price={price} size={size}></PriceTag>
-    </div>
+    <form onSubmit={onSubmit}>
+      <RegisterBtn isLoading={isLoading} text="پرداخت"></RegisterBtn>
+    </form>
   );
 }
