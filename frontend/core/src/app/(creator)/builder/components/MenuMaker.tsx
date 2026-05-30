@@ -16,27 +16,60 @@ import { motion, AnimatePresence } from "motion/react";
 
 //types
 import { type AssetGroupType } from "@/components/global/AssetPicker";
-import { BusinessType } from "@/app/dashboard/layout";
 import { type SubscriptionPlan } from "@/app/types/api/subscription";
+import { type Business } from "@/app/types/api/business";
+type BuilderFormStep = "setup" | "billing" | "builder" | "qr";
+
+//hooks
+import { useRouter } from "next/navigation";
 
 export default function MenuMaker({
   plans,
+  businesses,
   assetGroups,
 }: {
   plans: SubscriptionPlan[];
+  businesses: Business[];
   assetGroups: AssetGroupType[];
 }) {
-  const [activeForm, setActiveForm] = useState<
-    "setup" | "billing" | "builder" | "qr"
-  >("setup");
-  const [businessData, setBusinessData] = useState<BusinessType | null>(null);
+  const [activeForm, setActiveForm] = useState<BuilderFormStep>("setup");
+  const [businessData, setBusinessData] = useState<Business | null>(null);
 
+  const router = useRouter();
   const { reset } = useSlider();
 
   const setupFormRef = useRef(null);
   const builderFormRef = useRef(null);
 
-  //reset slider states on form change and on initial mount
+  // Determine MenuMaker step based on business(s) has_menu and has_active_subscription status
+  useEffect(() => {
+    if (businesses.length === 0) {
+      // User is NOT associated to ANY business
+      // They have to create a business first
+      setActiveForm("setup");
+    } else if (businesses.length === 1) {
+      // User is associated to ONE business
+      if (businesses[0].subscription_status === "active") {
+        // Business already has an active sub
+        if (businesses[0].has_menu) {
+          // If business has menu => redirect to home
+          router.push("/");
+        } else {
+          // If business doesn't have menu => allow user to build menu
+          setActiveForm("builder");
+        }
+      } else {
+        // Business should have a subscription
+        setActiveForm("billing");
+      }
+    } else if (businesses.length >= 1) {
+      // user is associated to MORE THAN ONE business
+      // NOT part of MVP
+      router.push("/");
+    }
+  }, [businesses]);
+
+  // Reset slider states on form change and on initial mount
   useEffect(() => {
     reset();
   }, [activeForm]);
@@ -97,7 +130,9 @@ export default function MenuMaker({
           >
             <PricingPlans
               isCompact
-              businessSlug={businessData?.slug}
+              businessSlug={
+                businessData ? businessData.slug : businesses[0].slug
+              }
               plans={plans}
             ></PricingPlans>
           </motion.div>
@@ -122,7 +157,9 @@ export default function MenuMaker({
           >
             <BuilderTest
               ref={builderFormRef}
-              businessData={businessData}
+              businessSlug={
+                businessData ? businessData.slug : businesses[0].slug
+              }
               assetGroups={assetGroups}
               onSuccess={() => onBuilderSuccess()}
             ></BuilderTest>

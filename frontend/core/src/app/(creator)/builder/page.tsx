@@ -1,8 +1,9 @@
 //components
 import MenuMaker from "./components/MenuMaker";
 
-// functions
+//functions
 import getSubscriptionPlans from "@/lib/subscription/getSubscriptionPlans";
+import { getUserBusinesses } from "@/lib/getUserBusinesses";
 
 const getAssetGroups = async () => {
   const res = await fetch("http://127.0.0.1:8000/pickers/icon-pickers");
@@ -17,6 +18,13 @@ const getAssetGroups = async () => {
 export default async function Page() {
   const plans = await getSubscriptionPlans();
   const assetGroups = await getAssetGroups();
+  const businesses = await getUserBusinesses();
 
-  return <MenuMaker plans={plans} assetGroups={assetGroups}></MenuMaker>;
+  return (
+    <MenuMaker
+      plans={plans}
+      assetGroups={assetGroups}
+      businesses={businesses}
+    ></MenuMaker>
+  );
 }
