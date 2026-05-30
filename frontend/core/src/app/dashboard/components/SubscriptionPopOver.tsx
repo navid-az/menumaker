@@ -32,7 +32,7 @@ export default function SubscriptionPopOver({
 }: {
   subscription: Subscription;
 }) {
-  type planType = "Franchiser" | "Pro" | "Basic";
+  type planType = "franchiser" | "pro" | "basic";
   const plans: Record<
     planType,
     {
@@ -40,9 +40,9 @@ export default function SubscriptionPopOver({
       color: string;
     }
   > = {
-    Franchiser: { title: "فرنچایزر", color: "text-yellow-400" },
-    Pro: { title: "پرو", color: "text-purple-400" },
-    Basic: { title: "بیسیک", color: "text-cyan-400" },
+    franchiser: { title: "فرنچایزر", color: "text-yellow-400" },
+    pro: { title: "پرو", color: "text-purple-400" },
+    basic: { title: "بیسیک", color: "text-cyan-400" },
   };
 
   const { progress } = useProgress(
@@ -89,8 +89,8 @@ export default function SubscriptionPopOver({
         <div className="flex flex-col gap-3">
           <div className="flex gap-1 text-sm pt-2">
             <p>پلن</p>
-            <p className={plans[subscription.plan.name].color}>
-              {plans[subscription.plan.name].title}
+            <p className={plans[subscription.plan.slug].color}>
+              {plans[subscription.plan.slug].title}
             </p>
             <p>.</p>
             <p className="text-gray-600 font-normal">

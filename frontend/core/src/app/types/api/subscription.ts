@@ -11,7 +11,7 @@ export type SubscriptionPricing = {
 };
 
 export type SubscriptionPlan = {
-  slug: string;
+  slug: "basic" | "pro" | "franchiser";
   name: string;
   description: string;
   features: SubscriptionFeature[];

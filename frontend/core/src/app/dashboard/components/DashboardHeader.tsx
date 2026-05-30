@@ -50,6 +50,8 @@ export async function DashboardHeader({
   );
   const user = await getUserData();
   const businesses = await getUserBusinesses();
+  const subEndDate = new Date(subscription.end_date);
+  const now = new Date();
 
   return (
     <header className="flex w-full gap-2 justify-between bg-primary p-2 md:px-4 md:py-4">
@@ -58,7 +60,9 @@ export async function DashboardHeader({
       </div>
       <div className="flex gap-2 flex-none">
         <div className="flex gap-2">
-          {subscription && <SubscriptionPopOver subscription={subscription} />}
+          {subscription.status === "active" && subEndDate > now && (
+            <SubscriptionPopOver subscription={subscription} />
+          )}
         </div>
         {user && businesses && (
           <UserProfile user={user} businesses={businesses}>
