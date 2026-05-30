@@ -61,15 +61,17 @@ const SetupSchema = z.object({
 });
 
 export default function Setup({
-  handleCustomMenu,
-  handlePreBuiltMenu,
+  // handleCustomMenu,
+  // handlePreBuiltMenu,
   ref,
-  setBusinessData,
+  setNewBusiness,
+  onSuccess,
 }: {
-  handleCustomMenu: () => void;
-  handlePreBuiltMenu: () => void;
+  // handleCustomMenu: () => void;
+  // handlePreBuiltMenu: () => void;
   ref: React.RefObject<HTMLFormElement | null>;
-  setBusinessData: React.Dispatch<React.SetStateAction<Business | null>>;
+  setNewBusiness: React.Dispatch<React.SetStateAction<Business | null>>;
+  onSuccess: () => void;
 }) {
   const form = useForm<SetupSchemaType>({
     resolver: zodResolver(SetupSchema),
@@ -353,7 +355,7 @@ export default function Setup({
       toast.error(res.error);
     } else {
       // pass newly made business data to parent state
-      setBusinessData(res.data);
+      setNewBusiness(res.data);
 
       // refresh access token to inject new business role and permissions into the token payload
       const refreshed = await refreshToken();
@@ -388,11 +390,13 @@ export default function Setup({
     onSubmit(formValues);
 
     // Handle user choice
-    if (userChoice === "custom") {
-      handleCustomMenu();
-    } else if (userChoice === "pre-built") {
-      handlePreBuiltMenu();
-    }
+    // NOT MPV
+    // if (userChoice === "custom") {
+    //   handleCustomMenu();
+    // } else if (userChoice === "pre-built") {
+    //   handlePreBuiltMenu();
+    // }
+    onSuccess();
   };
 
   // Animation variants for the step transitions

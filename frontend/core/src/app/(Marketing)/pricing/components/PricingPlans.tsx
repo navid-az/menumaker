@@ -206,9 +206,13 @@ export default function PricingPlans({
                   )}
                 >
                   <Link
-                    href={`/checkout?${
-                      businessSlug ? `business=${businessSlug}&` : ""
-                    }plan=${plan.slug}&duration=${planDuration}`}
+                    href={
+                      isCompact
+                        ? `/checkout?${
+                            businessSlug ? `business=${businessSlug}&` : ""
+                          }plan=${plan.slug}&duration=${planDuration}`
+                        : "/builder"
+                    }
                   >
                     فعالسازی اشتراک
                   </Link>

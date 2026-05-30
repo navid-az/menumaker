@@ -34,7 +34,8 @@ export default function MenuMaker({
   assetGroups: AssetGroupType[];
 }) {
   const [activeForm, setActiveForm] = useState<BuilderFormStep>("setup");
-  const [businessData, setBusinessData] = useState<Business | null>(null);
+  const [newBusiness, setNewBusiness] = useState<Business | null>(null);
+  const [businessSlug, setBusinessSlug] = useState<string>("");
 
   const router = useRouter();
   const { reset } = useSlider();
@@ -44,33 +45,41 @@ export default function MenuMaker({
 
   const searchParams = useSearchParams();
 
-  // Determine MenuMaker step based on business(s) has_menu and has_active_subscription status
+  // Determine onboarding step from business/subscription state
   useEffect(() => {
     if (businesses.length === 0) {
-      // User is NOT associated to ANY business
-      // They have to create a business first
+      // New user must create a business before continuing
       setActiveForm("setup");
     } else if (businesses.length === 1) {
-      // User is associated to ONE business
-      if (businesses[0].subscription_status === "active") {
-        // Business already has an active sub
-        if (businesses[0].has_menu) {
-          // If business has menu => redirect to home
-          router.push("/");
+      const business = businesses[0];
+
+      setBusinessSlug(business.slug);
+
+      if (business.subscription_status === "active") {
+        if (business.has_menu) {
+          setActiveForm("qr");
         } else {
-          // If business doesn't have menu => allow user to build menu
           setActiveForm("builder");
         }
       } else {
-        // Business should have a subscription
+        // Business exists but subscription is required
         setActiveForm("billing");
       }
-    } else if (businesses.length >= 1) {
-      // user is associated to MORE THAN ONE business
-      // NOT part of MVP
+    } else {
+      // Multi-business support is not part of MVP
       router.push("/");
     }
   }, [businesses]);
+
+  // set business slug upon creation of a new business
+  useEffect(() => {
+    if (newBusiness) {
+      setBusinessSlug(newBusiness.slug);
+    } else {
+      setNewBusiness(businesses[0]);
+      setBusinessSlug(businesses[0].slug);
+    }
+  }, [newBusiness]);
 
   // show success message if user is redirected via successful payment
   useEffect(() => {
@@ -118,9 +127,10 @@ export default function MenuMaker({
           >
             <Setup
               ref={setupFormRef}
-              handleCustomMenu={() => setActiveForm("billing")}
-              handlePreBuiltMenu={() => setActiveForm("billing")}
-              setBusinessData={setBusinessData}
+              // handleCustomMenu={() => setActiveForm("billing")}
+              // handlePreBuiltMenu={() => setActiveForm("billing")}
+              setNewBusiness={setNewBusiness}
+              onSuccess={() => setActiveForm("billing")}
             ></Setup>
           </motion.div>
         )}
@@ -144,9 +154,7 @@ export default function MenuMaker({
           >
             <PricingPlans
               isCompact
-              businessSlug={
-                businessData ? businessData.slug : businesses[0].slug
-              }
+              businessSlug={businessSlug}
               plans={plans}
             ></PricingPlans>
           </motion.div>
@@ -171,9 +179,7 @@ export default function MenuMaker({
           >
             <BuilderTest
               ref={builderFormRef}
-              businessSlug={
-                businessData ? businessData.slug : businesses[0].slug
-              }
+              businessSlug={businessSlug}
               assetGroups={assetGroups}
               onSuccess={() => onBuilderSuccess()}
             ></BuilderTest>
@@ -192,7 +198,7 @@ export default function MenuMaker({
             }}
             className="w-screen"
           >
-            <SuccessPage businessData={businessData}></SuccessPage>
+            <SuccessPage newBusiness={newBusiness}></SuccessPage>
           </motion.div>
         )}
       </AnimatePresence>

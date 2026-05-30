@@ -14,9 +14,9 @@ import { LoaderCircle } from "lucide-react";
 import { type Business } from "@/app/types/api/business";
 
 export default function SuccessPage({
-  businessData,
+  newBusiness,
 }: {
-  businessData: Business | null;
+  newBusiness: Business | null;
 }) {
   return (
     <div className="w-full h-full flex flex-col items-center justify-center">
@@ -35,21 +35,21 @@ export default function SuccessPage({
             تا مشتری‌ها بتونن منوی شما رو ببینن.
           </p>
         </div>
-        {businessData?.slug ? (
+        {newBusiness?.slug ? (
           <QrCodeGenerator
-            url={`http://localhost:3000/${businessData.slug}/menu`}
+            url={`http://localhost:3000/${newBusiness.slug}/menu`}
           ></QrCodeGenerator>
         ) : (
           <LoaderCircle className="animate-spin w-14 h-14"></LoaderCircle>
         )}
         <div className="flex gap-4 justify-between w-full">
           <Button
-            disabled={!businessData?.slug}
+            disabled={!newBusiness?.slug}
             className="flex-1 transition-all font-normal hover:scale-105 scale-pro duration-300 border-2 bg-royal-green border-royal-green text-soft-blue"
             asChild
           >
             <Link
-              href={`/dashboard/${businessData?.slug}/${businessData?.branches[0].slug}/data/items`}
+              href={`/dashboard/${newBusiness?.slug}/${newBusiness?.branches[0].slug}/data/items`}
             >
               ادامه
             </Link>
