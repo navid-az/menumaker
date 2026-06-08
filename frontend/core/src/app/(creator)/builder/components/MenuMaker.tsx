@@ -76,10 +76,12 @@ export default function MenuMaker({
     if (newBusiness) {
       setBusinessSlug(newBusiness.slug);
     } else {
-      setNewBusiness(businesses[0]);
-      setBusinessSlug(businesses[0].slug);
+      if (businesses[0]) {
+        setNewBusiness(businesses[0]);
+        setBusinessSlug(businesses[0].slug);
+      }
     }
-  }, [newBusiness]);
+  }, [newBusiness, businesses]);
 
   // show success message if user is redirected via successful payment
   useEffect(() => {
