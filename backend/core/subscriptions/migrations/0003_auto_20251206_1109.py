@@ -7,10 +7,12 @@ class Migration(migrations.Migration):
         ('subscriptions', '0002_rename_label_planduration_name_and_more'),
     ]
 
-    operations = [
-        migrations.AlterField(
-            model_name='featurecategory',
-            name='code',
-            field=models.CharField(max_length=50),
+    migrations.AddField(
+        model_name='featurecategory',
+        name='code',
+        field=models.CharField(
+            max_length=50,
+            default='',
         ),
-    ]
+        preserve_default=False,
+    )
