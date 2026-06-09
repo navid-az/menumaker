@@ -1,7 +1,7 @@
 import React from "react";
 import SubscriptionCheckout from "./components/SubscriptionCheckout";
 
-export default async function ({
+export default async function Page({
   searchParams,
 }: {
   searchParams: Promise<{

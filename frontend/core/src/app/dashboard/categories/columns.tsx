@@ -1,15 +1,11 @@
-"use client";
-
-import { useState, useTransition } from "react";
-
 //libraries
 import { ColumnDef } from "@tanstack/react-table";
 import { CellContext } from "@tanstack/react-table";
 
 //components
 import Image from "next/image";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,12 +17,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-
+import CategoryTableSwitch from "../components/data-table/CategoryTableSwitch";
 import { CreateCategoryForm } from "../components/CreateCategoryForm";
-import { toast } from "sonner";
 
 //actions
-import { updateCategory, deleteCategory } from "@/app/actions";
+import { deleteCategory } from "@/app/actions";
 
 //SVGs
 import {
@@ -97,37 +92,14 @@ export const categoryColumns = (
   {
     accessorKey: "is_active",
     header: "فعال",
-    cell: (props) => {
-      const originalValue = props.cell.getValue() as boolean;
-      const [checked, setChecked] = useState(originalValue);
-      const [isPending, startTransition] = useTransition();
-
-      const handleToggle = (checked: boolean) => {
-        setChecked(checked); // update UI instantly
-
-        startTransition(async () => {
-          const isUpdated = await updateCategory(
-            props.row.original.business,
-            props.row.original.id,
-            { is_active: checked }
-          );
-
-          if (!isUpdated) {
-            toast.error("خطا در اعمال تغییرات");
-            setChecked(originalValue); // revert on failure
-          }
-        });
-      };
-
-      return (
-        <Switch
-          checked={checked}
-          onCheckedChange={handleToggle}
-          disabled={isPending}
-          id={props.row.id}
-        />
-      );
-    },
+    cell: ({ row, cell }) => (
+      <CategoryTableSwitch
+        originalValue={cell.getValue() as boolean}
+        business={row.original.business}
+        categoryId={row.original.id}
+        rowId={row.id}
+      />
+    ),
   },
   {
     id: "row-options",

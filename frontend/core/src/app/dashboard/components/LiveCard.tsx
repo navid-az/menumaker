@@ -490,7 +490,8 @@ export function LiveCardHeader({
                   <AlertDialogContent>
                     <AlertDialogHeader>
                       <AlertDialogTitle>
-                        آیا مطمعنی که میخوای میز "{table.name}" رو حذف کنی؟
+                        آیا مطمعنی که میخوای میز &rsquo;{table.name}&rsquo; رو
+                        حذف کنی؟
                       </AlertDialogTitle>
                       <AlertDialogDescription>
                         این عمل غیر قابل بازگشت میباشد
