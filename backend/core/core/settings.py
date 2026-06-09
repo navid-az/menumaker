@@ -29,16 +29,16 @@ DUMMY_PHONE_NUMBER = env('DUMMY_PHONE_NUMBER')
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-&@-4_u6z^b7xaq)l=7a@dh*3b%ac)$7d$5t0lkf3f#2@ky2&6e"
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool('DEBUG', default=False)
 
-ALLOWED_HOSTS = []
+DB_ENGINE = "postgres"
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
 
 
 # Application definition
-
 INSTALLED_APPS = [
     "daphne",
     "django.contrib.admin",
@@ -94,21 +94,35 @@ ASGI_APPLICATION = "core.asgi.application"
 WSGI_APPLICATION = "core.wsgi.application"
 
 
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels.layers.InMemoryChannelLayer",
     },
 }
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+# Database
+# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+
+if DB_ENGINE == "sqlite":
+    # Development
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
     }
-}
+else:
+    # Production
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": env("POSTGRES_DB"),
+            "USER": env("POSTGRES_USER"),
+            "PASSWORD": env("POSTGRES_PASSWORD"),
+            "HOST": env("POSTGRES_HOST"),
+            "PORT": env("POSTGRES_PORT"),
+        }
+    }
 
 
 # Password validation
@@ -129,6 +143,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Email
 # DEV only
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 DEFAULT_FROM_EMAIL = "no-reply@example.com"
@@ -164,7 +179,7 @@ AUTH_USER_MODEL = "accounts.User"
 # cors headers
 CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
 
-# rest api
+# Django REST API
 REST_FRAMEWORK = {
     # "DEFAULT_PARSER_CLASSES": [
     #     "rest_framework.parsers.JSONParser",
@@ -178,7 +193,7 @@ REST_FRAMEWORK = {
     ),
 }
 
-# simple JWT
+# Simple JWT
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=7),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
