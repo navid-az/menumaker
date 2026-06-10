@@ -37,6 +37,11 @@ DEBUG = env.bool('DEBUG', default=False)
 DB_ENGINE = "postgres"
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
 
+# Security
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = "DENY"
+
 
 # Application definition
 INSTALLED_APPS = [
@@ -94,9 +99,18 @@ ASGI_APPLICATION = "core.asgi.application"
 WSGI_APPLICATION = "core.wsgi.application"
 
 
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels.layers.InMemoryChannelLayer",
+#     },
+# }
+
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [env("REDIS_URL")],
+        },
     },
 }
 

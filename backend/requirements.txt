@@ -6,6 +6,7 @@ Automat==25.4.16
 certifi==2026.4.22
 cffi==1.17.1
 channels==4.3.2
+channels_redis==4.3.0
 charset-normalizer==3.4.7
 colorama==0.4.6
 constantly==23.10.4
@@ -26,10 +27,13 @@ iniconfig==2.3.0
 isort==5.13.2
 kavenegar==1.1.2
 mccabe==0.7.0
+msgpack==1.1.2
 packaging==26.2
 pillow==12.2.0
 platformdirs==4.1.0
 pluggy==1.6.0
+psycopg==3.3.4
+psycopg-binary==3.3.4
 pyasn1==0.6.1
 pyasn1_modules==0.4.2
 pycparser==2.22
@@ -41,6 +45,7 @@ pyOpenSSL==25.1.0
 pytest==8.3.4
 python-dateutil==2.9.0.post0
 pytz==2023.3
+redis==5.2.1
 requests==2.32.4
 requests-mock==1.12.1
 service-identity==24.2.0
