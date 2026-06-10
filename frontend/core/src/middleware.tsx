@@ -26,10 +26,8 @@ export async function middleware(request: NextRequest) {
   const businessSlug = segments[1];
   const branchSlug = segments[2];
 
-  // Secret key for verifying the JWT ~~~~NEEDS CHANGE~~~~
-  const secret = new TextEncoder().encode(
-    "django-insecure-&@-4_u6z^b7xaq)l=7a@dh*3b%ac)$7d$5t0lkf3f#2@ky2&6e"
-  );
+  // Secret key for verifying the JWT
+  const secret = new TextEncoder().encode(process.env.DJANGO_SECRET_KEY);
 
   // if (pathname.startsWith("/dashboard/") && businessSlug) {
   let token = request.cookies.get("access")?.value;
@@ -85,6 +83,8 @@ export async function middleware(request: NextRequest) {
 
         // No refresh tokens found
         if (!refreshToken) {
+          console.log("NO REFRESH TOKEN FOUND");
+
           return NextResponse.redirect(new URL("/register", request.url));
         }
 
@@ -98,6 +98,8 @@ export async function middleware(request: NextRequest) {
           }
         );
         if (!response.ok) {
+          console.log("FAILED TO REFRESH TOKEN");
+
           return NextResponse.redirect(new URL("/register", request.url));
         }
 
