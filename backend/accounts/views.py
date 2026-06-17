@@ -77,7 +77,7 @@ class ValidateCredentialView(APIView):
                 except HTTPException as e:
                     return Response('HTTP request failed')
 
-            print('random_code: ', random_code)
+            print('random_code: ', random_code, flush=True)
 
             return Response({
                 "detail": "Verification code sent",
