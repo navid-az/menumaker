@@ -18,8 +18,8 @@ import environ
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = environ.Env()
-PROJECT_ROOT = BASE_DIR.parent.parent  # project root
-environ.Env.read_env(BASE_DIR / ".env")
+PROJECT_ROOT = BASE_DIR.parent  # project root
+environ.Env.read_env(PROJECT_ROOT / ".env")
 
 KAVENEGAR_API_KEY = env("KAVENEGAR_API_KEY")
 DUMMY_PHONE_NUMBER = env('DUMMY_PHONE_NUMBER')

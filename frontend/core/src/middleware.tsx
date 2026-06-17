@@ -27,7 +27,7 @@ export async function middleware(request: NextRequest) {
   const branchSlug = segments[2];
 
   // Secret key for verifying the JWT
-  const secret = new TextEncoder().encode(process.env.DJANGO_SECRET_KEY);
+  const secret = new TextEncoder().encode(process.env.SECRET_KEY);
 
   // if (pathname.startsWith("/dashboard/") && businessSlug) {
   let token = request.cookies.get("access")?.value;
