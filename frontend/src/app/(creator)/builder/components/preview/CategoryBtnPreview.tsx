@@ -30,6 +30,9 @@ import { useCategoryBtn } from "@/lib/stores";
 import { useTactileAnimation } from "@/app/hooks/useTactileAnimation"; //animation hook
 import { useRippleAnimation } from "@/app/hooks/useRippleAnimation"; //animation hook
 
+//configs
+import { MEDIA_BASE_URL } from "@/lib/config";
+
 const buttonVariants = cva(
   `flex-none select-none transition-[border-color,border-radius,background-color] duration-300`,
   {
@@ -191,7 +194,7 @@ export default function CategoryBtnPreview({
           className={`${isIconOnly ? "ml-0" : "ltr:mr-2 rtl:ml-2"} ${
             !isIconOnly && size === "lg" ? "ml-4" : ""
           }`}
-          src={"http://localhost:8000" + icon}
+          src={`${MEDIA_BASE_URL}${icon}`}
           width={size === "lg" ? 28 : size === "sm" ? 22 : 24}
           height={size === "lg" ? 28 : size === "sm" ? 22 : 24}
           alt={name || "icon"}

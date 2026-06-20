@@ -48,12 +48,14 @@ const themeStyles: Record<
   },
 };
 
+//configs
+import { API_BASE_URL } from "@/lib/config";
+
 // Fetches plan data by slug from the backend API
 async function getPlanData(planSlug: string) {
-  const res = await fetch(
-    `http://localhost:8000/subscriptions/plans/${planSlug}`,
-    { method: "GET" }
-  );
+  const res = await fetch(`${API_BASE_URL}/subscriptions/plans/${planSlug}`, {
+    method: "GET",
+  });
   if (!res.ok) {
     throw new Error("Failed to fetch plan data");
   }

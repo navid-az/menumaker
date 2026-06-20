@@ -3,11 +3,14 @@ import React from "react";
 //components
 import MenuWrapper from "../components/MenuWrapper";
 
+//configs
+import { API_BASE_URL } from "@/lib/config";
+
 // GET menu global stylings
 export async function getGlobalStyling(business_slug: string) {
   try {
     let res = await fetch(
-      `http://127.0.0.1:8000/businesses/${business_slug}/menu/global-styling`
+      `${API_BASE_URL}/businesses/${business_slug}/menu/global-styling`
     );
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);

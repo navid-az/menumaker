@@ -36,10 +36,11 @@ export type TableType = {
   is_requesting_assistance?: boolean;
 };
 
+//configs
+import { API_BASE_URL } from "@/lib/config";
+
 const getTables = async (branchSlug: string) => {
-  const res = await fetch(
-    `http://127.0.0.1:8000/branches/${branchSlug}/tables`
-  );
+  const res = await fetch(`${API_BASE_URL}/branches/${branchSlug}/tables`);
   if (!res.ok) {
     throw new Error(
       `Failed to fetch asset groups: ${res.status} ${res.statusText}`

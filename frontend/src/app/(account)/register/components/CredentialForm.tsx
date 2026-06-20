@@ -9,6 +9,9 @@ import * as z from "zod";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 
+//configs
+import { API_BASE_URL } from "@/lib/config";
+
 //components
 import {
   Form,
@@ -53,10 +56,7 @@ export function CredentialForm({
 
   const postUserCredential = useMutation({
     mutationFn: (data: z.infer<typeof FormSchema>) => {
-      return axios.post(
-        "http://127.0.0.1:8000/accounts/validate-credential/",
-        data
-      );
+      return axios.post(`${API_BASE_URL}/accounts/validate-credential/`, data);
     },
     mutationKey: ["credential"],
     onSuccess: (data) => {

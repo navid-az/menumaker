@@ -10,6 +10,9 @@ import QrCodeGenerator from "@/components/global/QrCodeGenerator";
 //SVGs
 import { LoaderCircle } from "lucide-react";
 
+//configs
+import { API_BASE_URL } from "@/lib/config";
+
 //types
 import { type Business } from "@/app/types/api/business";
 
@@ -37,7 +40,7 @@ export default function SuccessPage({
         </div>
         {newBusiness?.slug ? (
           <QrCodeGenerator
-            url={`http://localhost:3000/${newBusiness.slug}/menu`}
+            url={`${API_BASE_URL}${newBusiness.slug}/menu`}
           ></QrCodeGenerator>
         ) : (
           <LoaderCircle className="animate-spin w-14 h-14"></LoaderCircle>

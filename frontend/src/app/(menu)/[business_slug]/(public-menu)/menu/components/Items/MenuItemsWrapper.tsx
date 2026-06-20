@@ -17,6 +17,9 @@ import { useCategoryBtn, useSearchBar } from "@/lib/stores";
 import { type MenuCategory } from "@/app/types/api/menu";
 import { type MenuUI, type MenuGlobalStylingUI } from "@/app/types/ui/menu";
 
+//configs
+import { API_BASE_URL } from "@/lib/config";
+
 export default function MenuItemsWrapper({
   categories,
   menuData,
@@ -38,7 +41,7 @@ export default function MenuItemsWrapper({
       try {
         // First, check for existing session
         const getRes = await fetch(
-          `http://localhost:8000/tables/${tableCode}/sessions/`,
+          `${API_BASE_URL}/tables/${tableCode}/sessions/`,
           { method: "GET" }
         );
         const getData = await getRes.json();
@@ -50,7 +53,7 @@ export default function MenuItemsWrapper({
           } else if (getData.status === "no_active_session") {
             // No active session, create one
             const postRes = await fetch(
-              `http://localhost:8000/tables/${tableCode}/sessions/`,
+              `${API_BASE_URL}/tables/${tableCode}/sessions/`,
               { method: "POST" }
             );
             const postData = await postRes.json();

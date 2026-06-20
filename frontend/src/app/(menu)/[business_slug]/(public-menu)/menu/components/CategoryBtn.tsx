@@ -14,6 +14,9 @@ import { Button } from "@/components/ui/button";
 import lightenDarkenColor from "@/lib/lightenDarkenColor";
 import mapAnimationsToConfigs from "@/lib/mapAnimationsToConfigs";
 
+//configs
+import { MEDIA_BASE_URL } from "@/lib/config";
+
 //types
 import { MenuGlobalStylingUI } from "@/app/types/ui/menu";
 import { type AnimationConfigType } from "@/components/global/InteractiveWrapper";
@@ -223,7 +226,7 @@ export default function CategoryBtn({
             className={`${isIconOnly ? "ml-0" : "ltr:mr-2 rtl:ml-2"} ${
               !isIconOnly && size === "lg" ? "ml-4" : ""
             }`}
-            src={"http://localhost:8000" + icon.image}
+            src={`${MEDIA_BASE_URL}${icon.image}`}
             width={size === "lg" ? 28 : size === "sm" ? 22 : 24}
             height={size === "lg" ? 28 : size === "sm" ? 22 : 24}
             alt={name || "icon"}

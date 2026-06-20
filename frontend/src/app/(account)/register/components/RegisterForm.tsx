@@ -19,6 +19,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useMutation } from "@tanstack/react-query";
 
+//configs
+import { API_BASE_URL } from "@/lib/config";
+
 //SVGs
 import { LoadingSpinner } from "@/app/components/svgs/animated/loadingSpinner";
 import { toast } from "sonner";
@@ -49,7 +52,7 @@ export function InputForm() {
 
   const createOtp = useMutation({
     mutationFn: (data: z.infer<typeof FormSchema>) => {
-      return axios.post("http://127.0.0.1:8000/accounts/token/", data);
+      return axios.post(`${API_BASE_URL}/accounts/token/`, data);
     },
     onSuccess: (data) => {
       const accessToken: string = data["data"]["access"];

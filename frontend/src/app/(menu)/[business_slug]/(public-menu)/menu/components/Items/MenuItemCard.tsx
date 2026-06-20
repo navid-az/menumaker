@@ -17,6 +17,9 @@ import { Button } from "@/components/ui/button";
 import PriceTag from "../PriceTag";
 import AddToCartBtn from "../AddToCartBtn";
 
+//configs
+import { MEDIA_BASE_URL } from "@/lib/config";
+
 //hooks
 import { useCart, useMenuItemDrawer } from "@/lib/stores";
 import { useRippleAnimation } from "@/app/hooks/useRippleAnimation";
@@ -315,7 +318,7 @@ export function MenuItemCard({
               <div className="relative flex h-full w-full">
                 <Image
                   className="rounded-t-(--radius-exception) object-cover object-top transition-all duration-300"
-                  src={`http://127.0.0.1:8000${image}`}
+                  src={`${MEDIA_BASE_URL}${image}`}
                   alt={name}
                   fill
                 ></Image>
@@ -358,7 +361,7 @@ export function MenuItemCard({
                 <div className="relative flex basis-6/6 w-full">
                   <Image
                     className="rounded-t-(--radius-exception) object-cover absolute -z-5 transition-all duration-300"
-                    src={`http://127.0.0.1:8000${image}`}
+                    src={`${MEDIA_BASE_URL}${image}`}
                     alt={name}
                     fill
                   ></Image>
@@ -404,7 +407,7 @@ export function MenuItemCard({
             This only works if the element doesn't have a background(png) */}
               <Image
                 className="rounded-(--radius-exception) absolute -z-5 object-cover "
-                src={`http://127.0.0.1:8000${image}`}
+                src={`${MEDIA_BASE_URL}${image}`}
                 alt={name}
                 fill
               ></Image>
@@ -449,7 +452,7 @@ export function MenuItemCard({
           <div className="w-full px-1.5 backdrop-blur-4xl flex justify-center items-center">
             <Image
               className="object-contain"
-              src={`http://127.0.0.1:8000${image}`}
+              src={`${MEDIA_BASE_URL}${image}`}
               alt={name}
               width={384}
               height={0}

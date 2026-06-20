@@ -59,6 +59,9 @@ import { createItem, updateItem } from "@/app/actions";
 //types
 import { MenuCategory } from "@/app/types/api/menu";
 
+//configs
+import { API_BASE_URL } from "@/lib/config";
+
 type CreateItemFormType = {
   businessSlug: string;
   branchSlug?: string;
@@ -333,7 +336,7 @@ export function CreateItemForm({
                         src={
                           previewUrl?.startsWith("blob:")
                             ? previewUrl
-                            : `http://127.0.0.1:8000/${previewUrl}`
+                            : `${API_BASE_URL}/${previewUrl}`
                         }
                         alt="Selected preview"
                         className="mt-2 h-20 rounded-md"
@@ -373,10 +376,7 @@ export function CreateItemForm({
                                   width={25}
                                   height={25}
                                   alt={category.name || "category-icon"}
-                                  src={
-                                    "http://localhost:8000" +
-                                    category.icon?.image
-                                  }
+                                  src={`${API_BASE_URL}${category.icon?.image}`}
                                 ></Image>
                               )}
                             </SelectItem>

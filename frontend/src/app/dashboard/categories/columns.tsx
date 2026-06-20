@@ -23,6 +23,9 @@ import { CreateCategoryForm } from "../components/CreateCategoryForm";
 //actions
 import { deleteCategory } from "@/app/actions";
 
+//configs
+import { MEDIA_BASE_URL } from "@/lib/config";
+
 //SVGs
 import {
   ArrowUpDown,
@@ -62,7 +65,7 @@ export const categoryColumns = (
             className="rounded-md"
             fill
             alt={props.row.original.icon?.name}
-            src={`http://127.0.0.1:8000${props.row.original.icon?.image}`}
+            src={`${MEDIA_BASE_URL}${props.row.original.icon?.image}`}
           ></Image>
         ) : (
           <ImageIcon

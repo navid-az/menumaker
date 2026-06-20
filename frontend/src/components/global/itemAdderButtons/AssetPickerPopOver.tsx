@@ -15,6 +15,9 @@ import AssetPicker from "../AssetPicker";
 //SVGs
 import { Plus } from "lucide-react";
 
+//configs
+import { MEDIA_BASE_URL } from "@/lib/config";
+
 //types
 import { AssetType, AssetGroupType } from "../AssetPicker";
 
@@ -72,7 +75,7 @@ export function AssetPickerPopOver({
                   className="rounded-md"
                   fill
                   alt={value.name}
-                  src={`http://127.0.0.1:8000${value.image}`}
+                  src={`${MEDIA_BASE_URL}${value.image}`}
                 />
               </div>
             </div>

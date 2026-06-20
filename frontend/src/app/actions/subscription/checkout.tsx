@@ -4,6 +4,9 @@
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 
+//configs
+import { API_BASE_URL } from "@/lib/config";
+
 export async function initiatePayment(
   businessSlug: string,
   planSlug: string,
@@ -13,7 +16,7 @@ export async function initiatePayment(
   let paymentUrl: string;
   try {
     const res = await fetch(
-      `http://localhost:8000/subscriptions/orders/?business_slug=${businessSlug}`,
+      `${API_BASE_URL}/subscriptions/orders/?business_slug=${businessSlug}`,
       {
         method: "POST",
         headers: {

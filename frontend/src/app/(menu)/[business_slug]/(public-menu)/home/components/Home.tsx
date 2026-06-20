@@ -8,6 +8,9 @@ import Link from "next/link";
 //libraries
 import { cn } from "@/lib/utils";
 
+//configs
+import { MEDIA_BASE_URL } from "@/lib/config";
+
 //SVGs
 import { AlignLeft } from "lucide-react";
 
@@ -63,7 +66,7 @@ export default function Home({
           {menuData.secondary_image && (
             <div className="relative h-[22vh] w-6/12 rounded-bl-(--radius-md)">
               <Image
-                src={`http://127.0.0.1:8000${menuData.secondary_image}`}
+                src={`${MEDIA_BASE_URL}${menuData.secondary_image}`}
                 fill
                 alt="secondary_image"
                 className={cn(
@@ -123,7 +126,7 @@ export default function Home({
       {menuData.tertiary_image && (
         <div className="absolute left-0 top-[12vh] h-[24vh] w-[110px]">
           <Image
-            src={`http://127.0.0.1:8000${menuData.tertiary_image}`}
+            src={`${MEDIA_BASE_URL}${menuData.tertiary_image}`}
             fill
             alt="tertiary_image"
             className={cn(
@@ -155,7 +158,7 @@ export default function Home({
         {menuData.primary_image && (
           <div className="relative h-full w-full">
             <Image
-              src={`http://127.0.0.1:8000${menuData.primary_image}`}
+              src={`${MEDIA_BASE_URL}${menuData.primary_image}`}
               fill
               alt="primary_image"
               className={cn(

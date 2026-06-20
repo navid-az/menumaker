@@ -12,6 +12,9 @@ import { ArrowLeft } from "lucide-react";
 //libraries
 import { gsap } from "gsap";
 
+//configs
+import { MEDIA_BASE_URL } from "@/lib/config";
+
 //types
 export type AssetType = { id: number; name: string; image: string };
 export type AssetGroupType = {
@@ -158,7 +161,7 @@ function AssetTab({
                       className="rounded-md"
                       fill
                       alt={asset.name}
-                      src={`http://127.0.0.1:8000${asset.image}`}
+                      src={`${MEDIA_BASE_URL}${asset.image}`}
                     />
                   </div>
                 </AssetTile>
@@ -203,7 +206,7 @@ function AssetGroupImage({ itemGroup }: { itemGroup: AssetGroupType }) {
             className="rounded-md"
             fill
             alt={instances[1].name}
-            src={`http://127.0.0.1:8000${instances[1].image}`}
+            src={`${MEDIA_BASE_URL}${instances[1].image}`}
           />
         </div>
       )}
@@ -213,7 +216,7 @@ function AssetGroupImage({ itemGroup }: { itemGroup: AssetGroupType }) {
             className="rounded-md"
             fill
             alt={instances[0].name}
-            src={`http://127.0.0.1:8000${instances[0].image}`}
+            src={`${MEDIA_BASE_URL}${instances[0].image}`}
           />
         </div>
       )}
@@ -223,7 +226,7 @@ function AssetGroupImage({ itemGroup }: { itemGroup: AssetGroupType }) {
             className="rounded-md"
             fill
             alt={instances[2].name}
-            src={`http://127.0.0.1:8000${instances[2].image}`}
+            src={`${MEDIA_BASE_URL}${instances[2].image}`}
           />
         </div>
       )}

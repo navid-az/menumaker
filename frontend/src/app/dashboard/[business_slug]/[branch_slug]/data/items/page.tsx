@@ -7,13 +7,16 @@ import ItemClientWrapper from "../components/ItemClientWrapper";
 import { type MenuCategory } from "@/app/types/api/menu";
 import { type MenuItem } from "@/app/types/api/menu";
 
+//configs
+import { API_BASE_URL } from "@/lib/config";
+
 //menu items data
 async function getVisibleItems(
   business_slug: string,
   branch_slug: string
 ): Promise<MenuItem[]> {
   const data = await fetch(
-    `http://127.0.0.1:8000/businesses/${business_slug}/items/?branch_slug=${branch_slug}&scope=visible`,
+    `${API_BASE_URL}/businesses/${business_slug}/items/?branch_slug=${branch_slug}&scope=visible`,
     {
       next: { tags: ["items"] },
     }
@@ -28,7 +31,7 @@ async function getHiddenItems(
   branch_slug: string
 ): Promise<MenuItem[]> {
   const data = await fetch(
-    `http://127.0.0.1:8000/businesses/${business_slug}/items/?branch_slug=${branch_slug}&scope=hidden`,
+    `${API_BASE_URL}/businesses/${business_slug}/items/?branch_slug=${branch_slug}&scope=hidden`,
     {
       next: { tags: ["items"] },
     }
@@ -44,7 +47,7 @@ async function getMenuCategoriesData(
   business_slug: string
 ): Promise<MenuCategory[]> {
   const data = await fetch(
-    `http://127.0.0.1:8000/businesses/${business_slug}/categories`,
+    `${API_BASE_URL}/businesses/${business_slug}/categories`,
     {
       next: { tags: ["categories"] },
     }

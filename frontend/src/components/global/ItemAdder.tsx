@@ -13,6 +13,9 @@ import { LinkAction } from "./itemAdderButtons/LinkAction";
 import * as z from "zod";
 import { nanoid } from "nanoid";
 
+//configs
+import { MEDIA_BASE_URL } from "@/lib/config";
+
 //hooks
 import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
 
@@ -290,7 +293,7 @@ function ListItem({ item, handleEdit, handleDelete, isActive }: ListItemType) {
               className="rounded-md"
               fill
               alt={item.asset.name}
-              src={`http://127.0.0.1:8000${item.asset.image}`}
+              src={`${MEDIA_BASE_URL}${item.asset.image}`}
             ></Image>
           ) : (
             <ImageOff

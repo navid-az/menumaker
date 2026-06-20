@@ -21,6 +21,9 @@ import { cn } from "@/lib/utils";
 import { usePreview } from "@/app/(creator)/builder/components/preview/PreviewContext";
 import { useSearchParams } from "next/navigation";
 
+//configs
+import { API_BASE_URL } from "@/lib/config";
+
 export default function MenuHeader({
   globalStyling,
   menuData,
@@ -32,10 +35,9 @@ export default function MenuHeader({
 }) {
   async function callWaiter() {
     const sessionCode = sessionStorage.getItem("session_code");
-    const res = await fetch(
-      `http://127.0.0.1:8000/sessions/${sessionCode}/calls/`,
-      { method: "POST" }
-    );
+    const res = await fetch(`${API_BASE_URL}/sessions/${sessionCode}/calls/`, {
+      method: "POST",
+    });
     if (!res.ok) {
       console.error("wtf just happened");
     }

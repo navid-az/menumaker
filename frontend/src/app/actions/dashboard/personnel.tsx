@@ -7,11 +7,14 @@ import { revalidateTag } from "next/cache";
 //types
 import { type Personnel } from "@/app/dashboard/personnel/columns";
 
+//configs
+import { API_BASE_URL } from "@/lib/config";
+
 export async function invitePersonnel(business_slug: string, data: Personnel) {
   const accessToken = (await cookies()).get("access");
   try {
     const res = await fetch(
-      `http://localhost:8000/personnel/business/${business_slug}/personnel/assign/`,
+      `${API_BASE_URL}/personnel/business/${business_slug}/personnel/assign/`,
       {
         method: "POST",
         headers: {
@@ -46,7 +49,7 @@ export async function deletePersonnel(
   const accessToken = (await cookies()).get("access");
   try {
     const res = await fetch(
-      `http://localhost:8000/business/${business_slug}/personnel/${personnel_id}/delete/`,
+      `${API_BASE_URL}/business/${business_slug}/personnel/${personnel_id}/delete/`,
       {
         method: "DELETE",
         headers: {

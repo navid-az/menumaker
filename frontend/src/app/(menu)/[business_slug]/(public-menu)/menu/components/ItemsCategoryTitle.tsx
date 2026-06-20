@@ -11,6 +11,9 @@ type ItemsCategoryTitleType = {
   lineGradient?: boolean;
 };
 
+//configs
+import { MEDIA_BASE_URL } from "@/lib/config";
+
 const ItemsCategoryTitle = ({
   categoryName,
   categoryIcon,
@@ -46,7 +49,7 @@ const ItemsCategoryTitle = ({
         {categoryIcon && (
           <div className="relative h-6 w-6 flex-none">
             <Image
-              src={"http://localhost:8000" + categoryIcon}
+              src={`${MEDIA_BASE_URL}${categoryIcon}`}
               fill
               alt="category icon"
             ></Image>

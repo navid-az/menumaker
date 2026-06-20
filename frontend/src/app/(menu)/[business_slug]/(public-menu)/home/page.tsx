@@ -4,12 +4,13 @@ import HomeLayout from "./components/HomeLayout";
 //types
 import { type MenuGlobalStyling, type Menu } from "@/app/types/api/menu";
 
+//configs
+import { API_BASE_URL } from "@/lib/config";
+
 // GET menu data
 export async function getMenuData(business_slug: string) {
   try {
-    let res = await fetch(
-      `http://127.0.0.1:8000/businesses/${business_slug}/menu/`
-    );
+    let res = await fetch(`${API_BASE_URL}/businesses/${business_slug}/menu/`);
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
     }
@@ -23,7 +24,7 @@ export async function getMenuData(business_slug: string) {
 export async function getGlobalStyling(business_slug: string) {
   try {
     let res = await fetch(
-      `http://127.0.0.1:8000/businesses/${business_slug}/menu/global-styling`
+      `${API_BASE_URL}/businesses/${business_slug}/menu/global-styling`
     );
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);

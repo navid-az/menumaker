@@ -4,9 +4,12 @@ type DRFErrorResponse = {
   [key: string]: any;
 };
 
+//configs
+import { API_BASE_URL } from "@/lib/config";
+
 // Fetches subscription plans from the backend API
 export default async function getSubscriptionPlans() {
-  const res = await fetch("http://localhost:8000/subscriptions/plans/", {
+  const res = await fetch(`${API_BASE_URL}/subscriptions/plans/`, {
     method: "GET",
 
     next: {

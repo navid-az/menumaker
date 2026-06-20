@@ -6,8 +6,11 @@ import { revalidatePath, revalidateTag } from "next/cache";
 
 //types
 import { SetupSchemaType } from "./(creator)/builder/components/setup/Setup";
-import { BuilderFormType } from "./(creator)/builder/components/builder/Builder";
 import { BranchFormType } from "./dashboard/components/CreateBranchForm";
+import { BuilderFormType } from "./(creator)/builder/components/builder/BuilderTest";
+
+//configs
+import { API_BASE_URL } from "@/lib/config";
 
 // import jwtDecoder from "@/lib/jwtDecoder";
 // type DecodedJwtType = {
@@ -62,7 +65,7 @@ export async function createCategory(
 
   try {
     const res = await fetch(
-      `http://localhost:8000/businesses/${businessSlug}/categories/`,
+      `${API_BASE_URL}/businesses/${businessSlug}/categories/`,
       {
         method: "POST",
         headers: {
@@ -98,7 +101,7 @@ export async function updateCategory(
 ) {
   const accessToken = (await cookies()).get("access");
   try {
-    const res = await fetch(`http://127.0.0.1:8000/categories/${categoryId}/`, {
+    const res = await fetch(`${API_BASE_URL}/categories/${categoryId}/`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -129,7 +132,7 @@ export async function updateCategory(
 export async function deleteCategory(businessSlug: string, categoryId: number) {
   const accessToken = (await cookies()).get("access");
   try {
-    const res = await fetch(`http://127.0.0.1:8000/categories/${categoryId}/`, {
+    const res = await fetch(`${API_BASE_URL}/categories/${categoryId}/`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -156,7 +159,7 @@ export async function deleteCategory(businessSlug: string, categoryId: number) {
 //ITEM ACTIONS
 //get all menu items
 export async function getItems() {
-  const res = await fetch("http://127.0.0.1:8000/dashboard/items/");
+  const res = await fetch(`${API_BASE_URL}/dashboard/items/`);
   if (!res.ok) {
     // This will activate the closest `error.js` Error Boundary
     throw new Error("Failed to fetch data");
@@ -169,7 +172,7 @@ export async function createItem(businessSlug: string, data: FormData) {
 
   try {
     const res = await fetch(
-      `http://127.0.0.1:8000/businesses/${businessSlug}/items/`,
+      `${API_BASE_URL}/businesses/${businessSlug}/items/`,
       {
         method: "POST",
         headers: {
@@ -208,7 +211,7 @@ export async function updateItem(
 
   try {
     const res = await fetch(
-      `http://127.0.0.1:8000/items/${itemId}/${
+      `${API_BASE_URL}/items/${itemId}/${
         branchSlug ? `?branch_slug=${branchSlug}` : ""
       }`,
       {
@@ -242,7 +245,7 @@ export async function updateItem(
 export async function deleteItem(businessSlug: string, itemId: number) {
   const accessToken = (await cookies()).get("access");
   try {
-    const res = await fetch(`http://127.0.0.1:8000/items/${itemId}/`, {
+    const res = await fetch(`${API_BASE_URL}/items/${itemId}/`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -294,7 +297,7 @@ export async function createMenu(businessSlug: string, data: MenuType) {
 
   try {
     const res = await fetch(
-      `http://localhost:8000/businesses/${businessSlug}/menu/`,
+      `${API_BASE_URL}/businesses/${businessSlug}/menu/`,
       {
         method: "POST",
         headers: {
@@ -329,7 +332,7 @@ export async function updateMenu(businessSlug: string, data: MenuType) {
 
   try {
     const res = await fetch(
-      `http://localhost:8000/businesses/${businessSlug}/menu/`,
+      `${API_BASE_URL}/businesses/${businessSlug}/menu/`,
       {
         method: "PATCH",
         headers: {
@@ -365,7 +368,7 @@ export async function createBusiness(data: SetupSchemaType) {
   const accessToken = (await cookies()).get("access");
 
   try {
-    const res = await fetch("http://localhost:8000/businesses/", {
+    const res = await fetch(`${API_BASE_URL}/businesses/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -403,7 +406,7 @@ export async function createBranch(
 
   try {
     const res = await fetch(
-      `http://localhost:8000/businesses/${business_slug}/branches/`,
+      `${API_BASE_URL}/businesses/${business_slug}/branches/`,
       {
         method: "POST",
         headers: {
@@ -436,7 +439,7 @@ export async function createBranch(
 export async function updateBranch(branch_slug: string, data: BranchFormType) {
   const accessToken = (await cookies()).get("access");
   try {
-    const res = await fetch(`http://localhost:8000/branches/${branch_slug}/`, {
+    const res = await fetch(`${API_BASE_URL}/branches/${branch_slug}/`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -469,17 +472,14 @@ export async function createTable(data: any, branch_slug: string) {
   const accessToken = (await cookies()).get("access");
 
   try {
-    const res = await fetch(
-      `http://localhost:8000/branches/${branch_slug}/tables/`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken?.value}`,
-        },
-        body: JSON.stringify(data),
-      }
-    );
+    const res = await fetch(`${API_BASE_URL}/branches/${branch_slug}/tables/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+      body: JSON.stringify(data),
+    });
     if (!res.ok) {
       const errorData = await res.json();
       console.log(errorData);
@@ -508,7 +508,7 @@ export async function updateTable(
   const accessToken = (await cookies()).get("access");
 
   try {
-    const res = await fetch(`http://localhost:8000/tables/${tableId}/`, {
+    const res = await fetch(`${API_BASE_URL}/tables/${tableId}/`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -540,7 +540,7 @@ export async function deleteTable(branch_slug: string, tableId: number) {
   const accessToken = (await cookies()).get("access");
 
   try {
-    const res = await fetch(`http://localhost:8000/tables/${tableId}/`, {
+    const res = await fetch(`${API_BASE_URL}/tables/${tableId}/`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -567,7 +567,7 @@ export async function deleteTable(branch_slug: string, tableId: number) {
 // image upload
 export async function uploadImage(data: FormData) {
   try {
-    const res = await fetch("http://localhost:8000/menu/images/", {
+    const res = await fetch(`${API_BASE_URL}/menu/images/`, {
       method: "POST",
       body: data,
     });
