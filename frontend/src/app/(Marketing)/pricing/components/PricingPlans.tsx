@@ -176,7 +176,7 @@ export default function PricingPlans({
                 ></PlanCardPricing>
                 {!isCompact && (
                   <PlanCardContent>
-                    {index != 0 && (
+                    {index != 0 && plans && (
                       <div className="flex gap-2 items-center ">
                         <CheckCheck className="w-4 h-4"></CheckCheck>
                         <p className="text-sm font-medium">
