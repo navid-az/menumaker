@@ -19,7 +19,7 @@ type jwtPayloadType = {
 };
 
 //configs
-import { API_BASE_URL } from "@/lib/config";
+import { SERVER_API_BASE_URL } from "@/lib/config";
 
 export async function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
@@ -93,7 +93,7 @@ export async function middleware(request: NextRequest) {
 
         // Fetch new access token
         const response = await fetch(
-          `${API_BASE_URL}/accounts/token/refresh/`,
+          `${SERVER_API_BASE_URL}/accounts/token/refresh/`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },

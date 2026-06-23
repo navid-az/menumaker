@@ -6,14 +6,14 @@ import CategoryClientWrapper from "../components/CategoryClientWrapper";
 import { MenuCategory } from "@/app/types/api/menu";
 
 //configs
-import { API_BASE_URL } from "@/lib/config";
+import { SERVER_API_BASE_URL } from "@/lib/config";
 
 //menu categories data
 async function getMenuCategoriesData(
   business_slug: string
 ): Promise<MenuCategory[]> {
   const data = await fetch(
-    `${API_BASE_URL}/businesses/${business_slug}/categories/`,
+    `${SERVER_API_BASE_URL}/businesses/${business_slug}/categories/`,
     {
       next: { tags: ["categories"] },
     }
@@ -26,7 +26,7 @@ async function getMenuCategoriesData(
 }
 
 const getAssetGroups = async () => {
-  const res = await fetch(`${API_BASE_URL}/pickers/icon-pickers`);
+  const res = await fetch(`${SERVER_API_BASE_URL}/pickers/icon-pickers`);
   if (!res.ok) {
     throw new Error(
       `Failed to fetch asset groups: ${res.status} ${res.statusText}`

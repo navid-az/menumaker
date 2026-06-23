@@ -8,12 +8,14 @@ import { type Menu as MenuData } from "@/app/types/api/menu";
 import { type AssetGroupType } from "@/components/global/AssetPicker";
 
 //configs
-import { API_BASE_URL } from "@/lib/config";
+import { SERVER_API_BASE_URL } from "@/lib/config";
 
 // GET business data
-export async function getBusinessData(business_slug: string) {
+async function getBusinessData(business_slug: string) {
   try {
-    let res = await fetch(`${API_BASE_URL}/businesses/${business_slug}/`);
+    let res = await fetch(
+      `${SERVER_API_BASE_URL}/businesses/${business_slug}/`
+    );
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
     }
@@ -24,9 +26,11 @@ export async function getBusinessData(business_slug: string) {
 }
 
 // GET menu data
-export async function getMenuData(business_slug: string) {
+async function getMenuData(business_slug: string) {
   try {
-    let res = await fetch(`${API_BASE_URL}/businesses/${business_slug}/menu/`);
+    let res = await fetch(
+      `${SERVER_API_BASE_URL}/businesses/${business_slug}/menu/`
+    );
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
     }
@@ -37,10 +41,10 @@ export async function getMenuData(business_slug: string) {
 }
 
 // GET menu global stylings
-export async function getGlobalStyling(business_slug: string) {
+async function getGlobalStyling(business_slug: string) {
   try {
     let res = await fetch(
-      `${API_BASE_URL}/businesses/${business_slug}/menu/global-styling/`
+      `${SERVER_API_BASE_URL}/businesses/${business_slug}/menu/global-styling/`
     );
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
@@ -52,7 +56,7 @@ export async function getGlobalStyling(business_slug: string) {
 }
 
 const getAssetGroups = async () => {
-  const res = await fetch(`${API_BASE_URL}/pickers/icon-pickers`);
+  const res = await fetch(`${SERVER_API_BASE_URL}/pickers/icon-pickers`);
   if (!res.ok) {
     throw new Error(
       `Failed to fetch asset groups: ${res.status} ${res.statusText}`

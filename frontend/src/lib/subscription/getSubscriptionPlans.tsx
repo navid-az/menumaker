@@ -5,35 +5,40 @@ type DRFErrorResponse = {
 };
 
 //configs
-import { API_BASE_URL } from "@/lib/config";
+import { SERVER_API_BASE_URL } from "@/lib/config";
 
 // Fetches subscription plans from the backend API
 export default async function getSubscriptionPlans() {
-  const res = await fetch(`${API_BASE_URL}/subscriptions/plans/`, {
-    method: "GET",
+  try {
+    const res = await fetch(`${SERVER_API_BASE_URL}/subscriptions/plans/`, {
+      method: "GET",
+      next: {
+        revalidate: 86400,
+      },
+      headers: {
+        Accept: "application/json",
+      },
+    });
 
-    next: {
-      revalidate: 86400, // 1 day
-    },
+    if (!res.ok) {
+      let errorData: DRFErrorResponse = {};
+      try {
+        errorData = await res.json();
+      } catch {}
 
-    headers: {
-      Accept: "application/json",
-    },
-  });
+      throw new Error(
+        errorData.detail ||
+          errorData.error ||
+          "Failed to fetch subscription plans"
+      );
+    }
 
-  if (!res.ok) {
-    let errorData: DRFErrorResponse = {};
-
-    try {
-      errorData = await res.json();
-    } catch {}
-
-    throw new Error(
-      errorData.detail ||
-        errorData.error ||
-        "Failed to fetch subscription plans"
-    );
+    return res.json();
+  } catch (error) {
+    // During docker build, backend isn't running yet.
+    // Return empty array so Next.js can complete static generation.
+    // ISR will revalidate with real data once the app is deployed.
+    console.warn("getSubscriptionPlans: fetch failed, using fallback.", error);
+    return [];
   }
-
-  return res.json();
 }

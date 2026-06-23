@@ -7,7 +7,7 @@ import { type UpdateOrder } from "@/app/types/payloads/menu";
 import { cookies } from "next/headers";
 
 //configs
-import { API_BASE_URL } from "@/lib/config";
+import { SERVER_API_BASE_URL } from "@/lib/config";
 
 // update order's status and status's timestamp (ex: status=ready & prepared_at=current dateTime)
 export async function updateOrder(
@@ -17,7 +17,7 @@ export async function updateOrder(
   const accessToken = (await cookies()).get("access");
 
   try {
-    const res = await fetch(`${API_BASE_URL}/orders/${orderId}/`, {
+    const res = await fetch(`${SERVER_API_BASE_URL}/orders/${orderId}/`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

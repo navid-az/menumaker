@@ -6,7 +6,7 @@ import jwtDecoder from "./jwtDecoder";
 import { type User } from "@/app/types/api/auth";
 
 //configs
-import { API_BASE_URL } from "@/lib/config";
+import { SERVER_API_BASE_URL } from "@/lib/config";
 
 // get user data
 export async function getUserData() {
@@ -21,7 +21,9 @@ export async function getUserData() {
     return null;
   }
 
-  const res = await fetch(`${API_BASE_URL}/accounts/user/${userObj.user_id}`);
+  const res = await fetch(
+    `${SERVER_API_BASE_URL}/accounts/user/${userObj.user_id}`
+  );
 
   if (!res.ok) {
     throw new Error("Failed to fetch data");

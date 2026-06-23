@@ -7,12 +7,14 @@ import { type MenuGlobalStyling } from "@/app/types/api/menu";
 export type ValidItemType = { item: MenuItem; count?: number };
 
 //configs
-import { API_BASE_URL } from "@/lib/config";
+import { SERVER_API_BASE_URL } from "@/lib/config";
 
 // GET menu items
 async function getItems(business_slug: string) {
   try {
-    let res = await fetch(`${API_BASE_URL}/businesses/${business_slug}/items`);
+    let res = await fetch(
+      `${SERVER_API_BASE_URL}/businesses/${business_slug}/items`
+    );
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
     }
@@ -23,10 +25,10 @@ async function getItems(business_slug: string) {
 }
 
 // GET menu global stylings
-export async function getGlobalStyling(business_slug: string) {
+async function getGlobalStyling(business_slug: string) {
   try {
     let res = await fetch(
-      `${API_BASE_URL}/businesses/${business_slug}/menu/global-styling`
+      `${SERVER_API_BASE_URL}/businesses/${business_slug}/menu/global-styling`
     );
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);

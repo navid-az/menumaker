@@ -12,7 +12,7 @@ import PersonnelClientWrapper from "./components/PersonnelClientWrapper";
 import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 
 //configs
-import { API_BASE_URL } from "@/lib/config";
+import { SERVER_API_BASE_URL } from "@/lib/config";
 
 // Fetch personnel data of the business/branch
 // If branch_slug is provided, fetch personnel for that branch
@@ -23,7 +23,7 @@ async function getPersonnel(
 ) {
   try {
     const data = await fetch(
-      `${API_BASE_URL}/businesses/${business_slug}/personnel/?branch_slug=${branch_slug}`,
+      `${SERVER_API_BASE_URL}/businesses/${business_slug}/personnel/?branch_slug=${branch_slug}`,
 
       {
         headers: {

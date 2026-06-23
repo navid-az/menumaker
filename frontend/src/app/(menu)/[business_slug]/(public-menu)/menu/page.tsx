@@ -6,12 +6,14 @@ import { type MenuGlobalStyling } from "@/app/types/api/menu";
 import { type Menu as MenuData } from "@/app/types/api/menu";
 
 //configs
-import { API_BASE_URL } from "@/lib/config";
+import { SERVER_API_BASE_URL } from "@/lib/config";
 
 // GET menu data
-export async function getMenuData(business_slug: string) {
+async function getMenuData(business_slug: string) {
   try {
-    let res = await fetch(`${API_BASE_URL}/businesses/${business_slug}/menu/`);
+    let res = await fetch(
+      `${SERVER_API_BASE_URL}/businesses/${business_slug}/menu/`
+    );
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
     }
@@ -22,10 +24,10 @@ export async function getMenuData(business_slug: string) {
 }
 
 // GET menu global stylings
-export async function getGlobalStyling(business_slug: string) {
+async function getGlobalStyling(business_slug: string) {
   try {
     let res = await fetch(
-      `${API_BASE_URL}/businesses/${business_slug}/menu/global-styling/`
+      `${SERVER_API_BASE_URL}/businesses/${business_slug}/menu/global-styling/`
     );
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
@@ -37,10 +39,10 @@ export async function getGlobalStyling(business_slug: string) {
 }
 
 // GET menu categories
-export async function getMenuCategories(business_slug: string) {
+async function getMenuCategories(business_slug: string) {
   try {
     let res = await fetch(
-      `${API_BASE_URL}/businesses/${business_slug}/categories/`
+      `${SERVER_API_BASE_URL}/businesses/${business_slug}/categories/`
     );
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);

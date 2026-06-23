@@ -19,12 +19,12 @@ import { getBusinessSubscription } from "@/lib/subscription/getBusinessSubscript
 import { type Subscription } from "@/app/types/api/subscription";
 
 //configs
-import { API_BASE_URL } from "@/lib/config";
+import { SERVER_API_BASE_URL } from "@/lib/config";
 
 // get all branches of active business
 async function getBranches(business_slug: string) {
   const data = await fetch(
-    `${API_BASE_URL}/businesses/${business_slug}/branches/`,
+    `${SERVER_API_BASE_URL}/businesses/${business_slug}/branches/`,
     {
       next: { tags: ["branches"] },
     }

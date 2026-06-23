@@ -5,10 +5,10 @@ import { DashboardHeader } from "../../components/DashboardHeader";
 import ToolBar from "../../components/ToolBar";
 
 //configs
-import { API_BASE_URL } from "@/lib/config";
+import { SERVER_API_BASE_URL } from "@/lib/config";
 
 const getAssetGroups = async () => {
-  const res = await fetch(`${API_BASE_URL}/pickers/icon-pickers`);
+  const res = await fetch(`${SERVER_API_BASE_URL}/pickers/icon-pickers`);
   if (!res.ok) {
     throw new Error(
       `Failed to fetch asset groups: ${res.status} ${res.statusText}`
@@ -19,7 +19,7 @@ const getAssetGroups = async () => {
 
 const getCategories = async (businessSlug: string) => {
   const res = await fetch(
-    `${API_BASE_URL}/businesses/${businessSlug}/categories`
+    `${SERVER_API_BASE_URL}/businesses/${businessSlug}/categories`
   );
   if (!res.ok) {
     throw new Error(
@@ -31,7 +31,7 @@ const getCategories = async (businessSlug: string) => {
 
 async function getBranches(business_slug: string) {
   const data = await fetch(
-    `${API_BASE_URL}/businesses/${business_slug}/branches/`,
+    `${SERVER_API_BASE_URL}/businesses/${business_slug}/branches/`,
     {
       next: { tags: ["branches"] },
     }

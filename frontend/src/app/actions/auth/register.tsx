@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 //configs
-import { API_BASE_URL } from "@/lib/config";
+import { SERVER_API_BASE_URL } from "@/lib/config";
 
 // Validate credentials(phoneNumber only) and generate an OTP
 // Email validation will be added later on
@@ -13,11 +13,14 @@ export async function validateCredentials(credential: {
   email?: string;
 }): Promise<{ retry_after: number; detail: string }> {
   try {
-    const res = await fetch(`${API_BASE_URL}/accounts/validate-credential/`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(credential),
-    });
+    const res = await fetch(
+      `${SERVER_API_BASE_URL}/accounts/validate-credential/`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(credential),
+      }
+    );
     const resData = await res.json();
     console.log(resData);
     if (!res.ok) {
@@ -50,7 +53,7 @@ export async function validateOtp(data: {
   | { success: false; error: ValidateOtpError }
 > {
   try {
-    const res = await fetch(`${API_BASE_URL}/accounts/validate-code`, {
+    const res = await fetch(`${SERVER_API_BASE_URL}/accounts/validate-code`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -98,7 +101,7 @@ export async function logOut() {
 export async function verifyToken() {
   const accessToken = (await cookies()).get("access");
 
-  const res = await fetch(`${API_BASE_URL}/accounts/token/verify/`, {
+  const res = await fetch(`${SERVER_API_BASE_URL}/accounts/token/verify/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -116,7 +119,7 @@ export async function verifyToken() {
 export async function refreshToken() {
   const refresh = (await cookies()).get("refresh")?.value;
 
-  const res = await fetch(`${API_BASE_URL}/accounts/token/refresh/`, {
+  const res = await fetch(`${SERVER_API_BASE_URL}/accounts/token/refresh/`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ refresh: refresh }),

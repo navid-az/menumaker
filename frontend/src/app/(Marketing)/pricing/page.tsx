@@ -20,9 +20,9 @@ import getSubscriptionPlans from "@/lib/subscription/getSubscriptionPlans";
 //SVGs
 import { Gem } from "lucide-react";
 
-export const PLANS = ["basic", "pro", "franchise"] as const;
+const PLANS = ["basic", "pro", "franchise"] as const;
 
-export const PRICING_COMPARISON = [
+const PRICING_COMPARISON = [
   {
     sectionKey: "menu_builder",
     sectionTitle: "سیستم منو ساز",

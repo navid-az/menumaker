@@ -8,7 +8,7 @@ import { type MenuCategory } from "@/app/types/api/menu";
 import { type MenuItem } from "@/app/types/api/menu";
 
 //configs
-import { API_BASE_URL } from "@/lib/config";
+import { SERVER_API_BASE_URL } from "@/lib/config";
 
 //menu items data
 async function getVisibleItems(
@@ -16,7 +16,7 @@ async function getVisibleItems(
   branch_slug: string
 ): Promise<MenuItem[]> {
   const data = await fetch(
-    `${API_BASE_URL}/businesses/${business_slug}/items/?branch_slug=${branch_slug}&scope=visible`,
+    `${SERVER_API_BASE_URL}/businesses/${business_slug}/items/?branch_slug=${branch_slug}&scope=visible`,
     {
       next: { tags: ["items"] },
     }
@@ -31,7 +31,7 @@ async function getHiddenItems(
   branch_slug: string
 ): Promise<MenuItem[]> {
   const data = await fetch(
-    `${API_BASE_URL}/businesses/${business_slug}/items/?branch_slug=${branch_slug}&scope=hidden`,
+    `${SERVER_API_BASE_URL}/businesses/${business_slug}/items/?branch_slug=${branch_slug}&scope=hidden`,
     {
       next: { tags: ["items"] },
     }
@@ -47,7 +47,7 @@ async function getMenuCategoriesData(
   business_slug: string
 ): Promise<MenuCategory[]> {
   const data = await fetch(
-    `${API_BASE_URL}/businesses/${business_slug}/categories`,
+    `${SERVER_API_BASE_URL}/businesses/${business_slug}/categories`,
     {
       next: { tags: ["categories"] },
     }

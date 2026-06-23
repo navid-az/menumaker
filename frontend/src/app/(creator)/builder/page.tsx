@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 //components
 import MenuMaker from "./components/MenuMaker";
 
@@ -6,10 +8,10 @@ import getSubscriptionPlans from "@/lib/subscription/getSubscriptionPlans";
 import { getUserBusinesses } from "@/lib/getUserBusinesses";
 
 //configs
-import { API_BASE_URL } from "@/lib/config";
+import { SERVER_API_BASE_URL } from "@/lib/config";
 
 const getAssetGroups = async () => {
-  const res = await fetch(`${API_BASE_URL}/pickers/icon-pickers`);
+  const res = await fetch(`${SERVER_API_BASE_URL}/pickers/icon-pickers`);
   if (!res.ok) {
     throw new Error(
       `Failed to fetch asset groups: ${res.status} ${res.statusText}`

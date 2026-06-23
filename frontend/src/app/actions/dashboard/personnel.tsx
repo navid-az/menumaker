@@ -8,13 +8,13 @@ import { revalidateTag } from "next/cache";
 import { type Personnel } from "@/app/dashboard/personnel/columns";
 
 //configs
-import { API_BASE_URL } from "@/lib/config";
+import { SERVER_API_BASE_URL } from "@/lib/config";
 
 export async function invitePersonnel(business_slug: string, data: Personnel) {
   const accessToken = (await cookies()).get("access");
   try {
     const res = await fetch(
-      `${API_BASE_URL}/personnel/business/${business_slug}/personnel/assign/`,
+      `${SERVER_API_BASE_URL}/personnel/business/${business_slug}/personnel/assign/`,
       {
         method: "POST",
         headers: {
@@ -49,7 +49,7 @@ export async function deletePersonnel(
   const accessToken = (await cookies()).get("access");
   try {
     const res = await fetch(
-      `${API_BASE_URL}/business/${business_slug}/personnel/${personnel_id}/delete/`,
+      `${SERVER_API_BASE_URL}/business/${business_slug}/personnel/${personnel_id}/delete/`,
       {
         method: "DELETE",
         headers: {
