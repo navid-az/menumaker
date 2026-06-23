@@ -1,29 +1,33 @@
 services:
   backend:
+    build: ./backend
     env_file:
       - .env
-    build: ./backend
-    command: sh -c "python manage.py migrate --noinput && daphne -b 0.0.0.0 -p 8000 core.asgi:application"
+    command: sh -c "python manage.py migrate --noinput && python manage.py collectstatic --noinput --clear && daphne -b 0.0.0.0 -p 8000 core.asgi:application"
     volumes:
       - ./backend:/app
+      - static_data:/app/staticfiles
+      - media_data:/app/media
     ports:
-      - "8000:8000"
+      - "8000:8000"   # temporary — goes away once nginx is added
     depends_on:
       - db
       - redis
 
   frontend:
-    build: ./frontend
-    env_file:
-      - ./frontend/.env.local
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-      - /app/.next
+    build:
+      context: ./frontend
+      args:
+        - NEXT_PUBLIC_API_URL=http://localhost:8000
+        - NEXT_PUBLIC_MEDIA_URL=http://backend:8000
+    environment:
+      - API_URL=http://backend:8000
+      - SECRET_KEY=${SECRET_KEY}
     ports:
       - "3000:3000"
     depends_on:
       - backend
+    restart: unless-stopped
 
   db:
     image: postgres:16
@@ -31,15 +35,18 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
 
   redis:
     image: redis:latest
-    ports:
-      - "6379:6379"
+    restart: unless-stopped
 
 volumes:
   postgres_data:
+  static_data:
+  media_data:

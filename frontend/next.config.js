@@ -2,7 +2,7 @@
 // const nextConfig = {};
 
 module.exports = {
-  // output: "standalone",
+  output: "standalone",
   // eslint: {
   //   ignoreDuringBuilds: true,
   // },
@@ -21,7 +21,7 @@ module.exports = {
     remotePatterns: [
       {
         protocol: "http",
-        hostname: "localhost",
+        hostname: "backend",
         port: "8000",
       },
     ],
