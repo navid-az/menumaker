@@ -20,7 +20,11 @@ import {
 } from "./PlanCard";
 
 //functions
+import getSubscriptionPlansClient from "@/lib/subscription/getSubscriptionPlansClient";
 import { cn } from "@/lib/utils";
+
+//libraries
+import { useQuery } from "@tanstack/react-query";
 
 //SVGs
 import {
@@ -115,14 +119,20 @@ const themeStyles: Record<
 
 export default function PricingPlans({
   businessSlug,
-  plans,
+  plans: plansProp,
   isCompact = false,
 }: {
   businessSlug?: string;
-  plans: SubscriptionPlan[];
+  plans?: SubscriptionPlan[];
   isCompact?: boolean;
 }) {
   const [planDuration, setPlanDuration] = useState<90 | 180 | 360>(90);
+  const { data: fetchedPlans = [] } = useQuery<SubscriptionPlan[]>({
+    queryKey: ["subscription-plans"],
+    queryFn: getSubscriptionPlansClient,
+    staleTime: 1000 * 60 * 60,
+    enabled: !plansProp, // Only fetch if plans weren't passed as prop
+  });
 
   return (
     <div className="w-full flex flex-col gap-16 items-center">
@@ -137,6 +147,7 @@ export default function PricingPlans({
         )}
       >
         {planStaticData.map((plan, index) => {
+          const plans = plansProp ?? fetchedPlans;
           const dynamicPlan = plans.find((p) => p.slug === plan.slug);
           const planPricing = dynamicPlan?.pricings.find(
             (p) => p.duration === planDuration

@@ -1,9 +1,10 @@
+import React from "react";
+
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-import localFont from "next/font/local";
-import React from "react";
 import { Toaster } from "@/components/ui/sonner";
+import Providers from "./providers";
 
 // Font files can be collocated inside of `app`
 // const vazir = localFont({
@@ -26,10 +27,12 @@ export default function RootLayout({
     <html lang="en" dir="rtl">
       <body className={cn("overflow-x-hidden bg-white font-vazir font-medium")}>
         {/* data-vaul-drawer-wrapper */}
-        <main>
-          {children}
-          <Toaster duration={4000} />
-        </main>
+        <Providers>
+          <main>
+            {children}
+            <Toaster duration={4000} />
+          </main>
+        </Providers>
       </body>
     </html>
   );
