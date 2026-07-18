@@ -5,12 +5,13 @@ from django.conf.urls.static import static  # new
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("accounts/", include("accounts.urls", namespace="accounts")),
-    path("pickers/", include("pickers.urls", namespace="pickers")),
-    path("", include("business.urls", namespace="business")),
-    path("", include("menu.urls", namespace="menu")),
-    path('personnel/', include('personnel.urls', namespace='personnel')),
-    path('subscriptions/', include('subscriptions.urls', namespace='subscriptions'))
+    path("api/accounts/", include("accounts.urls", namespace="accounts")),
+    path("api/pickers/", include("pickers.urls", namespace="pickers")),
+    path("api/", include("business.urls", namespace="business")),
+    path("api/", include("menu.urls", namespace="menu")),
+    path("api/personnel/", include("personnel.urls", namespace="personnel")),
+    path("api/subscriptions/",
+         include("subscriptions.urls", namespace="subscriptions")),
 ]
 
 if settings.DEBUG:

@@ -63,6 +63,9 @@ import { deleteTable } from "@/app/actions";
 //hooks
 import { progressType, useActiveTimer } from "@/app/hooks/useActiveTimer";
 
+//configs
+import { APP_URL } from "@/lib/config";
+
 // types
 import { type UpdateOrder } from "@/app/types/payloads/menu";
 type LiveCardType = {
@@ -366,7 +369,7 @@ function QRCodeView({
   return (
     <div className="flex items-center justify-center w-full h-full">
       <QrCodeGenerator
-        url={`http://localhost:3000/${businessSlug}/menu?branch=${branchSlug}&t=${tableCode}`}
+        url={`${APP_URL}/${businessSlug}/menu?branch=${branchSlug}&t=${tableCode}`}
       ></QrCodeGenerator>
     </div>
   );

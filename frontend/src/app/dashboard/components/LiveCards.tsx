@@ -5,6 +5,9 @@ import React, { useEffect, useState, useMemo } from "react";
 // components
 import LiveCard from "./LiveCard";
 
+//configs
+import { getWsUrl } from "@/lib/config";
+
 // types
 import { TableType } from "../[business_slug]/[branch_slug]/liveManagement/all/page";
 
@@ -43,7 +46,7 @@ export default function LiveCards({
 
   useEffect(() => {
     const socket = new WebSocket(
-      `ws://localhost:8000/ws/dashboard/${businessSlug}/${branchSlug}/`
+      getWsUrl(`/ws/dashboard/${businessSlug}/${branchSlug}/`)
     );
     socket.onopen = () => {
       console.log("connection established");

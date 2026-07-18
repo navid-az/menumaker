@@ -10,11 +10,18 @@ RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-# NEXT_PUBLIC_* must be baked in HERE, during the build
+# Declare each NEXT_PUBLIC_* as a build arg and convert to ENV
+# so Next.js can read them during `next build`
+ARG NEXT_PUBLIC_APP_URL
 ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_WS_URL
 ARG NEXT_PUBLIC_MEDIA_URL
-ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
-ENV NEXT_PUBLIC_MEDIA_URL=${NEXT_PUBLIC_MEDIA_URL}
+
+ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_WS_URL=$NEXT_PUBLIC_WS_URL
+ENV NEXT_PUBLIC_MEDIA_URL=$NEXT_PUBLIC_MEDIA_URL
+
 
 RUN pnpm run build
 
@@ -24,11 +31,6 @@ FROM node:26-slim AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-
-# Runtime env vars — read at request time, not baked into bundle
-# These are injected by docker compose at container startup
-ENV API_URL=http://backend:8000
-# SECRET_KEY and other runtime vars come from compose environment/env_file
 
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
