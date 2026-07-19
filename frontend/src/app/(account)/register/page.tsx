@@ -16,6 +16,7 @@ import RegisterBtn from "./components/RegisterBtn";
 import CredentialStep from "./components/CredentialStep";
 import OtpStep from "./components/OtpStep";
 import OtpCountdown from "./components/OtpCountdown";
+import DemoModeBtn from "@/app/components/DemoModeBtn";
 
 //libraries
 import z from "zod";
@@ -200,7 +201,10 @@ export default function Page() {
       >
         <Slider validSections={sections}>
           <SliderHeader>
-            <SliderTitle></SliderTitle>
+            <div className="flex flex-col w-full gap-6">
+              <SliderTitle></SliderTitle>
+              <DemoModeBtn></DemoModeBtn>
+            </div>
           </SliderHeader>
           <SliderBody>
             <AnimatePresence mode="wait" initial={false}>

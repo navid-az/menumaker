@@ -141,3 +141,35 @@ export async function refreshToken() {
   });
   return { success: true, refreshed_token: data.access };
 }
+
+// Create a demo user to bypass auth system
+// ONLY FOR REVIEWERS !!!
+export async function createDemoUser(): Promise<
+  | { success: true; tokens: ValidateOtpSuccess }
+  | { success: false; error: ValidateOtpError }
+> {
+  try {
+    const res = await fetch(`${SERVER_API_BASE_URL}/accounts/user/demo/`, {
+      method: "POST",
+    });
+
+    const resData = await res.json();
+    console.log(resData, resData.access, resData.refresh);
+
+    if (!res.ok) {
+      return {
+        success: false,
+        error: resData ?? { detail: "Unknown server error" },
+      };
+    }
+    return {
+      success: true,
+      tokens: { access: resData.access, refresh: resData.refresh },
+    };
+  } catch (err) {
+    return {
+      success: false,
+      error: { detail: "Network error. Please try again" },
+    };
+  }
+}
