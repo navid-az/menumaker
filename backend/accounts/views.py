@@ -1,4 +1,5 @@
 import secrets
+import time
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password, check_password
 from django.utils import timezone
@@ -13,6 +14,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.throttling import AnonRateThrottle
 
 from .serializers import (
     CustomTokenRefreshSerializer,
@@ -23,6 +25,22 @@ from .serializers import (
 
 # kavenegar API
 from kavenegar import *
+
+
+# Issue pair of auth tokens for given user
+# Inject user roles into access token
+def issue_tokens_for(user):
+    refresh = RefreshToken.for_user(user)
+
+    access = refresh.access_token
+
+    # Attach user roles to access token
+    access['roles'] = user.get_user_roles()
+
+    return {
+        "refresh": str(refresh),
+        "access": str(access),
+    }
 
 
 # Receive phone_number, generate OTP, send OTP to user
@@ -130,18 +148,10 @@ class ValidateOtpView(APIView):
             user.save()
 
         # issue JWT
-        refresh = RefreshToken.for_user(user)
-
-        access = refresh.access_token
-
-        # Attach user roles to access token
-        access['roles'] = user.get_user_roles()
+        tokens = issue_tokens_for(user)
 
         return Response(
-            {
-                "refresh": str(refresh),
-                "access": str(access),
-            },
+            tokens,
             status=status.HTTP_200_OK
         )
 
@@ -164,3 +174,26 @@ class getUserDataView(APIView):
         user = get_user_model().objects.get(pk=id)
         ser_data = getUserDataSerializer(instance=user)
         return Response(data=ser_data.data)
+
+
+class DemoRateThrottle(AnonRateThrottle):
+    scope = "demo"
+
+
+# Create demo user for demo access to app
+class DemoUserView(APIView):
+    throttle_classes = [DemoRateThrottle]
+
+    def post(self, request):
+        if not settings.DEMO_MODE_ENABLED:
+            return Response({"error": "not found"}, status=404)
+
+        phone_placeholder = f"+demo{int(time.time() * 1000)}"
+        user = User.objects.create(
+            phone_number=phone_placeholder,
+            is_demo=True,
+        )
+
+        # issue JWT
+        tokens = issue_tokens_for(user)
+        return Response(tokens, status=status.HTTP_200_OK)

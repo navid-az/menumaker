@@ -21,9 +21,6 @@ env = environ.Env()
 PROJECT_ROOT = BASE_DIR.parent  # project root
 environ.Env.read_env(PROJECT_ROOT / ".env")
 
-KAVENEGAR_API_KEY = env("KAVENEGAR_API_KEY")
-DUMMY_PHONE_NUMBER = env('DUMMY_PHONE_NUMBER')
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -34,13 +31,21 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DEBUG', default=False)
 
-DB_ENGINE = "postgres"
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
-
 # Security
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = "DENY"
+
+# Database core settings
+DB_ENGINE = env.str('DB_ENGINE', default='postgres')
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
+
+# External API keys
+KAVENEGAR_API_KEY = env("KAVENEGAR_API_KEY")
+
+# Demo mode is purely for recruiters reviewing the project
+DEMO_MODE_ENABLED = env.bool("DEMO_MODE_ENABLED", default=False)
+DUMMY_PHONE_NUMBER = env('DUMMY_PHONE_NUMBER')
 
 
 # Application definition
@@ -99,21 +104,22 @@ TEMPLATES = [
 ASGI_APPLICATION = "core.asgi.application"
 WSGI_APPLICATION = "core.wsgi.application"
 
-
-# CHANNEL_LAYERS = {
-#     "default": {
-#         "BACKEND": "channels.layers.InMemoryChannelLayer",
-#     },
-# }
-
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [env("REDIS_URL")],
+# ASGI channel layer
+if DEBUG == True:
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels.layers.InMemoryChannelLayer",
         },
-    },
-}
+    }
+else:
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [env("REDIS_URL")],
+            },
+        },
+    }
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -193,13 +199,14 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "accounts.User"
 
 # cors headers
+# NEEDS TO BE CHANGED
 CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
 
 # Django REST API
 REST_FRAMEWORK = {
-    # "DEFAULT_PARSER_CLASSES": [
-    #     "rest_framework.parsers.JSONParser",
-    # ],
+    "DEFAULT_THROTTLE_RATES": {
+        "demo": "20/hour",
+    },
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
         "rest_framework.renderers.BrowsableAPIRenderer",
@@ -213,10 +220,9 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=7),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
-    # "TOKEN_OBTAIN_SERIALIZER": "accounts.serializers.MyTokenObtainPairSerializer",
 }
 
-# Recommended for better performance
+# For better performance
 STORAGES = {
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
