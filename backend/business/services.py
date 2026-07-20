@@ -1,7 +1,8 @@
 # businesses/services.py
-from .models import Business, Branch, Table, Category, Item
+from .models import Business, Branch, Table, TableSession, Category, Item, CallWaiter
 from personnel.models import Personnel
 from business.models import generate_unique_code
+import random
 
 
 def clone_demo_business_data(new_business):
@@ -15,12 +16,26 @@ def clone_demo_business_data(new_business):
             phone_number=branch.phone_number
         )
         for table in branch.tables.all():
-            Table.objects.create(
+            new_table = Table.objects.create(
                 branch=new_branch,
                 name=table.name,
                 code=generate_unique_code(),
                 seats=table.seats,
             )
+            # Create table_session and waiter calls to make it feel real
+            # 60% chance this table has an active session
+            if random.random() < 0.6:
+
+                table_session = TableSession.objects.create(
+                    table=new_table,
+                    code=generate_unique_code(),
+                )
+
+                # ~35% chance this table has an active waiter call
+                if random.random() < 0.35:
+                    CallWaiter.objects.create(
+                        table_session=table_session,
+                    )
 
     # Categories -> Items
     for category in template.categories.all():
