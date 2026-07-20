@@ -13,4 +13,5 @@ export type User = {
   pk: 1;
   phone_number: string;
   email: string;
+  is_demo: boolean;
 };

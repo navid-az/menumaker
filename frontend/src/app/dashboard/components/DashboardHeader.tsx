@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import SubscriptionPopOver from "./SubscriptionPopOver";
 
 //SVGs
-import { Menu, User2 } from "lucide-react";
+import { User2 } from "lucide-react";
 
 //functions
 import { checkFeatureAccess } from "@/lib/guards/checkFeatureAccess";

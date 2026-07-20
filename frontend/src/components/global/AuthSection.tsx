@@ -9,6 +9,9 @@ import { cn } from "@/lib/utils";
 import { type User } from "@/app/types/api/auth";
 import { type Business } from "@/app/types/api/business";
 
+//hooks
+import { useSearchParams } from "next/navigation";
+
 //SVGs
 import { User2 } from "lucide-react";
 
@@ -22,6 +25,9 @@ export default function AuthSection() {
   const [businesses, setBusinesses] = useState<Business[] | null>();
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const searchParams = useSearchParams();
+  const isDemo = searchParams.get("demo") === "true";
 
   useEffect(() => {
     if (user && businesses) {
@@ -65,7 +71,9 @@ export default function AuthSection() {
           disabled={isLoading}
           className=" bg-royal-green text-soft-blue hover:scale-105 transition-all duration-300 scale-pro"
         >
-          <Link href="/register">ورود | ثبت نام</Link>
+          <Link href={isDemo ? "/register?demo=true" : "/register"}>
+            ورود | ثبت نام
+          </Link>
         </Button>
       )}
     </div>

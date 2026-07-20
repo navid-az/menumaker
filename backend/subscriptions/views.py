@@ -1,3 +1,5 @@
+from zarinpal import ZarinPal, Config
+from typing import Literal
 from django.shortcuts import get_object_or_404
 
 from rest_framework import status
@@ -13,12 +15,10 @@ from .serializers import SubscriptionSerializer, SubscriptionCreateUpdateSeriali
 from .models import Subscription, SubscriptionOrder, Plan, PlanPricing
 from business.models import Business
 from django.utils import timezone
+import environ
 
-# types
-from typing import Literal
+env = environ.Env()
 
-# zarinpal imports
-from zarinpal import ZarinPal, Config
 
 User = get_user_model()
 
@@ -103,7 +103,7 @@ def initiate_payment(amount: int, description: str, mobile: str, email: str):
 
         response = zarinpal.payments.create({
             "amount": amount,
-            "callback_url": "http://localhost:8000/subscriptions/orders/verify/",
+            "callback_url": env.str("NEXT_PUBLIC_APP_URL", default="http://localhost:8000/api/subscriptions/orders/verify/"),
             "description": description,
             "mobile": mobile,
             "email": email,

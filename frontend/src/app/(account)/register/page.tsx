@@ -18,6 +18,9 @@ import OtpStep from "./components/OtpStep";
 import OtpCountdown from "./components/OtpCountdown";
 import DemoModeBtn from "@/app/components/DemoModeBtn";
 
+//hooks
+import { useSearchParams } from "next/navigation";
+
 //libraries
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -66,6 +69,10 @@ export default function Page() {
   //form step state
   const [step, setStep] = useState(1);
   const [retryAfter, setRetryAfter] = useState(0);
+
+  //Check if this is a demo template(layout)
+  const searchParams = useSearchParams();
+  const isDemo = searchParams.get("demo") === "true";
 
   // reset slider states on mount
   useEffect(() => {
@@ -203,7 +210,7 @@ export default function Page() {
           <SliderHeader>
             <div className="flex flex-col w-full gap-6">
               <SliderTitle></SliderTitle>
-              <DemoModeBtn></DemoModeBtn>
+              {isDemo && <DemoModeBtn></DemoModeBtn>}
             </div>
           </SliderHeader>
           <SliderBody>

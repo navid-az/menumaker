@@ -166,4 +166,4 @@ class CheckUserCredentialSerializer(serializers.Serializer):
 class getUserDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["pk", "phone_number", "email"]
+        fields = ["pk", "phone_number", "email", 'is_demo']
