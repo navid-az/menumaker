@@ -22,6 +22,9 @@ from rest_framework import status
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 
+# services & functions
+from .services import clone_demo_business_data
+
 User = get_user_model()
 
 
@@ -48,8 +51,12 @@ class BusinessesView(APIView):
         if ser_data.is_valid():
             business = ser_data.save(owner=request.user)
 
-            # create a default branch for the business
-            Branch.objects.create(business=business, name=business.name)
+            if request.user.is_demo:
+                # Clone template business for demo user
+                clone_demo_business_data(business)
+            else:
+                # create a default branch for the business
+                Branch.objects.create(business=business, name=business.name)
 
             return Response(ser_data.data, status=status.HTTP_201_CREATED)
         return Response(ser_data.errors, status=status.HTTP_400_BAD_REQUEST)

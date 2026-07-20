@@ -37,7 +37,7 @@ SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = "DENY"
 
 # Database core settings
-DB_ENGINE = env.str('DB_ENGINE', default='postgres')
+DB_ENGINE = env.str("DB_ENGINE", default='postgres')
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
 
 # External API keys
