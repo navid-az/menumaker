@@ -7,7 +7,7 @@ import FeatureNameList from "./components/FeatureNameList";
 
 export default function Home() {
   return (
-    <main className="items-center">
+    <main className="items-center flex-1">
       <Image
         src="/images/two-square.svg"
         width={465}
