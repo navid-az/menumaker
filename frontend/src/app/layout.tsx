@@ -25,7 +25,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" dir="rtl">
-      <body className={cn("overflow-x-hidden bg-white font-vazir font-medium")}>
+      <body
+        className={cn(
+          "overflow-x-hidden bg-white font-vazir font-medium flex flex-col min-h-screen"
+        )}
+      >
         {/* data-vaul-drawer-wrapper */}
         <Providers>
           <main>
