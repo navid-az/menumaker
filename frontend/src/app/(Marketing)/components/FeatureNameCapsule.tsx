@@ -18,7 +18,7 @@ export default function FeatureNameCapsule({
   return (
     <Button
       className={cn(
-        "scale-pro flex gap-2 px-4 py-2 font-normal rounded-full border shadow-xs hover:shadow-xl hover:scale-105 transition-all duration-300",
+        "scale-pro h-8 md:h-10 flex text-xs md:text-sm gap-2 px-3 md:px-4 py-1 md:py-2 font-medium md:font-normal rounded-full border shadow-xs hover:shadow-xl hover:scale-105 transition-all duration-300",
         className
       )}
     >
