@@ -76,6 +76,7 @@ type LiveCardType = {
   status?: "occupied" | "reserved" | "canceled" | "notice";
   seats?: number;
   hasSession?: boolean;
+  isMockUp?: boolean;
 };
 type ServiceType = "in-person" | "on-table" | "online";
 type LiveCardState =
@@ -133,6 +134,7 @@ export default function LiveCard({
   hasSession,
   businessSlug,
   branchSlug,
+  isMockUp = false,
 }: LiveCardType) {
   const [showCode, setShowCode] = useState(false);
   const [state, setState] = useState<LiveCardState>("default");
@@ -402,6 +404,7 @@ export function LiveCardHeader({
   setShowCode,
   elapsedDuration,
   progressType,
+  isMockUp = false,
 }: {
   table: TableType;
   branchSlug: string;
@@ -409,6 +412,7 @@ export function LiveCardHeader({
   orderAge: number;
   elapsedDuration: string;
   progressType: progressType;
+  isMockUp?: boolean;
 }) {
   async function handleTableDelete() {
     const res = await deleteTable(branchSlug, table.id);
@@ -462,17 +466,24 @@ export function LiveCardHeader({
                 <QrCode></QrCode>
                 مشاهده QR کد
               </DropdownMenuItem>
-              <CreateTableForm
-                branchSlug={branchSlug}
-                defaultValues={table}
-                tableId={table.id}
-                title="ویرایش میز"
-              >
-                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+              {isMockUp ? (
+                <DropdownMenuItem>
                   <Pen></Pen>
                   ویرایش میز
                 </DropdownMenuItem>
-              </CreateTableForm>
+              ) : (
+                <CreateTableForm
+                  branchSlug={branchSlug}
+                  defaultValues={table}
+                  tableId={table.id}
+                  title="ویرایش میز"
+                >
+                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                    <Pen></Pen>
+                    ویرایش میز
+                  </DropdownMenuItem>
+                </CreateTableForm>
+              )}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
@@ -538,7 +549,7 @@ export function LiveCardHeader({
             size="icon"
             className={cn(
               "rounded-full w-14 transition-all duration-300 bg-(--livecard-secondary)",
-              false ? "opacity-0 -ml-[64px]" : "opacity-100 ml-0"
+              true ? "opacity-0 -ml-[64px]" : "opacity-100 ml-0"
             )}
           >
             <User2 className="text-(--livecard-primary)"></User2>
@@ -547,18 +558,20 @@ export function LiveCardHeader({
       </div>
 
       {/* transaction success message */}
-      {/* <div className="w-full h-full absolute flex justify-center z-20">
-        <Button className="rounded-full justify-center bg-green-950 text-green-200 group">
-          <BadgeCheck className="w-6 h-6"></BadgeCheck>
-          <p
-            className={cn(
-              "text-md font-light transition-all duration-300 -ml-[83.8px] opacity-0 group-hover:ml-0 group-hover:opacity-100"
-            )}
-          >
-            پرداخت موفق
-          </p>
-        </Button>
-      </div> */}
+      {/* {successfulTransaction && (
+        <div className="w-full h-full absolute flex justify-center z-20">
+          <Button className="rounded-full justify-center bg-green-950 text-green-200 group">
+            <BadgeCheck className="w-6 h-6"></BadgeCheck>
+            <p
+              className={cn(
+                "text-xs font-medium transition-all duration-300 -ml-[73px] opacity-0 group-hover:ml-0 group-hover:opacity-100"
+              )}
+            >
+              پرداخت موفق
+            </p>
+          </Button>
+        </div>
+      )} */}
     </div>
   );
 }
