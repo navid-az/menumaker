@@ -1,6 +1,21 @@
-export function GradientSpan({ children }: { children: string }) {
+import { cn } from "@/lib/utils";
+
+export function GradientSpan({
+  children,
+  variant = "dark",
+}: {
+  children: React.ReactNode;
+  variant?: "light" | "dark";
+}) {
   return (
-    <span className="bg-[linear-gradient(135deg,#94d9e2_0%,#0f2c30_70%)] bg-clip-text text-transparent">
+    <span
+      className={cn(
+        "bg-clip-text text-transparent",
+        variant === "light"
+          ? "bg-[linear-gradient(135deg,#94d9e2_0%,#a1fcb5_70%)]"
+          : "bg-[linear-gradient(135deg,#94d9e2_0%,#0f2c30_70%)]"
+      )}
+    >
       {children}
     </span>
   );
