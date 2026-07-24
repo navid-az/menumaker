@@ -1,9 +1,11 @@
+//components
 import Image from "next/image";
 import Link from "next/link";
-import Benefits from "../../components/global/benefits";
 import { Button } from "@/components/ui/button";
-import { GradientSpan } from "./components/GradientSpan";
+import Benefits from "../../components/global/benefits";
 import FeatureNameList from "./components/FeatureNameList";
+import LiveManagementSection from "./components/sections/LiveManagementSection";
+import { GradientSpan } from "./components/GradientSpan";
 
 export default function Home() {
   return (
@@ -92,7 +94,7 @@ export default function Home() {
         <h2 className="font-bold text-4xl md:text-6xl leading-12 md:leading-19 color-royal-green line-h">
           فراتر از یک
           <br />
-          <GradientSpan>منوی دیجیتال</GradientSpan>
+          <GradientSpan variant="dark">منوی دیجیتال</GradientSpan>
         </h2>
         <h3 className="text-teal-950/60 font-normal max-w-5/6 md:max-w-xl text-sm md:text-xl ">
           لِ‌منو یک سیستم عملیاتی کامل برای رستوران‌های مدرن است — از منوی زیبا
@@ -100,6 +102,7 @@ export default function Home() {
         </h3>
         <FeatureNameList></FeatureNameList>
       </div>
+      <LiveManagementSection></LiveManagementSection>
     </main>
   );
 }
