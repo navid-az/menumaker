@@ -77,6 +77,7 @@ type LiveCardType = {
   seats?: number;
   hasSession?: boolean;
   isMockUp?: boolean;
+  className?: string
 };
 type ServiceType = "in-person" | "on-table" | "online";
 type LiveCardState =
@@ -135,6 +136,7 @@ export default function LiveCard({
   businessSlug,
   branchSlug,
   isMockUp = false,
+  className
 }: LiveCardType) {
   const [showCode, setShowCode] = useState(false);
   const [state, setState] = useState<LiveCardState>("default");
@@ -233,7 +235,7 @@ export default function LiveCard({
     <div
       style={stateColors[state]}
       className={cn(
-        "relative border-[3px] overflow-clip border-(--livecard-primary) bg-(--livecard-primary) text-(--livecard-accent) min-h-[350px] font-normal w-60 transition-all duration-300 justify-end flex items-center flex-col rounded-[26px]"
+        "relative border-[3px] overflow-clip border-(--livecard-primary) bg-(--livecard-primary) text-(--livecard-accent) min-h-[350px] font-normal w-60 transition-all duration-300 justify-end flex items-center flex-col rounded-[26px]", className
       )}
     >
       <LiveCardBody activeSessionValid={!!activeSessionValid} table={table}>
@@ -297,20 +299,20 @@ export default function LiveCard({
               </div>
               {(progressType === "readyOrder" ||
                 progressType === "pendingOrder") && (
-                <Button
-                  onClick={handleUpdateOrder}
-                  className="left-1/2 hidden group-hover:flex top-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-100 absolute size-[76%] font-semibold rounded-full bg-green-300 text-green-950"
-                >
-                  <p
-                    className={cn(
-                      "font-semibold transition-all duration-300",
-                      showOrder ? "text-sm" : "text-2xl"
-                    )}
+                  <Button
+                    onClick={handleUpdateOrder}
+                    className="left-1/2 hidden group-hover:flex top-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-100 absolute size-[76%] font-semibold rounded-full bg-green-300 text-green-950"
                   >
-                    تکمیل
-                  </p>
-                </Button>
-              )}
+                    <p
+                      className={cn(
+                        "font-semibold transition-all duration-300",
+                        showOrder ? "text-sm" : "text-2xl"
+                      )}
+                    >
+                      تکمیل
+                    </p>
+                  </Button>
+                )}
               {/* <p className="absolute top-0 text-red-600">{progressType}</p> */}
               <ProgressBar
                 outerColor="var(--livecard-secondary)"
