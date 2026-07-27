@@ -26,7 +26,7 @@ export default function BentoFeaturesSection() {
                     نیاز به ابزارهای پراکنده.
                 </SectionSubtitle>
             </SectionHeader>
-            <BentoBox className='h-150 w-full' cols={6} >
+            <BentoBox className='h-370 md:h-150 w-full' cols={6} >
                 <MenuBento />
                 <BranchBento />
                 <TableBento />

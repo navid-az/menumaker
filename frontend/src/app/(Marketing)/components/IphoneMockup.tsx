@@ -10,7 +10,7 @@ interface IPhoneMockupProps extends React.HTMLAttributes<HTMLDivElement> {
   screenClassName?: string;
 }
 
-interface ScreenProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface ScreenProps extends React.HTMLAttributes<HTMLDivElement> { }
 
 const Screen = React.forwardRef<HTMLDivElement, ScreenProps>(
   ({ className, ...props }, ref) => (
@@ -36,7 +36,7 @@ export const IPhoneMockup = Object.assign(
           {/* Screen */}
           <div
             className={cn(
-              "absolute overflow-hidden opacity-80 rounded-[42px]",
+              "absolute overflow-hidden rounded-[42px]",
               screenClassName
             )}
             style={{

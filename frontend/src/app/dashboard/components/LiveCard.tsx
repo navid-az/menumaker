@@ -194,7 +194,7 @@ export default function LiveCard({
         setTitle("مشاهده منو");
       }
       if (progressType === "none") {
-        setState("default");
+        setState("disabled");
       }
     } else {
       setState("default");
@@ -540,12 +540,12 @@ export function LiveCardHeader({
         <div className="flex justify-between gap-2">
           <Button
             size="icon"
-            className="relative rounded-full border-yellow-950/20 border hover:border-yellow-950 bg-inherit hover:bg-royal-green/5 text-royal-green"
+            className="relative rounded-full border-(--livecard-primary)/20 border hover:border-(--livecard-primary) hover:bg-(--livecard-primary)/5 bg-inherit text-royal-green"
           >
             <Bell className="z-10"></Bell>
-            <span className="absolute -bottom-0.5 -right-0.5 min-w-[1rem] h-[1rem] rounded-full pt-0.5 bg-red-500 text-[10px] font-bold text-white flex items-center justify-center ring-2 ring-white">
+            {/* <span className="absolute -bottom-0.5 -right-0.5 min-w-[1rem] h-[1rem] rounded-full pt-0.5 bg-red-500 text-[10px] font-bold text-white flex items-center justify-center ring-2 ring-white">
               3
-            </span>
+            </span> */}
           </Button>
           {/* <Button
             size="icon"

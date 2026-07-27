@@ -17,19 +17,19 @@ import { motion, AnimatePresence } from 'motion/react'
 export default function RoleBento() {
     const [isHovered, setIsHovered] = useState(false);
 
-    return <Bento onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)} colSpan={4} rowSpan={2} className='group relative overflow-hidden'>
+    return <Bento onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)} colSpan={4} mobileRowSpan={1} rowSpan={2} className='group relative overflow-hidden'>
         <BentoHeader>
             <BentoTitle>مدیریت سطح دسترسی</BentoTitle>
             <BentoDescription>
                 مدیریت اعضا با سطح دسترسی های مختلف و نقش های متفاوت
             </BentoDescription>
             <BentoBody className='relative group'>
-                <div className='flex justify-between gap-2 pt-6 group-hover:scale-95 mx-auto absolute left-0 right-0 w-11/12  group-hover:-translate-y-7 transition-all duration-300'>
-                    <div className='flex flex-col w-full'>
-                        <div className='rounded-t-xl bg-zinc-50 border text-zinc-400 border-zinc-200 w-full h-max p-2 flex items-center font-normal justify-between'>
-                            <div className='flex-1 justify-start text-sm font-medium items-center'> <p>نام کاربر</p></div>
-                            <div className='flex-1 justify-start text-sm font-medium items-center'>    <p>شعبه</p></div>
-                            <div className='flex-1 justify-start text-sm font-medium items-center'>  <p>سمت</p></div>
+                <div className='flex justify-between gap-2 pt-12 md:pt-6 group-hover:scale-95 mx-auto absolute left-0 right-0 w-full md:w-11/12 group-hover:-translate-y-7 transition-all duration-300'>
+                    <div className='flex flex-col w-full h-max'>
+                        <div className='rounded-t-xl bg-zinc-50 border text-zinc-400 border-zinc-200 w-full h-max px-1.5 py-0 md:p-2 flex items-center font-normal justify-between'>
+                            <div className='flex-1 justify-start text-xs md:text-sm font-medium items-center'> <p>نام کاربر</p></div>
+                            <div className='flex-1 justify-start text-xs md:text-sm font-medium items-center'>    <p>شعبه</p></div>
+                            <div className='flex-1 justify-start text-xs md:text-sm font-medium items-center'>  <p>سمت</p></div>
                             <div className='flex gap-2'>
                                 <Button className='opacity-0 p-2 h-auto bg-transparent hover:bg-zinc-100 text-zinc-600'><Trash2 className='w-5 h-5'></Trash2></Button>
                                 <Button className='opacity-0 p-2 h-auto bg-transparent hover:bg-zinc-100 text-zinc-600'><Trash2 className='w-5 h-5'></Trash2></Button>
@@ -57,14 +57,14 @@ export default function RoleBento() {
 
 function MockupTableRow({ children, isBlurred = false }: { children?: React.ReactNode, isBlurred?: boolean }) {
     return <div className={cn('last-of-type:rounded-b-md border border-t-0 text-zinc-600 border-zinc-200 w-full h-max flex items-center font-normal justify-between')}>
-        <div className={cn('flex-1 px-2 py-4 justify-start text-sm font-light items-center', isBlurred && 'blur-xs')}><p>پارسا کاظمی</p></div>
-        <div className={cn('flex-1 px-2 py-4 justify-start text-sm font-light items-center', isBlurred && 'blur-xs')}>  <p>شعبه تهران-نیاوران</p></div>
-        <div className='relative px-2 py-4 flex-1 justify-start text-sm font-light items-center'>
+        <div className={cn('flex-1 px-2 py-2 md:py-4 justify-start text-xs md:text-sm font-light items-center', isBlurred && 'blur-xs')}><p>پارسا کاظمی</p></div>
+        <div className={cn('flex-1 px-2 py-2 md:py-4 justify-start text-xs md:text-sm font-light items-center', isBlurred && 'blur-xs')}>  <p>شعبه تهران-نیاوران</p></div>
+        <div className='relative px-2 py-2 md:py-4 flex-1 justify-start text-sm font-light items-center'>
             {children}
         </div>
-        <div className='flex gap-2 px-4 py-2'>
-            <Button className='p-2 h-auto bg-transparent hover:bg-zinc-100 text-zinc-600'><Trash2 className='w-5 h-5'></Trash2></Button>
-            <Button className='p-2 h-auto bg-transparent hover:bg-zinc-100 text-zinc-600'><EllipsisVertical className='w-5 h-5'></EllipsisVertical></Button>
+        <div className={cn('flex gap-2 px-2 md:px-2 py-2 md:py-4', isBlurred && 'blur-xs')}>
+            <Button className='p-2 h-auto bg-transparent hover:bg-zinc-100 text-zinc-600'><Trash2 className='w-3.5 md:w-4 h-3.5 md:h-4'></Trash2></Button>
+            <Button className='p-2 h-auto bg-transparent hover:bg-zinc-100 text-zinc-600'><EllipsisVertical className='w-3.5 md:w-4 h-3.5 md:h-4'></EllipsisVertical></Button>
         </div>
     </div>
 
@@ -119,7 +119,7 @@ function PermissionsList({ isHovered }: { isHovered: boolean }) {
 
     return (
 
-        <div className="absolute z-10 right-0 -top-0.5 flex flex-col gap-8 items-start">
+        <div className="absolute z-10 right-0 -top-1.5 md:-top-0.5 flex flex-col gap-8 items-start">
             <AnimatePresence mode="popLayout">
                 {visible.map((role, index) => {
                     const isTop = index === 0;
@@ -144,13 +144,13 @@ function PermissionsList({ isHovered }: { isHovered: boolean }) {
                                 opacity: { duration: 0.3 },
                             }}
                             className={`
-                  px-3 py-2 w-max border-2 rounded-full
+                  px-2.5 md:px-3 py-1.5 md:py-2 w-max border md:border-2 rounded-full
                   flex items-center gap-2
                   ${role.colors}
                 `}
                         >
                             <role.icon
-                                className="w-4 h-4"
+                                className="w-3.5 md:w-4 h-3.5 md:h-4"
                                 strokeWidth={role.strokeWidth ?? 2}
                             />
                             <p className="text-xs font-medium">{role.label}</p>

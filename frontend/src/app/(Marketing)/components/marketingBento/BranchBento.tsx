@@ -5,7 +5,7 @@ import { Bento, BentoHeader, BentoTitle, BentoDescription, BentoBody } from "../
 import { Search, MapPin, Plus } from "lucide-react"
 
 export default function BranchBento() {
-    return <Bento colSpan={2} rowSpan={4} className='group relative overflow-hidden'>
+    return <Bento colSpan={2} mobileRowSpan={2} rowSpan={4} className='group relative overflow-hidden'>
         <BentoHeader>
             <BentoTitle>مدیریت شعبه ها</BentoTitle>
             <BentoDescription>

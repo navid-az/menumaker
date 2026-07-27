@@ -58,6 +58,7 @@ export default function TableBento() {
 
     return <Bento
         colSpan={2}
+        mobileRowSpan={2}
         rowSpan={4}
         className="group relative overflow-hidden"
         onMouseEnter={() => setIsHovered(true)}
@@ -71,22 +72,22 @@ export default function TableBento() {
         </BentoHeader>
 
         <BentoBody className="">
-            <div className="h-full w-max absolute flex gap-4 left-1/2 right-1/2 translate-x-1/2 translate-y-2/12 scale-90">
+            <div className="h-full w-max absolute flex gap-0 md:gap-4 left-1/2 right-1/2 translate-x-1/2 translate-y-2/12 scale-90">
                 <LiveCard
-                    className="border transition-all duration-300 group-hover:scale-95"
-                    table={getIdleTableData()}
+                    className="border transition-all duration-300 scale-90 md:scale-100 group-hover:scale-85 md:group-hover:scale-95"
+                    table={{ ...getIdleTableData(), name: 'میز VIP' }}
                     businessSlug="mockup-business-2"
                     branchSlug="mockup-branch-2"
                 />
                 <LiveCard
-                    className="border group-hover:border-2 transition-all group-hover:-translate-y-2/12 duration-300 group-hover:scale-105"
+                    className="border group-hover:border-2 transition-all group-hover:-translate-y-2/12 duration-300 scale-90 md:scale-100 group-hover:scale-95 md:group-hover:scale-105"
                     table={table}
                     businessSlug="mockup-business-2"
                     branchSlug="mockup-branch-2"
                 />
                 <LiveCard
-                    className="border transition-all duration-300 group-hover:scale-95"
-                    table={getIdleTableData()}
+                    className="border transition-all duration-300 scale-90 md:scale-100 group-hover:scale-85 md:group-hover:scale-95"
+                    table={{ ...getIdleTableData(), name: 'میز ۲' }}
                     businessSlug="mockup-business-2"
                     branchSlug="mockup-branch-2"
                 />
