@@ -72,10 +72,12 @@ export default function ToolBar({
           <DashboardTabs>
             <DashboardTabsTrigger path="all" title="همه"></DashboardTabsTrigger>
             <DashboardTabsTrigger
+              disabled
               path="in-person"
               title="بر روی میز"
             ></DashboardTabsTrigger>
             <DashboardTabsTrigger
+              disabled
               path="online"
               title="سفارش آنلاین"
             ></DashboardTabsTrigger>
@@ -87,6 +89,7 @@ export default function ToolBar({
               title="پرسنل مجموعه"
             ></DashboardTabsTrigger>
             <DashboardTabsTrigger
+              disabled
               path="per-branch"
               title="پرسنل شعبه"
             ></DashboardTabsTrigger>
@@ -98,6 +101,7 @@ export default function ToolBar({
         {parentSection === "data" && childSection === "items" && (
           <div className="flex items-center gap-2">
             <Button
+              disabled
               size="icon"
               className="scale-pro h-11 w-11 rounded-full border-2 border-primary bg-soft-blue font-bold text-primary transition-all duration-200 hover:scale-95 hover:bg-primary hover:text-primary-foreground data-[state=open]:scale-95 data-[state=open]:bg-primary data-[state=open]:text-primary-foreground"
             >
@@ -138,9 +142,8 @@ export default function ToolBar({
         {parentSection === "personnel" && childSection === "all" && (
           <CreateUpdatePersonnelForm
             businessSlug={params.business_slug}
-            branchSlug={params.branch_slug}
             branches={branches}
-            title="ایجاد پرسنل"
+            title="دعوت پرسنل"
             description="اعضای جدید را به پرسنل مجموعه اضافه کنید"
           ></CreateUpdatePersonnelForm>
         )}
