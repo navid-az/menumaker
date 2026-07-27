@@ -7,6 +7,8 @@ import FeatureNameList from "./components/FeatureNameList";
 import LiveManagementSection from "./components/sections/LiveManagementSection";
 import { GradientSpan } from "./components/GradientSpan";
 import StepsSection from "./components/sections/StepsSection";
+import BentoFeaturesSection from "./components/sections/BentoFeaturesSection";
+
 
 export default function Home() {
   return (
@@ -98,15 +100,17 @@ export default function Home() {
             <br className="hidden lg:block" />
             <GradientSpan variant="dark"> منوی دیجیتال</GradientSpan>
           </h2>
-          <h3 className="text-teal-950/60 font-normal max-w-5/6 md:max-w-xl text-sm md:text-xl ">
+          <h3 className="text-teal-950/60 font-normal max-w-5/6 md:max-w-xl text-sm md:text-xl leading-relaxed">
             منومیکر یک سیستم عملیاتی کامل برای رستوران‌های مدرن است — از منوی زیبا
             تا مدیریت سفارش، رزرو، و آنالیتیکس لحظه‌ای.
           </h3>
         </div>
         <FeatureNameList></FeatureNameList>
       </div>
+      <BentoFeaturesSection></BentoFeaturesSection>
       <LiveManagementSection></LiveManagementSection>
       <StepsSection></StepsSection>
+
     </main>
   );
 }
