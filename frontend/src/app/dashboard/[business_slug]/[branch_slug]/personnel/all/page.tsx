@@ -7,6 +7,11 @@ import { checkFeatureAccess } from "@/lib/guards/checkFeatureAccess";
 //components
 import UpgradePlanAlertDialog from "@/app/dashboard/components/UpgradePlanAlertDialog";
 import PersonnelClientWrapper from "./components/PersonnelClientWrapper";
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
+import { CreateUpdatePersonnelForm } from "@/app/dashboard/components/CreateUpdatePersonnelForm";
+
+//SVGs
+import { CircleAlert } from "lucide-react";
 
 //types
 import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
@@ -43,6 +48,19 @@ async function getPersonnel(
   }
 }
 
+async function getBranches(business_slug: string) {
+  const data = await fetch(
+    `${SERVER_API_BASE_URL}/businesses/${business_slug}/branches/`,
+    {
+      next: { tags: ["branches"] },
+    }
+  );
+  if (!data.ok) {
+    throw new Error("Failed to fetch data");
+  }
+  return data.json();
+}
+
 export default async function Page(props: {
   params: Promise<{ business_slug: string; branch_slug: string }>;
 }) {
@@ -58,17 +76,42 @@ export default async function Page(props: {
     params.branch_slug,
     cookieStore
   );
+  const branches = await getBranches(params.business_slug)
 
   return (
-    <>
-      <PersonnelClientWrapper
-        businessSlug={params.business_slug}
-        personnel={personnelData}
-      ></PersonnelClientWrapper>
+    <div className="flex-1 justify-start flex">
+      {personnelData.length > 0 ?
+        <PersonnelClientWrapper
+          businessSlug={params.business_slug}
+          branchSlug={params.branch_slug}
+          personnel={personnelData}
+          branches={branches}
+        ></PersonnelClientWrapper> : <Empty className="w-full h-full">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <CircleAlert></CircleAlert>
+            </EmptyMedia>
+            <EmptyTitle>هیچ پرسنلی برای نمایش وجود ندارد</EmptyTitle>
+            <EmptyDescription className="min-w-2xl">
+              شما هیچ پرسنلی دعوت نکرده اید. با دعوت یک پرسنل جدید شروع کنید
+            </EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent className="flex-row justify-center gap-2">
+            <CreateUpdatePersonnelForm
+              businessSlug={params.business_slug}
+              branches={branches}
+              title="دعوت پرسنل"
+              description="با انتخاب گزینه های مورد نظر دسته بندی جدید به منو اضافه کنید"
+            >
+            </CreateUpdatePersonnelForm>
+          </EmptyContent>
+        </Empty>
+      }
+
       <UpgradePlanAlertDialog
         hasFeature={hasFeature}
         businessSlug={params.business_slug}
       ></UpgradePlanAlertDialog>
-    </>
+    </div>
   );
 }
