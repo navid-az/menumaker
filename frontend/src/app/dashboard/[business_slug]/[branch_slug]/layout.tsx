@@ -66,13 +66,15 @@ export default async function DashboardPanelLayout(props: {
         business_slug={params.business_slug}
         branch_slug={params.branch_slug}
       ></DashboardHeader>
-      <div className="bg-white p-4 flex-1 overflow-y-auto! xl:rounded-tr-[40px]">
+      <div className="bg-white flex flex-col p-4 flex-1 overflow-y-auto! xl:rounded-tr-[40px]">
         <ToolBar
           branches={branches}
           categories={categories}
           assetGroups={assetGroups}
         ></ToolBar>
-        {children}
+        <div className="mt-4 flex-1 flex flex-col">
+          {children}
+        </div>
       </div>
     </div>
   );
