@@ -81,20 +81,18 @@ export default function MyBusinessesTab({
   return (
     <div
       ref={tab}
-      className={`transition-height flex ${
-        isCollapsed
-          ? "h-auto rounded-xl"
-          : "min-h-[84px] rounded-xl rounded-tl-3xl"
-      } w-full select-none flex-col overflow-hidden border-4 border-sad-blue bg-soft-blue text-primary duration-300 ease-in-out`}
+      className={`transition-height flex ${isCollapsed
+        ? "h-auto rounded-xl"
+        : "min-h-[84px] rounded-xl rounded-tl-[36px]"
+        } w-full select-none flex-col overflow-hidden border-4 border-sad-blue bg-soft-blue text-primary duration-300 ease-in-out`}
     >
       <Button
         onClick={handleTab}
         className="flex h-full cursor-pointer flex-col justify-between gap-2 bg-inherit p-2 text-primary"
       >
         <section
-          className={`flex w-full items-center gap-2 ${
-            isCollapsed ? "justify-center py-2" : "justify-between"
-          }`}
+          className={`flex w-full items-center gap-2 ${isCollapsed ? "justify-center py-2" : "justify-between"
+            }`}
         >
           <div className="flex items-center gap-2">
             <Building className="h-6 w-6"></Building>
@@ -103,15 +101,13 @@ export default function MyBusinessesTab({
             </p>
           </div>
           <ArrowLeft
-            className={` transition-all ${isCollapsed ? "hidden" : "flex"} ${
-              !isOpen ? "rotate-0" : "-rotate-90"
-            } ${businesses.length <= 1 ? "hidden" : "flex"}`}
+            className={` transition-all ${isCollapsed ? "hidden" : "flex"} ${!isOpen ? "rotate-0" : "-rotate-90"
+              } ${businesses.length <= 1 ? "hidden" : "flex"}`}
           ></ArrowLeft>
         </section>
         <span
-          className={`${
-            isCollapsed ? "hidden" : "flex"
-          } flex w-full items-center gap-2`}
+          className={`${isCollapsed ? "hidden" : "flex"
+            } flex w-full items-center gap-2`}
         >
           <p>سمت شما</p>
           <p className=" w-max rounded-full bg-yellow-400 px-3 py-1 text-xs text-yellow-900">
@@ -128,11 +124,10 @@ export default function MyBusinessesTab({
                 <Button
                   key={business.id}
                   onClick={() => handleClick(business)}
-                  className={`${
-                    (name || businesses[0].name) === business.name
-                      ? "hidden"
-                      : "flex"
-                  } scale-pro justify-start gap-2 border border-sad-blue bg-sad-blue px-2 py-3 text-base font-normal text-primary transition-all duration-300 hover:scale-105 hover:border-primary hover:bg-white`}
+                  className={`${(name || businesses[0].name) === business.name
+                    ? "hidden"
+                    : "flex"
+                    } scale-pro justify-start gap-2 border border-sad-blue bg-sad-blue px-2 py-3 text-base font-normal text-primary transition-all duration-300 hover:scale-105 hover:border-primary hover:bg-white`}
                 >
                   <Building className="h-6 w-6"></Building>
                   {business.name}

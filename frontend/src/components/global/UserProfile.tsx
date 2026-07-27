@@ -30,6 +30,7 @@ import {
   Users,
   ChartColumn,
   Radio,
+  ScrollText,
 } from "lucide-react";
 
 //types
@@ -66,12 +67,12 @@ export function UserProfile({
 
         {businesses && businesses.length ? (
           <DropdownMenuGroup>
-            <DropdownMenuItem asChild className="group flex gap-2 py-2">
+            <DropdownMenuItem disabled asChild className="group flex gap-2 py-2">
               <Link
                 href={`/dashboard/${businesses[0].slug}/${businesses[0].branches[0].slug}/insights`}
               >
                 <ChartColumn></ChartColumn>
-                <p>داشبورد</p>
+                <p>آمار تحلیل</p>
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild className="flex gap-2 py-2">
@@ -80,6 +81,14 @@ export function UserProfile({
               >
                 <Radio></Radio>
                 <p>مدیریت زنده</p>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild className="flex gap-2 py-2">
+              <Link
+                href={`/dashboard/${businesses[0].slug}/${businesses[0].branches[0].slug}/data/items`}
+              >
+                <ScrollText></ScrollText>
+                <p>اطلاعات منو</p>
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild className="flex gap-2 py-2">

@@ -45,6 +45,7 @@ export default function DashboardSidebar({
 
   return (
     <ResizablePanel
+      className="transition-all duration-300"
       ref={resizablePanel}
       onCollapse={() => {
         setIsCollapsed(true);
@@ -61,7 +62,7 @@ export default function DashboardSidebar({
       <section className="flex w-full flex-col items-end bg-primary text-soft-blue px-2">
         <div
           className={cn(
-            "w-full flex p-4 pb-8 transition-all duration-300",
+            "w-full flex p-4 transition-all duration-300",
             isCollapsed ? "justify-center" : "justify-start"
           )}
         >
@@ -95,6 +96,7 @@ export default function DashboardSidebar({
             collapsePanel={collapsePanel}
           ></MyBusinessesTab>
           <DashboardNavbarBtn
+            disabled
             text="وضعیت مجموعه"
             isCollapsed={isCollapsed}
             basePath={`/dashboard/${params.business_slug}/${decodedBranchSlug}/insights`}
@@ -147,6 +149,7 @@ type DashboardNavbarBtnType = {
   basePath?: string;
   dynamicPaths?: string[];
   isCollapsed: boolean;
+  disabled?: boolean
   children: React.ReactNode;
 };
 
@@ -155,6 +158,7 @@ function DashboardNavbarBtn({
   basePath = "/",
   dynamicPaths = [],
   isCollapsed,
+  disabled = false,
   children,
 }: DashboardNavbarBtnType) {
   const pathName = usePathname();
@@ -169,25 +173,32 @@ function DashboardNavbarBtn({
         "scale-pro relative h-14 w-full py-3 text-lg opacity-60 transition-all duration-300 after:absolute after:right-0 after:h-4/6 after:w-1 after:rounded-full after:bg-sky-blue/50 after:opacity-0 after:transition-all after:duration-300 hover:opacity-90 hover:after:opacity-100 md:text-sm lg:text-lg",
         (encodedBasePath == pathName ||
           dynamicPaths.includes(lastPathNamePart)) &&
-          "scale-105 pr-6 text-sad-blue opacity-100! after:bg-sky-blue after:opacity-100",
+        "scale-105 pr-6 text-sad-blue opacity-100! after:bg-sky-blue after:opacity-100",
         isCollapsed &&
-          (encodedBasePath == pathName ||
-            dynamicPaths.includes(lastPathNamePart)) &&
-          "scale-125 px-4",
+        (encodedBasePath == pathName ||
+          dynamicPaths.includes(lastPathNamePart)) &&
+        "scale-125 px-4",
         isCollapsed ? " justify-center" : "justify-start"
-      )}
+        , disabled && 'opacity-30 after:hidden hover:opacity-30 select-none cursor-not-allowed')}
     >
-      <Link
-        href={encodedBasePath}
-        className={`flex ${
-          isCollapsed ? "justify-center" : "justify-between"
-        } gap-4`}
-      >
-        <div className="flex items-center">
-          {children}
-          {!isCollapsed && <p>{text}</p>}
-        </div>
-      </Link>
+      {disabled ? (
+        <span className={`flex ${isCollapsed ? "justify-center" : "justify-between"} gap-4`}>
+          <div className="flex items-center">
+            {children}
+            {!isCollapsed && <p>{text}</p>}
+          </div>
+        </span>
+      ) :
+        <Link
+          href={encodedBasePath}
+          className={`flex ${isCollapsed ? "justify-center" : "justify-between"
+            } gap-4`}
+        >
+          <div className="flex items-center">
+            {children}
+            {!isCollapsed && <p>{text}</p>}
+          </div>
+        </Link>}
     </Button>
   );
 }
