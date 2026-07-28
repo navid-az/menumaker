@@ -53,8 +53,11 @@ type CreateTableFormType = {
 // import { createTable, updateTable } from "@/app/actions";
 
 const FormSchema = z.object({
-  name: z.string(),
-  seats: z.number(),
+  name: z
+    .string()
+    .trim()
+    .min(1, "نام میز الزامی است."),
+  seats: z.coerce.number().int().min(1, "تعداد صندلی باید حداقل ۱ باشد."),
   location_description: z.string().optional(),
 });
 
@@ -70,15 +73,15 @@ export function CreateTableForm({
     resolver: zodResolver(FormSchema),
     defaultValues: defaultValues
       ? {
-          name: defaultValues.name || "",
-          seats: defaultValues.seats || 2,
-          location_description: defaultValues.location_description || "",
-        }
+        name: defaultValues.name || "",
+        seats: defaultValues.seats || 2,
+        location_description: defaultValues.location_description || "",
+      }
       : {
-          name: "",
-          seats: 2,
-          location_description: "",
-        },
+        name: "",
+        seats: 2,
+        location_description: "",
+      },
   });
 
   // control dialog component
@@ -117,7 +120,10 @@ export function CreateTableForm({
   }
 
   const onError = (errors: FieldErrors<any>) => {
-    alert(errors);
+    form.setError("root", {
+      type: "required",
+      message: "لطفا موارد الزامی را وارد کنید",
+    });
   };
 
   return (
@@ -146,7 +152,6 @@ export function CreateTableForm({
                         {...field}
                       ></Input>
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -161,13 +166,27 @@ export function CreateTableForm({
                         placeholder="تعداد صندلی"
                         type="number"
                         {...field}
+                        onChange={(e) => field.onChange(e.target.valueAsNumber)}
                       ></Input>
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
             </section>
+            {/* form errors  */}
+            <div className="pt-2">
+              {form.formState.errors.name && (
+                <p className="text-sm text-destructive">
+                  {form.formState.errors.name.message}
+                </p>
+              )}
+
+              {form.formState.errors.seats && (
+                <p className="text-sm text-destructive">
+                  {form.formState.errors.seats.message}
+                </p>
+              )}
+            </div>
             <FormField
               control={form.control}
               name="location_description"

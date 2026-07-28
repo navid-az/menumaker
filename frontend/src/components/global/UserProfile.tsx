@@ -72,7 +72,7 @@ export function UserProfile({
                 href={`/dashboard/${businesses[0].slug}/${businesses[0].branches[0].slug}/insights`}
               >
                 <ChartColumn></ChartColumn>
-                <p>آمار تحلیل</p>
+                <p>آمار و تحلیل</p>
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild className="flex gap-2 py-2">

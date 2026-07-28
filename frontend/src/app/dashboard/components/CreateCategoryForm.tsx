@@ -78,13 +78,13 @@ export function CreateCategoryForm({
     resolver: zodResolver(FormSchema),
     defaultValues: defaultValues
       ? {
-          name: defaultValues.name || "",
-          icon: defaultValues.icon || null,
-        }
+        name: defaultValues.name || "",
+        icon: defaultValues.icon || null,
+      }
       : {
-          name: "",
-          icon: null,
-        },
+        name: "",
+        icon: null,
+      },
   });
 
   // control dialog component
@@ -160,7 +160,7 @@ export function CreateCategoryForm({
             onSubmit={form.handleSubmit(onSubmit, onError)}
             id="category-form"
           >
-            <section className="flex w-full items-end gap-2 space-y-6">
+            <section className="flex w-full items-end gap-2">
               <FormField
                 control={form.control}
                 name="name"

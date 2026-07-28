@@ -68,17 +68,28 @@ type CreateUpdatePersonnelForm = {
   branches: Tag[];
 };
 
-export const TagSchema = z.object({
-  id: z.number().int().nonnegative(), // integer id (0+). use .positive() if you prefer >0
-  name: z.string().min(1, "Name is required").max(100),
-});
-
 const FormSchema = z.object({
   role: z.enum(["manager", "chef", "cashier", "waiter", "storekeeper"]),
-  first_name: z.string().optional(),
-  last_name: z.string().optional(),
-  invited_email: z.string().email("ایمیل معتبر وارد کنید"),
-  branches: z.array(z.number()),
+
+  first_name: z
+    .string()
+    .trim()
+    .min(1, "نام الزامی است.")
+    .max(100),
+
+  last_name: z
+    .string()
+    .trim()
+    .min(1, "نام خانوادگی الزامی است.")
+    .max(100),
+
+  invited_email: z
+    .string()
+    .email("ایمیل معتبر وارد کنید"),
+
+  branches: z
+    .array(z.number())
+    .min(1, "انتخاب شعبه الزامی است.")
 });
 
 export function CreateUpdatePersonnelForm({
@@ -93,19 +104,19 @@ export function CreateUpdatePersonnelForm({
     resolver: zodResolver(FormSchema),
     defaultValues: defaultValues
       ? {
-          role: "waiter",
-          invited_email: defaultValues.invited_email || "",
-          first_name: defaultValues.first_name || "",
-          last_name: defaultValues.last_name || "",
-          branches: defaultValues.branches || [],
-        }
+        role: "waiter",
+        invited_email: defaultValues.invited_email || "",
+        first_name: defaultValues.first_name || "",
+        last_name: defaultValues.last_name || "",
+        branches: defaultValues.branches || [],
+      }
       : {
-          role: "waiter",
-          invited_email: "",
-          first_name: "",
-          last_name: "",
-          branches: [],
-        },
+        role: "waiter",
+        invited_email: "",
+        first_name: "",
+        last_name: "",
+        branches: [],
+      },
   });
 
   //control dialog component

@@ -139,7 +139,7 @@ class HasFeatureAccess(BasePermission):
 
         for feature in required_features:
             if feature not in subscription.get_features().values_list('code', flat=True):
-                print('table management is not one of the features')
+                print(f'{feature} is not one of the features')
                 return False
 
         return True

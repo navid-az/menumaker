@@ -64,10 +64,10 @@ class Branch(models.Model):
     business = models.ForeignKey(
         Business, on_delete=models.CASCADE, related_name="branches")
     slug = models.SlugField(
-        max_length=100, unique=True, null=True, blank=True)
-    name = models.CharField(max_length=50, blank=True, null=True)
-    address = models.CharField(max_length=255, blank=True, null=True)
-    phone_number = models.CharField(max_length=20, blank=True, null=True)
+        max_length=100, unique=True, blank=True)
+    name = models.CharField(max_length=50)
+    address = models.CharField(max_length=255, blank=True)
+    phone_number = models.CharField(max_length=20, blank=True)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
