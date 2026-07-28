@@ -100,7 +100,7 @@ export function UserProfile({
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild className="flex gap-2 py-2">
-              <Link href={`/dashboard/${businesses[0].slug}/liveManagement`}>
+              <Link href={`/dashboard/${businesses[0].slug}/${businesses[0].branches[0].slug}/settings`}>
                 <Settings></Settings>
                 <p>تنضیمات</p>
               </Link>

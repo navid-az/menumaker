@@ -6,7 +6,7 @@ export default async function page(props: {
 }) {
   const params = await props.params;
   return (
-    <div className="flex justify-center flex-col items-center">
+    <div className="flex -mt-4 justify-center flex-col items-center">
       <UpdateMenuBtn
         businessSlug={params.business_slug}
         branchSlug={params.branch_slug}
