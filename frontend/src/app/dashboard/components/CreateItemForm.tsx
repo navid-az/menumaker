@@ -116,20 +116,20 @@ export function CreateItemForm({
     resolver: zodResolver(FormSchema),
     defaultValues: defaultValues
       ? {
-          scope: "all",
-          name: defaultValues.name || "",
-          description: defaultValues.description || "",
-          category: defaultValues.category,
-          price: defaultValues.price || 0,
-          image: undefined,
-        }
+        scope: "all",
+        name: defaultValues.name || "",
+        description: defaultValues.description || "",
+        category: defaultValues.category,
+        price: defaultValues.price || 0,
+        image: undefined,
+      }
       : {
-          scope: "all",
-          name: "",
-          description: "",
-          price: 0,
-          image: undefined,
-        },
+        scope: "all",
+        name: "",
+        description: "",
+        price: 0,
+        image: undefined,
+      },
   });
 
   //control dialog component
@@ -205,6 +205,7 @@ export function CreateItemForm({
       <DialogTrigger asChild>
         {!defaultValues ? (
           <Button
+            disabled={categories.length === 0}
             size="lg"
             className="scale-pro rounded-full border-2 border-primary bg-soft-blue px-4 font-semibold text-primary transition-all duration-200 hover:scale-95 hover:bg-primary hover:text-primary-foreground data-[state=open]:scale-95 data-[state=open]:bg-primary data-[state=open]:text-primary-foreground"
           >

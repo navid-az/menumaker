@@ -26,7 +26,7 @@ import { useRippleAnimation } from "@/app/hooks/useRippleAnimation";
 import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
 
 //SVGs
-import { Plus, Minus, CheckCircle2 } from "lucide-react";
+import { Plus, Minus, CheckCircle2, ImageOff } from "lucide-react";
 
 //functions
 import mapAnimationsToConfigs from "@/lib/mapAnimationsToConfigs";
@@ -269,13 +269,13 @@ export function MenuItemCard({
     animationRef,
     MenuItemAnimationConfigs.ripple,
     globalStyling.click_animation_enabled &&
-      globalStyling.click_animation_type?.includes("ripple")
+    globalStyling.click_animation_type?.includes("ripple")
   );
   useTactileAnimation(
     animationRef,
     MenuItemAnimationConfigs.tactile,
     globalStyling.click_animation_enabled &&
-      globalStyling.click_animation_type?.includes("tactile")
+    globalStyling.click_animation_type?.includes("tactile")
   );
 
   const animationConfigs = mapAnimationsToConfigs(
@@ -316,12 +316,14 @@ export function MenuItemCard({
           {is_featured ? (
             <div className="col-span-2 flex h-[300px] flex-none flex-col">
               <div className="relative flex h-full w-full">
-                <Image
+                {image ? <Image
                   className="rounded-t-(--radius-exception) object-cover object-top transition-all duration-300"
                   src={`${MEDIA_BASE_URL}${image}`}
                   alt={name}
                   fill
-                ></Image>
+                ></Image> :
+                  <div className="rounded-(--radius-exception) w-full h-full bg-(--secondary) flex justify-center items-center"><ImageOff className="size-16 lg:size-24 text-(--primary)" /></div>
+                }
               </div>
               <div
                 className={`flex w-full flex-none shrink-0 gap-4 basis-5/12 flex-col justify-between rounded-b-(--radius-exception) bg-(--primary) text-(--secondary) p-2 transition-all duration-300`}
@@ -354,10 +356,10 @@ export function MenuItemCard({
               className={cn(
                 "flex h-[300px] flex-none flex-col xss:col-span-1 border-(--secondary) text-[var(--contrast-on-primary)] transition-[box-shadow,border-radius] duration-300",
                 globalStyling.style === "retro" &&
-                  "border-3 shadow-[4px_4px_0px_0px_var(--secondary)]"
+                "border-3 shadow-[4px_4px_0px_0px_var(--secondary)]"
               )}
             >
-              {image && (
+              {image ? (
                 <div className="relative flex basis-6/6 w-full">
                   <Image
                     className="rounded-t-(--radius-exception) object-cover absolute -z-5 transition-all duration-300"
@@ -366,12 +368,14 @@ export function MenuItemCard({
                     fill
                   ></Image>
                 </div>
-              )}
+              ) :
+                <div className="rounded-t-(--radius-exception) w-full h-full bg-(--secondary) flex justify-center items-center"><ImageOff className="size-16 lg:size-24 text-(--primary)" /></div>
+              }
               <div
                 className={cn(
                   `relative bottom-0 flex w-full flex-none shrink-0 basis-5/12 flex-col justify-between gap-3 rounded-b-(--radius-exception) bg-(--primary) p-2 text-(--secondary) transition-[border-radius] duration-300`,
                   globalStyling.style === "retro" &&
-                    "border-t-3 border-(--secondary)"
+                  "border-t-3 border-(--secondary)"
                 )}
               >
                 <div className="space-y-0.5">
@@ -400,25 +404,26 @@ export function MenuItemCard({
               className={cn(
                 "relative flex h-[300px] flex-none flex-col xss:col-span-1 transition-[box-shadow,border,border-radius] duration-300",
                 globalStyling.style === "retro" &&
-                  "border-3 border-(--secondary) shadow-[4px_4px_0px_0px_var(--secondary)]"
+                "border-3 border-(--secondary) shadow-[4px_4px_0px_0px_var(--secondary)]"
               )}
             >
               {/* Removing -z-5 will apply ripple animation effect BEHIND the image
             This only works if the element doesn't have a background(png) */}
-              <Image
+              {image ? <Image
                 className="rounded-(--radius-exception) absolute -z-5 object-cover "
                 src={`${MEDIA_BASE_URL}${image}`}
                 alt={name}
                 fill
-              ></Image>
+              ></Image> :
+                <div className="rounded-(--radius-exception) w-full h-full bg-(--secondary) flex justify-center items-center"><ImageOff className="size-16 lg:size-24 text-(--primary)" /></div>
+              }
               <div
                 className={`absolute bottom-0 flex w-full h-full justify-end flex-none  shrink-0 flex-col gap-3 from-20% rounded-(--radius-exception) bg-linear-to-t from-(--primary)/90 to-transparent to-60% p-2 text-(--secondary)`}
               >
                 <div className="space-y-0.5">
                   <p
-                    className={`font-semibold ${
-                      name.length > 20 ? "text-sm" : "text-lg"
-                    }`}
+                    className={`font-semibold ${name.length > 20 ? "text-sm" : "text-lg"
+                      }`}
                   >
                     {name}
                   </p>
@@ -450,13 +455,14 @@ export function MenuItemCard({
           <div className="mx-auto mb-1.5 h-2 w-[100px] rounded-full bg-(--tertiary)"></div>
 
           <div className="w-full px-1.5 backdrop-blur-4xl flex justify-center items-center">
-            <Image
+            {image && <Image
               className="object-contain"
               src={`${MEDIA_BASE_URL}${image}`}
               alt={name}
               width={384}
               height={0}
             />
+            }
           </div>
           <DrawerHeader className="flex flex-col text-right">
             <div className="flex w-full items-center justify-between text-(--primary)">
@@ -554,9 +560,9 @@ export function MenuItemCard({
               className={cn(
                 "w-4/12 h-12 rounded-(--radius-inner) bg-[var(--cart-btn-bg)] text-[var(--cart-btn-text)]",
                 globalStyling.style === "retro" &&
-                  "border-3 !border-(--secondary) shadow-[4px_4px_0px_0px_var(--secondary)] font-bold",
+                "border-3 !border-(--secondary) shadow-[4px_4px_0px_0px_var(--secondary)] font-bold",
                 globalStyling.tertiary_color &&
-                  "border-[2.5px] border-secondary h-11"
+                "border-[2.5px] border-secondary h-11"
               )}
               onClick={handleAddOption}
             >

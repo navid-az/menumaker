@@ -25,28 +25,42 @@ import { ChevronLeft, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
-  // Listen for scroll events to update the scrolled state
   useEffect(() => {
+    // how far you need to scroll before hiding starts
+    const threshold = 80;
+
     const handleScroll = () => {
-      if (window.scrollY > 600) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
+      const currentScrollY = window.scrollY;
+
+      // Always show when near the top
+      if (currentScrollY < threshold) {
+        setHidden(false);
       }
+      // hide when scrolling down
+      else if (currentScrollY > lastScrollY) {
+        setHidden(true);
+      }
+      // show when scrolling up
+      else {
+        setHidden(false);
+      }
+
+      setLastScrollY(currentScrollY);
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [lastScrollY]);
 
   return (
-    <div className="p-4 lg:px-16 w-full sticky z-50 top-0">
+    <div className={cn("p-4 lg:px-16 w-full sticky z-50 top-0 transition-all duration-300", hidden && "-translate-y-full")}>
       <nav
         className={cn(
-          "bg-sad-blue/20 w-full lg:gap-20 border-2 border-royal-green/5 xl:gap-32 rounded-lg flex items-center transition-all duration justify-between p-4 text-xl text-royal-green",
-          scrolled ? " backdrop-blur-xl" : "backdrop-blur-sm"
+          "bg-sad-blue/20 w-full backdrop-blur-xl lg:gap-20 border-2 border-royal-green/5 xl:gap-32 rounded-lg flex items-center transition-all duration justify-between p-4 text-xl text-royal-green",
+
         )}
       >
         <div className="flex gap-4 items-center">
@@ -70,35 +84,35 @@ export function Navbar() {
               <div className="flex flex-col gap-4 justify-between text-white">
                 <Button
                   size="lg"
-                  className="w-full h-auto text-xl justify-start bg-primary-foreground text-gray-600 py-4"
+                  className="w-full h-auto text-xl justify-start bg-royal-green-foreground text-gray-600 py-4"
                   asChild
                 >
                   <Link href="/">راهکار ها</Link>
                 </Button>
                 <Button
                   size="lg"
-                  className="w-full h-auto text-xl justify-start bg-primary-foreground text-gray-600 py-4"
+                  className="w-full h-auto text-xl justify-start bg-royal-green-foreground text-gray-600 py-4"
                   asChild
                 >
                   <Link href="/builder">ساخت منو هوشمند</Link>
                 </Button>
                 <Button
                   size="lg"
-                  className="w-full h-auto text-xl justify-start bg-primary-foreground text-gray-600 py-4"
+                  className="w-full h-auto text-xl justify-start bg-royal-green-foreground text-gray-600 py-4"
                   asChild
                 >
                   <Link href="/pricing">تعرفه ها</Link>
                 </Button>
                 <Button
                   size="lg"
-                  className="w-full h-auto text-xl justify-start bg-primary-foreground text-gray-600 py-4"
+                  className="w-full h-auto text-xl justify-start bg-royal-green-foreground text-gray-600 py-4"
                   asChild
                 >
                   <Link href="/pricing">درباره ها</Link>
                 </Button>
                 <Button
                   size="lg"
-                  className="w-full h-auto text-xl justify-start bg-primary-foreground text-gray-600 py-4"
+                  className="w-full h-auto text-xl justify-start bg-royal-green-foreground text-gray-600 py-4"
                   asChild
                 >
                   <Link href="/pricing">تماس با ها</Link>
@@ -116,17 +130,15 @@ export function Navbar() {
           <NavBtn
             isLink={false}
             href="/"
-            scrolled={scrolled}
             title="راهکار ها"
           ></NavBtn>
           <NavBtn
             href="/builder"
-            scrolled={scrolled}
             title="ساخت منو هوشمند"
           ></NavBtn>
-          <NavBtn href="/pricing" scrolled={scrolled} title="تعرفه ها"></NavBtn>
-          <NavBtn href="/" scrolled={scrolled} title="درباره ما"></NavBtn>
-          <NavBtn href="/" scrolled={scrolled} title="تماس با ما"></NavBtn>
+          <NavBtn href="/pricing" title="تعرفه ها"></NavBtn>
+          <NavBtn href="/" title="درباره ما"></NavBtn>
+          <NavBtn href="/" title="تماس با ما"></NavBtn>
         </div>
         <AuthSection></AuthSection>
       </nav>
@@ -137,20 +149,17 @@ export function Navbar() {
 const NavBtn = ({
   href,
   title,
-  scrolled,
   isLink = true,
 }: {
   href: string;
   title: string;
-  scrolled: boolean;
   isLink?: boolean;
 }) => {
   return (
     <Button
       asChild
       className={cn(
-        "hover:bg-royal-green/5 scale-pro hover:scale-105 bg-inherit text-primary font-medium text-base rounded-full transition-all duration-300",
-        scrolled ? "text-soft-blue" : "text-primary"
+        "hover:bg-royal-green/5 scale-pro hover:scale-105 bg-inherit text-royal-green font-medium text-base rounded-full transition-all duration-300",
       )}
     >
       <Link href={href}>

@@ -51,7 +51,7 @@ export default function UpdateMenuBtn({
   return (
     <Button
       asChild
-      className="group w-full cursor-pointer h-60 relative flex justify-start px-20 overflow-hidden hover:bg-amber-50 hover:text-amber-950 rounded-3xl hover:border-royal-green duration-300 transition-all bg-soft-blue border-2 border-royal-green/20 text-royal-green "
+      className="group w-full cursor-pointer h-60 relative flex justify-start px-20 overflow-hidden hover:bg-amber-50 hover:text-amber-950 rounded-4xl hover:border-royal-green duration-300 transition-all bg-soft-blue border-2 border-royal-green/20 text-royal-green "
     >
       <Link
         href={`/${businessSlug}/menu/update?returnTo=/dashboard/${businessSlug}/${branchSlug}/settings`}
@@ -64,9 +64,8 @@ export default function UpdateMenuBtn({
           {iconRows.map((icons, index) => (
             <div
               key={index}
-              className={`flex gap-4 transition-all duration-300 ${
-                rowHasHoverPush[index] ? "group-hover:pr-12" : ""
-              }`}
+              className={`flex gap-4 transition-all duration-300 ${rowHasHoverPush[index] ? "group-hover:pr-12" : ""
+                }`}
             >
               {icons.map((Icon, colIdx) => (
                 <IconSquare key={colIdx}>

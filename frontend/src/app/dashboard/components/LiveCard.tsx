@@ -235,7 +235,7 @@ export default function LiveCard({
     <div
       style={stateColors[state]}
       className={cn(
-        "relative border-[3px] overflow-clip border-(--livecard-primary) bg-(--livecard-primary) text-(--livecard-accent) min-h-[350px] font-normal w-60 transition-all duration-300 justify-end flex items-center flex-col rounded-[26px]", className
+        "relative border-[3px] h-max overflow-clip border-(--livecard-primary) bg-(--livecard-primary) text-(--livecard-accent) min-h-[350px] font-normal w-60 transition-all duration-300 justify-end flex items-center flex-col rounded-[26px]", className
       )}
     >
       <LiveCardBody activeSessionValid={!!activeSessionValid} table={table}>

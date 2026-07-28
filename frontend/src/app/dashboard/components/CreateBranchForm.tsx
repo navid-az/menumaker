@@ -46,16 +46,26 @@ type CreateBranchFormType = {
 
 //zod schema
 const FormSchema = z.object({
-  name: z.string().min(2, {
+  name: z.string().trim().min(2, {
     message: "نام شعبه باید حداقل ۲ حرف باشد",
   }),
   slug: z.string().optional(),
-  address: z.string().optional(),
+  address: z
+    .string()
+    .trim()
+    .max(255, {
+      message: "آدرس نمی‌تواند بیشتر از ۲۵۵ کاراکتر باشد",
+    })
+    .optional(),
   phone_number: z
     .string()
-    .max(15)
-    .regex(/^\d+$/, { message: "فقط عدد وارد کنید" })
-    .optional(),
+    .max(20)
+    .refine(
+      (value) => value === "" || /^\d+$/.test(value),
+      {
+        message: "فقط عدد وارد کنید",
+      }
+    ),
 });
 
 export default function CreateBranchForm({
@@ -68,17 +78,17 @@ export default function CreateBranchForm({
     resolver: zodResolver(FormSchema),
     defaultValues: defaultValues
       ? {
-          name: defaultValues.name || "",
-          slug: defaultValues.slug || "",
-          address: defaultValues.address || "",
-          phone_number: "",
-        }
+        name: defaultValues.name ?? "",
+        slug: defaultValues.slug ?? "",
+        address: defaultValues.address ?? "",
+        phone_number: defaultValues.phone_number ?? "",
+      }
       : {
-          name: "",
-          slug: "",
-          address: "",
-          phone_number: "",
-        },
+        name: "",
+        slug: "",
+        address: "",
+        phone_number: "",
+      },
   });
 
   const [open, setOpen] = React.useState(false);
