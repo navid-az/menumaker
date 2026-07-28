@@ -39,6 +39,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { motion, AnimatePresence } from "motion/react";
 
+//SVGs
+import { Lightbulb } from "lucide-react";
+
 //zod schemas
 const InstanceSchema = z.array(
   z.object({
@@ -137,23 +140,23 @@ export default function BuilderTest({
     defaultValues: defaultValues
       ? defaultValues
       : {
-          business: { social_links: [], phone_numbers: [] },
-          global_styling: {
-            style: "default",
-            color_palette: ["#0d3b66", "#faf0ca", "#f4d35e"],
-            border_radius: "full",
-            unit_display_type: "default",
-            click_animation_type: [],
-            click_animation_enabled: false,
-          },
-          items_page_layout: "horizontal",
-          items_display_type: "half-image-stacked",
-          cart_btn_display_type: "default",
-          menu_sections: [],
-          home_title: "",
-          home_subtitle: "",
-          home_images: [],
+        business: { social_links: [], phone_numbers: [] },
+        global_styling: {
+          style: "default",
+          color_palette: ["#0d3b66", "#faf0ca", "#f4d35e"],
+          border_radius: "full",
+          unit_display_type: "default",
+          click_animation_type: [],
+          click_animation_enabled: false,
         },
+        items_page_layout: "horizontal",
+        items_display_type: "half-image-stacked",
+        cart_btn_display_type: "default",
+        menu_sections: [],
+        home_title: "",
+        home_subtitle: "",
+        home_images: [],
+      },
   });
 
   const sections = [
@@ -403,7 +406,13 @@ export default function BuilderTest({
           </Slider>
         </form>
         {/* live menu preview */}
-        <MenuPreview></MenuPreview>
+        <div className="flex relative  p-0 py-0 gap-0 w-max flex-col h-screen justify-center items-center">
+          <MenuPreview></MenuPreview>
+          <div className="rounded-md px-3 absolute -left-24 bottom-30 -rotate-90 py-2 text-xs font-medium text-zinc-400 flex gap-2">
+            <Lightbulb className="size-3.5" />
+            <span>این پیش‌نمایش تعاملی می‌باشد</span>
+          </div>
+        </div>
       </div>
     </Form>
   );

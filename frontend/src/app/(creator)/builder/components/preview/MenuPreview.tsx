@@ -20,7 +20,7 @@ import { type MenuCategory } from "@/app/types/api/menu";
 import { type ActivePreviewPage, PreviewProvider } from "./PreviewContext";
 
 export default function MenuPreview() {
-  const [activePage, setActivePage] = React.useState<ActivePreviewPage>("home");
+  const [activePage, setActivePage] = React.useState<ActivePreviewPage>("menu");
 
   const { watch } = useFormContext<BuilderFormType>();
   const data = watch();
