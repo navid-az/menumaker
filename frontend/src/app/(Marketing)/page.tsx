@@ -2,10 +2,12 @@ import Image from "next/image";
 import Link from "next/link";
 import Benefits from "../../components/global/benefits";
 import { Button } from "@/components/ui/button";
+import { GradientSpan } from "./components/GradientSpan";
+import FeatureNameList from "./components/FeatureNameList";
 
 export default function Home() {
   return (
-    <main className="items-center">
+    <main className="items-center flex-1">
       <Image
         src="/images/two-square.svg"
         width={465}
@@ -86,13 +88,17 @@ export default function Home() {
           />
         </section>
       </section>
-      <div className="mt-20 flex w-full flex-col items-center gap-4 text-center text-royal-green">
-        <h2 className="text-5xl font-bold">!ساخت منو تنها در ۴ مرحله</h2>
-        <p className="text-lg font-normal">
-          برای راه اندازی و استفاده از منو هوشمند تنها کافیست ۴ مرحله ساده را طی
-          کنید
-          <br />و هرگاه نیاز به هرگونه تغییری بود به سادگی تغییرات را اعمال کنید
-        </p>
+      <div className="my-20 flex w-full flex-col items-center gap-8 text-center text-royal-green">
+        <h2 className="font-bold text-4xl md:text-6xl leading-12 md:leading-19 color-royal-green line-h">
+          فراتر از یک
+          <br />
+          <GradientSpan>منوی دیجیتال</GradientSpan>
+        </h2>
+        <h3 className="text-teal-950/60 font-normal max-w-5/6 md:max-w-xl text-sm md:text-xl ">
+          لِ‌منو یک سیستم عملیاتی کامل برای رستوران‌های مدرن است — از منوی زیبا
+          تا مدیریت سفارش، رزرو، و آنالیتیکس لحظه‌ای.
+        </h3>
+        <FeatureNameList></FeatureNameList>
       </div>
     </main>
   );
