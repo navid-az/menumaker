@@ -77,6 +77,7 @@ type LiveCardType = {
   seats?: number;
   hasSession?: boolean;
   isMockUp?: boolean;
+  className?: string
 };
 type ServiceType = "in-person" | "on-table" | "online";
 type LiveCardState =
@@ -135,6 +136,7 @@ export default function LiveCard({
   businessSlug,
   branchSlug,
   isMockUp = false,
+  className
 }: LiveCardType) {
   const [showCode, setShowCode] = useState(false);
   const [state, setState] = useState<LiveCardState>("default");
@@ -192,7 +194,7 @@ export default function LiveCard({
         setTitle("مشاهده منو");
       }
       if (progressType === "none") {
-        setState("default");
+        setState("disabled");
       }
     } else {
       setState("default");
@@ -233,7 +235,7 @@ export default function LiveCard({
     <div
       style={stateColors[state]}
       className={cn(
-        "relative border-[3px] overflow-clip border-(--livecard-primary) bg-(--livecard-primary) text-(--livecard-accent) min-h-[350px] font-normal w-60 transition-all duration-300 justify-end flex items-center flex-col rounded-[26px]"
+        "relative border-[3px] overflow-clip border-(--livecard-primary) bg-(--livecard-primary) text-(--livecard-accent) min-h-[350px] font-normal w-60 transition-all duration-300 justify-end flex items-center flex-col rounded-[26px]", className
       )}
     >
       <LiveCardBody activeSessionValid={!!activeSessionValid} table={table}>
@@ -297,20 +299,20 @@ export default function LiveCard({
               </div>
               {(progressType === "readyOrder" ||
                 progressType === "pendingOrder") && (
-                <Button
-                  onClick={handleUpdateOrder}
-                  className="left-1/2 hidden group-hover:flex top-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-100 absolute size-[76%] font-semibold rounded-full bg-green-300 text-green-950"
-                >
-                  <p
-                    className={cn(
-                      "font-semibold transition-all duration-300",
-                      showOrder ? "text-sm" : "text-2xl"
-                    )}
+                  <Button
+                    onClick={handleUpdateOrder}
+                    className="left-1/2 hidden group-hover:flex top-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-100 absolute size-[76%] font-semibold rounded-full bg-green-300 text-green-950"
                   >
-                    تکمیل
-                  </p>
-                </Button>
-              )}
+                    <p
+                      className={cn(
+                        "font-semibold transition-all duration-300",
+                        showOrder ? "text-sm" : "text-2xl"
+                      )}
+                    >
+                      تکمیل
+                    </p>
+                  </Button>
+                )}
               {/* <p className="absolute top-0 text-red-600">{progressType}</p> */}
               <ProgressBar
                 outerColor="var(--livecard-secondary)"
@@ -538,12 +540,12 @@ export function LiveCardHeader({
         <div className="flex justify-between gap-2">
           <Button
             size="icon"
-            className="relative rounded-full border-yellow-950/20 border hover:border-yellow-950 bg-inherit hover:bg-royal-green/5 text-royal-green"
+            className="relative rounded-full border-(--livecard-primary)/20 border hover:border-(--livecard-primary) hover:bg-(--livecard-primary)/5 bg-inherit text-royal-green"
           >
             <Bell className="z-10"></Bell>
-            <span className="absolute -bottom-0.5 -right-0.5 min-w-[1rem] h-[1rem] rounded-full pt-0.5 bg-red-500 text-[10px] font-bold text-white flex items-center justify-center ring-2 ring-white">
+            {/* <span className="absolute -bottom-0.5 -right-0.5 min-w-[1rem] h-[1rem] rounded-full pt-0.5 bg-red-500 text-[10px] font-bold text-white flex items-center justify-center ring-2 ring-white">
               3
-            </span>
+            </span> */}
           </Button>
           {/* <Button
             size="icon"

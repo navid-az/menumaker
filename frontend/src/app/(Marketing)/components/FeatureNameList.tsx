@@ -17,7 +17,7 @@ import {
 
 export default function FeatureNameList() {
   return (
-    <div className="flex flex-wrap justify-center gap-3 max-w-11/12 md:max-w-3xl xl:max-w-6xl">
+    <div className="flex flex-wrap justify-center gap-3 max-w-11/12 md:max-w-3xl">
       <FeatureNameCapsule
         className="bg-yellow-200 border-yellow-700/40 text-yellow-900"
         name="منوساز"
