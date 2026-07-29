@@ -139,12 +139,12 @@ export default function CartBtn({
             className={cn(
               "relative h-11 w-11 bg-(--bg) -ml-4 first:ml-0 rounded-(--radius-base) border-(--secondary) border-2 shadow-sm transition-all duration-300 xs:h-12 xs:w-12",
               globalStyling.style === "retro" &&
-                "border-3 shadow-[2px_2px_0px_0px_var(--secondary)]"
+              "border-3 shadow-[2px_2px_0px_0px_var(--secondary)]"
             )}
           >
             <Image
               fill
-              src={`${MEDIA_BASE_URL}${item.item.image}`}
+              src={`${!isPreview ? MEDIA_BASE_URL : ''}${item.item.image}`}
               alt={item.item.name}
               className="rounded-(--radius-base) object-cover transition-all duration-300"
             />
@@ -167,7 +167,7 @@ export default function CartBtn({
             className={cn(
               "h-11 w-11 rounded-(--radius-base) z-10 -ml-4 border-2 border-(--footer-cart-border) bg-(--secondary) pt-3 text-center text-(--primary) shadow-sm transition-all duration-300 xs:h-12 xs:w-12",
               globalStyling.style === "retro" &&
-                "border-3 bg-(--primary) text-(--secondary) border-(--secondary) shadow-[2px_2px_0px_0px_var(--secondary)]"
+              "border-3 bg-(--primary) text-(--secondary) border-(--secondary) shadow-[2px_2px_0px_0px_var(--secondary)]"
             )}
           >
             <p>{matchingItems.length - 3}+</p>
@@ -191,7 +191,7 @@ export default function CartBtn({
         className={cn(
           "fixed bottom-[-80px] mx-4 mb-4 border-2 border-(--secondary) left-0 right-0 z-50 flex h-max items-center justify-between rounded-(--radius-base) p-2 bg-[var(--footer-cart-bg)] text-[var(--footer-cart-text)] shadow-2xl xs:p-2.5 transition-[box-shadow,border-radius,color,background-color] duration-300",
           globalStyling.style === "retro" &&
-            "border-3 shadow-[4px_4px_0px_0px_var(--secondary)]"
+          "border-3 shadow-[4px_4px_0px_0px_var(--secondary)]"
         )}
       >
         {isPreview ? (
@@ -217,7 +217,7 @@ export default function CartBtn({
           className={cn(
             "relative h-14 w-14 rounded-(--radius-base) bg-[var(--footer-cart-bg)] text-[var(--footer-cart-text)] transition-[box-shadow] duration-300",
             globalStyling.style === "retro" &&
-              "border-3 border-(--secondary) shadow-[4px_4px_0px_0px_var(--secondary)]"
+            "border-3 border-(--secondary) shadow-[4px_4px_0px_0px_var(--secondary)]"
           )}
           size="icon"
         >

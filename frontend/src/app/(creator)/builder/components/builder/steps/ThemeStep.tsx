@@ -71,7 +71,7 @@ export default function ThemeStep({
         )}
       />
 
-      <SliderTab onClick={() => console.log("cum")} isActive>
+      <SliderTab onClick={() => console.log("clicked")} isActive>
         <SliderTabTitle
           title="رنگ بندی منو"
           description="پالت رنگی دلخواه خود را برای ظاهر منوی ایجاد کنید"

@@ -60,6 +60,9 @@ import { generateStyleVars } from "../../../../utilities/styleVars";
 //libraries
 import { cn } from "@/lib/utils";
 
+//hooks
+import { usePreview } from "@/app/(creator)/builder/components/preview/PreviewContext";
+
 export function MenuItemCard({
   id,
   name,
@@ -82,16 +85,14 @@ export function MenuItemCard({
   ];
   const styleVars = generateStyleVars(colors, globalStyling.border_radius);
 
-  //change the value of drawerIsOpen global state
-  // const updateIsOpen = useMenuItemDrawer((state) => state.updateIsOpen);
-  // const handleDrawer = () => {
-  //   updateIsOpen();
-  // };
-
   // Inner and Outer drawer states
   const [innerOpen, setInnerOpen] = React.useState(false);
   const [outerOpen, setOuterOpen] = React.useState(false);
   const { setDrawerOpen } = useMenuItemDrawer();
+
+  // Check if parent provides isPreview or not
+  const { isPreview } = usePreview()
+
 
   const [activeChoices, setActiveChoices] = useState<ActiveChoices>({});
   useEffect(() => {
@@ -318,7 +319,7 @@ export function MenuItemCard({
               <div className="relative flex h-full w-full">
                 {image ? <Image
                   className="rounded-t-(--radius-exception) object-cover object-top transition-all duration-300"
-                  src={`${MEDIA_BASE_URL}${image}`}
+                  src={`${!isPreview ? MEDIA_BASE_URL : ''}${image}`}
                   alt={name}
                   fill
                 ></Image> :
@@ -363,7 +364,7 @@ export function MenuItemCard({
                 <div className="relative flex basis-6/6 w-full">
                   <Image
                     className="rounded-t-(--radius-exception) object-cover absolute -z-5 transition-all duration-300"
-                    src={`${MEDIA_BASE_URL}${image}`}
+                    src={`${!isPreview ? MEDIA_BASE_URL : ''}${image}`}
                     alt={name}
                     fill
                   ></Image>
@@ -411,7 +412,7 @@ export function MenuItemCard({
             This only works if the element doesn't have a background(png) */}
               {image ? <Image
                 className="rounded-(--radius-exception) absolute -z-5 object-cover "
-                src={`${MEDIA_BASE_URL}${image}`}
+                src={`${!isPreview ? MEDIA_BASE_URL : ''}${image}`}
                 alt={name}
                 fill
               ></Image> :
@@ -457,7 +458,7 @@ export function MenuItemCard({
           <div className="w-full px-1.5 backdrop-blur-4xl flex justify-center items-center">
             {image && <Image
               className="object-contain"
-              src={`${MEDIA_BASE_URL}${image}`}
+              src={`${!isPreview ? MEDIA_BASE_URL : ''}${image}`}
               alt={name}
               width={384}
               height={0}

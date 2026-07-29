@@ -79,7 +79,7 @@ const PRICING_COMPARISON = [
     ],
   },
   {
-    sectionKey: "nigga",
+    sectionKey: "online_order",
     sectionTitle: "سیستم رزرواسیون",
     rows: [
       {
