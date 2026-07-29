@@ -93,6 +93,8 @@ export function MenuItemCard({
   // Check if parent provides isPreview or not
   const { isPreview } = usePreview()
 
+  const imageSrc = isPreview ? image : `${MEDIA_BASE_URL}${image}`;
+
 
   const [activeChoices, setActiveChoices] = useState<ActiveChoices>({});
   useEffect(() => {
@@ -317,9 +319,9 @@ export function MenuItemCard({
           {is_featured ? (
             <div className="col-span-2 flex h-[300px] flex-none flex-col">
               <div className="relative flex h-full w-full">
-                {image ? <Image
+                {imageSrc ? <Image
                   className="rounded-t-(--radius-exception) object-cover object-top transition-all duration-300"
-                  src={`${!isPreview ? MEDIA_BASE_URL : ''}${image}`}
+                  src={imageSrc}
                   alt={name}
                   fill
                 ></Image> :
@@ -360,11 +362,11 @@ export function MenuItemCard({
                 "border-3 shadow-[4px_4px_0px_0px_var(--secondary)]"
               )}
             >
-              {image ? (
+              {imageSrc ? (
                 <div className="relative flex basis-6/6 w-full">
                   <Image
                     className="rounded-t-(--radius-exception) object-cover absolute -z-5 transition-all duration-300"
-                    src={`${!isPreview ? MEDIA_BASE_URL : ''}${image}`}
+                    src={imageSrc}
                     alt={name}
                     fill
                   ></Image>
@@ -410,9 +412,9 @@ export function MenuItemCard({
             >
               {/* Removing -z-5 will apply ripple animation effect BEHIND the image
             This only works if the element doesn't have a background(png) */}
-              {image ? <Image
+              {imageSrc ? <Image
                 className="rounded-(--radius-exception) absolute -z-5 object-cover "
-                src={`${!isPreview ? MEDIA_BASE_URL : ''}${image}`}
+                src={imageSrc}
                 alt={name}
                 fill
               ></Image> :
@@ -455,15 +457,30 @@ export function MenuItemCard({
           {/* drawer handle */}
           <div className="mx-auto mb-1.5 h-2 w-[100px] rounded-full bg-(--tertiary)"></div>
 
-          <div className="w-full px-1.5 backdrop-blur-4xl flex justify-center items-center">
-            {image && <Image
-              className="object-contain"
-              src={`${!isPreview ? MEDIA_BASE_URL : ''}${image}`}
-              alt={name}
-              width={384}
-              height={0}
-            />
-            }
+          <div className="relative w-full h-80 max-h-100 overflow-hidden px-1.5 flex items-center justify-center">
+            {imageSrc && (
+              <>
+                {/* Blurred background */}
+                <Image
+                  src={imageSrc}
+                  alt=""
+                  fill
+                  aria-hidden
+                  className="object-cover scale-110 blur-xl opacity-80"
+                />
+
+                {/* Dark overlay to improve contrast */}
+                <div className="absolute inset-0 bg-black/10" />
+
+                {/* Actual image */}
+                <Image
+                  src={imageSrc}
+                  alt={name}
+                  fill
+                  className="relative z-10 object-contain"
+                />
+              </>
+            )}
           </div>
           <DrawerHeader className="flex flex-col text-right">
             <div className="flex w-full items-center justify-between text-(--primary)">
