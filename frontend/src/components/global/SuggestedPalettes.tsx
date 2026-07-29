@@ -63,7 +63,7 @@ export default function SuggestedPalettes({
   const palettesToShow = useMemo(() => activePack, [activePack]);
 
   return (
-    <div className="grid w-full grid-cols-3 gap-2 py-[6px]">
+    <div className="grid w-full grid-cols-3 gap-2 py-1.5">
       {palettesToShow.map((palette, index) => (
         <SuggestedPalette
           key={index}

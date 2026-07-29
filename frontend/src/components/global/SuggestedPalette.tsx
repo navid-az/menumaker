@@ -15,7 +15,7 @@ type SuggestedPaletteType = {
 
 const SuggestedPalette = ({
   palette,
-  value = ["#0d3b66", "#faf0ca", "#f4d35e"],
+  value = ["#F8F8F8", "#0F0000"],
   onChange,
 }: SuggestedPaletteType) => {
   //check if arrays are equal
@@ -26,11 +26,10 @@ const SuggestedPalette = ({
 
   return (
     <div
-      className={`relative rounded-full border-[3.5px] transition-all duration-200 ${
-        arraysEqual(value, palette)
-          ? "pointer-events-none scale-95 border-primary"
-          : "border-transparent"
-      } `}
+      className={`relative rounded-full border-[3.5px] transition-all duration-200 ${arraysEqual(value, palette)
+        ? "pointer-events-none scale-95 border-primary"
+        : "border-transparent"
+        } `}
       onClick={() => onChange?.(palette)}
     >
       <Palette disableOptions colors={palette}></Palette>

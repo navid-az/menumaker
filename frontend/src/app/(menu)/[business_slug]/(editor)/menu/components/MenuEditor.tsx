@@ -35,19 +35,19 @@ export function MenuEditor({
     router.push(returnTo);
   };
 
-  const colorPlatte = [
+  const colorPalette = [
     globalStylingData.primary_color,
     globalStylingData.secondary_color,
     globalStylingData.tertiary_color,
     globalStylingData.bg_color,
-  ];
+  ].filter((color) => color !== null);
 
   const normalizedData: BuilderFormType = {
     ...menuData,
     welcome_page_layout: "none",
     menu_sections: [],
     business: { ...businessData },
-    global_styling: { color_palette: colorPlatte, ...globalStylingData },
+    global_styling: { color_palette: colorPalette, ...globalStylingData },
     frontend_only: { suggested_palette_enabled: true },
   };
   return (

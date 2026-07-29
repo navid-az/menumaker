@@ -75,8 +75,8 @@ class MenuGlobalStyling(models.Model):
         max_length=20, choices=GLOBAL_STYLE_CHOICES, default='default')
     primary_color = ColorField()
     secondary_color = ColorField()
-    tertiary_color = ColorField()
-    bg_color = ColorField()
+    tertiary_color = ColorField(null=True, blank=True, default=None)
+    bg_color = ColorField(null=True, blank=True, default=None)
     border_radius = models.CharField(
         max_length=4,
         choices=[('sm', 'small'), ('md', 'medium'),
