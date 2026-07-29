@@ -82,7 +82,7 @@ const GlobalStylingSchema = z.object({
   ]),
 });
 const FrontEndOnlySchema = z.object({
-  suggested_palette_enabled: z.boolean().default(false),
+  suggested_palette_enabled: z.boolean().default(true),
 });
 export const BuilderSchema = z.object({
   //home page
@@ -105,7 +105,7 @@ export const BuilderSchema = z.object({
 
   //items page
   items_page_layout: z.enum(["horizontal", "vertical"]),
-  categories_display_type: z.enum(["slider", "circular"]),
+  // categories_display_type: z.enum(["slider", "circular"]),
   items_display_type: z.enum(["half-image-stacked", "full-bleed-overlay"]),
   cart_btn_display_type: z.enum(["default", "compact"]),
   call_waiter_enabled: z.boolean().default(false),
@@ -143,19 +143,21 @@ export default function BuilderTest({
         business: { social_links: [], phone_numbers: [] },
         global_styling: {
           style: "default",
-          color_palette: ["#0d3b66", "#faf0ca", "#f4d35e"],
+          color_palette: ["#F8F8F8", "#0F0000"],
           border_radius: "full",
           unit_display_type: "default",
           click_animation_type: [],
           click_animation_enabled: false,
         },
+        welcome_page_layout: 'none',
         items_page_layout: "horizontal",
-        items_display_type: "half-image-stacked",
+        items_display_type: 'full-bleed-overlay',
         cart_btn_display_type: "default",
         menu_sections: [],
         home_title: "",
         home_subtitle: "",
         home_images: [],
+        frontend_only: { suggested_palette_enabled: true }
       },
   });
 
@@ -236,12 +238,12 @@ export default function BuilderTest({
           component: <MenuLayoutStep stepId={"menuLayout"} />,
           show: true,
         },
-        {
-          id: "categoryStyle",
-          subtitle: "تنظیمات ظاهری دسته بندی ها",
-          component: <CategoryStyleStep stepId={"categoryStyle"} />,
-          show: true,
-        },
+        // {
+        //   id: "categoryStyle",
+        //   subtitle: "تنظیمات ظاهری دسته بندی ها",
+        //   component: <CategoryStyleStep stepId={"categoryStyle"} />,
+        //   show: true,
+        // },
         {
           id: "itemStyle",
           subtitle: "تنظیمات ظاهری آیتم ها",

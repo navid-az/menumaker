@@ -14,6 +14,9 @@ type PaletteSuggestionsType = {
 // Set of suggestions for every global styling
 const palettePacks = {
   default: [
+    // Black & White
+    ["#F8F8F8", "#0F0000"],
+
     // 🍷 Elegant Café (Warm & Cozy)
     ["#4B2E22", "#F5EBDC", "#D2691E", "#FAF7F2"],
 
@@ -23,14 +26,11 @@ const palettePacks = {
     // 🍓 Playful Retro (Vibrant & Nostalgic)
     ["#E63946", "#F1FAEE", "#06B6D4", "#FFF8E7"],
 
-    // 🧊 Futuristic / Neon Bar (Dark Mode)
-    ["#0E0E10", "#FFFFFF", "#00E5FF", "#080808"],
-
     // 🫒 Natural / Organic (Earthy Calm)
-    ["#A8BCA2", "#3E3B32", "#C46B4E", "#F9F5EB"],
+    ["#A8BCA2", "#4b2e22", "#C46B4E", "#F9F5EB"],
 
     // 🍫 Luxury Dark (Premium / Steakhouse)
-    ["#1C1C1C", "#EADCA6", "#800020", "#000000"],
+    ["#1C1C1C", "#EADCA6", "#800020", "#FFF7F7"],
   ],
   retro: [
     // 🍋 Modern Minimal (Clean & Readable)
@@ -41,13 +41,16 @@ const palettePacks = {
 
     // Candy shop
     ["#f7ccff", "#440051", "#a3d9ff", "#fef4ff"],
+
+    // ORANGE
+    ['#ffa644', '#000000', '#bfc8ad', '#fffcf3']
   ],
 };
 
 export default function SuggestedPalettes({
   globalStyle = "default",
   initialPalettePack = "default",
-  defaultValue = ["#0d3b66", "#faf0ca", "#f4d35e"],
+  defaultValue = ["#F8F8F8", "#0F0000"],
   value,
   onChange,
 }: PaletteSuggestionsType) {

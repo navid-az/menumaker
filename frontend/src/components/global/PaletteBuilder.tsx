@@ -12,7 +12,7 @@ import { Plus, Minus } from "lucide-react";
 import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
 
 const PaletteBuilder = ({
-  defaultValue = ["#0d3b66", "#faf0ca", "#f4d35e"],
+  defaultValue = ["#F8F8F8", "#0F0000"],
   value,
   onChange,
 }: {
