@@ -5,9 +5,8 @@ export const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "";
 export const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL ?? ""}/api`;
 
 // Container-facing — Server Components, Server Actions, Route Handlers
-export const SERVER_API_BASE_URL = `${
-  process.env.API_URL ?? "http://backend:8000"
-}/api`;
+export const SERVER_API_BASE_URL = `${process.env.API_URL ?? "http://backend:8000"
+  }/api`;
 
 // Media files — Nginx serves /media/ directly, so same origin
 export const MEDIA_BASE_URL =

@@ -24,38 +24,37 @@ const Screen = React.forwardRef<HTMLDivElement, ScreenProps>(
 
 Screen.displayName = "IPhoneMockup.Screen";
 
-export const IPhoneMockup = Object.assign(
-  React.forwardRef<HTMLDivElement, IPhoneMockupProps>(
-    ({ className, screenClassName, children, ...props }, ref) => {
-      return (
+const IPhoneMockupBase = React.forwardRef<HTMLDivElement, IPhoneMockupProps>(
+  ({ className, screenClassName, children, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn("relative aspect-430/874", className)}
+        {...props}
+      >
+        {/* Screen */}
         <div
-          ref={ref}
-          className={cn("relative aspect-430/874", className)}
-          {...props}
+          className={cn(
+            "absolute overflow-hidden rounded-[42px]",
+            screenClassName
+          )}
+          style={{
+            left: "5.6%",
+            top: "2.3%",
+            width: "88.9%",
+            height: "95.3%",
+          }}
         >
-          {/* Screen */}
-          <div
-            className={cn(
-              "absolute overflow-hidden rounded-[42px]",
-              screenClassName
-            )}
-            style={{
-              left: "5.6%",
-              top: "2.3%",
-              width: "88.9%",
-              height: "95.3%",
-            }}
-          >
-            {children}
-          </div>
-          <IphoneFrame className="pointer-events-none absolute inset-0 h-full w-full select-none"></IphoneFrame>
+          {children}
         </div>
-      );
-    }
-  ),
-  {
-    Screen,
+        <IphoneFrame className="pointer-events-none absolute inset-0 h-full w-full select-none"></IphoneFrame>
+      </div>
+    );
   }
 );
 
-IPhoneMockup.displayName = "IPhoneMockup";
+IPhoneMockupBase.displayName = "IPhoneMockup";
+
+export const IPhoneMockup = Object.assign(IPhoneMockupBase, {
+  Screen,
+});

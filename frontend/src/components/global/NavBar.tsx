@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 
 //components
 import Link from "next/link";
@@ -140,7 +140,9 @@ export function Navbar() {
           <NavBtn href="/" title="درباره ما"></NavBtn>
           <NavBtn href="/" title="تماس با ما"></NavBtn>
         </div>
-        <AuthSection></AuthSection>
+        <Suspense fallback={null}>
+          <AuthSection />
+        </Suspense>
       </nav>
     </div>
   );

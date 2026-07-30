@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 
 //components
 import {
@@ -16,10 +16,8 @@ import RegisterBtn from "./components/RegisterBtn";
 import CredentialStep from "./components/CredentialStep";
 import OtpStep from "./components/OtpStep";
 import OtpCountdown from "./components/OtpCountdown";
-import DemoModeBtn from "@/app/components/DemoModeBtn";
+import DemoModeWrapper from "./components/DemoModeBtn";
 
-//hooks
-import { useSearchParams } from "next/navigation";
 
 //libraries
 import z from "zod";
@@ -70,9 +68,7 @@ export default function Page() {
   const [step, setStep] = useState(1);
   const [retryAfter, setRetryAfter] = useState(0);
 
-  //Check if this is a demo template(layout)
-  const searchParams = useSearchParams();
-  const isDemo = searchParams.get("demo") === "true";
+
 
   // reset slider states on mount
   useEffect(() => {
@@ -210,7 +206,9 @@ export default function Page() {
           <SliderHeader>
             <div className="flex flex-col w-full gap-6">
               <SliderTitle></SliderTitle>
-              {isDemo && <DemoModeBtn></DemoModeBtn>}
+              <Suspense fallback={null}>
+                <DemoModeWrapper></DemoModeWrapper>
+              </Suspense>
             </div>
           </SliderHeader>
           <SliderBody>
