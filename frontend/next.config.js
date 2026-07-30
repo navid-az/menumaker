@@ -21,7 +21,7 @@ module.exports = {
     remotePatterns: [
       {
         protocol: "http",
-        hostname: "localhost",
+        hostname: "nginx",
         // port: "8000",
         pathname: "/media/**",
       },

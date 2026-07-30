@@ -100,7 +100,7 @@ def initiate_payment(amount: int, description: str, mobile: str, email: str):
 
         response = zarinpal.payments.create({
             "amount": amount,
-            "callback_url": "http://localhost:8000/api/subscriptions/orders/verify/",
+            "callback_url": "http://localhost/api/subscriptions/orders/verify/",
             "description": description,
             "mobile": mobile,
             "email": email,
@@ -274,7 +274,7 @@ class SubscriptionOrderVerifyView(APIView):
             sub_order.save()
 
             # payment failed or user canceled
-            return redirect('http://localhost:3000/pricing?status=NOK')
+            return redirect('http://localhost/pricing?status=NOK')
 
         res = verify_payment(
             authority=authority,
@@ -297,10 +297,10 @@ class SubscriptionOrderVerifyView(APIView):
             )
             return redirect(
                 # opt-out &authority={authority}
-                f'http://localhost:3000/builder?status=OK'
+                f'http://localhost/builder?status=OK'
             )
 
         # mark order as failed
         subscription_order.status = SubscriptionOrder.OrderStatus.FAILED
         subscription_order.save()
-        return redirect('http://localhost:3000/pricing?status=NOK')
+        return redirect('http://localhost/pricing?status=NOK')
