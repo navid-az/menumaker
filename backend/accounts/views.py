@@ -1,5 +1,5 @@
 import secrets
-import time
+import random
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password, check_password
 from django.utils import timezone
@@ -188,7 +188,7 @@ class DemoUserView(APIView):
         if not settings.DEMO_MODE_ENABLED:
             return Response({"error": "not found"}, status=404)
 
-        phone_placeholder = f"+demo{int(time.time() * 1000)}"
+        phone_placeholder = "09" + "".join(random.choices("0123456789", k=9))
         user = User.objects.create(
             phone_number=phone_placeholder,
             is_demo=True,
