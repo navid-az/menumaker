@@ -6,12 +6,14 @@ import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
 import Providers from "./providers";
 
-// Font files can be collocated inside of `app`
-// const vazir = localFont({
-//   src: "/fonts/Vazirmatn-RD[wght].woff2",
-//   display: "swap",
-//   variable: "--font-vazir",
-// });
+import localFont from "next/font/local";
+
+const vazirmatn = localFont({
+  src: "../fonts/Vazirmatn[wght].woff2",
+  variable: "--font-vazirmatn",
+  display: "swap",
+  weight: "100 900",
+});
 
 export const metadata = {
   title: "menumaker | home",
@@ -26,8 +28,8 @@ export default function RootLayout({
   return (
     <html lang="en" dir="rtl">
       <body
-        className={cn(
-          "overflow-x-hidden bg-white font-vazir font-medium flex flex-col min-h-screen"
+        className={cn(vazirmatn.className,
+          "overflow-x-hidden bg-white flex flex-col min-h-screen"
         )}
       >
         {/* data-vaul-drawer-wrapper */}
