@@ -11,7 +11,7 @@ import QrCodeGenerator from "@/components/global/QrCodeGenerator";
 import { LoaderCircle } from "lucide-react";
 
 //configs
-import { API_BASE_URL } from "@/lib/config";
+import { APP_URL } from "@/lib/config";
 
 //types
 import { type Business } from "@/app/types/api/business";
@@ -29,7 +29,7 @@ export default function SuccessPage({
         <div className="aspect-square w-[clamp(800px,80vw,1300px)] border-sad-blue border-2 rounded-full absolute"></div>
       </div>
       <div className="flex w-full flex-col items-center justify-center gap-9 px-4 max-w-sm">
-        <div className="flex flex-col items-center gap-1.5">
+        <div className="flex flex-col justify-center items-center gap-1.5">
           <h2 className="text-xl font-bold sm:text-3xl">
             منو شما با موفقیت ایجاد شد!
           </h2>
@@ -40,7 +40,7 @@ export default function SuccessPage({
         </div>
         {newBusiness?.slug ? (
           <QrCodeGenerator
-            url={`${API_BASE_URL}${newBusiness.slug}/menu`}
+            url={`${APP_URL}/${newBusiness.slug}/menu`}
           ></QrCodeGenerator>
         ) : (
           <LoaderCircle className="animate-spin w-14 h-14"></LoaderCircle>

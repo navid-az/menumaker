@@ -7,7 +7,7 @@ import gsap from "gsap";
 import { cn } from "@/lib/utils";
 
 //configs
-import { MEDIA_BASE_URL } from "@/lib/config";
+import { MEDIA_INTERNAL_URL } from "@/lib/config";
 
 //providers
 import { usePreview } from "@/app/(creator)/builder/components/preview/PreviewContext";
@@ -144,7 +144,7 @@ export default function CartBtn({
           >
             <Image
               fill
-              src={`${!isPreview ? MEDIA_BASE_URL : ''}${item.item.image}`}
+              src={`${!isPreview ? MEDIA_INTERNAL_URL : ''}${item.item.image}`}
               alt={item.item.name}
               className="rounded-(--radius-base) object-cover transition-all duration-300"
             />

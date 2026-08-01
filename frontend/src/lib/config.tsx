@@ -9,8 +9,11 @@ export const SERVER_API_BASE_URL = `${process.env.API_URL ?? "http://backend:800
   }/api`;
 
 // Media files — Nginx serves /media/ directly, so same origin
+export const MEDIA_INTERNAL_URL =
+  process.env.MEDIA_INTERNAL_URL ?? "http://nginx";
 export const MEDIA_BASE_URL =
   process.env.NEXT_PUBLIC_MEDIA_URL ?? "http://backend:8000";
+
 
 // Decide websocket protocol
 export function getWsUrl(path: string): string {

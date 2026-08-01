@@ -22,7 +22,7 @@ import ItemTableSwitch from "../components/ItemTableSwitch";
 import { deleteItem } from "@/app/actions";
 
 //configs
-import { MEDIA_BASE_URL } from "@/lib/config";
+import { MEDIA_INTERNAL_URL } from "@/lib/config";
 
 //SVGs
 import { ArrowUpDown, Trash2, ImageIcon } from "lucide-react";
@@ -52,143 +52,143 @@ export const itemColumns = (
   categories: MenuCategory[],
   scope: "visible" | "hidden"
 ): ColumnDef<MenuItem>[] => [
-  {
-    accessorKey: "image",
-    header: "تصویر",
-    cell: (props) => (
-      <div className="relative h-12 w-12 rounded-md">
-        {props.row.original.image ? (
-          <Image
-            className="rounded-md"
-            fill
-            alt={props.row.getValue("name")}
-            src={`${MEDIA_BASE_URL}${props.row.getValue("image")}`}
-          ></Image>
-        ) : (
-          <ImageIcon
-            strokeWidth={1.5}
-            className="h-12 w-12 text-gray-400"
-          ></ImageIcon>
-        )}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <Button
-          className="-mr-3"
-          size="sm"
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          نام
-          <ArrowUpDown className="mr-2 h-4 w-4" />
-        </Button>
-      );
+    {
+      accessorKey: "image",
+      header: "تصویر",
+      cell: (props) => (
+        <div className="relative h-12 w-12 rounded-md">
+          {props.row.original.image ? (
+            <Image
+              className="rounded-md"
+              fill
+              alt={props.row.getValue("name")}
+              src={`${MEDIA_INTERNAL_URL}${props.row.getValue("image")}`}
+            ></Image>
+          ) : (
+            <ImageIcon
+              strokeWidth={1.5}
+              className="h-12 w-12 text-gray-400"
+            ></ImageIcon>
+          )}
+        </div>
+      ),
     },
-  },
-  {
-    accessorKey: "category",
-    header: "گروه",
-  },
+    {
+      accessorKey: "name",
+      header: ({ column }) => {
+        return (
+          <Button
+            className="-mr-3"
+            size="sm"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            نام
+            <ArrowUpDown className="mr-2 h-4 w-4" />
+          </Button>
+        );
+      },
+    },
+    {
+      accessorKey: "category",
+      header: "گروه",
+    },
 
-  {
-    accessorKey: "price",
-    header: ({ column }) => {
-      return (
-        <Button
-          className="-mr-3"
-          size="sm"
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          قیمت
-          <ArrowUpDown className="mr-2 h-4 w-4" />
-        </Button>
-      );
+    {
+      accessorKey: "price",
+      header: ({ column }) => {
+        return (
+          <Button
+            className="-mr-3"
+            size="sm"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            قیمت
+            <ArrowUpDown className="mr-2 h-4 w-4" />
+          </Button>
+        );
+      },
     },
-  },
-  {
-    accessorKey: "branch_exceptions.is_available",
-    header: "موجود",
-    cell: (props) => {
-      const branchExceptions = props.row.original.branch_exceptions;
-      const value = branchExceptions
-        ? branchExceptions.is_available
-        : scope === "visible"
-        ? true
-        : false;
+    {
+      accessorKey: "branch_exceptions.is_available",
+      header: "موجود",
+      cell: (props) => {
+        const branchExceptions = props.row.original.branch_exceptions;
+        const value = branchExceptions
+          ? branchExceptions.is_available
+          : scope === "visible"
+            ? true
+            : false;
 
-      return (
-        <ItemTableSwitch
-          initial={value}
-          row={props.row}
-          fieldName="is_available"
-        ></ItemTableSwitch>
-      );
+        return (
+          <ItemTableSwitch
+            initial={value}
+            row={props.row}
+            fieldName="is_available"
+          ></ItemTableSwitch>
+        );
+      },
     },
-  },
-  {
-    accessorKey: "branch_exceptions.is_active",
-    header: "فعال",
-    cell: (props) => {
-      const branchExceptions = props.row.original.branch_exceptions;
-      const value = branchExceptions
-        ? branchExceptions.is_active
-        : scope === "visible"
-        ? true
-        : false;
+    {
+      accessorKey: "branch_exceptions.is_active",
+      header: "فعال",
+      cell: (props) => {
+        const branchExceptions = props.row.original.branch_exceptions;
+        const value = branchExceptions
+          ? branchExceptions.is_active
+          : scope === "visible"
+            ? true
+            : false;
 
-      return (
-        <ItemTableSwitch
-          initial={value}
-          row={props.row}
-          fieldName="is_active"
-        ></ItemTableSwitch>
-      );
+        return (
+          <ItemTableSwitch
+            initial={value}
+            row={props.row}
+            fieldName="is_active"
+          ></ItemTableSwitch>
+        );
+      },
     },
-  },
-  {
-    id: "row-options",
-    cell: (props) => (
-      <div className="flex items-center justify-end gap-2">
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button className="rounded-full" variant="ghost" size="icon">
-              <Trash2 className="h-5 w-5"></Trash2>
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>مطمعنی؟</AlertDialogTitle>
-              <AlertDialogDescription>
-                آیا از حذف این آیتم({props.row.getValue("name")}) مطمعنی؟
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>انصراف</AlertDialogCancel>
-              <AlertDialogAction asChild>
-                <Button
-                  onClick={() => handleDelete(props)}
-                  variant="destructive"
-                >
-                  حذف کن
-                </Button>
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-        <CreateItemForm
-          businessSlug={props.row.original.business}
-          title="ویرایش آیتم"
-          description="با تغییر موارد زیر آیتم را ویرایش کنید"
-          defaultValues={props.row.original}
-          categories={categories}
-          itemId={props.row.original.id}
-        />
-      </div>
-    ),
-  },
-];
+    {
+      id: "row-options",
+      cell: (props) => (
+        <div className="flex items-center justify-end gap-2">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button className="rounded-full" variant="ghost" size="icon">
+                <Trash2 className="h-5 w-5"></Trash2>
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>مطمعنی؟</AlertDialogTitle>
+                <AlertDialogDescription>
+                  آیا از حذف این آیتم({props.row.getValue("name")}) مطمعنی؟
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>انصراف</AlertDialogCancel>
+                <AlertDialogAction asChild>
+                  <Button
+                    onClick={() => handleDelete(props)}
+                    variant="destructive"
+                  >
+                    حذف کن
+                  </Button>
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+          <CreateItemForm
+            businessSlug={props.row.original.business}
+            title="ویرایش آیتم"
+            description="با تغییر موارد زیر آیتم را ویرایش کنید"
+            defaultValues={props.row.original}
+            categories={categories}
+            itemId={props.row.original.id}
+          />
+        </div>
+      ),
+    },
+  ];

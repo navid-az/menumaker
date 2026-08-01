@@ -10,7 +10,7 @@ import AddToCartBtn from "@/app/(menu)/[business_slug]/(public-menu)/menu/compon
 import { Heart } from "lucide-react";
 
 //configs
-import { MEDIA_BASE_URL } from "@/lib/config";
+import { MEDIA_INTERNAL_URL } from "@/lib/config";
 
 //types
 import { AnimationVariantType } from "@/components/global/InteractiveWrapper";
@@ -61,18 +61,18 @@ export function MenuItemPreview({
               globalBorderRadius === "full"
                 ? "20px"
                 : globalBorderRadius === "lg"
-                ? "14px"
-                : globalBorderRadius === "md"
-                ? "7px"
-                : "3px",
+                  ? "14px"
+                  : globalBorderRadius === "md"
+                    ? "7px"
+                    : "3px",
             borderBottomRightRadius:
               globalBorderRadius === "full"
                 ? "20px"
                 : globalBorderRadius === "lg"
-                ? "14px"
-                : globalBorderRadius === "md"
-                ? "7px"
-                : "3px",
+                  ? "14px"
+                  : globalBorderRadius === "md"
+                    ? "7px"
+                    : "3px",
           }}
           className={`absolute bottom-0 right-0 z-20 flex w-full flex-col justify-between gap-2 rounded-b-3xl p-4 transition-all duration-300`}
         >
@@ -84,7 +84,7 @@ export function MenuItemPreview({
         </div>
         <Image
           className="absolute rounded-3xl object-cover"
-          src={`${MEDIA_BASE_URL}${image}`}
+          src={`${MEDIA_INTERNAL_URL}${image}`}
           alt={name}
           fill
         ></Image>
@@ -107,7 +107,7 @@ export function MenuItemPreview({
           </Button>
           <Image
             className="object-cover transition-all duration-300"
-            src={`${MEDIA_BASE_URL}${image}`}
+            src={`${MEDIA_INTERNAL_URL}${image}`}
             alt={name}
             fill
             style={{
@@ -115,18 +115,18 @@ export function MenuItemPreview({
                 globalBorderRadius === "full"
                   ? "20px"
                   : globalBorderRadius === "lg"
-                  ? "14px"
-                  : globalBorderRadius === "md"
-                  ? "7px"
-                  : "4px",
+                    ? "14px"
+                    : globalBorderRadius === "md"
+                      ? "7px"
+                      : "4px",
               borderTopRightRadius:
                 globalBorderRadius === "full"
                   ? "20px"
                   : globalBorderRadius === "lg"
-                  ? "14px"
-                  : globalBorderRadius === "md"
-                  ? "7px"
-                  : "4px",
+                    ? "14px"
+                    : globalBorderRadius === "md"
+                      ? "7px"
+                      : "4px",
             }}
           ></Image>
         </div>
@@ -138,18 +138,18 @@ export function MenuItemPreview({
               globalBorderRadius === "full"
                 ? "20px"
                 : globalBorderRadius === "lg"
-                ? "14px"
-                : globalBorderRadius === "md"
-                ? "7px"
-                : "3px",
+                  ? "14px"
+                  : globalBorderRadius === "md"
+                    ? "7px"
+                    : "3px",
             borderBottomRightRadius:
               globalBorderRadius === "full"
                 ? "20px"
                 : globalBorderRadius === "lg"
-                ? "14px"
-                : globalBorderRadius === "md"
-                ? "7px"
-                : "3px",
+                  ? "14px"
+                  : globalBorderRadius === "md"
+                    ? "7px"
+                    : "3px",
           }}
           className={`flex w-full basis-5/12 flex-col justify-end gap-3 p-2 transition-all duration-300`}
         >

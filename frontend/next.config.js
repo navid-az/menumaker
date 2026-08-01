@@ -1,5 +1,4 @@
 /** @type {import('next').NextConfig} */
-// const nextConfig = {};
 
 module.exports = {
   output: "standalone",
@@ -21,8 +20,12 @@ module.exports = {
     remotePatterns: [
       {
         protocol: "http",
+        hostname: "localhost",
+        pathname: "/media/**",
+      },
+      {
+        protocol: "http",
         hostname: "nginx",
-        // port: "8000",
         pathname: "/media/**",
       },
     ],

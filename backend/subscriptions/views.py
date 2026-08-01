@@ -1,3 +1,5 @@
+import os
+
 from zarinpal import ZarinPal, Config
 from typing import Literal
 from django.shortcuts import get_object_or_404
@@ -98,9 +100,12 @@ def initiate_payment(amount: int, description: str, mobile: str, email: str):
         )
         zarinpal = ZarinPal(config)
 
+        callback_url = (
+            f"{os.environ['NEXT_PUBLIC_APP_URL']}/api/subscriptions/orders/verify/"
+        )
         response = zarinpal.payments.create({
             "amount": amount,
-            "callback_url": "http://localhost/api/subscriptions/orders/verify/",
+            "callback_url": callback_url,
             "description": description,
             "mobile": mobile,
             "email": email,
@@ -274,7 +279,7 @@ class SubscriptionOrderVerifyView(APIView):
             sub_order.save()
 
             # payment failed or user canceled
-            return redirect('http://localhost/pricing?status=NOK')
+            return redirect(f'{os.environ['NEXT_PUBLIC_APP_URL']}/pricing?status=NOK')
 
         res = verify_payment(
             authority=authority,
@@ -297,10 +302,10 @@ class SubscriptionOrderVerifyView(APIView):
             )
             return redirect(
                 # opt-out &authority={authority}
-                f'http://localhost/builder?status=OK'
+                f'{os.environ['NEXT_PUBLIC_APP_URL']}/builder?status=OK'
             )
 
         # mark order as failed
         subscription_order.status = SubscriptionOrder.OrderStatus.FAILED
         subscription_order.save()
-        return redirect('http://localhost/pricing?status=NOK')
+        return redirect(f'{os.environ['NEXT_PUBLIC_APP_URL']}/pricing?status=NOK')

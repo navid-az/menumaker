@@ -9,7 +9,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 //configs
-import { MEDIA_BASE_URL } from "@/lib/config";
+import { MEDIA_INTERNAL_URL } from "@/lib/config";
 
 //SVGs
 import { AlignLeft } from "lucide-react";
@@ -66,13 +66,13 @@ export default function Home({
           {menuData.secondary_image && (
             <div className="relative h-[22vh] w-6/12 rounded-bl-(--radius-md)">
               <Image
-                src={`${MEDIA_BASE_URL}${menuData.secondary_image}`}
+                src={`${MEDIA_INTERNAL_URL}${menuData.secondary_image}`}
                 fill
                 alt="secondary_image"
                 className={cn(
                   "rounded-bl-(--radius-md) object-cover transition-all duration-300",
                   globalStyling.style === "retro" &&
-                    "border-l-3 border-b-3 border-(--secondary)"
+                  "border-l-3 border-b-3 border-(--secondary)"
                 )}
               ></Image>
             </div>
@@ -126,13 +126,13 @@ export default function Home({
       {menuData.tertiary_image && (
         <div className="absolute left-0 top-[12vh] h-[24vh] w-[110px]">
           <Image
-            src={`${MEDIA_BASE_URL}${menuData.tertiary_image}`}
+            src={`${MEDIA_INTERNAL_URL}${menuData.tertiary_image}`}
             fill
             alt="tertiary_image"
             className={cn(
               "rounded-r-(--radius-sm) object-cover transition-all duration-300",
               globalStyling.style === "retro" &&
-                "border-3 border-l-0 border-(--secondary)"
+              "border-3 border-l-0 border-(--secondary)"
             )}
           ></Image>
         </div>
@@ -158,13 +158,13 @@ export default function Home({
         {menuData.primary_image && (
           <div className="relative h-full w-full">
             <Image
-              src={`${MEDIA_BASE_URL}${menuData.primary_image}`}
+              src={`${MEDIA_INTERNAL_URL}${menuData.primary_image}`}
               fill
               alt="primary_image"
               className={cn(
                 "rounded-tr-(--radius-lg) object-cover transition-all duration-300",
                 globalStyling.style === "retro" &&
-                  "border-3 border-l-0 border-(--secondary)"
+                "border-3 border-l-0 border-(--secondary)"
               )}
             ></Image>
           </div>
