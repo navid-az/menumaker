@@ -39,6 +39,7 @@ X_FRAME_OPTIONS = "DENY"
 # Database core settings
 DB_ENGINE = env.str("DB_ENGINE", default='postgres')
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 
 # External API keys
 KAVENEGAR_API_KEY = env("KAVENEGAR_API_KEY")
