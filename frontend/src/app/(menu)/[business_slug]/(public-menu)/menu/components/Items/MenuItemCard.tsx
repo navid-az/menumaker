@@ -18,7 +18,7 @@ import PriceTag from "../PriceTag";
 import AddToCartBtn from "../AddToCartBtn";
 
 //configs
-import { NEXT_PUBLIC_MEDIA_URL } from "@/lib/config";
+import { MEDIA_BASE_URL } from "@/lib/config";
 
 //hooks
 import { useCart, useMenuItemDrawer } from "@/lib/stores";
@@ -93,7 +93,7 @@ export function MenuItemCard({
   // Check if parent provides isPreview or not
   const { isPreview } = usePreview()
 
-  const imageSrc = isPreview ? image : `${NEXT_PUBLIC_MEDIA_URL}${image}`;
+  const imageSrc = isPreview ? image : `${MEDIA_BASE_URL}${image}`;
 
 
   const [activeChoices, setActiveChoices] = useState<ActiveChoices>({});

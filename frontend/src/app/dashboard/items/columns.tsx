@@ -22,7 +22,7 @@ import ItemTableSwitch from "../components/ItemTableSwitch";
 import { deleteItem } from "@/app/actions";
 
 //configs
-import { MEDIA_INTERNAL_URL } from "@/lib/config";
+import { MEDIA_BASE_URL } from "@/lib/config";
 
 //SVGs
 import { ArrowUpDown, Trash2, ImageIcon } from "lucide-react";
@@ -62,7 +62,7 @@ export const itemColumns = (
               className="rounded-md"
               fill
               alt={props.row.getValue("name")}
-              src={`${MEDIA_INTERNAL_URL}${props.row.getValue("image")}`}
+              src={`${MEDIA_BASE_URL}${props.row.getValue("image")}`}
             ></Image>
           ) : (
             <ImageIcon
