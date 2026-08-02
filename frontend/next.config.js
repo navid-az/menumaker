@@ -19,13 +19,13 @@ module.exports = {
   images: {
     remotePatterns: [
       {
-        protocol: "http",
-        hostname: "localhost",
+        protocol: "https",
+        hostname: "menomaker.ir",
         pathname: "/media/**",
       },
       {
-        protocol: "http",
-        hostname: "nginx",
+        protocol: "https",
+        hostname: "www.menomaker.ir",
         pathname: "/media/**",
       },
     ],
