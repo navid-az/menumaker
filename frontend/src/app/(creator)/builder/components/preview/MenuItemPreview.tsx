@@ -10,7 +10,7 @@ import AddToCartBtn from "@/app/(menu)/[business_slug]/(public-menu)/menu/compon
 import { Heart } from "lucide-react";
 
 //configs
-import { MEDIA_INTERNAL_URL } from "@/lib/config";
+import { NEXT_PUBLIC_MEDIA_URL } from "@/lib/config";
 
 //types
 import { AnimationVariantType } from "@/components/global/InteractiveWrapper";
@@ -84,7 +84,7 @@ export function MenuItemPreview({
         </div>
         <Image
           className="absolute rounded-3xl object-cover"
-          src={`${MEDIA_INTERNAL_URL}${image}`}
+          src={`${NEXT_PUBLIC_MEDIA_URL}${image}`}
           alt={name}
           fill
         ></Image>
@@ -107,7 +107,7 @@ export function MenuItemPreview({
           </Button>
           <Image
             className="object-cover transition-all duration-300"
-            src={`${MEDIA_INTERNAL_URL}${image}`}
+            src={`${NEXT_PUBLIC_MEDIA_URL}${image}`}
             alt={name}
             fill
             style={{

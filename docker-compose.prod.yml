@@ -26,7 +26,6 @@ services:
       # Server-side only vars — available at runtime, never sent to browser
       - API_URL=${API_URL}
       - SECRET_KEY=${SECRET_KEY}
-      - MEDIA_INTERNAL_URL=${MEDIA_INTERNAL_URL}
     depends_on:
       - backend
     restart: unless-stopped

@@ -10,7 +10,7 @@ import { AlignLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 //configs
-import { MEDIA_INTERNAL_URL } from "@/lib/config";
+import { NEXT_PUBLIC_MEDIA_URL } from "@/lib/config";
 
 export default function HomePagePreview({
   imageUrls,
@@ -59,12 +59,12 @@ export default function HomePagePreview({
           {imageUrls[1] ? (
             <div className="relative h-[22vh] w-6/12">
               <Image
-                src={`${MEDIA_INTERNAL_URL}${imageUrls[1]}`}
+                src={`${NEXT_PUBLIC_MEDIA_URL}${imageUrls[1]}`}
                 fill
                 alt="secondary_image"
                 className={`${globalBorderRadius === "full"
-                    ? "rounded-bl-[100px]"
-                    : "rounded-bl-(--radius-exception)"
+                  ? "rounded-bl-[100px]"
+                  : "rounded-bl-(--radius-exception)"
                   } object-cover`}
               ></Image>
             </div>
@@ -128,12 +128,12 @@ export default function HomePagePreview({
       {imageUrls[2] ? (
         <div className="absolute left-0 top-[16vh] h-[24vh] w-[100px]">
           <Image
-            src={`${MEDIA_INTERNAL_URL}${imageUrls[2]}`}
+            src={`${NEXT_PUBLIC_MEDIA_URL}${imageUrls[2]}`}
             fill
             alt="tertiary_image"
             className={`${globalBorderRadius === "full"
-                ? "rounded-r-[40px]"
-                : "rounded-r-(--radius-exception)"
+              ? "rounded-r-[40px]"
+              : "rounded-r-(--radius-exception)"
               } object-cover`}
           ></Image>
         </div>
@@ -162,11 +162,11 @@ export default function HomePagePreview({
           <Image
             width={300}
             height={200}
-            src={`${MEDIA_INTERNAL_URL}${imageUrls[0]}`}
+            src={`${NEXT_PUBLIC_MEDIA_URL}${imageUrls[0]}`}
             alt="primary_image"
             className={`${globalBorderRadius === "full"
-                ? "rounded-tr-[120px]"
-                : "rounded-tr-(--radius-exception)"
+              ? "rounded-tr-[120px]"
+              : "rounded-tr-(--radius-exception)"
               } rounded-bl-[100px] object-cover`}
           ></Image>
         ) : (
