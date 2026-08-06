@@ -15,7 +15,7 @@ function Footer() {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: 900,
+            width: '100%',
             height: 600,
             background: `radial-gradient(ellipse at center, rgba(148,217,226,0.08) 0%, rgba(82,99,255,0.04) 40%, transparent 70%)`,
             pointerEvents: "none",
@@ -31,7 +31,7 @@ function Footer() {
             pointerEvents: "none",
           }}
         />
-        <div className="flex flex-col items-center justify-center gap-4 md:gap-6 select-none">
+        <div className="flex flex-col leading-16 items-center justify-center gap-4 md:gap-6 select-none">
           <h2 className="text-soft-blue">فروشگاه خود را</h2>
           <span
             style={{
@@ -68,14 +68,14 @@ function Footer() {
         <p className="hidden lg:block text-sm font-light absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full text-center opacity-40 select-none">
           © 1405 لِ‌منو — تمامی حقوق محفوظ است.
         </p>
-        <div className="flex justify-between items-start lg:items-center w-full gap-2">
+        <div className="flex justify-between flex-col sm:flex-row items-start lg:items-center w-full gap-2">
           <Link
             href="/"
             className="relative w-32 h-10 opacity-40 hover:opacity-100 transition-opacity duration-300"
           >
             <Logo height={36} primary="#edfdff" secondary="#94D9E2"></Logo>
           </Link>
-          <div className="flex">
+          <div className="flex w-full sm:w-auto justify-center sm:justify-end">
             <Button className="text-xs lg:text-sm font-light text-soft-blue/40 hover:text-soft-blue transition-colors duration-300">
               حریم خصوصی
             </Button>
