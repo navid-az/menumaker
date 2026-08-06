@@ -6,7 +6,7 @@ import React, { useRef } from 'react'
 import { Section, SectionHeader, SectionTitle, SectionSubtitle } from '@/components/global/marketingLayout/MarketingSection'
 import FeatureNameCapsule from '../FeatureNameCapsule'
 import { GradientSpan } from '../GradientSpan'
-import { LiveManagementMockUp } from '@/components/global/Mockup/LiveManagementMockup'
+import { DashboardMockup, LiveManagementPanelMockup } from '@/components/global/Mockup/DashboardMockup'
 import LiveCard from '@/app/dashboard/components/LiveCard'
 
 //libraries
@@ -68,7 +68,9 @@ export default function LiveManagementSection() {
                         }}
                         transition={transition}
                     >
-                        <LiveManagementMockUp isCompact></LiveManagementMockUp>
+                        <DashboardMockup isCompact>
+                            <LiveManagementPanelMockup isCompact></LiveManagementPanelMockup>
+                        </DashboardMockup>
                     </motion.div>
                     <motion.div
                         initial={{ right: 272.8, top: 100 }} //Initial position of the target LiveCard

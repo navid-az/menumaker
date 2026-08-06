@@ -24,6 +24,9 @@ import { motion, type Transition } from 'motion/react'
 //types
 import { type LucideIcon } from 'lucide-react'
 
+//functions
+import { cn } from '@/lib/utils'
+
 const radiusTransition = (toHover: boolean): Transition => ({
     duration: 0.35,
     ease: "easeOut" as const,
@@ -73,6 +76,7 @@ type CategoryButtonProps = {
     label: string;
     active?: boolean;
     className?: string;
+    activeClassName?: string;
     isHovered?: boolean;
 };
 
@@ -81,6 +85,7 @@ export function CategoryButton({
     label,
     active = false,
     className = "",
+    activeClassName = "",
     isHovered = false,
 }: CategoryButtonProps) {
     return (
@@ -88,18 +93,24 @@ export function CategoryButton({
             variants={fullRoundVariants}
             animate={isHovered ? "hover" : "rest"}
             transition={radiusTransition(isHovered)}
-            className={`
-        flex items-center gap-1.5 px-2.5 py-1.5
-        font-normal border w-max text-xs translate-x-10
-        transition-colors duration-300
-        ${active
-                    ? `bg-zinc-800 border-zinc-200 text-white
-               group-hover:bg-orange-500 group-hover:border-orange-600 group-hover:text-white`
-                    : `bg-zinc-50 border-zinc-200 text-zinc-600
-               group-hover:bg-orange-100 group-hover:border-orange-400 group-hover:text-orange-800`
-                }
-        ${className}
-      `}
+            className={cn(
+                `
+    flex items-center gap-1.5 px-2.5 py-1.5
+    font-normal border w-max text-xs translate-x-10
+    transition-colors duration-300
+  `,
+                active
+                    ? `
+        bg-zinc-800 border-zinc-200 text-white
+        group-hover:bg-orange-500 group-hover:border-orange-600 group-hover:text-white
+      `
+                    : `
+        bg-zinc-50 border-zinc-200 text-zinc-600
+        group-hover:bg-orange-100 group-hover:border-orange-400 group-hover:text-orange-800
+      `,
+                className,
+                active && activeClassName
+            )}
         >
             <Icon className="w-4 h-4" />
             <p>{label}</p>
@@ -196,6 +207,7 @@ type MenuItemCardProps = {
     name?: string,
     quantity: number;
     isHovered?: boolean;
+    className?: string
 };
 
 export function MenuItemCard({
@@ -204,13 +216,14 @@ export function MenuItemCard({
     name = '',
     quantity,
     isHovered = false,
+    className = ''
 }: MenuItemCardProps) {
     return (
         <motion.div
             variants={cardRoundVariants}
             animate={isHovered ? "hover" : "rest"}
             transition={radiusTransition(isHovered)}
-            className="bg-orange-200 border relative border-orange-950 h-48 overflow-hidden"
+            className={cn(" border relative border-orange-950 h-48 overflow-hidden", className)}
         >
             <div className="h-full w-full relative">
                 {imageSrc ? (

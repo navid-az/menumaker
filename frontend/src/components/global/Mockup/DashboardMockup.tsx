@@ -1,227 +1,30 @@
-import React, { RefObject } from "react";
+import React from "react";
 
 //components
 import { Button } from "@/components/ui/button";
 import LiveCard from "@/app/dashboard/components/LiveCard";
+import Logo from "../Logo";
+
+//functions
+import { cn } from "@/lib/utils";
+
+//SVGs
+import { Building2, ChevronLeft, MapPin, Star, User2 } from "lucide-react";
+import { BarChart, Radar, ScrollText, Users, Settings } from "@/app/dashboard/components/svg";
 
 //types
 import { TableType } from "@/app/dashboard/[business_slug]/[branch_slug]/liveManagement/all/page";
 
-//functions
-import { cn } from "@/lib/utils";
-import { Building2, ChevronLeft, MapPin, Star, User2 } from "lucide-react";
-import { BarChart, Radar, ScrollText, Users, Settings } from "@/app/dashboard/components/svg";
-import Logo from "../Logo";
-
-const defaultDummyData: TableType[] = [
-    // Batch 1
-    {
-        id: 1,
-        code: "A1B2C3",
-        active_session: {
-            code: "S1X2Y3",
-            started_at: new Date().toISOString(),
-            expires_at: new Date(Date.now() + 60_000).toISOString(),
-            is_active: true,
-        },
-        active_call: {
-            resolved: false,
-            created_at: new Date().toISOString(),
-            expires_at: new Date(Date.now() + 30_000).toISOString(),
-        },
-        name: "Table 1",
-        seats: 4,
-        location_description: "Near window",
-        is_active: true,
-        is_occupied: true,
-        is_reserved: false,
-        is_requesting_assistance: true,
-    },
-    {
-        id: 2,
-        code: "D4E5F6",
-        active_session: {
-            code: "T7U8V9",
-            started_at: new Date().toISOString(),
-            expires_at: new Date(Date.now() + 60_000).toISOString(),
-            is_active: true,
-        },
-        name: "Table 2",
-        seats: 2,
-        is_active: true,
-        is_occupied: true,
-        is_reserved: false,
-    },
-    {
-        id: 3,
-        code: "G7H8I9",
-        active_session: {
-            code: "X1Y2Z3",
-            started_at: new Date().toISOString(),
-            expires_at: new Date(Date.now() + 120_000).toISOString(),
-            is_active: true,
-        },
-        active_call: {
-            resolved: false,
-            created_at: new Date().toISOString(),
-            expires_at: new Date(Date.now() + 90_000).toISOString(),
-        },
-        name: "Table 3",
-        seats: 6,
-        location_description: "Center hall",
-        is_active: true,
-        is_occupied: true,
-        is_reserved: false,
-        is_requesting_assistance: true,
-    },
-    {
-        id: 4,
-        code: "J1K2L3",
-        active_session: {
-            code: "X1Y2Z3",
-            started_at: new Date().toISOString(),
-            expires_at: new Date(Date.now() + 120_000).toISOString(),
-            is_active: true,
-        },
-        name: "Table 4",
-        seats: 4,
-        location_description: "Patio",
-        is_active: true,
-        is_occupied: true,
-        is_reserved: false,
-        is_requesting_assistance: false,
-    },
-
-    // Batch 2
-    {
-        id: 6,
-        code: "P7Q8R9",
-        active_session: {
-            code: "L1M2N3",
-            started_at: new Date().toISOString(),
-            expires_at: new Date(Date.now() + 90_000).toISOString(),
-            is_active: true,
-        },
-        active_call: {
-            resolved: false,
-            created_at: new Date().toISOString(),
-            expires_at: new Date(Date.now() + 45_000).toISOString(),
-        },
-        name: "Table 6",
-        seats: 4,
-        location_description: "Balcony",
-        is_active: true,
-        is_occupied: true,
-        is_reserved: false,
-        is_requesting_assistance: true,
-    },
-    {
-        id: 7,
-        code: "S1T2U3",
-        active_session: {
-            code: "O4P5Q6",
-            started_at: new Date().toISOString(),
-            expires_at: new Date(Date.now() + 90_000).toISOString(),
-            is_active: true,
-        },
-        name: "Table 7",
-        seats: 2,
-        is_active: true,
-        is_occupied: true,
-        is_reserved: false,
-    },
-    {
-        id: 8,
-        code: "V4W5X6",
-        active_session: {
-            code: "R7S8T9",
-            started_at: new Date().toISOString(),
-            expires_at: new Date(Date.now() + 180_000).toISOString(),
-            is_active: true,
-        },
-        active_call: {
-            resolved: false,
-            created_at: new Date().toISOString(),
-            expires_at: new Date(Date.now() + 120_000).toISOString(),
-        },
-        name: "Table 8",
-        seats: 6,
-        location_description: "Main hall",
-        is_active: true,
-        is_occupied: true,
-        is_reserved: false,
-        is_requesting_assistance: true,
-    },
-    {
-        id: 9,
-        code: "Y7Z8A9",
-        active_session: {
-            code: "R7S8T9",
-            started_at: new Date().toISOString(),
-            expires_at: new Date(Date.now() + 180_000).toISOString(),
-            is_active: true,
-        },
-        name: "Table 9",
-        seats: 4,
-        location_description: "Corner",
-        is_active: true,
-        is_occupied: true,
-        is_reserved: false,
-        is_requesting_assistance: false,
-    },
-];
-
-export function LiveManagementMockUp({ dummyData = defaultDummyData, highlightedCardRef, isCompact = false, className }: { dummyData?: TableType[], highlightedCardRef?: RefObject<HTMLDivElement | null>, isCompact?: boolean, className?: string }) {
+export function DashboardMockup({ isCompact = false, children }: { isCompact?: boolean, className?: string, children: React.ReactNode }) {
     return (
         <div className={cn("flex h-max w-max flex-col items-center select-none justify-center gap-4 rounded-[40px] border-4  border-[#c5e5e929] bg-[#243B3E] p-4", isCompact && 'border-2 border-[#C5E5E9]/20 bg-[#243B3E] p-0')}>
-            {!isCompact && <HeaderMockup></HeaderMockup>}
-            <div className="flex gap-4 w-max">
-                {!isCompact && <SideBarMockup></SideBarMockup>}
-                <div className={cn("flex flex-col gap-4 rounded-[34px] bg-[#ffffff1d] p-4", isCompact && 'bg-transparent', className)}>
-                    <div className="w-full rounded-full border border-[#C5E5E9]/40 bg-[#C5E5E9]/20 p-2">
-                        <div className="border-royal-green flex w-max gap-2 rounded-full border bg-[#F8FEFF] p-1">
-                            <Button className="bg-royal-green rounded-full px-6 text-sm text-white">
-                                همه
-                            </Button>
-                            <Button className="text-royal-green hover:bg-royal-green/10 rounded-full bg-inherit px-6 text-sm">
-                                میز ها
-                            </Button>
-                            <Button className="text-royal-green hover:bg-royal-green/10 rounded-full bg-inherit text-sm">
-                                سفارشات آنلاین
-                            </Button>
-                        </div>
-                    </div>
-                    <section className="flex w-full flex-col gap-4">
-                        <div className="flex w-full gap-4">
-                            {dummyData.slice(0, 4).map((table, index, array) => (
-                                <LiveCard
-                                    isMockUp
-                                    key={index}
-                                    table={table}
-                                    businessSlug="navid"
-                                    branchSlug="navid"
-                                ></LiveCard>
-                            ))}
-                        </div>
-                        <div className="flex w-full gap-4">
-                            {dummyData.slice(4).map((table, index) => (
-                                <LiveCard
-                                    isMockUp
-                                    key={index}
-                                    table={table}
-                                    businessSlug="navid"
-                                    branchSlug="navid"
-                                ></LiveCard>
-                            ))}
-                        </div>
-                    </section>
-                </div>
-            </div>
+            {!isCompact && <DashboardHeaderMockup></DashboardHeaderMockup>}
+            {children}
         </div>
     );
 };
 
-function HeaderMockup() {
+function DashboardHeaderMockup() {
     return <div className="flex items-center w-full gap-4">
         <div className="w-65 flex justify-start px-4">
             <Logo primary="white"></Logo>
@@ -242,7 +45,7 @@ function HeaderMockup() {
     </div>
 }
 
-function SideBarMockup() {
+function DashboardSidebarMockup() {
     return <div className="flex flex-col gap-4 w-max">
         <BusinessSelectorMockup></BusinessSelectorMockup>
         <SidebarNavigationMockup itemClassName="bg-[#243B3E] opacity-40" titleClassName="text-lg text-white font-medium"
@@ -347,3 +150,221 @@ function NavigationBtnMockup({
         </div>
     );
 }
+
+const defaultTableDummyData: TableType[] = [
+    // Batch 1
+    {
+        id: 1,
+        code: "A1B2C3",
+        active_session: {
+            code: "S1X2Y3",
+            started_at: new Date().toISOString(),
+            expires_at: new Date(Date.now() + 60_000).toISOString(),
+            is_active: true,
+        },
+        active_call: {
+            resolved: false,
+            created_at: new Date().toISOString(),
+            expires_at: new Date(Date.now() + 30_000).toISOString(),
+        },
+        name: "میز ۱",
+        seats: 4,
+        location_description: "Near window",
+        is_active: true,
+        is_occupied: true,
+        is_reserved: false,
+        is_requesting_assistance: true,
+    },
+    {
+        id: 2,
+        code: "D4E5F6",
+        active_session: {
+            code: "T7U8V9",
+            started_at: new Date().toISOString(),
+            expires_at: new Date(Date.now() + 60_000).toISOString(),
+            is_active: true,
+        },
+        name: "میز ۲",
+        seats: 2,
+        is_active: true,
+        is_occupied: true,
+        is_reserved: false,
+    },
+    {
+        id: 3,
+        code: "G7H8I9",
+        active_session: {
+            code: "X1Y2Z3",
+            started_at: new Date().toISOString(),
+            expires_at: new Date(Date.now() + 120_000).toISOString(),
+            is_active: true,
+        },
+        active_call: {
+            resolved: false,
+            created_at: new Date().toISOString(),
+            expires_at: new Date(Date.now() + 90_000).toISOString(),
+        },
+        name: "میز ۳",
+        seats: 6,
+        location_description: "Center hall",
+        is_active: true,
+        is_occupied: true,
+        is_reserved: false,
+        is_requesting_assistance: true,
+    },
+    {
+        id: 4,
+        code: "J1K2L3",
+        active_session: {
+            code: "X1Y2Z3",
+            started_at: new Date().toISOString(),
+            expires_at: new Date(Date.now() + 120_000).toISOString(),
+            is_active: true,
+        },
+        name: "میز ۴",
+        seats: 4,
+        location_description: "Patio",
+        is_active: true,
+        is_occupied: true,
+        is_reserved: false,
+        is_requesting_assistance: false,
+    },
+
+    // Batch 2
+    {
+        id: 6,
+        code: "P7Q8R9",
+        active_session: {
+            code: "L1M2N3",
+            started_at: new Date().toISOString(),
+            expires_at: new Date(Date.now() + 90_000).toISOString(),
+            is_active: true,
+        },
+        active_call: {
+            resolved: false,
+            created_at: new Date().toISOString(),
+            expires_at: new Date(Date.now() + 45_000).toISOString(),
+        },
+        name: "میز ۶",
+        seats: 4,
+        location_description: "Balcony",
+        is_active: true,
+        is_occupied: true,
+        is_reserved: false,
+        is_requesting_assistance: true,
+    },
+    {
+        id: 7,
+        code: "S1T2U3",
+        active_session: {
+            code: "O4P5Q6",
+            started_at: new Date().toISOString(),
+            expires_at: new Date(Date.now() + 90_000).toISOString(),
+            is_active: true,
+        },
+        name: "میز ۷",
+        seats: 2,
+        is_active: true,
+        is_occupied: true,
+        is_reserved: false,
+    },
+    {
+        id: 8,
+        code: "V4W5X6",
+        active_session: {
+            code: "R7S8T9",
+            started_at: new Date().toISOString(),
+            expires_at: new Date(Date.now() + 180_000).toISOString(),
+            is_active: true,
+        },
+        active_call: {
+            resolved: false,
+            created_at: new Date().toISOString(),
+            expires_at: new Date(Date.now() + 120_000).toISOString(),
+        },
+        name: "میز ۸",
+        seats: 6,
+        location_description: "Main hall",
+        is_active: true,
+        is_occupied: true,
+        is_reserved: false,
+        is_requesting_assistance: true,
+    },
+    {
+        id: 9,
+        code: "Y7Z8A9",
+        active_session: {
+            code: "R7S8T9",
+            started_at: new Date().toISOString(),
+            expires_at: new Date(Date.now() + 180_000).toISOString(),
+            is_active: true,
+        },
+        name: "میز ۹",
+        seats: 4,
+        location_description: "Corner",
+        is_active: true,
+        is_occupied: true,
+        is_reserved: false,
+        is_requesting_assistance: false,
+    },
+];
+
+// Panel Mockups
+export function LiveManagementPanelMockup({ dummyData = defaultTableDummyData, isCompact = false, activeCall = false, className }: { dummyData?: TableType[], isCompact?: boolean, activeCall?: boolean, className?: string }) {
+    return <div className="flex gap-4 w-max">
+        {!isCompact && <DashboardSidebarMockup></DashboardSidebarMockup>}
+        <div className={cn("flex flex-col gap-4 rounded-[34px] bg-[#ffffff1d] p-4", isCompact && 'bg-transparent', className)}>
+            <div className="w-full rounded-full border border-[#C5E5E9]/40 bg-[#C5E5E9]/20 p-2">
+                <div className="border-royal-green flex w-max gap-2 rounded-full border bg-[#F8FEFF] p-1">
+                    <Button className="bg-royal-green rounded-full px-6 text-sm text-white">
+                        همه
+                    </Button>
+                    <Button className="text-royal-green hover:bg-royal-green/10 rounded-full bg-inherit px-6 text-sm">
+                        میز ها
+                    </Button>
+                    <Button className="text-royal-green hover:bg-royal-green/10 rounded-full bg-inherit text-sm">
+                        سفارشات آنلاین
+                    </Button>
+                </div>
+            </div>
+            <section className="flex w-full flex-col gap-4">
+                <div className="flex w-full gap-4">
+                    {dummyData.slice(0, 4).map((table, index, array) => (
+                        <LiveCard
+                            isMockUp
+                            key={index}
+                            table={{
+                                ...table,
+                                // activate waiter call of table with id=2
+                                ...(table.id === 2 && activeCall
+                                    ? {
+                                        active_call: {
+                                            resolved: false,
+                                            created_at: new Date().toISOString(),
+                                            expires_at: new Date(Date.now() + 120_000).toISOString(),
+                                        },
+                                    }
+                                    : {}),
+                            }}
+                            businessSlug="business-1"
+                            branchSlug="branch-1-1"
+                        ></LiveCard>
+                    ))}
+                </div>
+                <div className="flex w-full gap-4">
+                    {dummyData.slice(4).map((table, index) => (
+                        <LiveCard
+                            isMockUp
+                            key={index}
+                            table={table}
+                            businessSlug="business-1"
+                            branchSlug="branch-1-1"
+                        ></LiveCard>
+                    ))}
+                </div>
+            </section>
+        </div >
+    </div >
+}
+
+// add other panel mockups here
