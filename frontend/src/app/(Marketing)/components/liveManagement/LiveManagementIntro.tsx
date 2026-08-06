@@ -9,9 +9,9 @@ import {
     CloudCheck,
     ClockAlert,
 } from "@/app/components/icons/DuoTone";
-import { LiveManagementMockUp } from "@/components/global/Mockup/LiveManagementMockup";
+import { DashboardMockup, LiveManagementPanelMockup } from "@/components/global/Mockup/DashboardMockup";
 
-export default function DashboardMockup() {
+export default function LiveManagementIntro() {
     return (
         <div className="relative flex h-[2000px] w-full flex-col gap-8 overflow-hidden px-4 lg:flex-row lg:px-12 xl:px-16">
             <div className="flex w-11/12 flex-col gap-8 lg:basis-2/5">
@@ -85,7 +85,9 @@ export default function DashboardMockup() {
             </div>
             <div className="relative h-max max-h-[280px] lg:absolute lg:-left-[700px] xl:-left-[500px] 2xl:-left-[450px]">
                 <div className="relative w-max origin-top-right scale-45 pr-32 sm:scale-85 sm:pr-48 lg:scale-75 lg:pr-0 xl:scale-85 2xl:scale-100">
-                    <LiveManagementMockUp></LiveManagementMockUp>
+                    <DashboardMockup isCompact>
+                        <LiveManagementPanelMockup isCompact></LiveManagementPanelMockup>
+                    </DashboardMockup>
                     <div className="pointer-events-none absolute -bottom-2 left-0 z-50 h-[350px] w-full bg-gradient-to-t from-white from-45% via-white/95 via-55% to-transparent" />
                 </div>
             </div>

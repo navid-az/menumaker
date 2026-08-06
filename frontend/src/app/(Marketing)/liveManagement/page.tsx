@@ -1,8 +1,8 @@
 import React from "react";
 
 //components
-import DashboardMockup from "@/app/(Marketing)/components/liveManagement/DashboardMockup";
 import Hero from "../components/liveManagement/Hero";
+import LiveManagementIntro from "../components/liveManagement/LiveManagementIntro";
 
 export default function Page() {
 
@@ -11,7 +11,7 @@ export default function Page() {
       {/* Live management intro hero */}
       <Hero></Hero>
       {/* Animated dashboard mockup */}
-      <DashboardMockup></DashboardMockup>
+      <LiveManagementIntro></LiveManagementIntro>
     </div>
   );
 }
