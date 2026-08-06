@@ -1,8 +1,4 @@
 //components
-import Image from "next/image";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import Benefits from "../../components/global/benefits";
 import FeatureNameList from "./components/FeatureNameList";
 import LiveManagementSection from "./components/sections/LiveManagementSection";
 import { GradientSpan } from "./components/GradientSpan";
@@ -15,7 +11,7 @@ export default function Home() {
   return (
     <main className="items-center flex-1">
       <HeroSection></HeroSection>
-      <div className="my-20 flex w-full flex-col items-center gap-8 text-center text-royal-green">
+      <div className="py-24 flex w-full flex-col items-center gap-8 text-center text-royal-green">
         <div className="flex flex-col gap-4 w-full justify-center items-center">
           <h2 className="font-bold text-4xl md:text-5xl lg:text-6xl leading-12 md:leading-19 color-royal-green">
             فراتر از یک

@@ -242,36 +242,36 @@ export default function HeroSection() {
     }, [activeCall]);
 
     return (
-        <Section className='relative overflow-hidden h-200'>
-            <SectionHeader>
-                <SectionTitle className='xl:leading-20'>
+        <Section className='relative flex flex-col lg:flex-row overflow-hidden gap-16 md:gap-12 h-200 sm:h-240 md:h-270 lg:h-screen'>
+            <SectionHeader className='w-full max-w-full flex-1 items-center md:items-start'>
+                <SectionTitle className='flex flex-col items-center leading-13! xl:leading-relaxed! text-4xl md:text-4xl md:items-start'>
                     <p>مدیریت کافه و رستوران </p>
-                    <GradientSpan>هوشمند</GradientSpan> تر از همیشه  <br />
-                    <GradientSpan>+</GradientSpan> موتور منو ساز
+                    <div><GradientSpan>هوشمند</GradientSpan> تر از همیشه </div>
+                    <div><GradientSpan>+</GradientSpan> موتور منو ساز</div>
                 </SectionTitle>
-                <SectionSubtitle className='leading-relaxed text-teal-950/80'>
+                <SectionSubtitle className='leading-relaxed text-teal-950/80 text-center max-w-sm md:max-w-md md:text-right'>
                     سیستم یکپارچه مدیریت رستوران و کافه؛ از ساخت منوی دیجیتال تا مدیریت لحظه‌ای کسب‌وکار، همه در یک پلتفرم.
                 </SectionSubtitle>
                 <div className='flex gap-4 xl:mt-4'>
-                    <Button asChild size={'lg'} className='group bg-royal-green hover:scale-105 border-2 border-royal-green rounded-full text-white hover:bg-royal-green/90 transition-all duration-300'>
+                    <Button asChild className='group lg:h-11 lg:px-8 bg-royal-green hover:scale-105 border-2 border-royal-green rounded-full text-white hover:bg-royal-green/90 transition-all duration-300'>
                         <Link href={'/builder'}>
                             <p className='group-hover:scale-95 transition-all duration-300 scale-pro'>شروع رایگان</p>
                         </Link>
                     </Button>
-                    <Button asChild size={'lg'} className='group bg-soft-blue hover:scale-105 border-2 border-sad-blue rounded-full text-royal-green hover:border-royal-green/60 transition-all duration-300'>
+                    <Button asChild className='group lg:h-11 lg:px-8 bg-soft-blue hover:scale-105 border-2 border-sad-blue rounded-full text-royal-green hover:border-royal-green/60 transition-all duration-300'>
                         <Link href={'/builder'}>
                             <p className='group-hover:scale-95 transition-all duration-300 scale-pro'>مشاهده دمو</p>
                         </Link>
                     </Button>
                 </div>
             </SectionHeader>
-            <div className='group relative w-5/12 h-full'>
-                <div className='absolute scale-55 md:scale-70 origin-top-right lg:scale-85 xl:scale-75 left-0 top-24 md:top-42 lg:top-62 xl:top-0 xl:right-0'>
+            <div className='group relative w-7/12 sm:w-6/12 lg:w-6/12 xl:w-5/12 h-full'>
+                <div className='absolute scale-40 sm:scale-55 md:scale-70 origin-top-right lg:scale-70 xl:scale-75 top-0 right-0'>
                     <DashboardMockup>
                         <LiveManagementPanelMockup dummyData={defaultTableDummyData} activeCall={activeCall}></LiveManagementPanelMockup>
                     </DashboardMockup>
                 </div>
-                <IPhoneMockup className='select-none right-0 top-3/12 translate-x-1/2 absolute w-80 scale-80' screenClassName='rounded-[36px]'>
+                <IPhoneMockup className='select-none top-4/12 sm:top-4/12 md:top-4/12 lg:top-5/12 origin-top translate-x-1/2 absolute w-80 scale-45 sm:scale-60 md:scale-80 lg:scale-70 xl:scale-80' screenClassName='rounded-[36px]'>
                     <IPhoneMockup.Screen className='hide-scrollbar overflow-hidden'>   <div id="menu-mockup" className="px-2">
                         {/* ========== Header badges ========== */}
                         <div className="h-4/12 pt-10 flex justify-between items-center">
@@ -338,7 +338,7 @@ export default function HeroSection() {
                     </div></IPhoneMockup.Screen>
                 </IPhoneMockup>
             </div>
-            <div className="pointer-events-none -bottom-10 absolute left-0 z-50 h-[350px] w-full bg-gradient-to-t from-white from-45% via-white/95 via-55% to-transparent" />
+            <div className="pointer-events-none absolute bottom-0 lg:-bottom-35 left-0 z-5 h-[150px] sm:h-[240px] lg:h-[350px] w-full bg-gradient-to-t from-white from-45% via-white/95 via-55% to-transparent" />
         </Section >
     )
 }

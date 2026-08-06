@@ -55,7 +55,7 @@ export default function LiveManagementSection() {
                 <SectionSubtitle>داشبورد زنده وضعیت تمام میزها، سفارش‌های جاری، و تراکنش‌ها را به صورت لحظه‌ای نشان می‌دهد — بدون نیاز به رفرش.</SectionSubtitle>
 
             </SectionHeader>
-            <div className='absolute origin-top scale-55 md:scale-70 lg:scale-85 xl:scale-100 left-0 top-24 md:top-42 lg:top-62 xl:top-36 -translate-x-6/12 sm:-translate-x-5/12 md:-translate-x-4/12 lg:-translate-x-5/12 xl:-translate-x-4/12'>
+            <div className='absolute scale-50 md:scale-70 lg:scale-85 xl:scale-100 left-0 top-24 md:top-42 lg:top-62 xl:top-36 -translate-x-5/12 sm:-translate-x-5/12 md:-translate-x-4/12 lg:-translate-x-5/12 xl:-translate-x-4/12'>
                 <div className='w-max h-max'>
                     <motion.div
                         animate={{
