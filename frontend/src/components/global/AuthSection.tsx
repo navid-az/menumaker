@@ -57,21 +57,21 @@ export default function AuthSection() {
       className={cn(
         "transition-all duration-300",
         isLoading ? "blur-sm" : "blur-none",
-        isAuthenticated ? "w-10" : "w-[111px]"
+        isAuthenticated ? "w-10" : "w-[109px]"
       )}
     >
       {user && businesses ? (
         <UserProfile user={user} businesses={businesses}>
-          <Button disabled={isLoading} size="icon" className=" bg-royal-green">
-            <User2 className="h-6 w-6 text-soft-blue"></User2>
+          <Button disabled={isLoading} size="icon" className="size-9 bg-royal-green">
+            <User2 className="size-5 lg:size-6 text-soft-blue"></User2>
           </Button>
         </UserProfile>
       ) : (
         <Button
           disabled={isLoading}
-          className=" bg-royal-green text-soft-blue hover:scale-105 transition-all duration-300 scale-pro"
+          className="group bg-royal-green text-sm lg:text-sm lg:font-medium font-normal text-white hover:scale-105 transition-all duration-300 scale-pro"
         >
-          <Link href={isDemo ? "/register?demo=true" : "/register"}>
+          <Link className="group-hover:scale-95 transition-all duration-300 scale-pro" href={isDemo ? "/register?demo=true" : "/register"}>
             ورود | ثبت نام
           </Link>
         </Button>

@@ -56,17 +56,17 @@ export function Navbar() {
   }, [lastScrollY]);
 
   return (
-    <div className={cn("p-4 lg:px-16 w-full sticky z-50 top-0 transition-all duration-300", hidden && "-translate-y-full")}>
+    <div className={cn("p-4 pb-0 lg:px-16 w-full sticky z-50 top-0 transition-all duration-300", hidden && "-translate-y-full")}>
       <nav
         className={cn(
-          "bg-sad-blue/20 w-full backdrop-blur-xl lg:gap-20 border-2 border-royal-green/5 xl:gap-32 rounded-lg flex items-center transition-all duration justify-between p-4 text-xl text-royal-green",
+          "bg-sad-blue/20 w-full backdrop-blur-xl lg:gap-20 border-2 border-royal-green/5 xl:gap-32 rounded-lg flex items-center transition-all duration justify-between p-1.5 lg:p-4 text-xl text-royal-green",
 
         )}
       >
-        <div className="flex gap-4 items-center">
+        <div className="flex lg:gap-4 items-center">
           <Sheet>
             <SheetTrigger asChild>
-              <Button className="lg:hidden" size="icon">
+              <Button className="lg:hidden bg-royal-green" size="icon">
                 <Menu></Menu>
               </Button>
             </SheetTrigger>
@@ -122,8 +122,8 @@ export function Navbar() {
             </SheetContent>
           </Sheet>
 
-          <Link href="/" className="relative w-32 h-10">
-            <Logo></Logo>
+          <Link href="/" className="relative w-32 h-8 lg:h-10">
+            <Logo className="h-full"></Logo>
           </Link>
         </div>
         <div className="hidden justify-between items-center flex-1 lg:flex">
