@@ -48,7 +48,7 @@ export function SectionTitle({
   return (
     <h2
       className={cn(
-        "text-3xl lg:text-4xl xl:text-5xl leading-snug font-semibold lg:font-bold text-primary text-right",
+        "text-3xl lg:text-4xl xl:text-5xl leading-snug font-semibold lg:font-bold text-royal-green text-right",
         center && "text-center",
         className
       )}
