@@ -31,6 +31,7 @@ import {
   ChartColumn,
   Radio,
   ScrollText,
+  Info,
 } from "lucide-react";
 
 //types
@@ -47,6 +48,9 @@ export function UserProfile({
 }) {
   const router = useRouter();
 
+  const DEMO_MODE_ENABLED = process.env.NEXT_PUBLIC_DEMO_MODE_ENABLED === 'true'
+
+
   async function handleLogout() {
     const res = await logOut();
 
@@ -62,7 +66,15 @@ export function UserProfile({
         className="w-56 bg-primary-foreground text-primary"
         align="end"
       >
-        <DropdownMenuLabel>{user.phone_number}</DropdownMenuLabel>
+        <DropdownMenuLabel className="flex justify-between items-center">
+          {user.phone_number}
+          {DEMO_MODE_ENABLED && user.is_demo &&
+            <div className="bg-yellow-50 text-yellow-800 border-yellow-400 border rounded-full flex justify-between items-center gap-2 px-2 pl-2.5 py-1">
+              <Info className="size-3" />
+              <p className="text-xs font-normal">اکانت دمو</p>
+            </div>
+          }
+        </DropdownMenuLabel>
         <DropdownMenuSeparator />
 
         {businesses && businesses.length ? (
