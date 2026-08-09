@@ -28,12 +28,12 @@ export default function SuccessPage({
         <div className="aspect-square w-[clamp(600px,60vw,1000px)] border-sad-blue border-2 rounded-full absolute"></div>
         <div className="aspect-square w-[clamp(800px,80vw,1300px)] border-sad-blue border-2 rounded-full absolute"></div>
       </div>
-      <div className="flex w-full flex-col items-center justify-center gap-9 px-4 max-w-sm">
+      <div className="flex w-full flex-col items-center justify-center gap-9 px-4">
         <div className="flex flex-col justify-center items-center gap-1.5">
-          <h2 className="text-xl font-bold sm:text-3xl">
+          <h2 className="text-2xl font-bold sm:text-3xl">
             منو شما با موفقیت ایجاد شد!
           </h2>
-          <p className="font-normal text-xs sm:text-base text-center">
+          <p className="font-normal text-sm sm:text-base text-center">
             کافیه QR کد زیر رو روی میزها یا هرجای دیگه قرار بدید <br />
             تا مشتری‌ها بتونن منوی شما رو ببینن.
           </p>
@@ -45,7 +45,7 @@ export default function SuccessPage({
         ) : (
           <LoaderCircle className="animate-spin w-14 h-14"></LoaderCircle>
         )}
-        <div className="flex gap-4 justify-between w-full">
+        <div className="flex gap-4 justify-between w-full max-w-sm">
           <Button
             disabled={!newBusiness?.slug}
             className="flex-1 transition-all font-normal hover:scale-105 scale-pro duration-300 border-2 bg-royal-green border-royal-green text-soft-blue"
