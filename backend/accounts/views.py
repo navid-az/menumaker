@@ -1,3 +1,5 @@
+from kavenegar import *
+
 import secrets
 import random
 from django.contrib.auth import get_user_model
@@ -23,12 +25,10 @@ from .serializers import (
     getUserDataSerializer,
 )
 
-# kavenegar API
-from kavenegar import *
-
-
 # Issue pair of auth tokens for given user
 # Inject user roles into access token
+
+
 def issue_tokens_for(user):
     refresh = RefreshToken.for_user(user)
 
@@ -78,29 +78,35 @@ class ValidateCredentialView(APIView):
             Otp.objects.create(
                 phone_number=phone_number, hashed_otp=hashed_code)
 
+            expose_otp = settings.DEBUG or settings.DEMO_MODE_ENABLED
+
             # Send OTP to receptor
-            if not settings.DEBUG:
+            if not expose_otp:
                 try:
                     api = KavenegarAPI(settings.KAVENEGAR_API_KEY)
                     params = {
-                        'receptor': settings.DUMMY_PHONE_NUMBER if settings.DEBUG else phone_number,
-                        'template': 'verifycode',
-                        'token': random_code,
-                        'type': 'sms',
+                        "receptor": phone_number,
+                        "template": "verifycode",
+                        "token": random_code,
+                        "type": "sms",
                     }
                     response = api.verify_lookup(params)
                     print(response)
-                except APIException as e:
-                    return Response('API OTP send failed')
-                except HTTPException as e:
-                    return Response('HTTP request failed')
+                except APIException:
+                    return Response("API OTP send failed")
+                except HTTPException:
+                    return Response("HTTP request failed")
 
-            print('random_code: ', random_code, flush=True)
-
-            return Response({
+            response_data = {
                 "detail": "Verification code sent",
-                "retry_after": int(cooldown.total_seconds())
-            }, status=status.HTTP_200_OK)
+                "retry_after": int(cooldown.total_seconds()),
+            }
+
+            # Expose OTP in development/demo environments
+            if expose_otp:
+                response_data["code"] = random_code
+
+            return Response(response_data, status=status.HTTP_200_OK)
         return Response(srz_data.errors, status.HTTP_400_BAD_REQUEST)
 
 

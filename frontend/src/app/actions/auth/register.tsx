@@ -11,7 +11,7 @@ import { SERVER_API_BASE_URL } from "@/lib/config";
 export async function validateCredentials(credential: {
   phone_number?: string;
   email?: string;
-}): Promise<{ retry_after: number; detail: string }> {
+}): Promise<{ retry_after: number; code?: number, detail: string }> {
   try {
     const res = await fetch(
       `${SERVER_API_BASE_URL}/accounts/validate-credential/`,
@@ -22,14 +22,18 @@ export async function validateCredentials(credential: {
       }
     );
     const resData = await res.json();
-    console.log(resData);
+
     if (!res.ok) {
       if (res.status === 429) {
         return { detail: resData.detail, retry_after: resData.retry_after };
       }
       return { detail: resData.detail, retry_after: resData.retry_after };
     }
-    return { detail: resData.detail, retry_after: resData.retry_after };
+    return {
+      detail: resData.detail,
+      retry_after: resData.retry_after,
+      code: resData.code,
+    };
   } catch (err: any) {
     console.error("Fetch error:", err);
     throw new Error(err.detail || "Failed to validate credentials");

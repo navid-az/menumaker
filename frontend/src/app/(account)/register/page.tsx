@@ -34,6 +34,9 @@ import { createCookie } from "@/app/actions/auth/register";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
+//SVGs
+import { Info } from "lucide-react";
+
 //types
 export type InviteData = {
   personnelId: number;
@@ -158,6 +161,11 @@ export default function Page() {
       });
       setStep(2);
 
+      // If demo mode OR DEBUG is true, server will pass OTP directly to client, bypassing kavenegar API entirely
+      if (res.code) {
+        form.setValue('otp', res.code.toString())
+      }
+
       // this is a better solution than res.retry_after
       // because retry_after is always the same and that makes setter not re render the OtpCountdown component
       setRetryAfter(Date.now() + res.retry_after * 1000);
@@ -228,7 +236,7 @@ export default function Page() {
             </AnimatePresence>
           </SliderBody>
           <SliderFooter>
-            <div className="flex gap-4 flex-col w-full">
+            <div className="flex gap-6 flex-col w-full">
               <div
                 className={cn(
                   "flex flex-wrap justify-between w-full gap-4 transition-all duration-300 delay-300",
@@ -250,10 +258,16 @@ export default function Page() {
                   ویرایش شماره موبایل
                 </Button>
               </div>
-              <RegisterBtn
-                text={step === 1 ? "دریافت کد" : "ورود"}
-                isLoading={isLoading}
-              ></RegisterBtn>
+              <div className="flex flex-col gap-4">
+                <RegisterBtn
+                  text={step === 1 ? "دریافت کد" : "ورود"}
+                  isLoading={isLoading}
+                ></RegisterBtn>
+                <div className={cn('w-full opacity-0 flex justify-center items-center text-xs gap-1.5 font-light text-royal-green/60 -mt-16 transition-all duration-300', step === 2 && 'mt-0 opacity-100 delay-1000')}>
+                  <Info className="size-3.5" strokeWidth={'1.5px'}></Info>
+                  <p>در حالت دمو سرویس OTP غیر‌فعال می‌باشد</p>
+                </div>
+              </div>
             </div>
           </SliderFooter>
         </Slider>

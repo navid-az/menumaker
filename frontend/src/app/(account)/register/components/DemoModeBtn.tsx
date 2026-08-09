@@ -31,7 +31,7 @@ export default function DemoModeWrapper() {
         }
     }
     return isDemo && (
-        <div className="group flex flex-col gap-4 w-full p-4 rounded-md bg-white border-2 border-sad-blue transition-all duration-300 has-[button:hover]:border-royal-green">
+        <div className="group flex flex-col gap-4 w-full p-4 rounded-md hover:border-royal-green bg-white border-2 border-sad-blue transition-all duration-300 has-[button:hover]:border-royal-green">
             <div className="flex gap-1 flex-col">
                 <div className="flex justify-between">
                     <p className="font-medium">برای ورود به حالت دمو اینجا کلیک کنید</p>
@@ -39,9 +39,9 @@ export default function DemoModeWrapper() {
                         <p>حالت دمو</p>
                     </span>
                 </div>
+
                 <p className=" font-normal text-sm text-royal-green/90 w-5/6">
-                    در صورت عدم تمایل به وارد کردن شماره موبایل خود میتوانید از حالت دمو
-                    استفاده کنید.
+                    در حالت دمو، داشبورد مدیریتی پس از ساخت فروشگاه و منو، به‌صورت خودکار با اطلاعات نمونه تکمیل می‌شود.
                 </p>
             </div>
             <Button
