@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 //components
 import {
@@ -71,7 +71,7 @@ export default function Page() {
   const [step, setStep] = useState(1);
   const [retryAfter, setRetryAfter] = useState(0);
 
-
+  const DEMO_MODE_ENABLED = process.env.NEXT_PUBLIC_DEMO_MODE_ENABLED === 'true'
 
   // reset slider states on mount
   useEffect(() => {
@@ -208,15 +208,13 @@ export default function Page() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex px-4 sm:px-20 z-50 lg:px-16 xl:px-12 flex-6/12 flex-shrink items-center overflow-hidden"
+        className="flex px-4 sm:px-20 lg:px-16 xl:px-12 flex-6/12 flex-shrink items-center overflow-hidden"
       >
         <Slider validSections={sections}>
           <SliderHeader>
             <div className="flex flex-col w-full gap-6">
               <SliderTitle></SliderTitle>
-              <Suspense fallback={null}>
-                <DemoModeWrapper></DemoModeWrapper>
-              </Suspense>
+              {DEMO_MODE_ENABLED && <DemoModeWrapper></DemoModeWrapper>}
             </div>
           </SliderHeader>
           <SliderBody>
@@ -263,10 +261,10 @@ export default function Page() {
                   text={step === 1 ? "دریافت کد" : "ورود"}
                   isLoading={isLoading}
                 ></RegisterBtn>
-                <div className={cn('w-full opacity-0 flex justify-center items-center text-xs gap-1.5 font-light text-royal-green/60 -mt-16 transition-all duration-300', step === 2 && 'mt-0 opacity-100 delay-1000')}>
+                {DEMO_MODE_ENABLED && <div className={cn('w-full opacity-0 flex justify-center items-center text-xs gap-1.5 font-light text-royal-green/60 -mt-16 transition-all duration-300', step === 2 && 'mt-0 opacity-100 delay-1000')}>
                   <Info className="size-3.5" strokeWidth={'1.5px'}></Info>
                   <p>در حالت دمو سرویس OTP غیر‌فعال می‌باشد</p>
-                </div>
+                </div>}
               </div>
             </div>
           </SliderFooter>

@@ -10,15 +10,7 @@ import { Button } from "@/components/ui/button";
 import { createDemoUser } from '@/app/actions/auth/register';
 import { createCookie } from '@/app/actions/auth/register';
 
-
-//hooks
-import { useSearchParams } from "next/navigation";
-
 export default function DemoModeWrapper() {
-    //Check if this is a demo template(layout)
-    const searchParams = useSearchParams();
-    const isDemo = searchParams.get("demo") === "true";
-
     async function startDemo() {
         const result = await createDemoUser();
         if (result.success) {
@@ -30,7 +22,7 @@ export default function DemoModeWrapper() {
             toast.error("خطایی رخ داد!");
         }
     }
-    return isDemo && (
+    return (
         <div className="group flex flex-col gap-4 w-full p-4 rounded-md hover:border-royal-green bg-white border-2 border-sad-blue transition-all duration-300 has-[button:hover]:border-royal-green">
             <div className="flex gap-1 flex-col">
                 <div className="flex justify-between">
