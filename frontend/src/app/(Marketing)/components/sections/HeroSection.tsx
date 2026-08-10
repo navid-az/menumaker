@@ -259,7 +259,7 @@ export default function HeroSection() {
                             <p className='group-hover:scale-95 transition-all duration-300 scale-pro'>شروع رایگان</p>
                         </Link>
                     </Button>
-                    <Button asChild className='group lg:h-11 lg:px-8 bg-soft-blue hover:scale-105 border-2 border-sad-blue rounded-full text-royal-green hover:border-royal-green/60 transition-all duration-300'>
+                    <Button asChild className='group lg:h-11 lg:px-8 bg-soft-blue hover:scale-105 border lg:border-2 border-sad-blue rounded-full text-royal-green hover:border-royal-green/60 transition-all duration-300'>
                         <Link href={'/builder'}>
                             <p className='group-hover:scale-95 transition-all duration-300 scale-pro'>مشاهده دمو</p>
                         </Link>

@@ -288,6 +288,22 @@ const menuItems = [
         name: 'پیتزا مارگاریتا',
         quantity: 0
     },
+    {
+        id: "item-5",
+        imageSrc: "/images/menu-mockup/pizza-mockup-1.webp",
+        blurredUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAMCAYAAABfnvydAAABXklEQVR4AQSAP08TUQDAf329vnJXrtc/dxerBanagHXB1UUTJzYnF2PiZ3H2a+jq5OhOQmAAQoBQ0pI2pbS89vro/yuPiH/fS+bXJ9/8/lIz+z9q5v+31+bP3hvz9+uuOfr5wYi7yIJxDmv4yPlFTJ8qWW8TGVQ5b2QRUVzEiVf0owVe4OOuFvT1mJQrKToWopZ6pO5MONgYcal76Gad9GLK7XDASEWIB+mzlw35eC/xlxPcSonmuzWuL8+4Ob5G9PqKeRCS2qmCH6L0BPtkQmXlEvh5hJWx6QaCw3VFY11ylBU0nyVozRdYxQIily+gWhGFjmRXzUgONPfOHB0ronYb4UvYXkrCxpiEVnzOvGTnVPDK8ShvhQhpz0mZJeXtCl2ZJ+napGczXhQDpoMlYqg63Okpq6Th7fsNRu0W+dwaWsY8jHuIzGaZ2Opw063j+Am8ksfzrTRu4oqRPeMJAAD//6yeufwAAAAGSURBVAMAwoeQ2pkb8TYAAAAASUVORK5CYII=',
+        imageAlt: "pizza-mockup-1",
+        name: 'پیتزا مارگاریتا',
+        quantity: 0
+    },
+    {
+        id: "item-6",
+        imageSrc: "/images/menu-mockup/pizza-mockup-1.webp",
+        blurredUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAMCAYAAABfnvydAAABXklEQVR4AQSAP08TUQDAf329vnJXrtc/dxerBanagHXB1UUTJzYnF2PiZ3H2a+jq5OhOQmAAQoBQ0pI2pbS89vro/yuPiH/fS+bXJ9/8/lIz+z9q5v+31+bP3hvz9+uuOfr5wYi7yIJxDmv4yPlFTJ8qWW8TGVQ5b2QRUVzEiVf0owVe4OOuFvT1mJQrKToWopZ6pO5MONgYcal76Gad9GLK7XDASEWIB+mzlw35eC/xlxPcSonmuzWuL8+4Ob5G9PqKeRCS2qmCH6L0BPtkQmXlEvh5hJWx6QaCw3VFY11ylBU0nyVozRdYxQIily+gWhGFjmRXzUgONPfOHB0ronYb4UvYXkrCxpiEVnzOvGTnVPDK8ShvhQhpz0mZJeXtCl2ZJ+napGczXhQDpoMlYqg63Okpq6Th7fsNRu0W+dwaWsY8jHuIzGaZ2Opw063j+Am8ksfzrTRu4oqRPeMJAAD//6yeufwAAAAGSURBVAMAwoeQ2pkb8TYAAAAASUVORK5CYII=',
+        imageAlt: "pizza-mockup-1",
+        name: 'پیتزا مارگاریتا',
+        quantity: 0
+    },
 ];
 
 export default function MenuBento() {

@@ -73,7 +73,7 @@ export default function LiveManagementSection() {
                         </DashboardMockup>
                     </motion.div>
                     <motion.div
-                        initial={{ right: 272.8, top: 100 }} //Initial position of the target LiveCard
+                        initial={{ right: 274, top: 100 }} //Initial position of the target LiveCard
                         animate={isInView ? { scale: 1.2 } : { scale: 1 }}
                         transition={transition}
                         className="absolute z-20"

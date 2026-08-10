@@ -64,7 +64,7 @@ function Footer() {
           </Button>
         </div>
       </div>
-      <div className="flex flex-col lg:flex-row justify-between gap-6 relative items-center py-4 px-4 md:px-16 text-soft-blue bg-primary backdrop-blur-2xl">
+      <div className="flex flex-col lg:flex-row justify-between gap-2 lg:gap-6 relative items-center py-4 px-4 md:px-16 text-soft-blue bg-primary backdrop-blur-2xl">
         <p className="hidden lg:block text-sm font-light absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full text-center opacity-40 select-none">
           © 1405 منو میکر - تمامی حقوق محفوظ است.
         </p>
