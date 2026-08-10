@@ -43,11 +43,6 @@ const cardRoundVariants = {
     hover: { borderRadius: "8px" },
 };
 
-const imageRoundVariants = {
-    rest: { borderRadius: "22px" },
-    hover: { borderRadius: "8px" },
-};
-
 // Searchbar show / hide (pushes content down)
 const searchContainerVariants = {
     rest: {
@@ -91,6 +86,7 @@ export function CategoryButton({
     return (
         <motion.div
             variants={fullRoundVariants}
+            initial='rest'
             animate={isHovered ? "hover" : "rest"}
             transition={radiusTransition(isHovered)}
             className={cn(
@@ -132,28 +128,20 @@ export function QuantityControl({
     return (
         <motion.div
             variants={fullRoundVariants}
+            initial='rest'
             animate={isHovered ? "hover" : "rest"}
             transition={radiusTransition(isHovered)}
-            className={`
-        flex flex-1 justify-between items-center gap-2.5
-        h-max px-1 py-1 font-medium border
-        border-zinc-200 bg-zinc-50 w-full text-sm text-zinc-600
-        transition-colors duration-300
-        group-hover:bg-orange-100 group-hover:border-orange-400 group-hover:text-orange-800
-        ${className}
-      `}
+            className={cn("flex flex-1 justify-between items-center gap-2.5 h-max px-1 py-1 font-medium border border-zinc-200 bg-zinc-50 w-full text-sm text-zinc-600 transition-colors duration-300",
+                isHovered && 'group-hover:bg-orange-100 group-hover:border-orange-400 group-hover:text-orange-800',
+                className)}
         >
             <motion.button
                 type="button"
                 variants={fullRoundVariants}
+                initial='rest'
                 animate={isHovered ? "hover" : "rest"}
                 transition={radiusTransition(isHovered)}
-                className="
-          h-6 w-10 flex items-center justify-center
-          bg-zinc-800 text-soft-blue
-          transition-colors duration-300
-          group-hover:bg-orange-500 group-hover:text-white
-        "
+                className={cn(" h-6 w-10 flex items-center justify-center bg-zinc-800 text-soft-blue transition-colors duration-300", isHovered && 'group-hover:bg-orange-100 group-hover:border-orange-400 group-hover:bg-orange-500 group-hover:text-white')}
             >
                 <Plus className="w-5 h-5" />
             </motion.button>
@@ -163,14 +151,10 @@ export function QuantityControl({
             <motion.button
                 type="button"
                 variants={fullRoundVariants}
+                initial='rest'
                 animate={isHovered ? "hover" : "rest"}
                 transition={radiusTransition(isHovered)}
-                className="
-          h-6 w-10 flex items-center justify-center
-          bg-zinc-800 text-soft-blue
-          transition-colors duration-300
-          group-hover:bg-orange-500 group-hover:text-white
-        "
+                className={cn(" h-6 w-10 flex items-center justify-center bg-zinc-800 text-soft-blue transition-colors", isHovered && 'group-hover:bg-orange-100 group-hover:border-orange-400 duration-300 group-hover:bg-orange-500 group-hover:text-white')}
             >
                 <Minus className="w-5 h-5" />
             </motion.button>
@@ -183,16 +167,15 @@ function CartBtn({
     isHovered = false, }) {
     return <motion.div
         variants={fullRoundVariants}
+        initial='rest'
         animate={isHovered ? "hover" : "rest"}
         transition={radiusTransition(isHovered)}
-        className={`
+        className={cn(`
         flex flex-1 justify-between items-center gap-2.5
         h-max px-1 py-1 font-medium border
         border-zinc-200 bg-zinc-50 w-full text-sm text-zinc-600
         transition-colors duration-300
-        group-hover:bg-orange-100 group-hover:border-orange-400 group-hover:text-orange-800
-        ${className}
-      `}
+        `, isHovered && 'group-hover:bg-orange-100 group-hover:border-orange-400 group-hover:text-orange-800', className)}
     >
         <div className='h-6 w-full flex items-center justify-center text-md font-medium'>
             <p>افزودن</p>
@@ -223,6 +206,7 @@ export function MenuItemCard({
     return (
         <motion.div
             variants={cardRoundVariants}
+            initial='rest'
             animate={isHovered ? "hover" : "rest"}
             transition={radiusTransition(isHovered)}
             className={cn(" border relative border-orange-950 h-48 overflow-hidden", className)}
@@ -230,7 +214,8 @@ export function MenuItemCard({
             <div className="h-full w-full relative">
                 {imageSrc ? (
                     <motion.div
-                        variants={imageRoundVariants}
+                        variants={cardRoundVariants}
+                        initial='rest'
                         animate={isHovered ? "hover" : "rest"}
                         transition={radiusTransition(isHovered)}
                         className="absolute inset-0 overflow-hidden"
@@ -329,6 +314,7 @@ export default function MenuBento() {
                             <div className="h-4/12 pt-10 flex justify-between items-center">
                                 <motion.div
                                     variants={fullRoundVariants}
+                                    initial='rest'
                                     animate={isHovered ? "hover" : "rest"}
                                     transition={radiusTransition(isHovered)}
                                     className="
@@ -336,6 +322,7 @@ export default function MenuBento() {
                     border-zinc-200 bg-zinc-50 w-max text-xs text-zinc-600
                     transition-colors duration-300
                     group-hover:bg-orange-100 group-hover:border-orange-400 group-hover:text-orange-800
+                    
                   "
                                 >
                                     <ConciergeBell className="w-4.5 h-4.5" />
@@ -344,12 +331,14 @@ export default function MenuBento() {
 
                                 <motion.div
                                     variants={fullRoundVariants}
+                                    initial='rest'
                                     animate={isHovered ? "hover" : "rest"}
                                     transition={radiusTransition(isHovered)}
                                     className="
                     p-2 bg-zinc-50 text-zinc-600 border border-zinc-200
                     transition-colors duration-300
                     group-hover:bg-orange-100 group-hover:border-orange-400 group-hover:text-orange-800
+                    
                   "
                                 >
                                     <Menu className="w-4.5 h-4.5" />
@@ -359,11 +348,13 @@ export default function MenuBento() {
                             {/* ========== Searchbar (initially hidden) ========== */}
                             <motion.div
                                 variants={searchContainerVariants}
+                                initial='rest'
                                 animate={isHovered ? "hover" : "rest"}
                                 style={{ overflow: "hidden" }}
                             >
                                 <motion.div
                                     variants={fullRoundVariants}
+                                    initial='rest'
                                     animate={isHovered ? "hover" : "rest"}
                                     transition={radiusTransition(isHovered)}
                                     className="
@@ -371,6 +362,7 @@ export default function MenuBento() {
                     border border-zinc-200 w-full
                     transition-colors duration-300
                     group-hover:bg-orange-100 flex gap-2 group-hover:border-orange-400 group-hover:text-orange-800
+                    
                   "
                                 >
                                     <Search className="w-4 h-4 opacity-60"></Search>

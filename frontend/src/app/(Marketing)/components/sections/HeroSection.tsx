@@ -317,6 +317,7 @@ export default function HeroSection() {
                         <div className="grid grid-cols-2 gap-2">
                             {menuItems.map((item) => (
                                 <MenuItemCard
+                                    isHovered={false}
                                     key={item.id}
                                     imageSrc={item.imageSrc}
                                     blurredUrl={item.blurredUrl}
