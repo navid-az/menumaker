@@ -203,6 +203,7 @@ function CartBtn({
 
 type MenuItemCardProps = {
     imageSrc?: string;
+    blurredUrl?: string;
     imageAlt?: string;
     name?: string,
     quantity: number;
@@ -212,6 +213,7 @@ type MenuItemCardProps = {
 
 export function MenuItemCard({
     imageSrc,
+    blurredUrl,
     imageAlt = "menu item",
     name = '',
     quantity,
@@ -238,6 +240,8 @@ export function MenuItemCard({
                             alt={imageAlt}
                             fill
                             src={imageSrc}
+                            blurDataURL={blurredUrl}
+                            placeholder={blurredUrl ? "blur" : undefined}
                         />
                     </motion.div>
                 ) : (
@@ -247,7 +251,7 @@ export function MenuItemCard({
                 )}
             </div>
 
-            <div className="absolute bottom-0 left-0 p-1 w-full backdrop-blur-[1px] flex justify-between items-center">
+            <div className="absolute bottom-0 left-0 p-1 w-full backdrop-blur-[2px] flex justify-between items-center">
                 <div className='flex flex-col w-full text-white gap-2'>
                     <p>{name}</p>
                     {quantity === 0 ? <CartBtn isHovered={isHovered}></CartBtn> : <QuantityControl value={quantity} isHovered={isHovered} />}
@@ -268,45 +272,35 @@ const categories = [
 
 const menuItems = [
     {
-        id: "item-1",
-        imageSrc: "/images/menu-mockup/pizza-mockup-4.webp",
-        imageAlt: "pizza-mockup-4",
+        id: "item-2",
+        imageSrc: "/images/menu-mockup/pizza-mockup-2.webp",
+        blurredUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAA+ElEQVR4AQzMMU6DUACA4b+vQK3Aa7FUS2wcjImTk4vhBBrj4mTc3DyIXsGlMSZewFO466CLieKCNVHUlNIHBZ7dv3zi8vRQX5zs69HZgb4+DvXV0a4+39vW4UZPe05Ti0aRMVC/DJMxa/OcwFpmZxCw6a/QsQyEU0zoxF9YfxU938bwbGTLIvS7rHckAqWRqx4ikJSqIokVOptgm228fh9RFTMaLRPXMZGmYKudIoFmbdBIU8Snyim0xnBNLEfid5u4tqAe2oynGSIvFa8LOf1OQf1gukuUVslDHDGfLYasLLmPYkaPEbcvMTdPH9w9v5O8RdRVxT8AAAD//0MxQp0AAAAGSURBVAMAn35iQCw5l3MAAAAASUVORK5CYII=',
+        imageAlt: "pizza-mockup-2",
         name: 'پیتزا پپرونی',
         quantity: 2
     },
     {
-        id: "item-2",
-        imageSrc: "/images/menu-mockup/pizza-mockup-1.webp",
-        imageAlt: "pizza-mockup-1",
-        name: 'پیتزا پپرونی',
-        quantity: 0
-    },
-    {
         id: "item-3",
         imageSrc: "/images/menu-mockup/pizza-mockup-3.webp",
+        blurredUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAABFElEQVR4AQAIAff+AjA2QP87Ojr/Zk45/4xnQv+BZEL/Wkw8/zY3O/8oLjj/AhEG/ABmMwoAcksfAFAxIABHKxcAbk0UAGM/EAAWEgwAAiQM9wAmFAQA2fTuAOgN+gD/CQEA/+TxAEQdBgA4JQ8AAi4pGADbEQYA0fjsAAnf6wAcERkA+Q8LAAQVGwA8Jg8AAvr19gAd9/4AVChJABUfKgDw5eIA4O/nAOvt4gAJDw8AAsLJ2QAVAP4A7eriAPr89wAG//kAOggRABf8BQDQ2+0AAsvj9gC31+kA+/fyAPne3wD/AQMA9Q0HAM7xBwDC1O4AAvkDCwCRteAAk6TJALrU4ADI4uoAp8bqAJTA6ADl7vUAAAAA//9wsbX4AAAABklEQVQDADd7ZvF6JyJsAAAAAElFTkSuQmCC',
         imageAlt: "pizza-mockup-3",
         name: 'پیتزا مارگاریتا',
-        quantity: 1
+        quantity: 0
     },
     {
         id: "item-4",
-        imageSrc: "/images/menu-mockup/pizza-mockup-2.webp",
-        imageAlt: "pizza-mockup-2",
-        name: '',
-        quantity: 0
-    },
-    {
-        id: "item-5",
-        imageSrc: "/images/menu-mockup/pizza-mockup-1.webp",
-        imageAlt: "pizza-mockup-1",
-        name: '',
+        imageSrc: "/images/menu-mockup/pizza-mockup-4.webp",
+        blurredUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAA/UlEQVR4AQSAsUoCYRzAf/7vPK+TPLHUwBAztYi2oKAxqsHXaGsMgoZqiLDcegNfIXqMwKVB0CGCuDKzlCvvOwzvC7m8utGNRlO3bk/0w0Vd358d6Nb5kW427/Tx6bWWbMphx+ixZfYp5y2KlRw16VGJPfHz/Yps5g3caEByo4ReqfBnaqY5k+qcT81ViDXxYL3Kl62YOTOMeJJ0rogaepQTI8RkysxXZH4j4hIgrmDZBk62wEIqhSi7QNDpMPXHWKGBjmnC4Qfh5wgvtJFgfo1EoYbXfUM9ewSPbcy+YiguL1EJGUxivC/VGS/vM8rs4Wd2aZvbdNOHOIur/AMAAP//aJqHxgAAAAZJREFUAwDT7l+dkmIu0QAAAABJRU5ErkJggg==',
+        imageAlt: "pizza-mockup-4",
+        name: 'پیتزا پپرونی',
         quantity: 1
     },
     {
-        id: "item-6",
+        id: "item-1",
         imageSrc: "/images/menu-mockup/pizza-mockup-1.webp",
+        blurredUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAMCAYAAABfnvydAAABXklEQVR4AQSAP08TUQDAf329vnJXrtc/dxerBanagHXB1UUTJzYnF2PiZ3H2a+jq5OhOQmAAQoBQ0pI2pbS89vro/yuPiH/fS+bXJ9/8/lIz+z9q5v+31+bP3hvz9+uuOfr5wYi7yIJxDmv4yPlFTJ8qWW8TGVQ5b2QRUVzEiVf0owVe4OOuFvT1mJQrKToWopZ6pO5MONgYcal76Gad9GLK7XDASEWIB+mzlw35eC/xlxPcSonmuzWuL8+4Ob5G9PqKeRCS2qmCH6L0BPtkQmXlEvh5hJWx6QaCw3VFY11ylBU0nyVozRdYxQIily+gWhGFjmRXzUgONPfOHB0ronYb4UvYXkrCxpiEVnzOvGTnVPDK8ShvhQhpz0mZJeXtCl2ZJ+napGczXhQDpoMlYqg63Okpq6Th7fsNRu0W+dwaWsY8jHuIzGaZ2Opw063j+Am8ksfzrTRu4oqRPeMJAAD//6yeufwAAAAGSURBVAMAwoeQ2pkb8TYAAAAASUVORK5CYII=',
         imageAlt: "pizza-mockup-1",
-        name: '',
+        name: 'پیتزا مارگاریتا',
         quantity: 0
     },
 ];
