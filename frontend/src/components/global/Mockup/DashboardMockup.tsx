@@ -310,7 +310,7 @@ const defaultTableDummyData: TableType[] = [
 ];
 
 // Panel Mockups
-export function LiveManagementPanelMockup({ dummyData = defaultTableDummyData, isCompact = false, activeCall = false, className }: { dummyData?: TableType[], isCompact?: boolean, activeCall?: boolean, className?: string }) {
+export function LiveManagementPanelMockup({ dummyData = defaultTableDummyData, isCompact = false, isInView, activeCall = false, className }: { dummyData?: TableType[], isCompact?: boolean, isInView?: boolean, activeCall?: boolean, className?: string }) {
     return <div className="flex gap-4 w-max">
         {!isCompact && <DashboardSidebarMockup></DashboardSidebarMockup>}
         <div className={cn("flex flex-col gap-4 rounded-[34px] bg-[#ffffff1d] p-4", isCompact && 'bg-transparent', className)}>
@@ -331,6 +331,7 @@ export function LiveManagementPanelMockup({ dummyData = defaultTableDummyData, i
                 <div className="flex w-full gap-4">
                     {dummyData.slice(0, 4).map((table, index, array) => (
                         <LiveCard
+                            isInView={isInView}
                             isMockup
                             key={index}
                             table={{
@@ -354,6 +355,7 @@ export function LiveManagementPanelMockup({ dummyData = defaultTableDummyData, i
                 <div className="flex w-full gap-4">
                     {dummyData.slice(4).map((table, index) => (
                         <LiveCard
+                            isInView={isInView}
                             isMockup
                             key={index}
                             table={table}

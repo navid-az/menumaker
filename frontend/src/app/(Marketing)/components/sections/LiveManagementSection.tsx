@@ -37,7 +37,7 @@ export default function LiveManagementSection() {
     }
 
     const wrapperRef = useRef<HTMLDivElement>(null);
-    const isInView = useInView(wrapperRef, { once: true, amount: 0.4 });
+    const isInView = useInView(wrapperRef, { once: false, amount: 0.1 });
     const transition: Transition = { duration: 0.7, delay: 1.5, ease: 'easeOut' }
 
     return (
@@ -69,12 +69,12 @@ export default function LiveManagementSection() {
                         transition={transition}
                     >
                         <DashboardMockup isCompact>
-                            <LiveManagementPanelMockup isCompact></LiveManagementPanelMockup>
+                            <LiveManagementPanelMockup isInView={isInView} isCompact></LiveManagementPanelMockup>
                         </DashboardMockup>
                     </motion.div>
                     <motion.div
                         initial={{ right: 272.8, top: 100 }} //Initial position of the target LiveCard
-                        animate={isInView && { scale: 1.2 }}
+                        animate={isInView ? { scale: 1.2 } : { scale: 1 }}
                         transition={transition}
                         className="absolute z-20"
                     >

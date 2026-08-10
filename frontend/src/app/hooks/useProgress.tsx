@@ -12,13 +12,17 @@ export function useProgress(
   endTime: string,
   formatElapsed: boolean = false,
   mode: "countdown" | "countup" = "countdown",
-  onExpire?: () => void
+  onExpire?: () => void,
+  isInView?: boolean // Used for LiveCards in mockups
 ) {
   const [progress, setProgress] = useState(100);
   const [remainingMs, setRemainingMs] = useState(0);
   const [elapsedMs, setElapsedMs] = useState(0);
 
   useEffect(() => {
+    // If isInView boolean is provided AND progress is NOT in view do not start the progress
+    if (isInView === false) return;
+
     const start = new Date(startTime).getTime();
     const end = new Date(endTime).getTime();
     const total = end - start;
@@ -46,7 +50,7 @@ export function useProgress(
     tick(); // initial call
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, [startTime, endTime, onExpire]);
+  }, [startTime, endTime, onExpire, isInView]);
 
   const result = {
     progress: progress,

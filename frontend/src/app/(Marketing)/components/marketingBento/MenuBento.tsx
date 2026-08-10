@@ -236,7 +236,7 @@ export function MenuItemCard({
                 )}
             </div>
 
-            <div className="absolute bottom-0 left-0 p-1 w-full backdrop-blur-[2px] flex justify-between items-center">
+            <div className="absolute bottom-0 left-0 p-1 w-full backdrop-blur-[2px] rounded-b-3xl flex justify-between items-center">
                 <div className='flex flex-col w-full text-white gap-2'>
                     <p>{name}</p>
                     {quantity === 0 ? <CartBtn isHovered={isHovered}></CartBtn> : <QuantityControl value={quantity} isHovered={isHovered} />}

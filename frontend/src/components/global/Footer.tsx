@@ -45,7 +45,7 @@ function Footer() {
             همین الان بسازید
           </span>
           <h4 className="text-soft-blue/40 font-light max-w-5/6 md:max-w-xl text-base md:text-xl text-center leading-6 md:leading-10">
-            به جمع رستوران‌ها و کافه‌هایی بپیوندید که با لِ‌منو تجربه مدیریت را
+            به جمع رستوران‌ها و کافه‌هایی بپیوندید که با منو میکر تجربه مدیریت را
             متحول کرده‌اند.
           </h4>
         </div>
@@ -66,7 +66,7 @@ function Footer() {
       </div>
       <div className="flex flex-col lg:flex-row justify-between gap-6 relative items-center py-4 px-4 md:px-16 text-soft-blue bg-primary backdrop-blur-2xl">
         <p className="hidden lg:block text-sm font-light absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full text-center opacity-40 select-none">
-          © 1405 لِ‌منو — تمامی حقوق محفوظ است.
+          © 1405 منو میکر - تمامی حقوق محفوظ است.
         </p>
         <div className="flex justify-between flex-col sm:flex-row items-start lg:items-center w-full gap-2">
           <Link
@@ -88,7 +88,7 @@ function Footer() {
           </div>
         </div>
         <p className="lg:hidden text-xs lg:text-sm font-light w-full text-center opacity-40 select-none">
-          © 1405 لِ‌منو — تمامی حقوق محفوظ است.
+          © 1405 منو میکر — تمامی حقوق محفوظ است.
         </p>
       </div>
     </footer>

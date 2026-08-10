@@ -76,6 +76,7 @@ type LiveCardType = {
   status?: "occupied" | "reserved" | "canceled" | "notice";
   seats?: number;
   hasSession?: boolean;
+  isInView?: boolean
   isMockup?: boolean;
   className?: string
 };
@@ -135,6 +136,7 @@ export default function LiveCard({
   hasSession,
   businessSlug,
   branchSlug,
+  isInView,
   isMockup = false,
   className
 }: LiveCardType) {
@@ -156,7 +158,7 @@ export default function LiveCard({
     elapsedDuration,
     progressType,
     progressMessage,
-  } = useActiveTimer(table);
+  } = useActiveTimer(table, isInView);
 
   useEffect(() => {
     if (progressType) {
@@ -376,7 +378,7 @@ function QRCodeView({
   tableCode?: string;
   isMockup?: boolean
 }) {
-  const URL = businessSlug && branchSlug && tableCode ? `${APP_URL}/${businessSlug}/menu?branch=${branchSlug}&t=${tableCode}` : '/'
+  const URL = businessSlug && branchSlug && tableCode ? `${APP_URL}/${businessSlug}/menu?branch=${branchSlug}&t=${tableCode}` : APP_URL
 
   return (
     <div className="flex items-center justify-center w-full h-full">

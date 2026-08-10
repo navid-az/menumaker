@@ -13,7 +13,7 @@ export type progressType =
 
 // Get table's active_call, active_session and order data
 // Return progress of the alert with highest priority
-export function useActiveTimer(table: TableType): {
+export function useActiveTimer(table: TableType, isInView?: boolean): {
   progress: number;
   remainingDuration: string;
   elapsedDuration: string;
@@ -47,7 +47,9 @@ export function useActiveTimer(table: TableType): {
     table.active_session?.started_at || "",
     table.active_session?.expires_at || "",
     true,
-    "countdown"
+    "countdown",
+    undefined,
+    isInView
   );
 
   //calculate waiter call progress
@@ -59,7 +61,9 @@ export function useActiveTimer(table: TableType): {
     table.active_call?.created_at || "",
     table.active_call?.expires_at || "",
     true,
-    "countdown"
+    "countdown",
+    undefined,
+    isInView
   );
 
   //calculate order created_at progress
@@ -67,21 +71,21 @@ export function useActiveTimer(table: TableType): {
     progress: orderAge,
     remainingMs: remainingOrderDuration,
     elapsedMs: elapsedOrderDuration,
-  } = useProgress(table.order?.created_at || "", "", false, "countup");
+  } = useProgress(table.order?.created_at || "", "", false, "countup", undefined, isInView);
 
   //calculate order ready_at progress
   const {
     progress: orderReady,
     remainingMs: remainingOrderReadyDuration,
     elapsedMs: elapsedOrderReadyDuration,
-  } = useProgress(table.order?.ready_at || "", "", false, "countup");
+  } = useProgress(table.order?.ready_at || "", "", false, "countup", undefined, isInView);
 
   //calculate order served_at progress
   const {
     progress: orderServed,
     remainingMs: remainingOrderServedDuration,
     elapsedMs: elapsedOrderServedDuration,
-  } = useProgress(table.order?.served_at || "", "", false, "countup");
+  } = useProgress(table.order?.served_at || "", "", false, "countup", undefined, isInView);
 
   if (activeCallValid) {
     return {

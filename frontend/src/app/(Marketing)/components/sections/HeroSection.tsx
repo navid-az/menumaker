@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 
 //components
 import { Section, SectionHeader, SectionSubtitle, SectionTitle } from '@/components/global/marketingLayout/MarketingSection'
@@ -9,6 +9,9 @@ import { Button } from '@/components/ui/button'
 import { DashboardMockup, LiveManagementPanelMockup } from '@/components/global/Mockup/DashboardMockup'
 import { IPhoneMockup } from '../IphoneMockup'
 import { CategoryButton, MenuItemCard } from '../marketingBento/MenuBento'
+
+//libraries
+import { motion, useInView } from 'motion/react'
 
 //SVGs
 import { ConciergeBell, Pizza, Beef, Menu, Hamburger, CupSoda, Search } from 'lucide-react'
@@ -220,6 +223,8 @@ const defaultTableDummyData = [
 export default function HeroSection() {
     const [activeCall, setActiveCall] = useState(false)
 
+    const ref = useRef<HTMLDivElement>(null);
+
     // Deactivate active call after 2 minutes
     useEffect(() => {
         if (!activeCall) return;
@@ -230,6 +235,12 @@ export default function HeroSection() {
 
         return () => clearTimeout(timeout);
     }, [activeCall]);
+
+    // Resume live management counters only when mockup is in viewport
+    const isInView = useInView(ref, {
+        once: false,
+        amount: 0.2,
+    });
 
     return (
         <Section className='relative flex flex-col lg:flex-row overflow-hidden gap-16 md:gap-12 h-200 sm:h-240 md:h-270 lg:h-screen'>
@@ -256,11 +267,11 @@ export default function HeroSection() {
                 </div>
             </SectionHeader>
             <div className='group relative w-7/12 sm:w-6/12 lg:w-6/12 xl:w-5/12 h-full'>
-                <div className='absolute scale-40 sm:scale-55 md:scale-70 origin-top-right lg:scale-70 xl:scale-75 top-0 right-0'>
+                <motion.div ref={ref} className='absolute scale-40 sm:scale-55 md:scale-70 origin-top-right lg:scale-70 xl:scale-75 top-0 right-0'>
                     <DashboardMockup>
-                        <LiveManagementPanelMockup dummyData={defaultTableDummyData} activeCall={activeCall}></LiveManagementPanelMockup>
+                        <LiveManagementPanelMockup dummyData={defaultTableDummyData} activeCall={activeCall} isInView={isInView}></LiveManagementPanelMockup>
                     </DashboardMockup>
-                </div>
+                </motion.div>
                 <IPhoneMockup className='select-none top-4/12 sm:top-4/12 md:top-4/12 lg:top-5/12 origin-top translate-x-1/2 absolute w-80 scale-45 sm:scale-60 md:scale-80 lg:scale-70 xl:scale-80' screenClassName='rounded-[36px]'>
                     <IPhoneMockup.Screen className='hide-scrollbar overflow-hidden'>   <div id="menu-mockup" className="px-2">
                         {/* ========== Header badges ========== */}
