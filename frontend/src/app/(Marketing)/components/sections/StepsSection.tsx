@@ -1,9 +1,18 @@
 'use client'
 
-import { Section, SectionHeader, SectionSubtitle, SectionTitle } from '@/components/global/marketingLayout/MarketingSection'
 import React from 'react'
+
+//components
+import { Section, SectionHeader, SectionSubtitle, SectionTitle } from '@/components/global/marketingLayout/MarketingSection'
 import { GradientSpan } from '../GradientSpan'
+
+//SVGs
 import { Building2Icon, ChartColumn, Palette, QrCode } from 'lucide-react'
+
+//hooks
+import { useIsMobile } from '@/hooks/useIsMobile'
+
+//libraries
 import { motion, Variants } from 'motion/react'
 
 const steps = [
@@ -71,6 +80,8 @@ export default function StepsSection() {
 
 }
 function Steps() {
+    const isMobile = useIsMobile()
+
     const segments = steps.length - 1;
 
     return (
@@ -100,23 +111,34 @@ function Steps() {
                 })}
             </div>
             {/* steps */}
-            {steps.map((step, i) => (
-                <motion.div
-                    key={step.stepNum}
-                    custom={i}
-                    variants={stepVariants as Variants}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                >
-                    <Step
-                        stepNum={step.stepNum}
-                        icon={step.icon}
-                        title={step.title}
-                        subTitle={step.subTitle}
-                    />
-                </motion.div>
-            ))}
+            {steps.map((step, i) =>
+                isMobile ? (
+                    <div key={step.stepNum}>
+                        <Step
+                            stepNum={step.stepNum}
+                            icon={step.icon}
+                            title={step.title}
+                            subTitle={step.subTitle}
+                        />
+                    </div>
+                ) : (
+                    <motion.div
+                        key={step.stepNum}
+                        custom={i}
+                        variants={stepVariants as Variants}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true }}
+                    >
+                        <Step
+                            stepNum={step.stepNum}
+                            icon={step.icon}
+                            title={step.title}
+                            subTitle={step.subTitle}
+                        />
+                    </motion.div>
+                )
+            )}
         </div>
     );
 }
