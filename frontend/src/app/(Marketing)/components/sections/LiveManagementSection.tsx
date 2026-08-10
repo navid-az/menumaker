@@ -79,7 +79,7 @@ export default function LiveManagementSection() {
                         className="absolute z-20"
                     >
                         <LiveCard
-                            isMockUp
+                            isMockup
                             table={tableDummyData}
                             businessSlug="mockup-business"
                             branchSlug="mockup-branch-1"

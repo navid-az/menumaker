@@ -12,7 +12,7 @@ import { Check, Copy, Download } from "lucide-react";
 import QRCodeStyling, { Options, FileExtension } from "qr-code-styling";
 import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
 
-export default function QrCodeGenerator({ url }: { url: string }) {
+export default function QrCodeGenerator({ url, isMockup = false }: { url: string, isMockup?: boolean }) {
   const [options, setOptions] = useState<Options>({
     width: 170,
     height: 170,
@@ -76,14 +76,14 @@ export default function QrCodeGenerator({ url }: { url: string }) {
   };
 
   const onDownloadClick = () => {
-    if (!qrCode) return;
+    if (!qrCode || isMockup) return;
     qrCode.download({
       extension: fileExt,
     });
   };
 
   const onCopyClick = () => {
-    if (!qrCode) return;
+    if (!qrCode || isMockup) return;
     navigator.clipboard.writeText(url);
     setCopied(true);
     setTimeout(() => {
@@ -92,7 +92,7 @@ export default function QrCodeGenerator({ url }: { url: string }) {
   };
 
   const handleQRclick = () => {
-    if (!qrCode) return;
+    if (!qrCode || isMockup) return;
     window.open(url, "_blank", "noopener,noreferrer");
   };
 

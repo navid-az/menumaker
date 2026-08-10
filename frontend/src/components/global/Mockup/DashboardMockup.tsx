@@ -331,7 +331,7 @@ export function LiveManagementPanelMockup({ dummyData = defaultTableDummyData, i
                 <div className="flex w-full gap-4">
                     {dummyData.slice(0, 4).map((table, index, array) => (
                         <LiveCard
-                            isMockUp
+                            isMockup
                             key={index}
                             table={{
                                 ...table,
@@ -354,7 +354,7 @@ export function LiveManagementPanelMockup({ dummyData = defaultTableDummyData, i
                 <div className="flex w-full gap-4">
                     {dummyData.slice(4).map((table, index) => (
                         <LiveCard
-                            isMockUp
+                            isMockup
                             key={index}
                             table={table}
                             businessSlug="business-1"

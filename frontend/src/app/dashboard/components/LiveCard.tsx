@@ -76,7 +76,7 @@ type LiveCardType = {
   status?: "occupied" | "reserved" | "canceled" | "notice";
   seats?: number;
   hasSession?: boolean;
-  isMockUp?: boolean;
+  isMockup?: boolean;
   className?: string
 };
 type ServiceType = "in-person" | "on-table" | "online";
@@ -135,7 +135,7 @@ export default function LiveCard({
   hasSession,
   businessSlug,
   branchSlug,
-  isMockUp = false,
+  isMockup = false,
   className
 }: LiveCardType) {
   const [showCode, setShowCode] = useState(false);
@@ -246,12 +246,16 @@ export default function LiveCard({
           orderAge={progress}
           elapsedDuration={elapsedDuration}
           progressType={progressType}
+          isMockup={isMockup}
         ></LiveCardHeader>
         {showCode ? (
           <QRCodeView
-            businessSlug={businessSlug}
-            branchSlug={branchSlug}
-            tableCode={table.code}
+            {...(!isMockup && {
+              businessSlug,
+              branchSlug,
+              tableCode: table.code,
+            })}
+            isMockup={isMockup}
           ></QRCodeView>
         ) : activeSessionValid ? (
           <motion.div
@@ -365,15 +369,20 @@ function QRCodeView({
   businessSlug,
   branchSlug,
   tableCode,
+  isMockup = false
 }: {
-  businessSlug: string;
-  branchSlug: string;
-  tableCode: string;
+  businessSlug?: string;
+  branchSlug?: string;
+  tableCode?: string;
+  isMockup?: boolean
 }) {
+  const URL = businessSlug && branchSlug && tableCode ? `${APP_URL}/${businessSlug}/menu?branch=${branchSlug}&t=${tableCode}` : '/'
+
   return (
     <div className="flex items-center justify-center w-full h-full">
       <QrCodeGenerator
-        url={`${APP_URL}/${businessSlug}/menu?branch=${branchSlug}&t=${tableCode}`}
+        isMockup={isMockup}
+        url={URL}
       ></QrCodeGenerator>
     </div>
   );
@@ -406,7 +415,7 @@ export function LiveCardHeader({
   setShowCode,
   elapsedDuration,
   progressType,
-  isMockUp = false,
+  isMockup = false,
 }: {
   table: TableType;
   branchSlug: string;
@@ -414,7 +423,7 @@ export function LiveCardHeader({
   orderAge: number;
   elapsedDuration: string;
   progressType: progressType;
-  isMockUp?: boolean;
+  isMockup?: boolean;
 }) {
   async function handleTableDelete() {
     const res = await deleteTable(branchSlug, table.id);
@@ -450,7 +459,7 @@ export function LiveCardHeader({
               </div>
             </DropdownMenuLabel>
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem disabled={isMockup}>
                 <Info></Info>
                 مشخصات میز
               </DropdownMenuItem>
@@ -468,8 +477,8 @@ export function LiveCardHeader({
                 <QrCode></QrCode>
                 مشاهده QR کد
               </DropdownMenuItem>
-              {isMockUp ? (
-                <DropdownMenuItem>
+              {isMockup ? (
+                <DropdownMenuItem disabled>
                   <Pen></Pen>
                   ویرایش میز
                 </DropdownMenuItem>
@@ -490,6 +499,7 @@ export function LiveCardHeader({
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem
+                disabled={isMockup}
                 onClick={(e) => e.preventDefault()}
                 className="text-red-600 p-0 focus:text-red-600 focus:bg-red-50"
               >
