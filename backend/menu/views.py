@@ -5,9 +5,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from permissions import IsOwner, HasBusinessBranchAccess, HasMethodAccess
 from mixins import MethodBasedPermissionsMixin
+from permissions import demo_or_full_access
 
 # dependencies
 from .models import Menu, MenuGlobalStyling
@@ -20,10 +19,10 @@ User = get_user_model()
 
 class MenuView(MethodBasedPermissionsMixin, APIView):
     permission_classes_by_method = {
-        'POST': [IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess)], 'PATCH': [IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess)]}
+        'POST': [demo_or_full_access], 'PATCH': [demo_or_full_access]}
     required_permission_by_method = {
-        'POST': ['business.add_menu'],
-        'PATCH': ['business.change_menu']
+        'POST': ['menu.add_menu'],
+        'PATCH': ['menu.change_menu']
     }
 
     def get(self, request, business_slug):

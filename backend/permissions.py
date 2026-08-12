@@ -1,8 +1,14 @@
-from rest_framework.permissions import BasePermission, SAFE_METHODS
+from rest_framework.permissions import BasePermission, IsAuthenticated
 from rest_framework.permissions import BasePermission
-from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.exceptions import PermissionDenied
 from business.models import Business, Branch
-from django.contrib.auth.models import Permission
+
+
+class IsDemo(BasePermission):
+    # Check to see if user has is_demo flag
+    # Demo accounts should bypass any kind of permission checks
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and request.user.is_demo
 
 
 class IsOwner(BasePermission):
@@ -143,3 +149,24 @@ class HasFeatureAccess(BasePermission):
                 return False
 
         return True
+
+
+# Reusable permission compositions
+# Authenticated user with business/branch access and method-level authorization
+business_access = (
+    IsAuthenticated
+    & (
+        IsOwner
+        | (HasBusinessBranchAccess & HasMethodAccess)
+    )
+)
+
+# Business access plus an active subscription with the required feature
+full_access = (
+    business_access
+    & HasActiveSubscription
+    & HasFeatureAccess
+)
+
+# Demo users bypass subscription/feature restrictions
+demo_or_full_access = IsDemo | full_access

@@ -1,23 +1,28 @@
-from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
-from rest_framework.views import APIView, Response, status
-from rest_framework.permissions import IsAuthenticated
-from permissions import IsOwner, HasBusinessBranchAccess, HasMethodAccess
+from datetime import timedelta
+
 from django.contrib.auth import get_user_model
-from .models import Personnel
-from .serializers import PersonnelListSerializer, PersonnelAssignSerializer, PersonnelUpdateSerializer
-from business.models import Business, Branch
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.core.mail import send_mail
-from datetime import timedelta
+
+from .models import Personnel
+from .serializers import PersonnelListSerializer, PersonnelAssignSerializer, PersonnelUpdateSerializer
+from business.models import Business, Branch
+
+from mixins import MethodBasedPermissionsMixin
+
+# rest_framework dependencies
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.views import APIView, Response, status
+from permissions import demo_or_full_access
 
 User = get_user_model()
 
+# ***** These API views are not following REST conventions *****
+# MUST BE CHANGED
+
 
 class PersonnelListView(APIView):
-    permission_classes = [IsAuthenticated, IsOwner |
-                          (HasBusinessBranchAccess & HasMethodAccess)]
-    required_permission = ['personnel.view_personnel']
 
     def get(self, request, business_slug):
         branch_slug = request.query_params.get('branch_slug')
@@ -53,10 +58,10 @@ def generate_invite_token(personnel):
     return str(token)
 
 
-class PersonnelAssignView(APIView):
-    permission_classes = [IsAuthenticated, IsOwner |
-                          (HasBusinessBranchAccess & HasMethodAccess)]
-    required_permission = ['personnel.add_personnel']
+class PersonnelAssignView(MethodBasedPermissionsMixin, APIView):
+    permission_classes_by_method = {'POST': [demo_or_full_access]}
+    required_permission_by_method = {'POST': ['personnel.add_personnel']}
+    required_feature = ['personnel_management']
 
     def post(self, request, slug):
         # user = get_object_or_404(User, pk=user_id)
@@ -117,10 +122,10 @@ class PersonnelAssignView(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class PersonnelUpdateView(APIView):
-    permission_classes = [IsAuthenticated, IsOwner |
-                          (HasBusinessBranchAccess & HasMethodAccess)]
-    required_permission = ['personnel.change_personnel']
+class PersonnelUpdateView(MethodBasedPermissionsMixin, APIView):
+    permission_classes_by_method = {'PATCH': [demo_or_full_access]}
+    required_permission_by_method = {'PATCH': ['personnel.change_personnel']}
+    required_feature = ['personnel_management']
 
     def put(self, request, personnel_id, *args, **kwargs):
         personnel = get_object_or_404(Personnel, pk=personnel_id)
@@ -147,10 +152,10 @@ class PersonnelUpdateView(APIView):
         return Response(ser_data.errors, status.HTTP_400_BAD_REQUEST)
 
 
-class PersonnelDeleteView(APIView):
-    permission_classes = [IsAuthenticated, IsOwner |
-                          (HasBusinessBranchAccess & HasMethodAccess)]
-    required_permission = ['personnel.delete_personnel']
+class PersonnelDeleteView(MethodBasedPermissionsMixin, APIView):
+    permission_classes_by_method = {'DELETE': [demo_or_full_access]}
+    required_permission_by_method = {'DELETE': ['personnel.delete_personnel']}
+    required_feature = ['personnel_management']
 
     def delete(self, request, personnel_id, *args, **kwargs):
         # Check personnel availability

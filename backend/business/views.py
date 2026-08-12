@@ -14,7 +14,7 @@ from personnel.models import Personnel
 # rest_framework dependencies
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from permissions import IsOwner, HasBusinessBranchAccess, HasMethodAccess, HasActiveSubscription, HasFeatureAccess
+from permissions import business_access, demo_or_full_access
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -75,8 +75,7 @@ class BusinessDetailView(APIView):
 
 # Branch CRUD views
 class BranchesView(MethodBasedPermissionsMixin, APIView):
-    permission_classes_by_method = {'POST': [
-        IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess), HasActiveSubscription & HasFeatureAccess]}
+    permission_classes_by_method = {'POST': [demo_or_full_access]}
     required_permission_by_method = {
         'POST': ['business.add_branch'],
     }
@@ -107,9 +106,8 @@ class BranchesView(MethodBasedPermissionsMixin, APIView):
 
 
 class BranchDetailView(MethodBasedPermissionsMixin, APIView):
-    permission_classes_by_method = {'PATCH': [
-        IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess), HasActiveSubscription & HasFeatureAccess],
-        'DELETE': [IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess), HasActiveSubscription & HasFeatureAccess]}
+    permission_classes_by_method = {'PATCH': [demo_or_full_access],
+                                    'DELETE': [demo_or_full_access]}
     required_permission_by_method = {
         'PATCH': ['business.change_branch'],
         'DELETE': ['business.delete_branch'],
@@ -147,8 +145,7 @@ class BranchDetailView(MethodBasedPermissionsMixin, APIView):
 
 # Table CRUD views
 class TablesView(MethodBasedPermissionsMixin, APIView):
-    permission_classes_by_method = {'POST': [
-        IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess), HasActiveSubscription & HasFeatureAccess]}
+    permission_classes_by_method = {'POST': [demo_or_full_access]}
     required_permission_by_method = {
         'POST': ['business.add_table'],
     }
@@ -181,9 +178,8 @@ class TablesView(MethodBasedPermissionsMixin, APIView):
 
 
 class TableDetailView(MethodBasedPermissionsMixin, APIView):
-    permission_classes_by_method = {'PATCH': [
-        IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess), HasActiveSubscription & HasFeatureAccess],
-        'DELETE': [IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess), HasActiveSubscription & HasFeatureAccess]}
+    permission_classes_by_method = {'PATCH': [demo_or_full_access],
+                                    'DELETE': [demo_or_full_access]}
     required_permission_by_method = {
         'PATCH': ['business.change_table'],
         'DELETE': ['business.delete_table'],
@@ -342,8 +338,7 @@ class CallWaiterView(MethodBasedPermissionsMixin, APIView):
 
 
 class CallWaiterDetailView(MethodBasedPermissionsMixin, APIView):
-    permission_classes_by_method = {'PATCH': [
-        IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess)]}
+    permission_classes_by_method = {'PATCH': [demo_or_full_access]}
     required_permission_by_method = {
         'PATCH': ['business.change_callwaiter'],
     }
@@ -377,8 +372,7 @@ class CallWaiterDetailView(MethodBasedPermissionsMixin, APIView):
 
 # Category CRUD views
 class CategoriesView(MethodBasedPermissionsMixin, APIView):
-    permission_classes_by_method = {'POST': [
-        IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess)]}
+    permission_classes_by_method = {'POST': [business_access]}
     required_permission_by_method = {
         'POST': ['business.add_category'],
     }
@@ -409,9 +403,8 @@ class CategoriesView(MethodBasedPermissionsMixin, APIView):
 
 
 class CategoryDetailView(APIView):
-    permission_classes_by_method = {'PATCH': [
-        IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess)],
-        'DELETE': [IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess)]}
+    permission_classes_by_method = {'PATCH': [business_access],
+                                    'DELETE': [business_access]}
     required_permission_by_method = {
         'PATCH': ['business.change_category'],
         'DELETE': ['business.delete_category'],
@@ -467,8 +460,7 @@ def get_items_for_branch(items, branch):
 
 
 class ItemsView(MethodBasedPermissionsMixin, APIView):
-    permission_classes_by_method = {'POST': [
-        IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess)]}
+    permission_classes_by_method = {'POST': [business_access]}
     required_permission_by_method = {
         'POST': ['business.add_item'],
     }
@@ -529,9 +521,8 @@ class ItemsView(MethodBasedPermissionsMixin, APIView):
 
 
 class ItemDetailView(MethodBasedPermissionsMixin, APIView):
-    permission_classes_by_method = {'PATCH': [
-        IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess)],
-        'DELETE': [IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess)]}
+    permission_classes_by_method = {'PATCH': [business_access],
+                                    'DELETE': [business_access]}
     required_permission_by_method = {
         'PATCH': ['business.change_item'],
         'DELETE': ['business.delete_item'],
@@ -605,8 +596,8 @@ class ItemDetailView(MethodBasedPermissionsMixin, APIView):
 
 
 class OrdersView(MethodBasedPermissionsMixin, APIView):
-    permission_classes_by_method = {'GET': [
-        IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess)], }
+    permission_classes_by_method = {
+        'GET': [demo_or_full_access], 'POST': [IsAuthenticated]}
     required_permission_by_method = {
         'GET': ['business.view_order'],
     }
@@ -664,9 +655,8 @@ class OrdersView(MethodBasedPermissionsMixin, APIView):
 
 
 class OrderDetailView(MethodBasedPermissionsMixin, APIView):
-    permission_classes_by_method = {'PATCH': [
-        IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess)],
-        'DELETE': [IsAuthenticated, IsOwner | (HasBusinessBranchAccess & HasMethodAccess)]}
+    permission_classes_by_method = {'PATCH': [demo_or_full_access],
+                                    'DELETE': [demo_or_full_access]}
     required_permission_by_method = {
         'PATCH': ['business.change_order'],
         'DELETE': ['business.delete_order'],
