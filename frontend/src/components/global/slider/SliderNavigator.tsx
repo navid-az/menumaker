@@ -123,6 +123,23 @@ export function SliderNavigator({
     }
   };
 
+  // Automatically advance to the next step if autoAdvance is set to true
+  const autoAdvancedStepId = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!activeStep.autoAdvance || !isStepValid) return;
+    if (autoAdvancedStepId.current === activeStep.id) return; // already advanced from this step
+
+    // Prevent auto advance from a retrigger between renders
+    autoAdvancedStepId.current = activeStep.id;
+
+    const timeout = setTimeout(() => {
+      goNext();
+    }, 350);
+
+    return () => clearTimeout(timeout);
+  }, [isStepValid, activeStep]);
+
   return (
     <div className="flex w-full items-center justify-between rtl:flex-row-reverse">
       <Button
