@@ -7,27 +7,20 @@ import { Button } from "@/components/ui/button";
 
 //hooks
 import { useSlider } from "@/lib/stores";
-import { useTactileAnimation } from "@/app/hooks/useTactileAnimation"; //animation hook
+import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
+import { useStepValid } from "@/app/hooks/useStepValid";
 
 //libraries
 import gsap from "gsap";
 
 //types
-type disabledStateType = "nextDisabled" | "prevDisabled" | "";
+import type { SliderSection } from "./Slider";
 type SliderNavigatorType = {
   disableSubmitBtn?: boolean;
   isDirty?: boolean;
   isEditing?: boolean;
   submitBtnText?: string;
-  validSections: {
-    title: string;
-    steps: {
-      id: string;
-      subtitle: string;
-      component: React.JSX.Element;
-      show: boolean;
-    }[];
-  }[];
+  validSections: SliderSection[]
 };
 
 export function SliderNavigator({
@@ -51,8 +44,10 @@ export function SliderNavigator({
   const activeStep = activeSection.steps[stepIndex];
   const stepCount = activeSection.steps.length;
 
-  // next/prev disability
-  const [disabled, setDisabled] = useState<disabledStateType>("prevDisabled");
+  const [prevDisabled, setPrevDisabled] = useState(true);
+  const [nextDisabled, setNextDisabled] = useState(false);
+
+  const isStepValid = useStepValid(activeStep.id, activeStep.fields ?? []);
 
   const nextBtnRef = useRef<HTMLButtonElement>(null);
   const prevBtnRef = useRef<HTMLButtonElement>(null);
@@ -60,62 +55,45 @@ export function SliderNavigator({
   const submitBtnRef = useRef<HTMLButtonElement>(null);
   const buttonsContainerRef = useRef<HTMLDivElement>(null);
 
-  // next/prev buttons animations
   useTactileAnimation(nextBtnRef, {});
   useTactileAnimation(prevBtnRef, {});
   useTactileAnimation(editBtnRef, {});
   useTactileAnimation(submitBtnRef, {});
 
-  // Initial section and step setter
-  // This will make sure initially first step of the first section is active
   useEffect(() => {
     setStepIndex(0);
     setSectionIndex(0);
   }, []);
 
-  // Disable next/prev buttons according to active step
   useEffect(() => {
-    if (stepIndex == stepCount - 1 && sectionIndex == sectionCount - 1) {
-      setDisabled("nextDisabled");
-    } else if (stepIndex == 0 && sectionIndex == 0) {
-      setDisabled("prevDisabled");
-    } else {
-      setDisabled("");
-    }
-  }, [activeStep, sectionCount, stepCount]);
+    const isLastStep = stepIndex === stepCount - 1 && sectionIndex === sectionCount - 1;
+    const isFirstStep = stepIndex === 0 && sectionIndex === 0;
+    const isMandatoryIncomplete = activeStep.optional !== true && !isStepValid;
 
-  // Animate next and submit buttons according to active step
+    // Disable prev btn on first step
+    setPrevDisabled(isFirstStep);
+
+    // Disable Next btn when step is mandatory & incomplete OR on last step  
+    setNextDisabled(isLastStep || isMandatoryIncomplete);
+  }, [activeStep, isStepValid, sectionCount, stepCount, stepIndex, sectionIndex]);
+
+  // Next and Submit btn animation
   useEffect(() => {
     if (!disableSubmitBtn && !isEditing) {
-      if (disabled === "nextDisabled") {
+      if (nextDisabled) {
         if (submitBtnRef.current) {
           submitBtnRef.current.style.display = "flex";
         }
-        gsap.to(submitBtnRef.current, {
-          duration: 0.2,
-          x: 0,
-          opacity: 1,
-        });
-
-        gsap.to(nextBtnRef.current, {
-          duration: 0.2,
-          x: 0,
-        });
+        gsap.to(submitBtnRef.current, { duration: 0.2, x: 0, opacity: 1 });
+        gsap.to(nextBtnRef.current, { duration: 0.2, x: 0 });
       } else {
-        gsap.to(submitBtnRef.current, {
-          duration: 0.2,
-          x: "100%",
-          opacity: 0,
-        });
-        gsap.to(nextBtnRef.current, {
-          duration: 0.2,
-          x: "142%",
-        });
+        gsap.to(submitBtnRef.current, { duration: 0.2, x: "100%", opacity: 0 });
+        gsap.to(nextBtnRef.current, { duration: 0.2, x: "142%" });
       }
     }
-  }, [disabled]);
+  }, [nextDisabled]);
 
-  // Go to next step
+  // Go to next step/section
   const goNext = () => {
     const isLastStepInSection = stepIndex === stepCount - 1;
     const isLastSection = sectionIndex === sectionCount - 1;
@@ -130,7 +108,7 @@ export function SliderNavigator({
     }
   };
 
-  // Go to previous step
+  // Go to previous step/section
   const goBack = () => {
     const isFirstStepInSection = stepIndex === 0;
     const isFirstSection = sectionIndex === 0;
@@ -150,20 +128,16 @@ export function SliderNavigator({
       <Button
         ref={prevBtnRef}
         type="button"
-        disabled={disabled == "prevDisabled"}
+        disabled={prevDisabled}
         onClick={goBack}
         className="h-9 select-none rounded-full px-5 transition-opacity duration-300 sm:h-10 sm:px-6"
       >
         قبلی
       </Button>
       <div className="w-full flex justify-center">
-        <div className="flex w-max gap-2 border-1 border-royal-green/20 rounded-full bg-soft-blue p-2 rtl:flex-row-reverse">
+        <div className="flex w-max gap-2 border border-royal-green/20 rounded-full bg-soft-blue p-2 rtl:flex-row-reverse">
           {Array.from({ length: stepCount }, (_, index) => (
-            <SliderNavigatorDot
-              index={index}
-              key={index}
-              active={stepIndex == index}
-            ></SliderNavigatorDot>
+            <SliderNavigatorDot index={index} key={index} active={stepIndex == index}></SliderNavigatorDot>
           ))}
         </div>
       </div>
@@ -171,7 +145,7 @@ export function SliderNavigator({
         {!disableSubmitBtn && !isEditing && (
           <Button
             ref={submitBtnRef}
-            disabled={disabled != "nextDisabled"}
+            disabled={!nextDisabled}
             className="h-9 select-none rounded-full px-5 opacity-0 sm:h-10 sm:px-6"
             type="submit"
           >
@@ -191,7 +165,7 @@ export function SliderNavigator({
         <Button
           ref={nextBtnRef}
           type="button"
-          disabled={disabled == "nextDisabled"}
+          disabled={nextDisabled}
           onClick={goNext}
           className="h-9 select-none rounded-full px-5 transition-opacity duration-300 sm:h-10 sm:px-6"
         >
@@ -202,21 +176,16 @@ export function SliderNavigator({
   );
 }
 
-type SliderNavigatorDot = {
-  active?: boolean;
-  index: number;
-};
+type SliderNavigatorDot = { active?: boolean; index: number };
 
 function SliderNavigatorDot({ active, index }: SliderNavigatorDot) {
   const { setStepIndex } = useSlider();
-
   return (
     <button
       type="button"
       onClick={() => setStepIndex(index)}
-      className={`scale-pro h-3 w-3 cursor-pointer rounded-full transition-all duration-300 hover:bg-primary/50 sm:h-3.5 sm:w-3.5 ${
-        active ? "scale-110 !bg-primary" : "scale-90 bg-sad-blue"
-      }`}
+      className={`scale-pro h-3 w-3 cursor-pointer rounded-full transition-all duration-300 hover:bg-primary/50 sm:h-3.5 sm:w-3.5 ${active ? "scale-110 bg-primary!" : "scale-90 bg-sad-blue"
+        }`}
     ></button>
   );
 }

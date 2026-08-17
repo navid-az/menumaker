@@ -2,31 +2,30 @@
 
 import React, { useEffect, useRef } from "react";
 
-//components
-import { Button } from "@/components/ui/button";
-import SliderTitle from "./SliderTitle";
-
 //hooks
 import { useSliderTitle, useSlider } from "@/lib/stores";
 
 //utils
 import { cn } from "@/lib/utils";
 
-//SVGs
-import { Eye } from "lucide-react";
-
 //types
+export type Step = {
+  id: string;
+  subtitle: string;
+  component: React.ReactNode;
+  show?: boolean
+  optional?: boolean;
+  fields?: string[];
+  autoAdvance?: boolean;
+}
+export type SliderSection = {
+  id: string;
+  title: string;
+  steps: Step[];
+};
 type SliderType = {
   children: React.ReactNode;
-  validSections: {
-    title: string;
-    steps: {
-      id: string;
-      subtitle: string;
-      component: React.JSX.Element;
-      show: boolean;
-    }[];
-  }[];
+  validSections: SliderSection[];
 };
 type stepType = {
   stepId: string;
