@@ -23,6 +23,7 @@ import {
   SliderFooter,
   SliderHeader,
   SliderStep,
+  type SliderSection,
 } from "@/components/global/slider/Slider";
 import { SliderNavigator } from "@/components/global/slider/SliderNavigator";
 import SliderTitle from "@/components/global/slider/SliderTitle";
@@ -84,7 +85,7 @@ export default function Setup({
 
   const { sectionIndex, stepIndex, direction } = useSlider();
 
-  const sections = [
+  const sections: SliderSection[] = [
     {
       id: "business_info",
       title: "آشنایی با شما",
@@ -114,6 +115,7 @@ export default function Setup({
             </SliderStep>
           ),
           show: true,
+          fields: ['owner_name'],
         },
         {
           id: "businessInfo",
@@ -157,6 +159,7 @@ export default function Setup({
             </SliderStep>
           ),
           show: true,
+          fields: ['name', 'name_en'],
         },
       ],
     },
@@ -217,6 +220,9 @@ export default function Setup({
             </SliderStep>
           ),
           show: true,
+          fields: ['service_type'],
+          optional: true,
+          autoAdvance: true,
         },
         {
           id: "primary_service_type",
@@ -260,9 +266,10 @@ export default function Setup({
               />
             </SliderStep>
           ),
-          show:
-            form.watch("service_type") === "online" ||
-            form.watch("service_type") === "both",
+          show: form.watch("service_type") === "both",
+          fields: ['primary_service_type'],
+          optional: true,
+          autoAdvance: true,
         },
         {
           id: "business_size",
@@ -303,6 +310,9 @@ export default function Setup({
               />
             </SliderStep>
           ),
+          fields: ['branch_structure'],
+          optional: true,
+          autoAdvance: true,
           show: true,
         },
       ],
@@ -324,11 +334,11 @@ export default function Setup({
                 title="شخصی سازی منو"
                 onClick={() => handleSubmit("custom")}
               ></Tile>
-              <Tile
+              {/* <Tile
                 isButton
                 title="انتخاب منو از پیش ساخته شده"
                 onClick={() => handleSubmit("pre-built")}
-              ></Tile>
+              ></Tile> */}
             </SliderStep>
           ),
           show: true,

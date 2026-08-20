@@ -13,6 +13,10 @@ import { useStepValid } from "@/app/hooks/useStepValid";
 //libraries
 import gsap from "gsap";
 
+//functions
+import { cn } from "@/lib/utils";
+
+
 //types
 import type { SliderSection } from "./Slider";
 type SliderNavigatorType = {
@@ -65,22 +69,18 @@ export function SliderNavigator({
     setSectionIndex(0);
   }, []);
 
+  const isLastStep = stepIndex === stepCount - 1 && sectionIndex === sectionCount - 1;
+  const isFirstStep = stepIndex === 0 && sectionIndex === 0;
+  const isMandatoryIncomplete = activeStep.optional !== true && !isStepValid;
+
   useEffect(() => {
-    const isLastStep = stepIndex === stepCount - 1 && sectionIndex === sectionCount - 1;
-    const isFirstStep = stepIndex === 0 && sectionIndex === 0;
-    const isMandatoryIncomplete = activeStep.optional !== true && !isStepValid;
-
-    // Disable prev btn on first step
     setPrevDisabled(isFirstStep);
-
-    // Disable Next btn when step is mandatory & incomplete OR on last step  
     setNextDisabled(isLastStep || isMandatoryIncomplete);
   }, [activeStep, isStepValid, sectionCount, stepCount, stepIndex, sectionIndex]);
 
-  // Next and Submit btn animation
   useEffect(() => {
     if (!disableSubmitBtn && !isEditing) {
-      if (nextDisabled) {
+      if (isLastStep) {
         if (submitBtnRef.current) {
           submitBtnRef.current.style.display = "flex";
         }
@@ -91,7 +91,7 @@ export function SliderNavigator({
         gsap.to(nextBtnRef.current, { duration: 0.2, x: "142%" });
       }
     }
-  }, [nextDisabled]);
+  }, [isLastStep]);
 
   // Go to next step/section
   const goNext = () => {
@@ -151,7 +151,7 @@ export function SliderNavigator({
       >
         قبلی
       </Button>
-      <div className="w-full flex justify-center">
+      <div className={cn("w-full flex justify-center transition-all duration-200 ease-in-out", isLastStep ? 'pl-0' : 'pl-20')}>
         <div className="flex w-max gap-2 border border-royal-green/20 rounded-full bg-soft-blue p-2 rtl:flex-row-reverse">
           {Array.from({ length: stepCount }, (_, index) => (
             <SliderNavigatorDot index={index} key={index} active={stepIndex == index}></SliderNavigatorDot>
