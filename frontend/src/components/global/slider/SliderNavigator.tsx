@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 
 //components
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
 
 
 //types
-import type { SliderSection } from "./Slider";
+import type { SliderSection, Step } from "./Slider";
 type SliderNavigatorType = {
   disableSubmitBtn?: boolean;
   isDirty?: boolean;
@@ -53,17 +53,46 @@ export function SliderNavigator({
 
   const isStepValid = useStepValid(activeStep.id, activeStep.fields ?? []);
 
+  // Tracks validity for every step in the active section, keyed by step id.
+  // Each entry is populated by a <StepValidityTracker> mounted below, which
+  // calls useStepValid exactly once per step (fixed hook-call count per
+  // component instance, so it's safe even though stepCount varies by section).
+  const [stepValidityMap, setStepValidityMap] = useState<Record<string, boolean>>({});
+
+  const handleStepValidityChange = useCallback((id: string, valid: boolean) => {
+    setStepValidityMap((prev) => (prev[id] === valid ? prev : { ...prev, [id]: valid }));
+  }, []);
+
+  // A dot is disabled if ANY step before it (within the same section) is mandatory and not yet valid 
+  const isDotDisabled = useCallback(
+    (index: number) => {
+      console.log('isDotDisabled callback just ran');
+
+      for (let i = 0; i < index; i++) {
+        const step = activeSection.steps[i];
+        const valid = stepValidityMap[step.id] ?? false;
+        if (step.optional !== true && !valid) {
+          return true;
+        }
+      }
+      return false;
+    },
+    [activeSection, stepValidityMap]
+  );
+
   const nextBtnRef = useRef<HTMLButtonElement>(null);
   const prevBtnRef = useRef<HTMLButtonElement>(null);
   const editBtnRef = useRef<HTMLButtonElement>(null);
   const submitBtnRef = useRef<HTMLButtonElement>(null);
   const buttonsContainerRef = useRef<HTMLDivElement>(null);
 
+  // Tactile animation for navigation buttons
   useTactileAnimation(nextBtnRef, {});
   useTactileAnimation(prevBtnRef, {});
   useTactileAnimation(editBtnRef, {});
   useTactileAnimation(submitBtnRef, {});
 
+  // Set initial active section and active step on mount
   useEffect(() => {
     setStepIndex(0);
     setSectionIndex(0);
@@ -73,11 +102,13 @@ export function SliderNavigator({
   const isFirstStep = stepIndex === 0 && sectionIndex === 0;
   const isMandatoryIncomplete = activeStep.optional !== true && !isStepValid;
 
+  // Disable Navigation buttons
   useEffect(() => {
     setPrevDisabled(isFirstStep);
     setNextDisabled(isLastStep || isMandatoryIncomplete);
   }, [activeStep, isStepValid, sectionCount, stepCount, stepIndex, sectionIndex]);
 
+  // Next and submit button animation
   useEffect(() => {
     if (!disableSubmitBtn && !isEditing) {
       if (isLastStep) {
@@ -142,6 +173,13 @@ export function SliderNavigator({
 
   return (
     <div className="flex w-full items-center justify-between rtl:flex-row-reverse">
+      {/* Invisible trackers: one per step in the active section, each reporting
+          that step's validity up into stepValidityMap. Keyed by step.id so each
+          mounts once and calls useStepValid a single, fixed number of times. */}
+      {activeSection.steps.map((step) => (
+        <StepValidityTracker key={step.id} step={step} onChange={handleStepValidityChange} />
+      ))}
+
       <Button
         ref={prevBtnRef}
         type="button"
@@ -151,10 +189,15 @@ export function SliderNavigator({
       >
         قبلی
       </Button>
-      <div className={cn("w-full flex justify-center transition-all duration-200 ease-in-out", isLastStep ? 'pl-0' : 'pl-20')}>
+      <div className={cn("w-full flex justify-center transition-all duration-200 ease-in-out")}>
         <div className="flex w-max gap-2 border border-royal-green/20 rounded-full bg-soft-blue p-2 rtl:flex-row-reverse">
           {Array.from({ length: stepCount }, (_, index) => (
-            <SliderNavigatorDot index={index} key={index} active={stepIndex == index}></SliderNavigatorDot>
+            <SliderNavigatorDot
+              key={index}
+              index={index}
+              active={stepIndex == index}
+              disabled={isDotDisabled(index)}
+            ></SliderNavigatorDot>
           ))}
         </div>
       </div>
@@ -193,16 +236,34 @@ export function SliderNavigator({
   );
 }
 
-type SliderNavigatorDot = { active?: boolean; index: number };
+// Renders nothing. Exists purely to call useStepValid exactly once for a
+// given step (keyed by step.id) and report the result upward, without
+// forcing the parent to call the hook a variable number of times.
+type StepValidityTrackerProps = {
+  step: Step;
+  onChange: (id: string, valid: boolean) => void;
+};
 
-function SliderNavigatorDot({ active, index }: SliderNavigatorDot) {
+function StepValidityTracker({ step, onChange }: StepValidityTrackerProps) {
+  const valid = useStepValid(step.id, step.fields ?? []);
+
+  useEffect(() => {
+    onChange(step.id, valid);
+  }, [step.id, valid, onChange]);
+
+  return null;
+}
+
+type SliderNavigatorDot = { active?: boolean; index: number, disabled?: boolean };
+
+function SliderNavigatorDot({ active, index, disabled = false }: SliderNavigatorDot) {
   const { setStepIndex } = useSlider();
   return (
     <button
       type="button"
+      disabled={disabled}
       onClick={() => setStepIndex(index)}
-      className={`scale-pro h-3 w-3 cursor-pointer rounded-full transition-all duration-300 hover:bg-primary/50 sm:h-3.5 sm:w-3.5 ${active ? "scale-110 bg-primary!" : "scale-90 bg-sad-blue"
-        }`}
+      className={cn("scale-pro h-3 w-3 cursor-pointer rounded-full transition-all duration-300 sm:h-3.5 sm:w-3.5", active ? "scale-110 bg-primary!" : "scale-90 bg-sad-blue", disabled ? 'bg-sad-blue/80 cursor-default' : 'bg-primary/20 hover:bg-primary/50')}
     ></button>
   );
 }
