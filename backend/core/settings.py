@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     "pickers",
     "personnel",
     'subscriptions',
+    'assets',
 
     # 3rd party packages
     "channels",
