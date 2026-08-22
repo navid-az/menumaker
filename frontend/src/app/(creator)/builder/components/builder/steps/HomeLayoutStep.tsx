@@ -28,6 +28,7 @@ export default function HomeLayoutStep({
 }) {
   const { control } = useFormContext();
 
+
   return (
     <SliderStep stepId={stepId}>
       <FormField
@@ -44,8 +45,10 @@ export default function HomeLayoutStep({
                 ></SliderTabTitle>
                 <SliderTabBody isOpen>
                   <ImageUploader
+                    maxFiles={3}
                     value={field.value}
                     onChange={field.onChange}
+                    collection="item_gallery"
                   ></ImageUploader>
                 </SliderTabBody>
               </SliderTab>

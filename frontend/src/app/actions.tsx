@@ -52,13 +52,13 @@ export async function createCategory(
   data: {
     name?: string | undefined;
     icon?:
-      | {
-          name: string;
-          id: number;
-          image: string;
-        }
-      | null
-      | undefined;
+    | {
+      name: string;
+      id: number;
+      image: string;
+    }
+    | null
+    | undefined;
   }
 ) {
   const accessToken = (await cookies()).get("access");
@@ -217,8 +217,7 @@ export async function updateItem(
 
   try {
     const res = await fetch(
-      `${SERVER_API_BASE_URL}/items/${itemId}/${
-        branchSlug ? `?branch_slug=${branchSlug}` : ""
+      `${SERVER_API_BASE_URL}/items/${itemId}/${branchSlug ? `?branch_slug=${branchSlug}` : ""
       }`,
       {
         method: "PATCH",
@@ -573,37 +572,97 @@ export async function deleteTable(branch_slug: string, tableId: number) {
   return { success: true };
 }
 
-// image upload
-export async function uploadImage(data: FormData) {
+type UploadedAsset = {
+  id: number;
+  url: string;
+  temp_id: string | null;
+  collection: string;
+  media_type: string;
+  order: number;
+  created: string;
+};
+
+type UploadResult =
+  | { success: true; assets: UploadedAsset[] }
+  | { success: false; error: string };
+
+// Pulls a readable message out of DRF's validation error shape, which
+// returns field-keyed arrays (e.g. {"non_field_errors": ["Maximum of..."]})
+// rather than a single "error"/"detail" key.
+function extractErrorMessage(errorData: any): string {
+  if (!errorData) return "Failed to upload image";
+  if (typeof errorData === "string") return errorData;
+  const firstKey = Object.keys(errorData)[0];
+  const firstValue = errorData[firstKey];
+  return Array.isArray(firstValue) ? firstValue[0] : String(firstValue);
+}
+
+export async function uploadImage(data: FormData): Promise<UploadResult> {
+  const accessToken = (await cookies()).get("access");
+
+  const collection = data.get("collection");
+  const tempId = data.get("temp_id");
+  const files = data.getAll("images") as File[];
+
+  if (!files.length) {
+    return { success: false, error: "No files provided" };
+  }
+
   try {
-    const res = await fetch(`${SERVER_API_BASE_URL}/menu/images/`, {
-      method: "POST",
-      body: data,
+    // The endpoint creates one MediaAsset per request, so a multi-file drop
+    // fans out into parallel requests rather than a single batched POST.
+    const uploads = files.map((file) => {
+      const singleFormData = new FormData();
+      singleFormData.append("file", file);
+      singleFormData.append("collection", collection as string);
+      singleFormData.append("temp_id", tempId as string);
+      singleFormData.append("media_type", "image");
+
+      return fetch(`${SERVER_API_BASE_URL}/assets/asset/`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken?.value}`,
+        },
+        body: singleFormData,
+      });
     });
-    if (!res.ok) {
-      const errorData = await res.json();
-      console.log("errorData:", errorData);
 
-      return {
-        success: false,
-        error: errorData.error || "Failed to upload image",
-      };
+    const responses = await Promise.all(uploads);
+
+    const failed = responses.find((res) => !res.ok);
+    if (failed) {
+      const errorData = await failed.json().catch(() => null);
+      return { success: false, error: extractErrorMessage(errorData) };
     }
 
-    const validData = await res.json();
+    const assets: UploadedAsset[] = await Promise.all(
+      responses.map((res) => res.json())
+    );
 
-    if (validData.success && Array.isArray(validData.image_refs)) {
-      return {
-        success: true,
-        imageRefs: validData.image_refs,
-      };
-    }
+    return { success: true, assets };
   } catch (error: any) {
     return {
       success: false,
       error: error.message || "An unexpected error occurred",
     };
   }
+}
 
-  return { success: true };
+// Deletes by MediaAsset primary key
+export async function deleteImage(assetId: number) {
+  const accessToken = (await cookies()).get("access");
+
+  try {
+    const res = await fetch(`${SERVER_API_BASE_URL}/assets/asset/${assetId}/`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    if (!res.ok) return { success: false, error: "Failed to delete image" };
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message || "Failed to delete image" };
+  }
 }

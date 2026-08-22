@@ -74,7 +74,7 @@ export default function HomeLayout({
           {menuData.secondary_image && (
             <div className="relative h-[22vh] w-6/12 rounded-bl-(--radius-md)">
               <Image
-                src={`${MEDIA_BASE_URL}${menuData.secondary_image}`}
+                src={`${menuData.secondary_image}`}
                 fill
                 alt="secondary_image"
                 className={cn(
@@ -134,7 +134,7 @@ export default function HomeLayout({
       {menuData.tertiary_image && (
         <div className="absolute left-0 top-[12vh] h-[24vh] w-[110px]">
           <Image
-            src={`${MEDIA_BASE_URL}${menuData.tertiary_image}`}
+            src={`${menuData.tertiary_image}`}
             fill
             alt="tertiary_image"
             className={cn(
@@ -168,7 +168,7 @@ export default function HomeLayout({
         {menuData.primary_image && (
           <div className="relative h-full w-full">
             <Image
-              src={`${MEDIA_BASE_URL}${menuData.primary_image}`}
+              src={`${menuData.primary_image}`}
               fill
               alt="primary_image"
               className={cn(

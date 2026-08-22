@@ -1,27 +1,66 @@
 "use client";
 
-//SVGs
-import { AlertCircleIcon, ImageIcon, UploadIcon, XIcon } from "lucide-react";
+import { useEffect, useRef } from "react";
 
-import { useFileUpload } from "@/app/hooks/useFileUpload";
+//components
 import { Button } from "@/components/ui/button";
-import { useEffect } from "react";
-import { uploadImage } from "@/app/actions";
 
-export default function ImageUploader({
-  defaultFiles = [],
-  maxFiles = 5,
-  maxSizeMB = 5,
-  value,
-  onChange,
-}: {
-  value: { tempId: string; url: string }[];
-  onChange: (value: { tempId: string; url: string }[]) => void;
+//SVGs
+import {
+  AlertCircleIcon,
+  ImageIcon,
+  UploadIcon,
+  XIcon,
+} from "lucide-react";
+
+//hooks
+import { useFormContext, useWatch } from "react-hook-form";
+import { useFileUpload } from "@/app/hooks/useFileUpload";
+
+//actions
+import { uploadImage, deleteImage } from "@/app/actions";
+
+//types
+type ImageRef = {
+  id: number;    // MediaAsset pk - used for deletion
+  url: string;
+};
+
+type ImageUploaderProps = {
+  value: ImageRef[];
+  onChange: (value: ImageRef[]) => void;
   maxFiles?: number;
   maxSizeMB?: number;
-  defaultFiles?: { tempId: string; url: string }[];
-}) {
+  collection: "item_gallery" | "menu_welcome_page" | "menu_banner_page"; //should rename later on
+};
+
+export default function ImageUploader({
+  value,
+  onChange,
+  maxFiles = 5,
+  maxSizeMB = 5,
+  collection,
+}: ImageUploaderProps) {
+
+  const { control } = useFormContext();
+  // Reads frontend_only.temp_id without subscribing to re-renders on every keystroke elsewhere in the form.
+  const tempId: string = useWatch({
+    control,
+    name: "frontend_only.temp_id",
+  });
+
   const maxSize = maxSizeMB * 1024 * 1024;
+
+  // Maps the uploader's local file.id -> the server's MediaAsset id,
+  // since deletion needs the real pk, not any client-side identifier.
+  const idMap = useRef<Record<string, number>>({});
+
+  // Keep latest controlled value available to async callbacks.
+  const valueRef = useRef(value);
+
+  useEffect(() => {
+    valueRef.current = value;
+  }, [value]);
 
   const [
     { files, isDragging, errors },
@@ -36,43 +75,91 @@ export default function ImageUploader({
     },
   ] = useFileUpload({
     accept:
-      "image/svg+xml,image/png,image/jpeg,image/jpg,image/gif/webp,image/webp",
+      "image/svg+xml,image/png,image/jpeg,image/jpg,image/gif,image/webp",
     maxSize,
     multiple: true,
     maxFiles,
+    initialFiles: value.map((image) => ({
+      id: String(image.id),
+      name: String(image.id),
+      size: 0,
+      type: "image/*",
+      url: image.url,
+    })),
+
     onFilesAdded: async (newFiles) => {
       const formData = new FormData();
+      formData.append("collection", collection);
+      formData.append("temp_id", tempId);
+
       newFiles.forEach((file) => {
         if (file.file instanceof File) {
           formData.append("images", file.file);
-        } else {
-          console.log(files);
         }
       });
 
       const res = await uploadImage(formData);
 
-      if (res?.success) {
-        const newUploaded = res.imageRefs.map(
-          (img: { id: number; image: string; temp_id: string }) => ({
-            tempId: img.temp_id,
-            url: img.image,
-          })
-        );
-
-        // Combine with previous images
-        const updated = [...value, ...newUploaded];
-
-        onChange?.(updated);
-      } else {
-        console.log(res.error);
+      if (!res?.success) {
+        console.error(res?.error);
+        return;
       }
+
+      const newUploaded: ImageRef[] = res.assets.map((asset) => ({
+        id: asset.id,
+        url: asset.url,
+      }));
+
+      // Map each local file to its server-assigned id so deletion works.
+      newFiles.forEach((file, index) => {
+        const uploaded = res.assets[index];
+        if (uploaded) {
+          idMap.current[file.id] = uploaded.id;
+        }
+      });
+
+      const nextValue = [...valueRef.current, ...newUploaded];
+      valueRef.current = nextValue;
+      onChange(nextValue);
     },
   });
 
+  const handleFileRemove = async (fileId: string) => {
+    const assetId = idMap.current[fileId];
+
+    // Remove from local uploader state.
+    removeFile(fileId);
+
+    if (!assetId) {
+      // Shouldn't normally happen, but guard against a missing mapping
+      // (e.g. upload failed for this file) rather than calling delete
+      // with undefined.
+      return;
+    }
+
+    try {
+      const res = await deleteImage(assetId);
+
+      if (!res?.success) {
+        console.error(res?.error);
+        return;
+      }
+
+      delete idMap.current[fileId];
+
+      const nextValue = valueRef.current.filter(
+        (image) => image.id !== assetId
+      );
+
+      valueRef.current = nextValue;
+      onChange(nextValue);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
-    <div className="flex w-full flex-col gap-2">
-      {/* Drop area */}
+    <div className="flex h-max w-full flex-col gap-2 rounded-xl">
       <div
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}
@@ -80,20 +167,23 @@ export default function ImageUploader({
         onDrop={handleDrop}
         data-dragging={isDragging || undefined}
         data-files={files.length > 0 || undefined}
-        className="has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 min-h-52 not-data-files:justify-center has-[input:focus]:ring-[3px] relative flex flex-col items-center overflow-hidden rounded-xl border border-dashed border-primary/60 p-4 transition-colors data-[dragging=true]:bg-accent/50"
+        className="has-[input:focus]:border-ring bg-white has-[input:focus]:ring-ring/50 not-data-files:justify-center has-[input:focus]:ring-[3px] relative flex flex-col items-center overflow-hidden rounded-xl border border-dashed border-primary/60 p-4 transition-colors data-[dragging=true]:bg-accent/50"
       >
         <input
           {...getInputProps()}
           className="sr-only"
           aria-label="Upload image file"
         />
+
         {files.length > 0 ? (
           <div className="flex w-full flex-col gap-3">
             <div className="flex items-center justify-between gap-2">
               <h3 className="truncate text-sm font-medium">
                 تصاویر آپلود شده ({files.length})
               </h3>
+
               <Button
+                type="button"
                 size="sm"
                 onClick={openFileDialog}
                 disabled={files.length >= maxFiles}
@@ -104,24 +194,30 @@ export default function ImageUploader({
               </Button>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex h-24 gap-2">
               {files.map((file) => (
                 <div
                   key={file.id}
-                  className="relative aspect-square h-24 w-24 rounded-md bg-accent"
+                  className="relative size-24 aspect-square rounded-md border-2 bg-accent transition-all duration-300 border-primary"
                 >
                   <img
                     src={file.preview}
-                    alt={file.file.name}
-                    className="h-full w-full rounded-[inherit] object-cover"
+                    alt={
+                      file.file instanceof File
+                        ? file.file.name
+                        : file.file.name
+                    }
+                    className="h-full w-full rounded-sm object-cover"
                   />
+
                   <Button
-                    onClick={() => removeFile(file.id)}
+                    type="button"
+                    onClick={() => handleFileRemove(file.id)}
                     size="icon"
-                    className="size-6 absolute -right-2 -top-2 rounded-full border-[3.5px] border-background shadow-none focus-visible:border-background"
+                    className="absolute -right-2 -top-2 size-5 rounded-full bg-primary"
                     aria-label="Remove image"
                   >
-                    <XIcon className="h-5 w-5" />
+                    <XIcon className="size-4" />
                   </Button>
                 </div>
               ))}
@@ -130,18 +226,25 @@ export default function ImageUploader({
         ) : (
           <div className="flex flex-col items-center justify-center p-2 text-center">
             <div
-              className="size-11 mb-2 flex shrink-0 items-center justify-center rounded-full"
+              className="mb-2 flex size-11 shrink-0 items-center justify-center rounded-md bg-gray-100"
               aria-hidden="true"
             >
-              <ImageIcon className="opacity-60" />
+              <ImageIcon />
             </div>
+
             <p className="mb-1.5 text-sm font-medium">
               تصاویر خود را اینجا بیاندازید
             </p>
+
             <p className="text-xs text-muted-foreground">
-              (حداکثر . {maxSizeMB}MB) SVG, PNG, JPG or GIF
+              (حداکثر . {maxSizeMB}MB) SVG, PNG, JPG, WebP یا GIF
             </p>
-            <Button className="mt-4 flex gap-2" onClick={openFileDialog}>
+
+            <Button
+              type="button"
+              className="mt-4 flex gap-2"
+              onClick={openFileDialog}
+            >
               <UploadIcon className="h-4 w-4" aria-hidden="true" />
               انتخاب تصاویر
             </Button>
