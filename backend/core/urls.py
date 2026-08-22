@@ -12,6 +12,7 @@ urlpatterns = [
     path("api/personnel/", include("personnel.urls", namespace="personnel")),
     path("api/subscriptions/",
          include("subscriptions.urls", namespace="subscriptions")),
+    path("api/assets/", include("assets.urls", namespace="assets")),
 ]
 
 if settings.DEBUG:
