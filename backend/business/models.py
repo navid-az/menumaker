@@ -2,6 +2,9 @@ from django.db import models
 from django.conf import settings
 from django.utils import timezone
 from django.utils.text import slugify
+from django.contrib.contenttypes.fields import GenericRelation
+from assets.models import MediaAsset
+
 from pickers.models import Asset
 from datetime import timedelta
 import string
@@ -257,11 +260,13 @@ class Category(models.Model):
 
 
 class Item(models.Model):
+
     business = models.ForeignKey(
         "business.Business", on_delete=models.CASCADE, related_name="items")
     category = models.ForeignKey(
         Category, on_delete=models.CASCADE, related_name="items"
     )
+    media_assets = GenericRelation(MediaAsset)
     name = models.CharField(max_length=110)
     description = models.TextField(max_length=300, blank=True, null=True)
     image = models.ImageField(

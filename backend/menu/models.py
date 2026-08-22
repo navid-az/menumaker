@@ -1,5 +1,7 @@
 from django.db import models
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericRelation
+from assets.models import MediaAsset
 
 # external dependencies
 from colorfield.fields import ColorField
@@ -35,6 +37,9 @@ class Menu(models.Model):
     searchbar_enabled = models.BooleanField(default=False)
     logo = models.ImageField(
         upload_to="menu/images/logo/", null=True, blank=True)
+
+    # Menu assets
+    media_assets = GenericRelation(MediaAsset)
 
     # home page
     primary_image = models.ImageField(
