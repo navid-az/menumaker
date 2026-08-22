@@ -103,11 +103,10 @@ export const useFileUpload = (
       if (accept !== "*") {
         const acceptedTypes = accept.split(",").map((type) => type.trim());
         const fileType = file instanceof File ? file.type || "" : file.type;
-        const fileExtension = `.${
-          file instanceof File
-            ? file.name.split(".").pop()
-            : file.name.split(".").pop()
-        }`;
+        const fileExtension = `.${file instanceof File
+          ? file.name.split(".").pop()
+          : file.name.split(".").pop()
+          }`;
 
         const isAccepted = acceptedTypes.some((type) => {
           if (type.startsWith(".")) {
@@ -121,9 +120,8 @@ export const useFileUpload = (
         });
 
         if (!isAccepted) {
-          return `File "${
-            file instanceof File ? file.name : file.name
-          }" is not an accepted file type.`;
+          return `File "${file instanceof File ? file.name : file.name
+            }" is not an accepted file type.`;
         }
       }
 
@@ -200,7 +198,8 @@ export const useFileUpload = (
         maxFiles !== Infinity &&
         state.files.length + newFilesArray.length > maxFiles
       ) {
-        errors.push(`You can only upload a maximum of ${maxFiles} files.`);
+        // errors.push(`You can only upload a maximum of ${maxFiles} files.`);  
+        errors.push(`شما فقط میتوانید حداکثر ${maxFiles} فایل آپلود کنید.`);
         setState((prev) => ({ ...prev, errors }));
         return;
       }
