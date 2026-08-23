@@ -48,7 +48,7 @@ export function MenuEditor({
     menu_sections: [],
     business: { ...businessData },
     global_styling: { color_palette: colorPalette, ...globalStylingData },
-    frontend_only: { suggested_palette_enabled: true },
+    frontend_only: { suggested_palette_enabled: true, temp_id: crypto.randomUUID() },
   };
   return (
     <BuilderTest
