@@ -2,6 +2,8 @@ from django.db import transaction
 from .models import Menu, MenuGlobalStyling, MenuImage
 from rest_framework import serializers
 from business.serializers import CategoriesSerializer
+from assets.models import MediaCollection
+from assets.serializers import MediaAssetSerializer
 import uuid
 
 
@@ -15,9 +17,17 @@ class MenuListSerializer(serializers.ModelSerializer):
 
 
 class MenuSerializer(serializers.ModelSerializer):
+    home_images = serializers.SerializerMethodField()
+
     class Meta:
         model = Menu
         exclude = ['updated', 'created', 'logo']
+
+    def get_home_images(self, obj):
+
+        assets = obj.media_assets.filter(
+            collection=MediaCollection.MENU_WELCOME)
+        return MediaAssetSerializer(assets, many=True, context=self.context).data
 
 
 class MenuGlobalStylingSerializer(serializers.ModelSerializer):

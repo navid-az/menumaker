@@ -30,7 +30,7 @@ class MenuView(MethodBasedPermissionsMixin, APIView):
     def get(self, request, business_slug):
         menu = get_object_or_404(Menu, business__slug=business_slug)
 
-        srz_data = MenuSerializer(instance=menu)
+        srz_data = MenuSerializer(instance=menu, context={"request": request})
         return Response(data=srz_data.data)
 
     def post(self, request, business_slug):

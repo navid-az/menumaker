@@ -40,6 +40,10 @@ export default function HomeLayout({
   const tableCode = searchParams.get("t");
   const branchSlug = searchParams.get("branch");
 
+  const homeImages = [...(menuData.home_images ?? [])].sort(
+    (a, b) => a.order - b.order
+  );
+
   return (
     <div className="relative flex h-full w-full flex-col justify-between overflow-x-hidden bg-(--primary) transition-all duration-300">
       <section className="flex flex-col gap-4">
@@ -71,10 +75,10 @@ export default function HomeLayout({
               strokeWidth="2"
             />
           </svg>
-          {menuData.secondary_image && (
+          {homeImages && homeImages[1] && (
             <div className="relative h-[22vh] w-6/12 rounded-bl-(--radius-md)">
               <Image
-                src={`${menuData.secondary_image}`}
+                src={homeImages[1].url}
                 fill
                 alt="secondary_image"
                 className={cn(
@@ -123,7 +127,7 @@ export default function HomeLayout({
           <h1
             className={cn(
               "font-semibold",
-              menuData.tertiary_image ? "text-3xl" : " text-5xl"
+              homeImages && homeImages[2] ? "text-3xl" : " text-5xl"
             )}
           >
             {menuData.home_title}
@@ -131,10 +135,10 @@ export default function HomeLayout({
           <h3 className="text-base font-normal">{menuData.home_subtitle}</h3>
         </div>
       </section>
-      {menuData.tertiary_image && (
+      {homeImages && homeImages[2] && (
         <div className="absolute left-0 top-[12vh] h-[24vh] w-[110px]">
           <Image
-            src={`${menuData.tertiary_image}`}
+            src={homeImages[2].url}
             fill
             alt="tertiary_image"
             className={cn(
@@ -165,10 +169,10 @@ export default function HomeLayout({
             </Link>
           )}
         </Button>
-        {menuData.primary_image && (
+        {homeImages && homeImages[0] && (
           <div className="relative h-full w-full">
             <Image
-              src={`${menuData.primary_image}`}
+              src={homeImages[0].url}
               fill
               alt="primary_image"
               className={cn(

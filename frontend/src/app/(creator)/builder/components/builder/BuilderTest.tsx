@@ -87,14 +87,13 @@ const FrontEndOnlySchema = z.object({
 });
 export const BuilderSchema = z.object({
   //home page
-  home_images: z
-    .array(
-      z.object({
-        id: z.number(),
-        url: z.string(),
-      })
-    )
-    .optional(),
+  home_images: z.array(z.object({
+    id: z.number(),
+    url: z.string(),
+    media_type: z.literal("image").default('image'),
+    collection: z.literal('menu_welcome').default('menu_welcome'),
+    order: z.number().default(0),
+  })).optional(),
   home_title: z.string().optional(),
   home_subtitle: z.string().optional(),
   welcome_page_layout: z.enum(["single", "couple", "none"]),

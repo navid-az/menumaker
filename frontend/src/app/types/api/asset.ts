@@ -11,6 +11,6 @@ export type MediaAsset = {
   media_type: MediaAssetType;
   collection: MediaAssetCollection;
   temp_id?: string;
-  order?: number;
+  order: number;
   created?: string;
 };
