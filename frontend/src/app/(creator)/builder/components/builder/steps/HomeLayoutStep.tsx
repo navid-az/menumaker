@@ -48,7 +48,7 @@ export default function HomeLayoutStep({
                     maxFiles={3}
                     value={field.value}
                     onChange={field.onChange}
-                    collection="item_gallery"
+                    collection="menu_welcome"
                   ></ImageUploader>
                 </SliderTabBody>
               </SliderTab>

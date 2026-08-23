@@ -13,6 +13,8 @@ from .models import Menu, MenuGlobalStyling
 from business.models import Business
 from .serializers import MenuCreateUpdateSerializer, MenuListSerializer, MenuGlobalStylingSerializer, MenuSerializer, MenuImageCreateSerializer
 
+from assets.models import MediaCollection, attach_media_assets
+
 
 User = get_user_model()
 
@@ -45,7 +47,11 @@ class MenuView(MethodBasedPermissionsMixin, APIView):
             )
 
         if serializer.is_valid():
-            serializer.save(business=business)
+            validated_data = serializer.validated_data
+            temp_id = validated_data.pop('temp_id')
+            menu = serializer.save(business=business)
+            attach_media_assets(menu, temp_id, MediaCollection.MENU_WELCOME)
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

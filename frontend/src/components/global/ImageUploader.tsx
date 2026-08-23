@@ -31,7 +31,7 @@ type ImageUploaderProps = {
   onChange: (value: ImageRef[]) => void;
   maxFiles?: number;
   maxSizeMB?: number;
-  collection: "item_gallery" | "menu_welcome_page" | "menu_banner_page"; //should rename later on
+  collection: "item_gallery" | "menu_welcome" | "menu_banner";
 };
 
 export default function ImageUploader({

@@ -34,6 +34,7 @@ class MenuGlobalStylingSerializer(serializers.ModelSerializer):
 
 class MenuCreateUpdateSerializer(serializers.ModelSerializer):
     global_styling = MenuGlobalStylingSerializer(write_only=True)
+    temp_id = serializers.CharField(write_only=True)
 
     # Accept a list of temp_ids from the client
     home_images = serializers.ListField(

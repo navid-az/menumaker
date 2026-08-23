@@ -91,7 +91,13 @@ def attach_media_assets(parent_instance, temp_id, collection):
     Call this from the parent's serializer.create(), after the parent
     already has a pk.
     """
+
+    if not collection:
+        print('collection was not provided')
+        return
+
     if not temp_id:
+        print('temp_id was not provided')
         return
 
     limit = MEDIA_COLLECTION_LIMITS.get(collection)

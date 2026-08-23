@@ -83,13 +83,14 @@ const GlobalStylingSchema = z.object({
 });
 const FrontEndOnlySchema = z.object({
   suggested_palette_enabled: z.boolean().default(true),
+  temp_id: z.string()
 });
 export const BuilderSchema = z.object({
   //home page
   home_images: z
     .array(
       z.object({
-        tempId: z.string(),
+        id: z.number(),
         url: z.string(),
       })
     )
@@ -157,9 +158,10 @@ export default function BuilderTest({
         home_title: "",
         home_subtitle: "",
         home_images: [],
-        frontend_only: { suggested_palette_enabled: true }
+        frontend_only: { suggested_palette_enabled: true, temp_id: crypto.randomUUID() }
       },
   });
+
 
   const sections = [
     {
@@ -301,7 +303,6 @@ export default function BuilderTest({
 
     const data = {
       ...menuData,
-      home_images: home_images?.map((image) => image.tempId),
       global_styling: {
         ...restStyling,
         primary_color,
@@ -309,6 +310,7 @@ export default function BuilderTest({
         tertiary_color,
         bg_color,
       },
+      temp_id: values.frontend_only.temp_id
     };
     console.log(data);
 
