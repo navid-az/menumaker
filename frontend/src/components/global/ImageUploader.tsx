@@ -26,12 +26,13 @@ type ImageRef = {
   url: string;
 };
 
+import { type MediaAssetCollection } from "@/app/types/api/asset";
 type ImageUploaderProps = {
   value: ImageRef[];
   onChange: (value: ImageRef[]) => void;
   maxFiles?: number;
   maxSizeMB?: number;
-  collection: "item_gallery" | "menu_welcome" | "menu_banner";
+  collection: MediaAssetCollection
 };
 
 export default function ImageUploader({
@@ -125,15 +126,17 @@ export default function ImageUploader({
   });
 
   const handleFileRemove = async (fileId: string) => {
-    const assetId = idMap.current[fileId];
+    // idMap bridges local-file-id -> server asset id for files uploaded
+    // during this mount. For files restored from RHF state after a
+    // remount, initialFiles already sets file.id = String(asset.id) - so
+    // fileId itself IS the asset id, and this fallback covers that case
+    // without needing any new persisted state.
+    const assetId = idMap.current[fileId] ?? Number(fileId);
 
-    // Remove from local uploader state.
     removeFile(fileId);
 
-    if (!assetId) {
-      // Shouldn't normally happen, but guard against a missing mapping
-      // (e.g. upload failed for this file) rather than calling delete
-      // with undefined.
+    if (!assetId || Number.isNaN(assetId)) {
+      console.error("Could not resolve asset id for file:", fileId);
       return;
     }
 
@@ -147,17 +150,13 @@ export default function ImageUploader({
 
       delete idMap.current[fileId];
 
-      const nextValue = valueRef.current.filter(
-        (image) => image.id !== assetId
-      );
-
+      const nextValue = valueRef.current.filter((image) => image.id !== assetId);
       valueRef.current = nextValue;
       onChange(nextValue);
     } catch (error) {
       console.error(error);
     }
   };
-
   return (
     <div className="flex h-max w-full flex-col gap-2 rounded-xl">
       <div
