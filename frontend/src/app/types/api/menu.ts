@@ -1,3 +1,5 @@
+import { MediaAsset } from "./asset";
+
 export type ItemsDisplayType = "full-bleed-overlay" | "half-image-stacked";
 
 export type Menu = {
@@ -8,16 +10,14 @@ export type Menu = {
   show_branches: boolean;
   items_page_layout: "horizontal" | "vertical";
   cart_btn_display_type: "default" | "compact";
-  categories_display_type: "slider" | "circular";
+  // categories_display_type: "slider" | "circular";
   items_display_type: ItemsDisplayType;
   call_waiter_enabled: boolean;
   searchbar_enabled: boolean;
   // welcome_page_layout?: "single" | "couple" | "none";
+  home_images?: MediaAsset[];
   home_title?: string;
   home_subtitle?: string;
-  primary_image?: string;
-  secondary_image?: string;
-  tertiary_image?: string;
 };
 
 export type AnimationVariant = "ripple" | "tactile";
