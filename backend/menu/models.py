@@ -42,12 +42,6 @@ class Menu(models.Model):
     media_assets = GenericRelation(MediaAsset)
 
     # home page
-    primary_image = models.ImageField(
-        upload_to="menu/images/home/primary/", null=True, blank=True)
-    secondary_image = models.ImageField(
-        upload_to="menu/images/home/secondary/", null=True, blank=True)
-    tertiary_image = models.ImageField(
-        upload_to="menu/images/home/tertiary/", null=True, blank=True)
     home_title = models.CharField(
         max_length=35, null=True, blank=True)
     home_subtitle = models.CharField(
