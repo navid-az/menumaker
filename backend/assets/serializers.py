@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import MediaAsset, MEDIA_COLLECTION_LIMITS
+from .models import MediaAsset, AssetGroup, MEDIA_COLLECTION_LIMITS, attach_media_assets
 
 
 class MediaAssetSerializer(serializers.ModelSerializer):
@@ -39,3 +39,25 @@ class MediaAssetSerializer(serializers.ModelSerializer):
         user = self.context["request"].user
         validated_data["uploaded_by"] = user if user.is_authenticated else None
         return super().create(validated_data)
+
+
+class AssetGroupSerializer(serializers.ModelSerializer):
+    temp_id = serializers.CharField(
+        write_only=True, required=False, allow_null=True)
+    assets = serializers.SerializerMethodField()
+
+    class Meta:
+        model = AssetGroup
+        fields = ["id", "name", "description",
+                  "kind", "created_by", "temp_id", "assets"]
+        read_only_fields = ["id", "created_by"]
+
+    def get_assets(self, obj):
+        assets = obj.assets.filter(collection=obj.media_collection)
+        return MediaAssetSerializer(assets, many=True, context=self.context).data
+
+    def create(self, validated_data):
+        temp_id = validated_data.pop("temp_id", None)
+        group = super().create(validated_data)
+        attach_media_assets(group, temp_id, group.media_collection)
+        return group

@@ -1,12 +1,13 @@
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 
-from .models import MediaAsset
-from .serializers import MediaAssetSerializer
+from .models import MediaAsset, AssetGroup, MediaCollection
+from .serializers import MediaAssetSerializer, AssetGroupSerializer
 
 
 class MediaAssetView(APIView):
@@ -73,3 +74,31 @@ class MediaAssetDetailView(APIView):
     def delete(self, request, pk):
         self.get_object(pk).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class AssetGroupView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        kind = request.query_params.get("kind")
+        groups = AssetGroup.objects.filter(
+            Q(created_by__isnull=True) | Q(
+                created_by=request.user)
+        )
+        # If kind is provided, only return groups of that kind
+        if kind:
+            groups = groups.filter(kind=kind)
+
+        serializer = AssetGroupSerializer(
+            groups, many=True, context={"request": request})
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = AssetGroupSerializer(
+            data=request.data, context={"request": request})
+        serializer.is_valid(raise_exception=True)
+        group = serializer.save(created_by=request.user)
+        return Response(
+            AssetGroupSerializer(group, context={"request": request}).data,
+            status=status.HTTP_201_CREATED,
+        )

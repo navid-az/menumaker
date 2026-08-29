@@ -1,8 +1,7 @@
-from django.dispatch import receiver
-from django.db.models.signals import post_delete
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.fields import GenericRelation
 from django.conf import settings
 
 import uuid
@@ -20,6 +19,8 @@ class MediaCollection(models.TextChoices):
     ITEM_GALLERY = "item_gallery", "Item Gallery"
     MENU_WELCOME = "menu_welcome", "Menu Welcome Page"
     MENU_BANNER = "menu_banner", "Item Page Banner"  # not built yet, wired up already
+    ICON_PACK = "icon_pack", "Icon Pack"
+    PATTERN_PACK = "pattern_pack", "Pattern Pack"
 
 
 class MediaType(models.TextChoices):
@@ -33,6 +34,8 @@ MEDIA_COLLECTION_LIMITS = {
     MediaCollection.ITEM_GALLERY: 6,
     MediaCollection.MENU_WELCOME: 8,
     MediaCollection.MENU_BANNER: 5,
+    MediaCollection.ICON_PACK: 50,
+    MediaCollection.PATTERN_PACK: 30,
 }
 
 
@@ -114,3 +117,34 @@ def attach_media_assets(parent_instance, temp_id, collection):
     MediaAsset.objects.filter(id__in=pending_ids).update(
         content_type=content_type, object_id=parent_instance.pk, temp_id=None
     )
+
+
+class AssetGroupKind(models.TextChoices):
+    ICON = "icon", "Icon"
+    PATTERN = "pattern", "Pattern"
+
+
+class AssetGroup(models.Model):
+    """
+    A named collection of picker assets - either icons or patterns
+    """
+    name = models.CharField(max_length=50)
+    description = models.TextField(null=True, blank=True)
+    kind = models.CharField(max_length=10, choices=AssetGroupKind.choices)
+    created_by = models.ForeignKey(
+        User, on_delete=models.CASCADE,
+        null=True, blank=True, related_name="asset_groups"
+    )
+
+    assets = GenericRelation(MediaAsset)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "kind"], condition=models.Q(created_by__isnull=True),
+                name="unique_system_asset_group_name_per_kind",
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.name} ({self.kind})"
