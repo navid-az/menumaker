@@ -47,6 +47,7 @@ class MediaAsset(models.Model):
     """
 
     file = models.FileField(upload_to=media_upload_path)
+    name = models.CharField(max_length=50, null=True, blank=True)
     media_type = models.CharField(
         max_length=10, choices=MediaType.choices, default=MediaType.IMAGE)
     collection = models.CharField(
@@ -78,7 +79,7 @@ class MediaAsset(models.Model):
             fields=["content_type", "object_id", "collection"])]
 
     def __str__(self):
-        return f"{self.collection} ({self.pk})"
+        return f"{self.name if self.name else ''} ({self.pk})"
 
     # Check if asset has been attached to any model or not
     @property
@@ -148,3 +149,13 @@ class AssetGroup(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.kind})"
+
+    # Maps this group's `kind` to the MediaAsset collection its icons/patterns
+    # are tagged with. Single source of truth so nothing has to hardcode
+    # "icon groups use icon_pack" separately in the serializer or views.
+    @property
+    def media_collection(self):
+        return {
+            AssetGroupKind.ICON: MediaCollection.ICON_PACK,
+            AssetGroupKind.PATTERN: MediaCollection.PATTERN_PACK,
+        }[self.kind]

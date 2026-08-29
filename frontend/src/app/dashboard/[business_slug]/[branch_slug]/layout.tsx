@@ -4,18 +4,11 @@ import React from "react";
 import { DashboardHeader } from "../../components/DashboardHeader";
 import ToolBar from "../../components/ToolBar";
 
+//function 
+import { getAssetGroups } from "@/lib/assets/getAssetGroups";
+
 //configs
 import { SERVER_API_BASE_URL } from "@/lib/config";
-
-const getAssetGroups = async () => {
-  const res = await fetch(`${SERVER_API_BASE_URL}/pickers/icon-pickers`);
-  if (!res.ok) {
-    throw new Error(
-      `Failed to fetch asset groups: ${res.status} ${res.statusText}`
-    );
-  }
-  return await res.json();
-};
 
 const getCategories = async (businessSlug: string) => {
   const res = await fetch(

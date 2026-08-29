@@ -40,7 +40,6 @@ export function DataTable<TData, TValue>({
     //   ],
     // },
   });
-  console.log("sorting state", table.getState().sorting);
   return (
     <div className="w-full rounded-md border">
       <Table>
@@ -54,9 +53,9 @@ export function DataTable<TData, TValue>({
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
                 );
               })}

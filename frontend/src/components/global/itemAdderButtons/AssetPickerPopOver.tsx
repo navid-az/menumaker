@@ -15,9 +15,6 @@ import AssetPicker from "../AssetPicker";
 //SVGs
 import { Plus } from "lucide-react";
 
-//configs
-import { MEDIA_BASE_URL } from "@/lib/config";
-
 //types
 import { AssetType, AssetGroupType } from "../AssetPicker";
 
@@ -27,12 +24,14 @@ export function AssetPickerPopOver({
   value,
   onChange,
   btnTriggerSize = "default",
+  kind
 }: {
   assetGroups: AssetGroupType[];
   ref?: React.RefObject<HTMLButtonElement | null>;
   value?: AssetType | null;
   onChange?: (selectedItem: AssetType | undefined | null) => void;
   btnTriggerSize?: "default" | "sm" | "lg" | "icon";
+  kind?: 'icon' | 'pattern'
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -58,7 +57,7 @@ export function AssetPickerPopOver({
           className="px-4 text-xs sm:text-sm"
           type="button"
         >
-          {value?.image ? (
+          {value?.url ? (
             <div className="flex justify-between gap-3 ">
               <Button
                 size="icon"
@@ -74,8 +73,8 @@ export function AssetPickerPopOver({
                 <Image
                   className="rounded-md"
                   fill
-                  alt={value.name}
-                  src={`${MEDIA_BASE_URL}${value.image}`}
+                  alt={value.name ?? 'asset'}
+                  src={value.url}
                 />
               </div>
             </div>
@@ -92,6 +91,7 @@ export function AssetPickerPopOver({
               handleOnChange(selectedAsset);
             }}
             assetGroups={assetGroups}
+            kind={kind}
           />
         </div>
       </PopoverContent>

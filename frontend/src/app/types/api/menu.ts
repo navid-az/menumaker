@@ -76,7 +76,7 @@ export type MenuCategory = {
   business: string;
   items: MenuItem[];
   name?: string;
-  icon?: { id: number; name: string; image: string };
+  icon?: { id: number; name: string; url: string };
   is_active: boolean;
 };
 

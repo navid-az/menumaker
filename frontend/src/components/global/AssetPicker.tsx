@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useMemo, useState, useEffect, useRef } from "react";
 
 //components
 import Image from "next/image";
@@ -12,23 +12,31 @@ import { ArrowLeft } from "lucide-react";
 //libraries
 import { gsap } from "gsap";
 
-//configs
-import { MEDIA_BASE_URL } from "@/lib/config";
-
 //types
-export type AssetType = { id: number; name: string; image: string };
+export type AssetType = {
+  id: number;
+  url: string;
+  name: string | null;
+  media_type: "image" | "video";
+  collection: "icon_pack" | "pattern_pack";
+  order: number;
+  // created: string;
+};
+
 export type AssetGroupType = {
   id: number;
   name: string;
-  description: string;
+  description: string | null;
+  kind: "icon" | "pattern";
   assets: AssetType[];
 };
 
 type AssetPickerType = {
   assetGroups: AssetGroupType[];
-  value?: AssetType | null; // Controlled value (selected asset)
-  onChange?: (selectedItem: AssetType) => void; // Callback to update value
-  defaultTab?: "icons" | "backgrounds";
+  value?: AssetType | null;
+  onChange?: (selectedItem: AssetType) => void;
+  defaultTab?: "icons" | "patterns";
+  kind?: "icon" | "pattern";
 };
 
 type AssetSelectorType = {
@@ -49,36 +57,47 @@ export default function AssetPicker({
   assetGroups,
   value,
   onChange,
-  defaultTab = "icons",
+  kind
 }: AssetPickerType) {
+  // Split once per render of the incoming list, rather than fetching twice
+  // or requiring the parent to pre-filter by kind.
+  const iconGroups = useMemo(
+    () => assetGroups.filter((group) => group.kind === "icon"),
+    [assetGroups]
+  );
+  const patternGroups = useMemo(
+    () => assetGroups.filter((group) => group.kind === "pattern"),
+    [assetGroups]
+  );
+
   return (
     <Tabs
-      defaultValue={defaultTab}
+      defaultValue={kind}
       className="flex h-full w-full flex-col gap-3"
     >
-      <TabsList
+      {!kind && <TabsList
         dir="rtl"
         className="flex h-max w-full gap-2 rounded-md border-2 border-primary bg-soft-blue p-1.5"
       >
-        <TabsTrigger className="h-10 flex-1 rounded-md" value="icons">
+        <TabsTrigger className="h-10 flex-1 rounded-md" value="icon">
           آیکون
         </TabsTrigger>
-        <TabsTrigger className="h-10 flex-1 rounded-md" value="backgrounds">
+        <TabsTrigger className="h-10 flex-1 rounded-md" value="pattern">
           پس زمینه ها
         </TabsTrigger>
-      </TabsList>
-      <TabsContent value="icons">
+      </TabsList>}
+      <TabsContent value="icon">
         <AssetTab
-          data={assetGroups}
+          data={iconGroups}
           title="لیست آیکون ها"
           description="آیکون مورد نظر خود را از بین گروه های زیر انتخاب کنید"
           value={value}
           onChange={onChange}
         />
       </TabsContent>
-      <TabsContent value="backgrounds">
+      <TabsContent value="pattern">
         <AssetTab
-          data={assetGroups}
+          data={patternGroups}
           title="لیست پس زمینه ها"
           description="پس زمینه مورد نظر خود را از بین گروه های زیر انتخاب کنید"
           value={value}
@@ -123,6 +142,16 @@ function AssetTab({
     }
   };
 
+  // Guard against an empty group list
+  if (data.length === 0) {
+    return (
+      <div className="flex h-full w-full flex-col items-center justify-center gap-2 py-8 text-center">
+        <p className="text-sm font-light text-primary">{description}</p>
+        <p className="text-xs text-muted-foreground">هنوز گروهی اضافه نشده است</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-full w-full select-none flex-col gap-3 rounded-lg transition-all ease-in-out">
       <header className="flex flex-col items-end gap-1">
@@ -151,32 +180,32 @@ function AssetTab({
         >
           {groupIsOpen
             ? data[groupIndex].assets.map((asset) => (
-                <AssetTile
-                  key={asset.id}
-                  onClick={() => selectItem(asset)}
-                  isSelected={asset.id === value?.id}
-                >
-                  <div className="relative h-12 w-12 rounded-md">
-                    <Image
-                      className="rounded-md"
-                      fill
-                      alt={asset.name}
-                      src={`${MEDIA_BASE_URL}${asset.image}`}
-                    />
-                  </div>
-                </AssetTile>
-              ))
+              <AssetTile
+                key={asset.id}
+                onClick={() => selectItem(asset)}
+                isSelected={asset.id === value?.id}
+              >
+                <div className="relative h-12 w-12 rounded-md">
+                  <Image
+                    className="rounded-md"
+                    fill
+                    alt={asset.name ?? "asset"}
+                    src={asset.url}
+                  />
+                </div>
+              </AssetTile>
+            ))
             : data.map((itemGroup, itemGroupIndex) => (
-                <AssetTile
-                  key={itemGroup.id}
-                  onClick={() => handleClick(itemGroupIndex)}
-                  isSelected={itemGroup.assets.some(
-                    (asset) => asset.id === value?.id
-                  )}
-                >
-                  <AssetGroupImage itemGroup={itemGroup} />
-                </AssetTile>
-              ))}
+              <AssetTile
+                key={itemGroup.id}
+                onClick={() => handleClick(itemGroupIndex)}
+                isSelected={itemGroup.assets.some(
+                  (asset) => asset.id === value?.id
+                )}
+              >
+                <AssetGroupImage itemGroup={itemGroup} />
+              </AssetTile>
+            ))}
         </section>
       </section>
     </div>
@@ -187,9 +216,8 @@ function AssetTile({ onClick, children, isSelected }: AssetProps) {
   return (
     <div
       onClick={onClick}
-      className={`scale-pro flex h-20 cursor-pointer items-center justify-center rounded-lg border-2 ${
-        isSelected ? "border-primary" : "border-transparent"
-      } bg-sad-blue transition-all duration-300 ease-in-out hover:scale-95 hover:border-primary`}
+      className={`scale-pro flex h-20 cursor-pointer items-center justify-center rounded-lg border-2 ${isSelected ? "border-primary" : "border-transparent"
+        } bg-sad-blue transition-all duration-300 ease-in-out hover:scale-95 hover:border-primary`}
     >
       {children}
     </div>
@@ -205,8 +233,8 @@ function AssetGroupImage({ itemGroup }: { itemGroup: AssetGroupType }) {
           <Image
             className="rounded-md"
             fill
-            alt={instances[1].name}
-            src={`${MEDIA_BASE_URL}${instances[1].image}`}
+            alt={instances[1].name ?? "asset"}
+            src={instances[1].url}
           />
         </div>
       )}
@@ -215,8 +243,8 @@ function AssetGroupImage({ itemGroup }: { itemGroup: AssetGroupType }) {
           <Image
             className="rounded-md"
             fill
-            alt={instances[0].name}
-            src={`${MEDIA_BASE_URL}${instances[0].image}`}
+            alt={instances[0].name ?? "asset"}
+            src={instances[0].url}
           />
         </div>
       )}
@@ -225,8 +253,8 @@ function AssetGroupImage({ itemGroup }: { itemGroup: AssetGroupType }) {
           <Image
             className="rounded-md"
             fill
-            alt={instances[2].name}
-            src={`${MEDIA_BASE_URL}${instances[2].image}`}
+            alt={instances[2].name ?? "asset"}
+            src={instances[2].url}
           />
         </div>
       )}

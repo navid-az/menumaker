@@ -12,55 +12,25 @@ import { BuilderFormType } from "./(creator)/builder/components/builder/BuilderT
 //configs
 import { SERVER_API_BASE_URL } from "@/lib/config";
 
-// import jwtDecoder from "@/lib/jwtDecoder";
-// type DecodedJwtType = {
-//   token_type: "access" | "refresh";
-//   exp: number;
-//   iat: number;
-//   jti: string;
-//   user_id: number;
-// };
-
-//deprecated
-// export async function signInUser(data: {
-//   phone_number: string;
-//   otp: string;
-//   invitation_token?: string;
-// }) {
-//   try {
-//     const res = await fetch("http://localhost:8000/accounts/token/", {
-//       method: "POST",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify(data),
-//     });
-//     const resData = await res.json();
-//     if (!res.ok) {
-//       console.error("Server error:", resData);
-//       throw new Error("Failed to fetch data");
-//     }
-//     return resData;
-//   } catch (err: any) {
-//     console.error("Fetch error:", err);
-//     throw new Error(err.detail || "Failed to fetch data");
-//   }
-// }
+// Pulls a readable message out of DRF's validation error shape, which
+// returns field-keyed arrays (e.g. {"non_field_errors": ["Maximum of..."]})
+// rather than a single "error"/"detail" key.
+function extractErrorMessage(errorData: any): string {
+  if (!errorData) return "Something went wrong";
+  if (typeof errorData === "string") return errorData;
+  const firstKey = Object.keys(errorData)[0];
+  const firstValue = errorData[firstKey];
+  return Array.isArray(firstValue) ? firstValue[0] : String(firstValue);
+}
 
 //~~~~dashboard table mutation-related actions~~~
+type CategoryFormData = {
+  name?: string;
+  icon?: number | null;
+  is_active?: boolean
+};
 
-export async function createCategory(
-  businessSlug: string,
-  data: {
-    name?: string | undefined;
-    icon?:
-    | {
-      name: string;
-      id: number;
-      image: string;
-    }
-    | null
-    | undefined;
-  }
-) {
+export async function createCategory(businessSlug: string, data: CategoryFormData) {
   const accessToken = (await cookies()).get("access");
 
   try {
@@ -72,22 +42,19 @@ export async function createCategory(
           "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken?.value}`,
         },
-        body: JSON.stringify({ name: data.name, icon: data.icon?.id }),
+        body: JSON.stringify({
+          name: data.name,
+          icon: data.icon
+        }),
       }
     );
 
     if (!res.ok) {
-      const errorData = await res.json();
-      return {
-        success: false,
-        error: errorData.error || "Failed to create category",
-      };
+      const errorData = await res.json().catch(() => null);
+      return { success: false, error: extractErrorMessage(errorData) };
     }
   } catch (error: any) {
-    return {
-      success: false,
-      error: error.message || "An unexpected error occurred",
-    };
+    return { success: false, error: error.message || "An unexpected error occurred" };
   }
 
   revalidatePath(`/dashboard/${businessSlug}/data/categories`);
@@ -95,37 +62,31 @@ export async function createCategory(
 }
 
 export async function updateCategory(
-  businessSlug: string,
   categoryId: number,
-  data: object
+  data: CategoryFormData
 ) {
   const accessToken = (await cookies()).get("access");
-  try {
-    const res = await fetch(
-      `${SERVER_API_BASE_URL}/categories/${categoryId}/`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken?.value}`,
-        },
-        body: JSON.stringify(data),
-      }
-    );
-    if (!res.ok) {
-      const errorData = await res.json();
-      console.log("errorData:", errorData);
 
-      return {
-        success: false,
-        error: errorData.error || "Failed to update category",
-      };
+  try {
+    const res = await fetch(`${SERVER_API_BASE_URL}/categories/${categoryId}/`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+      body: JSON.stringify({
+        name: data.name,
+        is_active: data.is_active,
+        icon: data.icon,
+      }),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => null);
+      return { success: false, error: extractErrorMessage(errorData) };
     }
   } catch (error: any) {
-    return {
-      success: false,
-      error: error.message || "An unexpected error occurred",
-    };
+    return { success: false, error: error.message || "An unexpected error occurred" };
   }
 
   revalidateTag("categories");
@@ -585,17 +546,6 @@ type UploadedAsset = {
 type UploadResult =
   | { success: true; assets: UploadedAsset[] }
   | { success: false; error: string };
-
-// Pulls a readable message out of DRF's validation error shape, which
-// returns field-keyed arrays (e.g. {"non_field_errors": ["Maximum of..."]})
-// rather than a single "error"/"detail" key.
-function extractErrorMessage(errorData: any): string {
-  if (!errorData) return "Failed to upload image";
-  if (typeof errorData === "string") return errorData;
-  const firstKey = Object.keys(errorData)[0];
-  const firstValue = errorData[firstKey];
-  return Array.isArray(firstValue) ? firstValue[0] : String(firstValue);
-}
 
 export async function uploadImage(data: FormData): Promise<UploadResult> {
   const accessToken = (await cookies()).get("access");

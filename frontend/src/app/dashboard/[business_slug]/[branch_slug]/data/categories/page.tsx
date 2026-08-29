@@ -11,6 +11,9 @@ import { type MenuCategory } from "@/app/types/api/menu";
 //configs
 import { SERVER_API_BASE_URL } from "@/lib/config";
 
+//functions
+import { getAssetGroups } from "@/lib/assets/getAssetGroups";
+
 //SVGs
 import { CircleAlert } from "lucide-react";
 
@@ -31,22 +34,12 @@ async function getMenuCategoriesData(
   return data.json();
 }
 
-const getAssetGroups = async () => {
-  const res = await fetch(`${SERVER_API_BASE_URL}/pickers/icon-pickers`);
-  if (!res.ok) {
-    throw new Error(
-      `Failed to fetch asset groups: ${res.status} ${res.statusText}`
-    );
-  }
-  return await res.json();
-};
-
 export default async function Page(props: {
   params: Promise<{ business_slug: string }>;
 }) {
   const params = await props.params;
 
-  const assetGroups = await getAssetGroups();
+  const assetGroups = await getAssetGroups('icon');
   const categoriesData = await getMenuCategoriesData(params.business_slug);
 
   return (

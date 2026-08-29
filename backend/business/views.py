@@ -383,7 +383,8 @@ class CategoriesView(MethodBasedPermissionsMixin, APIView):
         business = get_object_or_404(Business, slug=business_slug)
 
         categories = Category.objects.filter(business=business)
-        ser_data = CategoriesSerializer(instance=categories, many=True)
+        ser_data = CategoriesSerializer(instance=categories, context={
+                                        'request': request}, many=True)
         return Response(ser_data.data)
 
     # Create a new category for a business

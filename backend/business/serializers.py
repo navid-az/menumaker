@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404
 from decimal import Decimal
 
 from .models import Business, Branch, Table, TableSession, CallWaiter, Category, Item, ItemBranch, ItemOption, ItemOptionChoice, Order, OrderItem
-from pickers.models import Asset
+from assets.models import MediaAsset
 from personnel.models import Personnel
 from menu.models import Menu
 from subscriptions.models import Subscription
@@ -246,9 +246,17 @@ class ItemCreateUpdateSerializer(serializers.ModelSerializer):
 
 
 class IconsSerializer(serializers.ModelSerializer):
+    url = serializers.SerializerMethodField()
+
     class Meta:
-        model = Asset
-        fields = ['id', 'name', 'image']
+        model = MediaAsset
+        fields = ['id', 'name', 'url']
+
+    def get_url(self, obj):
+        request = self.context.get("request")
+        if not obj.file:
+            return None
+        return request.build_absolute_uri(obj.file.url) if request else obj.file.url
 
 
 # category serializers

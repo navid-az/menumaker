@@ -244,11 +244,7 @@ class Category(models.Model):
         Business, on_delete=models.CASCADE, related_name="categories")
     name = models.CharField(max_length=20, blank=True, null=True)
     icon = models.ForeignKey(
-        Asset,
-        on_delete=models.DO_NOTHING,
-        blank=True,
-        null=True,
-        related_name="item_categories",
+        MediaAsset, on_delete=models.SET_NULL, null=True, blank=True, related_name='item_categories'
     )
     is_active = models.BooleanField(default=True)
 

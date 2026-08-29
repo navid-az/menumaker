@@ -53,8 +53,11 @@ import { createCategory, updateCategory } from "@/app/actions";
 // zod schema
 const IconSchema = z.object({
   id: z.number(),
-  name: z.string(),
-  image: z.string(),
+  url: z.string(),
+  name: z.string().default(""),
+  media_type: z.literal("image").default("image"),
+  collection: z.literal("icon_pack").default("icon_pack"),
+  order: z.number().default(0),
 });
 
 const FormSchema = z
@@ -93,8 +96,9 @@ export function CreateCategoryForm({
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
       if (!defaultValues && !categoryId) {
+        const payload = { name: data.name, icon: data.icon ? data.icon.id : undefined }
         // Create new category
-        const res = await createCategory(businessSlug, data);
+        const res = await createCategory(businessSlug, payload);
         if (res?.success) {
           setTimeout(() => {
             setOpen(false);
@@ -105,7 +109,7 @@ export function CreateCategoryForm({
           toast.error(res?.error || "خطایی در ایجاد دسته بندی رخ داد.");
         }
       } else if (defaultValues && categoryId) {
-        const res = await updateCategory(businessSlug, categoryId, {
+        const res = await updateCategory(categoryId, {
           name: data.name,
           icon: data.icon ? data.icon.id : null, // Explicitly send null if icon is null
         });
@@ -188,6 +192,7 @@ export function CreateCategoryForm({
                         value={field.value}
                         onChange={field.onChange}
                         assetGroups={assetGroups}
+                        kind='icon'
                       ></AssetPickerPopOver>
                     </FormControl>
                     <FormMessage />
