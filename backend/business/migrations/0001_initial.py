@@ -30,7 +30,7 @@ class Migration(migrations.Migration):
                     default='#FFFFFF', image_field=None, max_length=25, samples=None)),
                 ('is_active', models.BooleanField(default=True)),
                 ('icon', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.DO_NOTHING,
-                 related_name='item_categories', to='pickers.icon')),
+                 related_name='item_categories', to='assets.mediaasset')),
                 ('menu', models.ForeignKey(blank=True, null=True,
                  on_delete=django.db.models.deletion.CASCADE, related_name='categories', to='menu.menu')),
             ],
