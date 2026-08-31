@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import MediaAsset, AssetGroup, MEDIA_COLLECTION_LIMITS, attach_media_assets
+from django.conf import settings
 
 
 class MediaAssetSerializer(serializers.ModelSerializer):
@@ -13,9 +14,12 @@ class MediaAssetSerializer(serializers.ModelSerializer):
         extra_kwargs = {"file": {"write_only": True}}
 
     def get_url(self, obj):
-        request = self.context.get("request")
         if not obj.file:
             return None
+        if settings.PUBLIC_MEDIA_BASE_URL:
+            return f"{settings.PUBLIC_MEDIA_BASE_URL}{obj.file.url}"
+
+        request = self.context.get("request")
         return request.build_absolute_uri(obj.file.url) if request else obj.file.url
 
     def validate(self, attrs):

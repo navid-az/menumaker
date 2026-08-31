@@ -6,9 +6,6 @@ import React, { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { cn } from "@/lib/utils";
 
-//configs
-import { NEXT_PUBLIC_MEDIA_URL } from "@/lib/config";
-
 //providers
 import { usePreview } from "@/app/(creator)/builder/components/preview/PreviewContext";
 
@@ -142,12 +139,12 @@ export default function CartBtn({
               "border-3 shadow-[2px_2px_0px_0px_var(--secondary)]"
             )}
           >
-            <Image
+            {item.item.image && <Image
               fill
-              src={`${!isPreview ? NEXT_PUBLIC_MEDIA_URL : ''}${item.item.image}`}
+              src={item.item.image}
               alt={item.item.name}
               className="rounded-(--radius-base) object-cover transition-all duration-300"
-            />
+            />}
             <div
               className={cn(
                 "absolute z-10 h-4.5 w-4.5 flex justify-center items-center rounded-(--radius-inner-alt) border border-(--footer-cart-border) text-center text-xs pt-0.5 font-normal bg-(--footer-cart-counter-bg) text-(--footer-cart-counter-text) transition-all duration-300",

@@ -93,9 +93,6 @@ export function MenuItemCard({
   // Check if parent provides isPreview or not
   const { isPreview } = usePreview()
 
-  const imageSrc = isPreview ? image : `${MEDIA_BASE_URL}${image}`;
-
-
   const [activeChoices, setActiveChoices] = useState<ActiveChoices>({});
   useEffect(() => {
     const defaults = getDefaultActiveChoices();
@@ -319,9 +316,9 @@ export function MenuItemCard({
           {is_featured ? (
             <div className="col-span-2 flex h-[300px] flex-none flex-col">
               <div className="relative flex h-full w-full">
-                {imageSrc ? <Image
+                {image ? <Image
                   className="rounded-t-(--radius-exception) object-cover object-top transition-all duration-300"
-                  src={imageSrc}
+                  src={image}
                   alt={name}
                   fill
                 ></Image> :
@@ -362,11 +359,11 @@ export function MenuItemCard({
                 "border-3 shadow-[4px_4px_0px_0px_var(--secondary)]"
               )}
             >
-              {imageSrc ? (
+              {image ? (
                 <div className="relative flex basis-6/6 w-full">
                   <Image
                     className="rounded-t-(--radius-exception) object-cover absolute -z-5 transition-all duration-300"
-                    src={imageSrc}
+                    src={image}
                     alt={name}
                     fill
                   ></Image>
@@ -412,9 +409,9 @@ export function MenuItemCard({
             >
               {/* Removing -z-5 will apply ripple animation effect BEHIND the image
             This only works if the element doesn't have a background(png) */}
-              {imageSrc ? <Image
+              {image ? <Image
                 className="rounded-(--radius-exception) absolute -z-5 object-cover "
-                src={imageSrc}
+                src={image}
                 alt={name}
                 fill
               ></Image> :
@@ -458,11 +455,11 @@ export function MenuItemCard({
           <div className="mx-auto mb-1.5 h-2 w-[100px] rounded-full bg-(--tertiary)"></div>
 
           <div className="relative w-full h-80 max-h-100 overflow-hidden px-1.5 flex items-center justify-center">
-            {imageSrc && (
+            {image && (
               <>
                 {/* Blurred background */}
                 <Image
-                  src={imageSrc}
+                  src={image}
                   alt=""
                   fill
                   aria-hidden
@@ -474,7 +471,7 @@ export function MenuItemCard({
 
                 {/* Actual image */}
                 <Image
-                  src={imageSrc}
+                  src={image}
                   alt={name}
                   fill
                   className="relative z-10 object-contain"

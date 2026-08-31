@@ -3,6 +3,7 @@ from django.utils import timezone
 from django.utils.text import slugify
 from django.db import transaction
 from django.shortcuts import get_object_or_404
+from django.conf import settings
 
 from decimal import Decimal
 
@@ -253,9 +254,12 @@ class IconsSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'url']
 
     def get_url(self, obj):
-        request = self.context.get("request")
         if not obj.file:
             return None
+        if settings.PUBLIC_MEDIA_BASE_URL:
+            return f"{settings.PUBLIC_MEDIA_BASE_URL}{obj.file.url}"
+
+        request = self.context.get("request")
         return request.build_absolute_uri(obj.file.url) if request else obj.file.url
 
 
