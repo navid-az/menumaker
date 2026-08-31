@@ -7,6 +7,9 @@ import { type MenuGlobalStyling } from "@/app/types/api/menu";
 import { type Menu as MenuData } from "@/app/types/api/menu";
 import { type AssetGroupType } from "@/components/global/AssetPicker";
 
+//functions
+import { getAssetGroups } from "@/lib/assets/getAssetGroups";
+
 //configs
 import { SERVER_API_BASE_URL } from "@/lib/config";
 
@@ -55,16 +58,6 @@ async function getGlobalStyling(business_slug: string) {
   }
 }
 
-const getAssetGroups = async () => {
-  const res = await fetch(`${SERVER_API_BASE_URL}/pickers/icon-pickers`);
-  if (!res.ok) {
-    throw new Error(
-      `Failed to fetch asset groups: ${res.status} ${res.statusText}`
-    );
-  }
-  return await res.json();
-};
-
 export default async function page(props: {
   params: Promise<{ business_slug: string }>;
 }) {
@@ -76,7 +69,7 @@ export default async function page(props: {
   const globalStylingData: MenuGlobalStyling = await getGlobalStyling(
     params.business_slug
   );
-  const assetGroups: AssetGroupType[] = await getAssetGroups();
+  const assetGroups: AssetGroupType[] = await getAssetGroups('icon');
 
   return (
     <div className="h-screen overflow-hidden">

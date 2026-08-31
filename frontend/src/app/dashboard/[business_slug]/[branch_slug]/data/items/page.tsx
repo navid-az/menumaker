@@ -14,6 +14,9 @@ import { type MenuItem } from "@/app/types/api/menu";
 //configs
 import { SERVER_API_BASE_URL } from "@/lib/config";
 
+//functions
+import { getAssetGroups } from "@/lib/assets/getAssetGroups";
+
 //SVGs
 import { CircleAlert } from "lucide-react";
 
@@ -49,16 +52,6 @@ async function getHiddenItems(
   return data.json();
 }
 
-const getAssetGroups = async () => {
-  const res = await fetch(`${SERVER_API_BASE_URL}/pickers/icon-pickers`);
-  if (!res.ok) {
-    throw new Error(
-      `Failed to fetch asset groups: ${res.status} ${res.statusText}`
-    );
-  }
-  return await res.json();
-};
-
 //menu categories data
 async function getMenuCategoriesData(
   business_slug: string
@@ -90,7 +83,7 @@ export default async function Page(props: {
     params.branch_slug
   );
 
-  const assetGroups = await getAssetGroups();
+  const assetGroups = await getAssetGroups('icon');
   const categoriesData = await getMenuCategoriesData(params.business_slug);
 
   const hasCategories = categoriesData.length > 0;

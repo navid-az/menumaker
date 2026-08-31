@@ -43,19 +43,24 @@ import { motion, AnimatePresence } from "motion/react";
 import { Lightbulb } from "lucide-react";
 
 //zod schemas
-const InstanceSchema = z.array(
-  z.object({
-    id: z.string(),
-    name: z.string().optional(),
-    asset: z
+const AssetRefSchema = z.object({
+  id: z.number(),
+  url: z.string(),
+});
+const InstanceSchema = z
+  .array(
+    z
       .object({
-        id: z.number(),
-        name: z.string(),
-        image: z.string(),
+        id: z.string(),
+        name: z.string().optional(),
+        asset: AssetRefSchema.optional(),
       })
-      .optional(),
-  })
-);
+      .refine((item) => item.name || item.asset, {
+        message: "نام یا آیکون باید انتخاب شود.",
+        path: ["name"],
+      })
+  )
+  .optional();
 
 const BusinessSchema = z.object({
   phone_numbers: InstanceSchema.optional(),

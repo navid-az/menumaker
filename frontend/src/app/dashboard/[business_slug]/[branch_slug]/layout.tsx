@@ -42,7 +42,7 @@ export default async function DashboardPanelLayout(props: {
   const params = await props.params;
   const { children } = props;
 
-  const assetGroups = await getAssetGroups();
+  const assetGroups = await getAssetGroups('icon');
   const categories = await getCategories(params.business_slug);
   const branches = await getBranches(params.business_slug);
 

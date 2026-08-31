@@ -10,7 +10,7 @@ import { getAssetGroups } from "@/lib/assets/getAssetGroups";
 
 export default async function Page() {
   const plans = await getSubscriptionPlans();
-  const assetGroups = await getAssetGroups();
+  const assetGroups = await getAssetGroups('icon');
   const businesses = await getUserBusinesses();
 
   return (

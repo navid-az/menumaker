@@ -13,9 +13,6 @@ import { LinkAction } from "./itemAdderButtons/LinkAction";
 import * as z from "zod";
 import { nanoid } from "nanoid";
 
-//configs
-import { MEDIA_BASE_URL } from "@/lib/config";
-
 //hooks
 import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
 
@@ -29,7 +26,7 @@ import { Edit3, ImageOff } from "lucide-react";
 
 //types
 import { type AssetGroupType, type AssetType } from "./AssetPicker";
-export type ItemType = { id: string; name?: string; asset?: AssetType };
+export type ItemType = { id: string; name?: string; asset?: AssetType | null };
 type ItemAdderType = {
   placeholder: string;
   limit?: number;
@@ -75,7 +72,7 @@ export default function ItemAdder({
   const isControlled = value !== undefined;
   const currentValue = isControlled ? value : internalState;
 
-  const [asset, setAsset] = useState<AssetType>();
+  const [asset, setAsset] = useState<AssetType | null>();
   const [text, setText] = useState("");
 
   const [isDisabled, setIsDisabled] = useState(false);
@@ -232,6 +229,7 @@ export default function ItemAdder({
               onChange={setAsset}
               assetGroups={assetGroups}
               btnTriggerSize="sm"
+              kind="icon"
             ></AssetPickerPopOver>
             {/* <LinkAction ref={linkActionRef} text={text}></LinkAction> */}
             {/* ~~~~action buttons~~~~  */}
@@ -240,9 +238,8 @@ export default function ItemAdder({
               disabled={isDisabled}
               type="button"
               size="icon"
-              className={`${
-                editMode ? "w-16" : "w-9"
-              } h-9 transition-[opacity,width] duration-300`}
+              className={`${editMode ? "w-16" : "w-9"
+                } h-9 transition-[opacity,width] duration-300`}
               onClick={editMode ? handleEditItem : handleAddItem}
             >
               {editMode ? (
@@ -292,8 +289,8 @@ function ListItem({ item, handleEdit, handleDelete, isActive }: ListItemType) {
             <Image
               className="rounded-md"
               fill
-              alt={item.asset.name}
-              src={`${MEDIA_BASE_URL}${item.asset.image}`}
+              alt={item.asset.name ?? 'asset'}
+              src={item.asset.url}
             ></Image>
           ) : (
             <ImageOff
@@ -311,15 +308,13 @@ function ListItem({ item, handleEdit, handleDelete, isActive }: ListItemType) {
         <Button
           size="icon"
           type="button"
-          className={`h-8 w-8 text-royal-green transition-transform duration-300 hover:scale-125 ${
-            isActive ? "bg-primary hover:scale-95" : "bg-inherit"
-          }`}
+          className={`h-8 w-8 text-royal-green transition-transform duration-300 hover:scale-125 ${isActive ? "bg-primary hover:scale-95" : "bg-inherit"
+            }`}
           onClick={handleEdit}
         >
           <Edit3
-            className={`h-5 w-5 ${
-              isActive ? "stroke-primary-foreground" : "bg-transparent"
-            }`}
+            className={`h-5 w-5 ${isActive ? "stroke-primary-foreground" : "bg-transparent"
+              }`}
           />
         </Button>
         <Button
