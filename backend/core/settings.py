@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     "accounts",
     "business",
     "menu",
+    "pickers",
     "personnel",
     'subscriptions',
     'assets',

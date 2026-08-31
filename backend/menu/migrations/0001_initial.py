@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('assets', '0001_initial'),
+        ('pickers', '0002_alter_icon_group'),
     ]
 
     operations = [
@@ -129,7 +129,7 @@ class Migration(migrations.Migration):
                     default='#FFFFFF', image_field=None, max_length=25, samples=None)),
                 ('is_active', models.BooleanField(default=True)),
                 ('icon', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.DO_NOTHING,
-                 related_name='item_categories', to='assets.mediaasset')),
+                 related_name='item_categories', to='pickers.icon')),
                 ('menu', models.ForeignKey(blank=True, null=True,
                  on_delete=django.db.models.deletion.CASCADE, related_name='categories', to='menu.menu')),
             ],
