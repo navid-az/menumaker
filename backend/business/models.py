@@ -5,7 +5,6 @@ from django.utils.text import slugify
 from django.contrib.contenttypes.fields import GenericRelation
 from assets.models import MediaAsset
 
-from pickers.models import Asset
 from datetime import timedelta
 import string
 import random

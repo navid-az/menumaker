@@ -13,109 +13,143 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('pickers', '0002_alter_icon_group'),
     ]
 
     operations = [
         migrations.CreateModel(
             name='Business',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(blank=True, max_length=100, null=True)),
                 ('name_en', models.CharField(default='business name', max_length=100)),
-                ('slug', models.SlugField(blank=True, max_length=100, null=True, unique=True)),
-                ('service_type', models.CharField(choices=[('online', 'Online Order Only'), ('in_person', 'In-Person Only'), ('both', 'Both')], default='both', max_length=20)),
-                ('primary_service_type', models.CharField(blank=True, choices=[('online', 'Online Order Only'), ('in_person', 'In-Person Only')], max_length=20, null=True)),
+                ('slug', models.SlugField(blank=True,
+                 max_length=100, null=True, unique=True)),
+                ('service_type', models.CharField(choices=[('online', 'Online Order Only'), (
+                    'in_person', 'In-Person Only'), ('both', 'Both')], default='both', max_length=20)),
+                ('primary_service_type', models.CharField(blank=True, choices=[
+                 ('online', 'Online Order Only'), ('in_person', 'In-Person Only')], max_length=20, null=True)),
                 ('branch_count', models.PositiveIntegerField(default=1)),
                 ('social_links', models.JSONField(blank=True, default=dict)),
                 ('phone_numbers', models.JSONField(blank=True, default=list)),
                 ('branches', models.JSONField(blank=True, default=list)),
                 ('updated', models.DateTimeField(auto_now=True)),
                 ('created', models.DateTimeField(auto_now_add=True)),
-                ('owner', models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, related_name='businesses', to=settings.AUTH_USER_MODEL)),
+                ('owner', models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE,
+                 related_name='businesses', to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.CreateModel(
             name='Menu',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('show_social_links', models.BooleanField(default=False)),
                 ('show_phone_numbers', models.BooleanField(default=False)),
                 ('show_branches', models.BooleanField(default=False)),
-                ('items_page_layout', models.CharField(choices=[('vertical', 'Vertical'), ('horizontal', 'Horizontal')], default='horizontal', max_length=20)),
-                ('categories_display_type', models.CharField(choices=[('slider', 'Slider'), ('circular', 'Circular')], default='slider', max_length=20)),
+                ('items_page_layout', models.CharField(choices=[
+                 ('vertical', 'Vertical'), ('horizontal', 'Horizontal')], default='horizontal', max_length=20)),
+                ('categories_display_type', models.CharField(choices=[
+                 ('slider', 'Slider'), ('circular', 'Circular')], default='slider', max_length=20)),
                 ('call_waiter_enabled', models.BooleanField(default=False)),
                 ('searchbar_enabled', models.BooleanField(default=False)),
-                ('logo', models.ImageField(blank=True, null=True, upload_to='menu/images/logo/')),
+                ('logo', models.ImageField(blank=True,
+                 null=True, upload_to='menu/images/logo/')),
                 ('updated', models.DateTimeField(auto_now=True)),
                 ('created', models.DateTimeField(auto_now_add=True)),
-                ('business', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='menus', to='menu.business')),
+                ('business', models.ForeignKey(blank=True, null=True,
+                 on_delete=django.db.models.deletion.CASCADE, related_name='menus', to='menu.business')),
             ],
         ),
         migrations.CreateModel(
             name='Tag',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=10)),
                 ('icon', models.ImageField(upload_to='')),
-                ('text_color', colorfield.fields.ColorField(default='#FFFFFF', image_field=None, max_length=25, samples=None)),
-                ('background', colorfield.fields.ColorField(default='#FFFFFF', image_field=None, max_length=25, samples=None)),
+                ('text_color', colorfield.fields.ColorField(
+                    default='#FFFFFF', image_field=None, max_length=25, samples=None)),
+                ('background', colorfield.fields.ColorField(
+                    default='#FFFFFF', image_field=None, max_length=25, samples=None)),
             ],
         ),
         migrations.CreateModel(
             name='Table',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(default='میز ۱', max_length=100)),
                 ('place', models.CharField(default='yes', max_length=150)),
                 ('exp_date', models.DateTimeField(auto_now_add=True, null=True)),
                 ('created', models.DateTimeField(auto_now_add=True, null=True)),
                 ('is_active', models.BooleanField(default=True)),
-                ('menu', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='tables', to='menu.menu')),
+                ('menu', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, related_name='tables', to='menu.menu')),
             ],
         ),
         migrations.CreateModel(
             name='MenuGlobalStyling',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('primary_color', colorfield.fields.ColorField(default='#FFFFFF', image_field=None, max_length=25, samples=None)),
-                ('secondary_color', colorfield.fields.ColorField(default='#FFFFFF', image_field=None, max_length=25, samples=None)),
-                ('tertiary_color', colorfield.fields.ColorField(default='#FFFFFF', image_field=None, max_length=25, samples=None)),
-                ('bg_color', colorfield.fields.ColorField(default='#FFFFFF', image_field=None, max_length=25, samples=None)),
-                ('border_radius', models.CharField(choices=[('sm', 'small'), ('md', 'medium'), ('lg', 'large'), ('full', 'full')], default='full', max_length=4)),
-                ('unit_display_type', models.CharField(choices=[('simp', 'simple'), ('comp', 'compact'), ('engL', 'engLetter'), ('perL', 'perLetter')], default='simp', max_length=9)),
-                ('click_animation_type', multiselectfield.db.fields.MultiSelectField(blank=True, choices=[('ripple', 'ripple effect'), ('tactile', 'tactile effect')], max_length=14, null=True)),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
+                ('primary_color', colorfield.fields.ColorField(
+                    default='#FFFFFF', image_field=None, max_length=25, samples=None)),
+                ('secondary_color', colorfield.fields.ColorField(
+                    default='#FFFFFF', image_field=None, max_length=25, samples=None)),
+                ('tertiary_color', colorfield.fields.ColorField(
+                    default='#FFFFFF', image_field=None, max_length=25, samples=None)),
+                ('bg_color', colorfield.fields.ColorField(
+                    default='#FFFFFF', image_field=None, max_length=25, samples=None)),
+                ('border_radius', models.CharField(choices=[('sm', 'small'), ('md', 'medium'), (
+                    'lg', 'large'), ('full', 'full')], default='full', max_length=4)),
+                ('unit_display_type', models.CharField(choices=[('simp', 'simple'), ('comp', 'compact'), (
+                    'engL', 'engLetter'), ('perL', 'perLetter')], default='simp', max_length=9)),
+                ('click_animation_type', multiselectfield.db.fields.MultiSelectField(blank=True, choices=[
+                 ('ripple', 'ripple effect'), ('tactile', 'tactile effect')], max_length=14, null=True)),
                 ('click_animation_enabled', models.BooleanField(default=False)),
                 ('updated', models.DateTimeField(auto_now=True)),
                 ('created', models.DateTimeField(auto_now_add=True)),
-                ('menu', models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='menu.menu')),
+                ('menu', models.OneToOneField(blank=True, null=True,
+                 on_delete=django.db.models.deletion.CASCADE, to='menu.menu')),
             ],
         ),
         migrations.CreateModel(
             name='ItemCategory',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(blank=True, max_length=20, null=True)),
-                ('text_color', colorfield.fields.ColorField(default='#FFFFFF', image_field=None, max_length=25, samples=None)),
-                ('child_bg', colorfield.fields.ColorField(default='#FFFFFF', image_field=None, max_length=25, samples=None)),
-                ('parent_bg', colorfield.fields.ColorField(default='#FFFFFF', image_field=None, max_length=25, samples=None)),
+                ('text_color', colorfield.fields.ColorField(
+                    default='#FFFFFF', image_field=None, max_length=25, samples=None)),
+                ('child_bg', colorfield.fields.ColorField(
+                    default='#FFFFFF', image_field=None, max_length=25, samples=None)),
+                ('parent_bg', colorfield.fields.ColorField(
+                    default='#FFFFFF', image_field=None, max_length=25, samples=None)),
                 ('is_active', models.BooleanField(default=True)),
-                ('icon', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='item_categories', to='pickers.icon')),
-                ('menu', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='categories', to='menu.menu')),
+                ('icon', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.DO_NOTHING,
+                 related_name='item_categories', to='pickers.icon')),
+                ('menu', models.ForeignKey(blank=True, null=True,
+                 on_delete=django.db.models.deletion.CASCADE, related_name='categories', to='menu.menu')),
             ],
         ),
         migrations.CreateModel(
             name='Item',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=110)),
-                ('description', models.TextField(blank=True, max_length=300, null=True)),
-                ('image', models.ImageField(blank=True, null=True, upload_to='menu/items/images/')),
+                ('description', models.TextField(
+                    blank=True, max_length=300, null=True)),
+                ('image', models.ImageField(blank=True,
+                 null=True, upload_to='menu/items/images/')),
                 ('price', models.PositiveIntegerField(default=0)),
                 ('is_available', models.BooleanField(default=True)),
                 ('is_active', models.BooleanField(default=True)),
-                ('category', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='items', to='menu.itemcategory')),
-                ('menu', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='items', to='menu.menu')),
+                ('category', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                 related_name='items', to='menu.itemcategory')),
+                ('menu', models.ForeignKey(blank=True, null=True,
+                 on_delete=django.db.models.deletion.CASCADE, related_name='items', to='menu.menu')),
             ],
         ),
     ]

@@ -7,7 +7,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('menu', '0002_remove_item_category_remove_item_menu_and_more'),
-        ('pickers', '0002_alter_icon_group'),
         ('business', '0001_initial'),
     ]
 
