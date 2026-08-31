@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
             model_name='category',
             name='icon',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL,
-                                    related_name='item_categories', to='pickers.asset'),
+                                    related_name='item_categories', to='assets.mediaasset'),
         ),
     ]
