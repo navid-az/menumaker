@@ -18,7 +18,7 @@ import PriceTag from "../PriceTag";
 import AddToCartBtn from "../AddToCartBtn";
 
 //hooks
-import { useCart, useMenuItemDrawer } from "@/lib/stores";
+import { useMenuItemDrawer } from "@/lib/stores";
 import { useRippleAnimation } from "@/app/hooks/useRippleAnimation";
 import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
 
@@ -86,9 +86,6 @@ export function MenuItemCard({
   const [innerOpen, setInnerOpen] = React.useState(false);
   const [outerOpen, setOuterOpen] = React.useState(false);
   const { setDrawerOpen } = useMenuItemDrawer();
-
-  // Check if parent provides isPreview or not
-  const { isPreview } = usePreview()
 
   const [activeChoices, setActiveChoices] = useState<ActiveChoices>({});
   useEffect(() => {
