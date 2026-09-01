@@ -14,14 +14,12 @@ import { Button } from "@/components/ui/button";
 import lightenDarkenColor from "@/lib/lightenDarkenColor";
 import mapAnimationsToConfigs from "@/lib/mapAnimationsToConfigs";
 
-//configs
-import { MEDIA_BASE_URL } from "@/lib/config";
-
 //types
+import { type CategoryIcon } from "@/app/types/api/menu";
 import { MenuGlobalStylingUI } from "@/app/types/ui/menu";
 import { type AnimationConfigType } from "@/components/global/InteractiveWrapper";
 type CategoryBtnType = {
-  icon?: { name: string; image: string };
+  icon?: CategoryIcon;
   parentType?: string;
   globalStyling: MenuGlobalStylingUI;
 };
@@ -63,8 +61,8 @@ const buttonVariants = cva(
 );
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    CategoryBtnType,
-    VariantProps<typeof buttonVariants> {}
+  CategoryBtnType,
+  VariantProps<typeof buttonVariants> { }
 
 export default function CategoryBtn({
   name,
@@ -92,13 +90,13 @@ export default function CategoryBtn({
     rippleRef,
     AddToCartBtnAnimationConfigs.ripple,
     globalStyling.click_animation_enabled &&
-      globalStyling.click_animation_type?.includes("ripple")
+    globalStyling.click_animation_type?.includes("ripple")
   );
   const tactile = useTactileAnimation(
     buttonRef,
     AddToCartBtnAnimationConfigs.tactile,
     globalStyling.click_animation_enabled &&
-      globalStyling.click_animation_type?.includes("tactile")
+    globalStyling.click_animation_type?.includes("tactile")
   );
 
   const { activeCategory, updateActiveCategory, updateIsAutoScrolling } =
@@ -193,25 +191,25 @@ export default function CategoryBtn({
         style={
           parentType === "vertical"
             ? {
-                writingMode: "vertical-rl",
-                transform: "rotate(180deg)",
-              }
+              writingMode: "vertical-rl",
+              transform: "rotate(180deg)",
+            }
             : undefined
         }
         className={cn(
           "scale-pro h-10 flex-none bg-(--primary) rounded-(--radius-base) overflow-hidden relative select-none border-2 px-4 py-2 text-(--secondary) transition-[background-color,color,box-shadow,border-radius,border-color,font-size] duration-300",
           globalStyling.style === "retro" &&
-            "border-3 !border-(--secondary) shadow-[4px_4px_0px_0px_var(--secondary)] font-bold",
+          "border-3 !border-(--secondary) shadow-[4px_4px_0px_0px_var(--secondary)] font-bold",
           globalStyling.style === "retro" &&
-            parentType === "vertical" &&
-            " shadow-[-4px_-4px_0px_0px_var(--secondary)]",
+          parentType === "vertical" &&
+          " shadow-[-4px_-4px_0px_0px_var(--secondary)]",
           activeCategory === id
             ? "bg-(--tertiary) border-(--category-btn-text) text-(--category-btn-text) shadow-[0px_0px_0px_0px_var(--secondary)]"
             : globalStyling.style === "retro"
-            ? "border-(--secondary)"
-            : "border-(--secondary)/20",
+              ? "border-(--secondary)"
+              : "border-(--secondary)/20",
           parentType === "vertical" &&
-            "h-auto w-10 flex items-center justify-center p-4",
+          "h-auto w-10 flex items-center justify-center p-4",
           className
         )}
       >
@@ -223,10 +221,9 @@ export default function CategoryBtn({
         {icon && (
           <Image
             priority
-            className={`${isIconOnly ? "ml-0" : "ltr:mr-2 rtl:ml-2"} ${
-              !isIconOnly && size === "lg" ? "ml-4" : ""
-            }`}
-            src={`${MEDIA_BASE_URL}${icon.image}`}
+            className={`${isIconOnly ? "ml-0" : "ltr:mr-2 rtl:ml-2"} ${!isIconOnly && size === "lg" ? "ml-4" : ""
+              }`}
+            src={icon.url}
             width={size === "lg" ? 28 : size === "sm" ? 22 : 24}
             height={size === "lg" ? 28 : size === "sm" ? 22 : 24}
             alt={name || "icon"}

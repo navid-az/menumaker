@@ -44,7 +44,6 @@ export type OptionChoice = {
   price_modifier: number;
   is_default?: boolean;
 };
-
 export type ItemOption = {
   id: number;
   type: "radio" | "multi_select" | "counter";
@@ -54,7 +53,7 @@ export type ItemOption = {
 };
 export type MenuItem = {
   id: number;
-  image?: string;
+  item_images?: MediaAsset[];
   name: string;
   description: string;
   category: number;
@@ -71,12 +70,13 @@ export type MenuItem = {
   options?: ItemOption[];
 };
 
+export type CategoryIcon = { id: number; name?: string; url: string };
 export type MenuCategory = {
   id: number;
   business: string;
   items: MenuItem[];
   name?: string;
-  icon?: { id: number; name: string; url: string };
+  icon?: CategoryIcon;
   is_active: boolean;
 };
 

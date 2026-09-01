@@ -9,6 +9,7 @@ from .serializers import (BusinessesSerializer, BusinessCreateSerializer, Branch
                           TablesSerializer, TableCreateUpdateSerializer, CategoriesSerializer, CategoryCreateUpdateSerializer,
                           ItemsSerializer, ItemCreateUpdateSerializer, OrdersSerializer, OrderUpdateSerializer, RoleSerializer)
 from .models import Business, Branch, Table, TableSession, CallWaiter, Category, Item, ItemBranch, Order
+from assets.models import MediaCollection, attach_media_assets
 from personnel.models import Personnel
 
 # rest_framework dependencies
@@ -489,15 +490,16 @@ class ItemsView(MethodBasedPermissionsMixin, APIView):
 
             if scope == 'hidden':
                 # return hidden items for the branch
-                ser_data = ItemsSerializer(instance=hidden_items, many=True, context={
+                ser_data = ItemsSerializer(instance=hidden_items, many=True, context={"request": request,
                                            "branch_slug": branch_slug})
             else:
                 # return visible items for the branch
-                ser_data = ItemsSerializer(instance=visible_items, many=True, context={
+                ser_data = ItemsSerializer(instance=visible_items, many=True, context={"request": request,
                                            "branch_slug": branch_slug})
         else:
             # return all business's items
-            ser_data = ItemsSerializer(instance=items, many=True)
+            ser_data = ItemsSerializer(
+                instance=items, many=True, context={"request": request})
         return Response(ser_data.data)
 
     # Create a new item for a business
@@ -508,6 +510,9 @@ class ItemsView(MethodBasedPermissionsMixin, APIView):
 
         ser_data = ItemCreateUpdateSerializer(data=request.data)
         if ser_data.is_valid():
+            validated_data = ser_data.validated_data
+            temp_id = validated_data.pop('temp_id', None)
+
             # check category ownership
             category_pk = ser_data.validated_data['category'].pk
             try:
@@ -516,7 +521,11 @@ class ItemsView(MethodBasedPermissionsMixin, APIView):
             except:
                 return Response({"message": "category with this ID does not belong to the provided business"}, status.HTTP_406_NOT_ACCEPTABLE)
 
-            ser_data.save(business=business)
+            item = ser_data.save(business=business)
+
+            # Attach media assets with the same temp id to this new item instance
+            attach_media_assets(item, temp_id, MediaCollection.ITEM_GALLERY)
+
             return Response(ser_data.data)
         return Response(ser_data.errors, status.HTTP_400_BAD_REQUEST)
 
@@ -580,7 +589,12 @@ class ItemDetailView(MethodBasedPermissionsMixin, APIView):
                             {"error": "category with this ID does not belong to the provided business"},
                             status=status.HTTP_406_NOT_ACCEPTABLE
                         )
-                ser_data.save()
+                validated_data = ser_data.validated_data
+                temp_id = validated_data.pop('temp_id', None)
+                item = ser_data.save()
+                attach_media_assets(
+                    item, temp_id, MediaCollection.ITEM_GALLERY)
+
             return Response(ser_data.data)
         return Response(ser_data.errors, status.HTTP_400_BAD_REQUEST)
 

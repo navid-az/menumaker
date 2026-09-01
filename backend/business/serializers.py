@@ -8,7 +8,8 @@ from django.conf import settings
 from decimal import Decimal
 
 from .models import Business, Branch, Table, TableSession, CallWaiter, Category, Item, ItemBranch, ItemOption, ItemOptionChoice, Order, OrderItem
-from assets.models import MediaAsset
+from assets.models import MediaAsset, MediaCollection
+from assets.serializers import MediaAssetSerializer
 from personnel.models import Personnel
 from menu.models import Menu
 from subscriptions.models import Subscription
@@ -163,11 +164,13 @@ class ItemOptionsSerializer(serializers.ModelSerializer):
 class ItemsSerializer(serializers.ModelSerializer):
     business = serializers.SlugRelatedField(slug_field='slug', read_only=True)
     branch_exceptions = serializers.SerializerMethodField()
+    item_images = serializers.SerializerMethodField()
     options = ItemOptionsSerializer(many=True)
 
     class Meta:
         model = Item
-        fields = '__all__'
+        fields = ['id', 'business', "category", 'name', 'description', 'price',
+                  'item_images', 'options', 'branch_exceptions', "is_available", "is_active"]
 
     # return item branches if available
     def get_branch_exceptions(self, obj):
@@ -181,6 +184,11 @@ class ItemsSerializer(serializers.ModelSerializer):
             except ItemBranch.DoesNotExist:
                 return None
         return None
+
+    def get_item_images(self, obj):
+        assets = obj.media_assets.filter(
+            collection=MediaCollection.ITEM_GALLERY)
+        return MediaAssetSerializer(assets, many=True, context=self.context).data
 
 
 class ItemCreateUpdateSerializer(serializers.ModelSerializer):
@@ -200,10 +208,21 @@ class ItemCreateUpdateSerializer(serializers.ModelSerializer):
     is_active = serializers.BooleanField(default=True, required=False)
     is_available = serializers.BooleanField(default=True, required=False)
 
+    # Write-only: groups pending uploads before this item exists yet.
+    temp_id = serializers.CharField(
+        write_only=True, required=False, allow_null=True)
+    # Read-only: the actual attached gallery images, for display after creation.
+    item_images = serializers.SerializerMethodField()
+
     class Meta:
         model = Item
         fields = ['business', 'category', 'name', 'description',
-                  'image', 'price', 'scope', 'branch_slug', 'is_available', 'is_active']
+                  'image', 'price', 'scope', 'branch_slug', 'is_available', 'is_active', 'temp_id', 'item_images']
+
+    def get_item_images(self, obj):
+        assets = obj.media_assets.filter(
+            collection=MediaCollection.ITEM_GALLERY)
+        return MediaAssetSerializer(assets, many=True, context=self.context).data
 
     def validate(self, attrs):
         scope = attrs.get('scope', 'all')

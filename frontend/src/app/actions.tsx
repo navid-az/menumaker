@@ -1,13 +1,13 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { revalidatePath, revalidateTag } from "next/cache";
 
 //types
-import { SetupSchemaType } from "./(creator)/builder/components/setup/Setup";
-import { BranchFormType } from "./dashboard/components/CreateBranchForm";
-import { BuilderFormType } from "./(creator)/builder/components/builder/BuilderTest";
+import { type SetupSchemaType } from "./(creator)/builder/components/setup/Setup";
+import { type BranchFormType } from "./dashboard/components/CreateBranchForm";
+import { type BuilderFormType } from "./(creator)/builder/components/builder/BuilderTest";
+import { type MenuItem } from "./types/api/menu";
 
 //configs
 import { SERVER_API_BASE_URL } from "@/lib/config";
@@ -134,34 +134,25 @@ export async function getItems() {
   return res.json();
 }
 
-export async function createItem(businessSlug: string, data: FormData) {
+export async function createItem(businessSlug: string, data: Partial<MenuItem>) {
   const accessToken = (await cookies()).get("access");
 
   try {
-    const res = await fetch(
-      `${SERVER_API_BASE_URL}/businesses/${businessSlug}/items/`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${accessToken?.value}`,
-        },
-        body: data,
-      }
-    );
-    if (!res.ok) {
-      const errorData = await res.json();
-      console.log("errorData:", errorData);
+    const res = await fetch(`${SERVER_API_BASE_URL}/businesses/${businessSlug}/items/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+      body: JSON.stringify(data),
+    });
 
-      return {
-        success: false,
-        error: errorData.error,
-      };
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => null);
+      return { success: false, error: extractErrorMessage(errorData) };
     }
   } catch (error: any) {
-    return {
-      success: false,
-      error: error.message || "An unexpected error occurred",
-    };
+    return { success: false, error: error.message || "An unexpected error occurred" };
   }
 
   revalidatePath(`/dashboard/${businessSlug}/data/items`);
@@ -171,37 +162,30 @@ export async function createItem(businessSlug: string, data: FormData) {
 export async function updateItem(
   businessSlug: string,
   itemId: number,
-  data: FormData,
+  data: Partial<MenuItem>,
   branchSlug?: string
 ) {
   const accessToken = (await cookies()).get("access");
 
   try {
     const res = await fetch(
-      `${SERVER_API_BASE_URL}/items/${itemId}/${branchSlug ? `?branch_slug=${branchSlug}` : ""
-      }`,
+      `${SERVER_API_BASE_URL}/items/${itemId}/${branchSlug ? `?branch_slug=${branchSlug}` : ""}`,
       {
         method: "PATCH",
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken?.value}`,
         },
-        body: data,
+        body: JSON.stringify(data),
       }
     );
-    if (!res.ok) {
-      const errorData = await res.json();
-      console.log("errorData:", errorData);
 
-      return {
-        success: false,
-        error: errorData.error || "Failed to update item",
-      };
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => null);
+      return { success: false, error: extractErrorMessage(errorData) };
     }
   } catch (error: any) {
-    return {
-      success: false,
-      error: error.message || "An unexpected error occurred",
-    };
+    return { success: false, error: error.message || "An unexpected error occurred" };
   }
 
   revalidateTag("items");

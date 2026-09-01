@@ -17,9 +17,6 @@ import { Button } from "@/components/ui/button";
 import PriceTag from "../PriceTag";
 import AddToCartBtn from "../AddToCartBtn";
 
-//configs
-import { MEDIA_BASE_URL } from "@/lib/config";
-
 //hooks
 import { useCart, useMenuItemDrawer } from "@/lib/stores";
 import { useRippleAnimation } from "@/app/hooks/useRippleAnimation";
@@ -67,7 +64,7 @@ export function MenuItemCard({
   id,
   name,
   description,
-  image,
+  item_images,
   price,
   options,
   is_active = true,
@@ -316,9 +313,9 @@ export function MenuItemCard({
           {is_featured ? (
             <div className="col-span-2 flex h-[300px] flex-none flex-col">
               <div className="relative flex h-full w-full">
-                {image ? <Image
+                {item_images ? <Image
                   className="rounded-t-(--radius-exception) object-cover object-top transition-all duration-300"
-                  src={image}
+                  src={item_images[0].url}
                   alt={name}
                   fill
                 ></Image> :
@@ -359,11 +356,11 @@ export function MenuItemCard({
                 "border-3 shadow-[4px_4px_0px_0px_var(--secondary)]"
               )}
             >
-              {image ? (
+              {item_images ? (
                 <div className="relative flex basis-6/6 w-full">
                   <Image
                     className="rounded-t-(--radius-exception) object-cover absolute -z-5 transition-all duration-300"
-                    src={image}
+                    src={item_images[0].url}
                     alt={name}
                     fill
                   ></Image>
@@ -407,11 +404,11 @@ export function MenuItemCard({
                 "border-3 border-(--secondary) shadow-[4px_4px_0px_0px_var(--secondary)]"
               )}
             >
-              {/* Removing -z-5 will apply ripple animation effect BEHIND the image
+              {/* Removing -z-5 will apply ripple animation effect BEHIND the item_images
             This only works if the element doesn't have a background(png) */}
-              {image ? <Image
+              {item_images ? <Image
                 className="rounded-(--radius-exception) absolute -z-5 object-cover "
-                src={image}
+                src={item_images[0].url}
                 alt={name}
                 fill
               ></Image> :
@@ -455,11 +452,11 @@ export function MenuItemCard({
           <div className="mx-auto mb-1.5 h-2 w-[100px] rounded-full bg-(--tertiary)"></div>
 
           <div className="relative w-full h-80 max-h-100 overflow-hidden px-1.5 flex items-center justify-center">
-            {image && (
+            {item_images && (
               <>
                 {/* Blurred background */}
                 <Image
-                  src={image}
+                  src={item_images[0].url}
                   alt=""
                   fill
                   aria-hidden
@@ -471,7 +468,7 @@ export function MenuItemCard({
 
                 {/* Actual image */}
                 <Image
-                  src={image}
+                  src={item_images[0].url}
                   alt={name}
                   fill
                   className="relative z-10 object-contain"

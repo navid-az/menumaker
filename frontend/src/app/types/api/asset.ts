@@ -7,6 +7,7 @@ export type MediaAssetType = "image" | "video";
 
 export type MediaAsset = {
   id: number;
+  name?: string;
   url: string;
   media_type: MediaAssetType;
   collection: MediaAssetCollection;

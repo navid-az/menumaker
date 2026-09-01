@@ -53,25 +53,26 @@ export const itemColumns = (
   scope: "visible" | "hidden"
 ): ColumnDef<MenuItem>[] => [
     {
-      accessorKey: "image",
+      accessorKey: "item_images",
       header: "تصویر",
-      cell: (props) => (
-        <div className="relative h-12 w-12 rounded-md">
-          {props.row.original.image ? (
-            <Image
-              className="rounded-md"
-              fill
-              alt={props.row.getValue("name")}
-              src={`${MEDIA_BASE_URL}${props.row.getValue("image")}`}
-            ></Image>
-          ) : (
-            <ImageIcon
-              strokeWidth={1.5}
-              className="h-12 w-12 text-gray-400"
-            ></ImageIcon>
-          )}
-        </div>
-      ),
+      cell: ({ row }) => {
+        const image = row.original.item_images?.[0];
+
+        return (
+          <div className="relative h-12 w-12 rounded-md">
+            {image ? (
+              <Image
+                className="rounded-md"
+                fill
+                alt={row.original.name}
+                src={image.url}
+              />
+            ) : (
+              <ImageIcon strokeWidth={1.5} className="h-12 w-12 text-gray-400" />
+            )}
+          </div>
+        );
+      },
     },
     {
       accessorKey: "name",

@@ -10,13 +10,13 @@ import { toast } from "sonner";
 
 //actions
 import { updateItem } from "@/app/actions";
-import { Item } from "../items/columns";
 
 //types
 import { Row } from "@tanstack/react-table";
+import { MenuItem } from "@/app/types/api/menu";
 interface BooleanSwitchCellProps {
   initial: boolean;
-  row: Row<Item>;
+  row: Row<MenuItem>;
   fieldName: "is_active" | "is_available";
 }
 
@@ -33,19 +33,16 @@ export default function ItemTableSwitch({
   const handleToggle = (checked: boolean) => {
     setChecked(checked);
 
-    const formData = new FormData();
-    formData.append(fieldName, `${checked}`);
-
     startTransition(async () => {
-      const isUpdated = await updateItem(
+      const res = await updateItem(
         row.original.business,
         row.original.id,
-        formData,
+        { [fieldName]: checked },
         params.branch_slug
       );
 
-      if (!isUpdated) {
-        toast.error("خطا در اعمال تغییرات");
+      if (!res?.success) {
+        toast.error(res?.error || "خطا در اعمال تغییرات");
         setChecked(initial); // revert
       }
     });

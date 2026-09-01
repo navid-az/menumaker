@@ -139,9 +139,9 @@ export default function CartBtn({
               "border-3 shadow-[2px_2px_0px_0px_var(--secondary)]"
             )}
           >
-            {item.item.image && <Image
+            {item.item.item_images && <Image
               fill
-              src={item.item.image}
+              src={item.item.item_images[0].url}
               alt={item.item.name}
               className="rounded-(--radius-base) object-cover transition-all duration-300"
             />}

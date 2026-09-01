@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 //zod validator
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -42,7 +42,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import Uploader from "./Uploader";
 
 //SVGs
 import { Plus, Loader2, Edit2 } from "lucide-react";
@@ -56,51 +55,36 @@ import { useForm } from "react-hook-form";
 //server actions
 import { createItem, updateItem } from "@/app/actions";
 
+//components
+import ImageUploader from "@/components/global/ImageUploader";
+
 //types
-import { MenuCategory } from "@/app/types/api/menu";
-
-//configs
-import { API_BASE_URL } from "@/lib/config";
-
+import { MenuCategory, MenuItem } from "@/app/types/api/menu";
 type CreateItemFormType = {
   businessSlug: string;
   branchSlug?: string;
   categories: MenuCategory[];
   title: string;
   description: string;
-  defaultValues?: {
-    scope?: string;
-    name?: string;
-    description?: string;
-    category: number;
-    price: number;
-    image?: string;
-  };
+  defaultValues?: MenuItem
   itemId?: number;
 };
 
+const ItemImageSchema = z.object({
+  id: z.number(),
+  url: z.string(),
+});
+
 const FormSchema = z.object({
   scope: z.enum(["all", "only", "except"]).optional(),
-  image: z
-    .instanceof(File)
-    .refine((file) => file.size <= 5 * 1024 * 1024, {
-      message: "Image must be less than 5MB.",
-    })
-    .refine(
-      (file) => ["image/jpeg", "image/png", "image/gif"].includes(file.type),
-      {
-        message: "Only JPEG, PNG, or GIF images are allowed.",
-      }
-    )
-    .optional(),
-  name: z.string().min(2, {
-    message: "نام آیتم باید حداقل ۲ حرف باشد",
+  item_images: z.array(ItemImageSchema).optional(),
+  frontend_only: z.object({
+    temp_id: z.string(),
   }),
+  name: z.string().min(2, { message: "نام آیتم باید حداقل ۲ حرف باشد" }),
   description: z.string().optional(),
   price: z.coerce.number(),
-  category: z.number({
-    required_error: "لطفا یک دسته را انتخاب کنید",
-  }),
+  category: z.number({ required_error: "لطفا یک دسته را انتخاب کنید" }),
 });
 
 export function CreateItemForm({
@@ -121,68 +105,45 @@ export function CreateItemForm({
         description: defaultValues.description || "",
         category: defaultValues.category,
         price: defaultValues.price || 0,
-        image: undefined,
+        item_images: defaultValues.item_images,
+        frontend_only: { temp_id: crypto.randomUUID() }
       }
       : {
         scope: "all",
         name: "",
         description: "",
         price: 0,
-        image: undefined,
+        item_images: [],
+        frontend_only: { temp_id: crypto.randomUUID() }
       },
   });
 
   //control dialog component
   const [open, setOpen] = useState(false);
 
-  const [previewUrl, setPreviewUrl] = useState<string | null>(
-    defaultValues?.image ?? null
-  );
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target?.files?.[0];
-    if (file) {
-      const objectUrl = URL.createObjectURL(file);
-      setPreviewUrl(objectUrl);
-      form.setValue("image", file); // set FileList for RHF
-    }
-  };
-
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    const formData = new FormData();
-    if (data.image instanceof File) {
-      formData.append("image", data.image);
-    }
-    if (branchSlug) {
-      formData.append("branch_slug", branchSlug);
-    }
-    formData.append("scope", data.scope || "all");
-    formData.append("name", data.name);
-    formData.append("description", data.description || "");
-    formData.append("category", data.category?.toString());
-    formData.append("price", data.price.toString());
+    const { frontend_only, item_images, ...rest } = data;
+
+    const payload = {
+      ...rest,
+      temp_id: frontend_only.temp_id,
+      branch_slug: branchSlug ?? undefined
+    };
+
     try {
       if (!defaultValues && !itemId) {
-        // Create new item
-        const res = await createItem(businessSlug, formData);
+        const res = await createItem(businessSlug, payload);
         if (res?.success) {
-          //wait for route revalidation to happen first
-          setTimeout(() => {
-            setOpen(false);
-          }, 300);
+          setTimeout(() => setOpen(false), 300);
           toast.success("آیتم با موفقیت ایجاد شد");
           form.reset();
         } else {
           toast.error(res?.error || "خطایی در ایجاد آیتم رخ داد.");
         }
       } else if (defaultValues && itemId) {
-        // Update item
-        const res = await updateItem(businessSlug, itemId, formData);
-
+        const res = await updateItem(businessSlug, itemId, payload);
         if (res?.success) {
-          setTimeout(() => {
-            setOpen(false);
-          }, 300);
+          setTimeout(() => setOpen(false), 300);
           toast.success("آیتم با موفقیت ویرایش شد");
         } else {
           toast.error(res?.error || "خطایی در ویرایش آیتم رخ داد.");
@@ -312,38 +273,13 @@ export function CreateItemForm({
             )}
             <FormField
               control={form.control}
-              name="image"
-              render={({ field: { onChange, value, ...rest } }) => (
+              name="item_images"
+              render={({ field }) => (
                 <FormItem className="flex-1">
-                  <FormLabel htmlFor={rest.name}>تصویر</FormLabel>
+                  <FormLabel htmlFor={field.name}>تصویر</FormLabel>
                   <FormControl>
-                    {/* <Uploader
-                      value={field.value}
-                      onChange={field.onChange}
-                      name="image"
-                      label="تصویر"
-                    /> */}
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                      {...rest}
-                    />
+                    <ImageUploader collection='item_gallery' maxFiles={1} value={field.value} onChange={field.onChange}></ImageUploader>
                   </FormControl>
-                  {/* <div className=" relative h-20 w-20">
-                    {previewUrl && (
-                      <Image
-                        fill
-                        src={
-                          previewUrl?.startsWith("blob:")
-                            ? previewUrl
-                            : `${API_BASE_URL}/${previewUrl}`
-                        }
-                        alt="Selected preview"
-                        className="mt-2 h-20 rounded-md"
-                      />
-                    )}
-                  </div> */}
                   <FormMessage className="font-normal" />
                 </FormItem>
               )}
@@ -372,12 +308,12 @@ export function CreateItemForm({
                               key={category.id}
                               value={category.id.toString()}
                             >
-                              {category.name || (
+                              {category.name || (category.icon &&
                                 <Image
-                                  width={25}
-                                  height={25}
+                                  width={20}
+                                  height={20}
                                   alt={category.name || "category-icon"}
-                                  src={`${API_BASE_URL}${category.icon?.image}`}
+                                  src={category.icon?.url}
                                 ></Image>
                               )}
                             </SelectItem>
