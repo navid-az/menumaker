@@ -42,6 +42,10 @@ export type TableType = {
 //configs
 import { SERVER_API_BASE_URL } from "@/lib/config";
 
+// TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
+export const instant = false;
+
 const getTables = async (branchSlug: string) => {
   const res = await fetch(
     `${SERVER_API_BASE_URL}/branches/${branchSlug}/tables`

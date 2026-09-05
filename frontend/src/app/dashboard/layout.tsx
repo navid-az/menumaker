@@ -15,6 +15,10 @@ import { getUserData } from "@/lib/getUserData";
 import { type Business } from "../types/api/business";
 import { type User } from "../types/api/auth";
 
+// TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
+export const instant = false;
+
 export default async function DashboardLayout({
   children,
 }: {

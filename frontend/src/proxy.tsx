@@ -21,7 +21,7 @@ type jwtPayloadType = {
 //configs
 import { SERVER_API_BASE_URL } from "@/lib/config";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
 
   // Extract business and branch slugs from the pathname
