@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
-
-module.exports = {
+const nextConfig = {
   output: "standalone",
   // eslint: {
   //   ignoreDuringBuilds: true,
@@ -13,15 +12,17 @@ module.exports = {
       bodySizeLimit: "5mb",
     },
   },
-  webpack: (config) => {
-    config.module.rules.push({
-      test: /\.svg$/,
-      use: [{ loader: "@svgr/webpack", options: { icon: true } }],
-    });
-
-    return config;
+  cacheComponents: true,
+  turbopack: {
+    rules: {
+      "*.svg": {
+        loaders: ["@svgr/webpack"],
+        as: "*.js",
+      },
+    },
   },
   images: {
+    dangerouslyAllowLocalIP: true, // Accept media assets from localhost (DEV only)
     remotePatterns: [
       {
         protocol: "http",
@@ -42,3 +43,5 @@ module.exports = {
     ],
   },
 };
+
+module.exports = nextConfig;

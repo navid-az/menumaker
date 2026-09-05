@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 
 //SVGs
-import { Minus, Plus, Trash } from "@/app/components/svgs";
+import { Plus, Minus, X } from "lucide-react";
 
 //components
 import { Button } from "@/components/ui/button";
@@ -29,7 +29,7 @@ type AddToCartBtnType = {
 };
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    AddToCartBtnType {}
+  AddToCartBtnType { }
 
 export default function AddToCartBtn({
   itemId,
@@ -78,8 +78,8 @@ export default function AddToCartBtn({
       className={cn(
         "flex w-full justify-center gap-2 rounded-(--radius-inner) bg-[var(--cart-btn-bg)] text-[var(--cart-btn-text)] transition-all duration-300",
         globalStyling.style === "retro" &&
-          globalStyling.tertiary_color &&
-          "border-[2.5px] border-secondary h-11",
+        globalStyling.tertiary_color &&
+        "border-[2.5px] border-secondary h-11",
         className
       )}
     >
@@ -160,13 +160,13 @@ const StepperBtn = ({
     buttonRef,
     AddToCartBtnAnimationConfigs.ripple,
     globalStyling.click_animation_enabled &&
-      globalStyling.click_animation_type?.includes("ripple")
+    globalStyling.click_animation_type?.includes("ripple")
   );
   useTactileAnimation(
     buttonRef,
     AddToCartBtnAnimationConfigs.tactile,
     globalStyling.click_animation_enabled &&
-      globalStyling.click_animation_type?.includes("tactile")
+    globalStyling.click_animation_type?.includes("tactile")
   );
 
   return (
@@ -181,11 +181,11 @@ const StepperBtn = ({
       )}
     >
       {iconSrc == "minus" ? (
-        <Minus className="h-8 w-8" />
+        <Minus className="size-7" />
       ) : iconSrc == "trash" ? (
-        <Trash className="h-8 w-8" />
+        <X className="size-7" />
       ) : (
-        <Plus className="h-8 w-8" />
+        <Plus className="size-7" />
       )}
     </Button>
   );

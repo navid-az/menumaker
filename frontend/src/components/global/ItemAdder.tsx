@@ -11,7 +11,6 @@ import { LinkAction } from "./itemAdderButtons/LinkAction";
 
 //libraries
 import * as z from "zod";
-import { nanoid } from "nanoid";
 
 //hooks
 import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
@@ -20,9 +19,7 @@ import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
 import isRTL from "@/lib/isRtl";
 
 //SVGs
-import { Trash } from "@/app/components/svgs";
-import { Plus } from "@/app/components/svgs";
-import { Edit3, ImageOff } from "lucide-react";
+import { Edit3, ImageOff, Trash2, Plus } from "lucide-react";
 
 //types
 import { type AssetGroupType, type AssetType } from "./AssetPicker";
@@ -145,10 +142,10 @@ export default function ItemAdder({
       if (!isControlled) {
         dispatch({
           type: "ADD",
-          payload: { id: nanoid(), name: text, asset: asset },
+          payload: { id: crypto.randomUUID(), name: text, asset: asset },
         });
       }
-      onChange?.([...value!, { id: nanoid(), name: text, asset: asset }]);
+      onChange?.([...value!, { id: crypto.randomUUID(), name: text, asset: asset }]);
       //remove any error text
       setInputError("");
     }
@@ -245,7 +242,7 @@ export default function ItemAdder({
               {editMode ? (
                 <p>ویرایش</p>
               ) : (
-                <Plus className="h-5 w-5 sm:h-6 sm:w-6" />
+                <Plus className="size-5 sm:size-6" />
               )}
             </Button>
           </section>
@@ -313,7 +310,7 @@ function ListItem({ item, handleEdit, handleDelete, isActive }: ListItemType) {
           onClick={handleEdit}
         >
           <Edit3
-            className={`h-5 w-5 ${isActive ? "stroke-primary-foreground" : "bg-transparent"
+            className={`size-5 ${isActive ? "stroke-primary-foreground" : "bg-transparent"
               }`}
           />
         </Button>
@@ -323,7 +320,7 @@ function ListItem({ item, handleEdit, handleDelete, isActive }: ListItemType) {
           className="h-8 w-8 bg-transparent text-royal-green transition-transform duration-300 hover:scale-125"
           onClick={() => handleDelete()}
         >
-          <Trash className="h-7 w-7" />
+          <Trash2 className="size-5" />
         </Button>
       </div>
     </div>

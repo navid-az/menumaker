@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 
 //SVGs
-import { ArrowLeft } from "@/app/components/svgs";
+import { ArrowLeft } from "lucide-react";
 
 //components
 import { Button } from "@/components/ui/button";
@@ -27,7 +27,7 @@ export default function RegisterLayout({
         >
           <Link href="/">
             <p className="text-sm">بازگشت</p>
-            <ArrowLeft className="h-5 w-5"></ArrowLeft>
+            <ArrowLeft className="size-5"></ArrowLeft>
           </Link>
         </Button>
       </header>

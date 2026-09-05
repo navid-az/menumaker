@@ -21,7 +21,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Cross } from "@/app/components/svgs";
 import { toast } from "sonner";
 import RegisterBtn from "./RegisterBtn";
 
