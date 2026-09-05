@@ -8,15 +8,14 @@ import { Button } from "@/components/ui/button";
 
 //functions
 import { createDemoUser } from '@/app/actions/auth/register';
-import { createCookie } from '@/app/actions/auth/register';
+import { createAuthCookies } from '@/app/actions/auth/register';
 
 export default function DemoModeWrapper() {
     async function startDemo() {
         const result = await createDemoUser();
         if (result.success) {
             const { access, refresh } = result.tokens;
-            createCookie("access", access);
-            createCookie("refresh", refresh);
+            createAuthCookies(access, refresh);
             toast.success("(Demo Mode)ورود با موفقیت انجام شد");
         } else {
             toast.error("خطایی رخ داد!");

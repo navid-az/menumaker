@@ -96,7 +96,7 @@ export function CreateTableForm({
           setTimeout(() => {
             setOpen(false);
           }, 300);
-          toast.success("مییز با موفقیت ایجاد شد");
+          toast.success("میز با موفقیت ایجاد شد");
           form.reset();
         } else {
           toast.error(res?.error || "خطایی در ایجاد میز رخ داد.");

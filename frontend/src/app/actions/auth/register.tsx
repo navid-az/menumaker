@@ -83,12 +83,20 @@ export async function validateOtp(data: {
 
 // Cookie creator
 // Specifically used for access & refresh tokens
-export async function createCookie(
-  name: string,
-  value: string,
-  httpOnly = true
+export async function createAuthCookies(
+  access: string,
+  refresh: string
 ) {
-  (await cookies()).set(name, value, { httpOnly: httpOnly });
+  const cookieStore = await cookies();
+
+  cookieStore.set("access", access, {
+    httpOnly: true,
+  });
+
+  cookieStore.set("refresh", refresh, {
+    httpOnly: true,
+  });
+
   redirect("/");
 }
 

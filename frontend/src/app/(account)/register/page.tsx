@@ -30,7 +30,7 @@ import { useSlider } from "@/lib/stores";
 
 //functions
 import { validateCredentials, validateOtp } from "@/app/actions/auth/register";
-import { createCookie } from "@/app/actions/auth/register";
+import { createAuthCookies } from "@/app/actions/auth/register";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -185,8 +185,7 @@ export default function Page() {
       if (result.success) {
         const { access, refresh } = result.tokens;
         setIsLoading(false);
-        createCookie("access", access);
-        createCookie("refresh", refresh);
+        createAuthCookies(access, refresh);
         toast.success("ورود با موفقیت انجام شد");
       } else {
         toast.error("کد وارد شده اشتباه است");
