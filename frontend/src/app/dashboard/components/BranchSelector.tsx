@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 
+//hooks
 import { useParams, usePathname, useRouter } from "next/navigation";
 
 //SVGs
@@ -28,10 +29,10 @@ import {
 } from "@/components/ui/popover";
 
 //types
-import { BranchType } from "../layout";
+import { type Branch } from "@/app/types/api/business";
 import CreateBranchForm from "./CreateBranchForm";
 type branchSelectorType = {
-  branches: BranchType[];
+  branches: Branch[];
   defaultValues?: {
     name: string;
     slug: string;
@@ -51,18 +52,23 @@ export function BranchSelector({
   const pathname = usePathname();
   const params = useParams<{ business_slug: string; branch_slug: string }>();
 
-  const [value, setValue] = React.useState(params.branch_slug);
-
   // change pathname when branch is changed
-  useEffect(() => {
+  const value = params.branch_slug;
+
+  const handleBranchChange = (branchSlug: string) => {
+    if (branchSlug === value) {
+      setOpen(false);
+      return;
+    }
+
     const segments = pathname.split("/");
-    segments[3] = value;
+    segments[3] = branchSlug;
+
     const newPath = segments.join("/");
+
     setOpen(false);
-    setTimeout(() => {
-      router.push(newPath);
-    }, 200);
-  }, [value]);
+    router.push(newPath);
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -105,7 +111,7 @@ export function BranchSelector({
                   key={branch.id}
                   value={branch.slug}
                   onSelect={(currentValue) => {
-                    setValue(currentValue);
+                    handleBranchChange(currentValue);
                   }}
                   className="group flex h-9 justify-between flex-row items-center"
                 >

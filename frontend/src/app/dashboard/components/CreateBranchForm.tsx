@@ -34,12 +34,13 @@ import { type FieldErrors } from "react-hook-form";
 
 //server actions
 import { createBranch, updateBranch } from "@/app/actions";
+import { type Branch } from "@/app/types/api/business";
 
 //types
 export type BranchFormType = z.infer<typeof FormSchema>;
 type CreateBranchFormType = {
   business_slug: string;
-  defaultValues?: BranchFormType;
+  defaultValues?: Branch;
   branch_slug?: string;
   children: React.ReactNode;
 };
