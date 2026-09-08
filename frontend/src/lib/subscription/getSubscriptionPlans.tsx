@@ -7,14 +7,17 @@ type DRFErrorResponse = {
 //configs
 import { SERVER_API_BASE_URL } from "@/lib/config";
 
+//function
+import { cacheLife } from 'next/cache'
+
 // Fetches subscription plans from the backend API
 export default async function getSubscriptionPlans() {
+  'use cache'
+  cacheLife('max')
+
   try {
     const res = await fetch(`${SERVER_API_BASE_URL}/subscriptions/plans/`, {
       method: "GET",
-      next: {
-        revalidate: 86400,
-      },
       headers: {
         Accept: "application/json",
       },
@@ -24,12 +27,12 @@ export default async function getSubscriptionPlans() {
       let errorData: DRFErrorResponse = {};
       try {
         errorData = await res.json();
-      } catch {}
+      } catch { }
 
       throw new Error(
         errorData.detail ||
-          errorData.error ||
-          "Failed to fetch subscription plans"
+        errorData.error ||
+        "Failed to fetch subscription plans"
       );
     }
 

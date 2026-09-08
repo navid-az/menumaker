@@ -14,12 +14,11 @@ import {
 } from "./components/ComparisonTable";
 import PricingPlans from "./components/PricingPlans";
 
+//functions
+import getSubscriptionPlans from "@/lib/subscription/getSubscriptionPlans";
+
 //SVGs
 import { Gem } from "lucide-react";
-
-// TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
-// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
-export const instant = false;
 
 const PLANS = ["basic", "pro", "franchise"] as const;
 
@@ -183,6 +182,8 @@ const DEFAULT_OPEN_SECTIONS = PRICING_COMPARISON.map(
 );
 
 export default async function page() {
+  const plans = await getSubscriptionPlans()
+
   return (
     <div className="flex mx-auto flex-col items-center gap-24 xl:px-20 md:px-8 2xl:px-28">
       <section className="flex flex-col gap-16 mt-20 w-full">
@@ -195,7 +196,7 @@ export default async function page() {
             </h3>
           </div>
         </div>
-        <PricingPlans></PricingPlans>
+        <PricingPlans plans={plans}></PricingPlans>
       </section>
       {/* Comparison Table */}
       <ComparisonTable className="py-20">
