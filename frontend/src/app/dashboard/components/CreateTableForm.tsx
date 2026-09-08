@@ -41,6 +41,7 @@ import { createTable, updateTable } from "@/app/actions";
 
 // types
 type CreateTableFormType = {
+  businessSlug: string;
   branchSlug: string;
   title: string;
   description?: string;
@@ -62,6 +63,7 @@ const FormSchema = z.object({
 });
 
 export function CreateTableForm({
+  businessSlug,
   branchSlug,
   title,
   description,
@@ -91,7 +93,7 @@ export function CreateTableForm({
     try {
       if (!defaultValues && !tableId) {
         // Create new table
-        const res = await createTable(data, branchSlug);
+        const res = await createTable(data, businessSlug, branchSlug);
         if (res?.success) {
           setTimeout(() => {
             setOpen(false);
@@ -103,7 +105,7 @@ export function CreateTableForm({
         }
       } else if (defaultValues && tableId) {
         // Update table
-        const res = await updateTable(data, branchSlug, tableId);
+        const res = await updateTable(data, businessSlug, branchSlug, tableId);
         if (res?.success) {
           setTimeout(() => {
             setOpen(false);

@@ -1,5 +1,6 @@
 //hooks
 import { useProgress } from "./useProgress";
+import { useDeferredNow } from "./useDeferredNow";
 
 //types
 import { type TableType } from "../dashboard/[business_slug]/[branch_slug]/liveManagement/all/page";
@@ -19,24 +20,29 @@ export function useActiveTimer(table: TableType, isInView?: boolean): {
   elapsedDuration: string;
   progressType: progressType;
   progressMessage: string;
+  isReady: boolean
   // color: string;
 } {
-  const now = new Date();
+  const now = useDeferredNow()
+  const isReady = now !== null // NEW
 
   const activeOrderValid = !!table.order && table.order.status != "cancelled";
 
   const orderIsReady = table.order?.status === "ready";
 
   const orderIsServed =
-    table.order?.served_at && new Date(table.order.served_at) < now;
+    now !== null &&
+    table.order?.served_at && new Date(table.order.served_at) < new Date(now);
 
   const activeCallValid =
+    now !== null &&
     table.active_call &&
     !table.active_call.resolved &&
-    new Date(table.active_call.expires_at) > now;
+    new Date(table.active_call.expires_at) > new Date(now);
 
   const activeSessionValid =
-    table.active_session && new Date(table.active_session.expires_at) > now;
+    now !== null &&
+    table.active_session && new Date(table.active_session.expires_at) > new Date(now);
 
   //calculate session progress
   const {
@@ -94,6 +100,7 @@ export function useActiveTimer(table: TableType, isInView?: boolean): {
       elapsedDuration: elapsedWaiterDuration,
       progressType: "call",
       progressMessage: `مشتری ${elapsedWaiterDuration} پیش صدا زده`,
+      isReady
     };
   }
 
@@ -105,6 +112,7 @@ export function useActiveTimer(table: TableType, isInView?: boolean): {
         elapsedDuration: elapsedOrderReadyDuration,
         progressType: "readyOrder",
         progressMessage: `سفارش ${elapsedOrderReadyDuration} پیش آماده شده`,
+        isReady
       };
     } else if (orderIsServed) {
       return {
@@ -113,6 +121,7 @@ export function useActiveTimer(table: TableType, isInView?: boolean): {
         elapsedDuration: elapsedOrderServedDuration,
         progressType: "servedOrder",
         progressMessage: `سفارش ${elapsedOrderServedDuration} پیش سرور شد`,
+        isReady
       };
     } else {
       return {
@@ -121,6 +130,7 @@ export function useActiveTimer(table: TableType, isInView?: boolean): {
         elapsedDuration: elapsedOrderDuration,
         progressType: "pendingOrder",
         progressMessage: `مشتری ${elapsedOrderDuration} پیش سفارش داده`,
+        isReady
       };
     }
   }
@@ -132,6 +142,7 @@ export function useActiveTimer(table: TableType, isInView?: boolean): {
       elapsedDuration: elapsedSessionDuration,
       progressType: "session",
       progressMessage: `مشتری ${elapsedSessionDuration} پیش اسکن کرده`,
+      isReady
     };
   }
 
@@ -141,5 +152,6 @@ export function useActiveTimer(table: TableType, isInView?: boolean): {
     elapsedDuration: "",
     progressType: "none",
     progressMessage: "",
+    isReady
   };
 }
