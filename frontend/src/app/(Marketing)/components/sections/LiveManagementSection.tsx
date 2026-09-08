@@ -9,6 +9,9 @@ import { GradientSpan } from '../GradientSpan'
 import { DashboardMockup, LiveManagementPanelMockup } from '@/components/global/Mockup/DashboardMockup'
 import LiveCard from '@/app/dashboard/components/LiveCard'
 
+//hooks
+import { useDeferredNow } from '@/app/hooks/useDeferredNow'
+
 //libraries
 import { motion, useInView, type Transition } from "motion/react"
 
@@ -20,13 +23,16 @@ import { TableType } from '@/app/dashboard/[business_slug]/[branch_slug]/liveMan
 
 export default function LiveManagementSection() {
 
+    const now = useDeferredNow()
+    const end = now !== null ? now + 60_000 : 0
+
     const tableDummyData: TableType = {
         id: 2,
         code: "D4E5F6",
         active_session: {
             code: "T7U8V9",
-            started_at: new Date().toISOString(),
-            expires_at: new Date(Date.now() + 60_000).toISOString(),
+            started_at: now == null ? '0' : new Date(now).toISOString(),
+            expires_at: now == null ? '0' : new Date(end).toISOString(),
             is_active: true,
         },
         name: "Table 2",

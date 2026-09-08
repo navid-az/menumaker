@@ -62,6 +62,7 @@ import { deleteTable } from "@/app/actions";
 
 //hooks
 import { progressType, useActiveTimer } from "@/app/hooks/useActiveTimer";
+import { useDeferredNow } from "@/app/hooks/useDeferredNow";
 
 //configs
 import { APP_URL } from "@/lib/config";
@@ -146,11 +147,13 @@ export default function LiveCard({
   const [title, setTitle] = useState("مشاهده منو");
   const [showOrder, setShowOrder] = useState(false);
 
-  const now = new Date();
+  const now = useDeferredNow()
+
   const activeSessionValid =
+    now !== null &&
     table.active_session &&
     table.active_session?.is_active &&
-    new Date(table.active_session.expires_at) > now;
+    new Date(table.active_session.expires_at) > new Date(now)
 
   const {
     progress,
@@ -158,6 +161,7 @@ export default function LiveCard({
     elapsedDuration,
     progressType,
     progressMessage,
+    isReady
   } = useActiveTimer(table, isInView);
 
   useEffect(() => {
@@ -243,6 +247,7 @@ export default function LiveCard({
       <LiveCardBody activeSessionValid={!!activeSessionValid} table={table}>
         <LiveCardHeader
           setShowCode={setShowCode}
+          businessSlug={businessSlug}
           branchSlug={branchSlug}
           table={table}
           orderAge={progress}
@@ -348,6 +353,7 @@ export default function LiveCard({
         footerAlert={footerAlert}
         setFooterAlert={setFooterAlert}
         progressType={progressType}
+        isReady={isReady}
         serviceType={serviceType}
       ></LiveCardFooter>
     </div>
@@ -413,6 +419,7 @@ export function LiveCardBody({
 
 export function LiveCardHeader({
   table,
+  businessSlug,
   branchSlug,
   setShowCode,
   elapsedDuration,
@@ -420,6 +427,7 @@ export function LiveCardHeader({
   isMockup = false,
 }: {
   table: TableType;
+  businessSlug: string;
   branchSlug: string;
   setShowCode: React.Dispatch<React.SetStateAction<boolean>>;
   orderAge: number;
@@ -428,7 +436,7 @@ export function LiveCardHeader({
   isMockup?: boolean;
 }) {
   async function handleTableDelete() {
-    const res = await deleteTable(branchSlug, table.id);
+    const res = await deleteTable(businessSlug, branchSlug, table.id);
     if (res.success) {
       toast.success("میز با موفقیت حذف شد");
     } else {
@@ -486,6 +494,7 @@ export function LiveCardHeader({
                 </DropdownMenuItem>
               ) : (
                 <CreateTableForm
+                  businessSlug={businessSlug}
                   branchSlug={branchSlug}
                   defaultValues={table}
                   tableId={table.id}
@@ -597,12 +606,14 @@ export function LiveCardFooter({
   footerAlert,
   setFooterAlert,
   progressType,
+  isReady,
   serviceType,
 }: {
   table: TableType;
   footerAlert: string;
   setFooterAlert: React.Dispatch<React.SetStateAction<string>>;
   progressType: progressType;
+  isReady: boolean;
   serviceType?: ServiceType;
 }) {
   // What should be shown right now according to props/state
@@ -627,6 +638,8 @@ export function LiveCardFooter({
 
   // Whenever progressType changes → check if text should update
   useEffect(() => {
+    if (!isReady) return; // skip the phantom pre-hydration pass entirely
+
     const target = getTargetText();
 
     // Only animate if the text actually needs to change
