@@ -1,5 +1,6 @@
 //functions
 import { cookies } from "next/headers";
+import { cacheLife, cacheTag } from "next/cache";
 import jwtDecoder from "./jwtDecoder";
 
 //types
@@ -7,23 +8,27 @@ import { type User } from "@/app/types/api/auth";
 
 //configs
 import { SERVER_API_BASE_URL } from "@/lib/config";
+export async function getUserData(): Promise<User | null> {
+  const accessToken = (await cookies()).get("access")?.value;
+  if (!accessToken) return null;
 
-// get user data
-export async function getUserData() {
-  const accessToken = (await cookies()).get("access");
+  const userObj = jwtDecoder(accessToken);
+  if (!userObj) return null;
 
-  if (accessToken === undefined) {
-    return null;
-  }
+  return getCachedUserData(accessToken, userObj.user_id);
+}
 
-  const userObj = jwtDecoder(accessToken?.value);
-  if (!userObj) {
-    return null;
-  }
+async function getCachedUserData(
+  accessToken: string,
+  userId: string
+): Promise<User> {
+  "use cache";
+  cacheLife("minutes");
+  cacheTag(`user-data-${userId}`);
 
-  const res = await fetch(
-    `${SERVER_API_BASE_URL}/accounts/user/${userObj.user_id}`
-  );
+  const res = await fetch(`${SERVER_API_BASE_URL}/accounts/user/${userId}`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
 
   if (!res.ok) {
     throw new Error("Failed to fetch data");

@@ -102,7 +102,7 @@ export default function CreateBranchForm({
 
   async function onSubmit(data: BranchFormType) {
     if (defaultValues && branch_slug) {
-      const res = await updateBranch(branch_slug, data);
+      const res = await updateBranch(business_slug, branch_slug, data);
       if (res?.success) {
         //wait for route revalidation to happen first
         setTimeout(() => {

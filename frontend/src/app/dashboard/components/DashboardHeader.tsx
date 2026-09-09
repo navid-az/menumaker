@@ -8,32 +8,17 @@ import SubscriptionPopOver from "./SubscriptionPopOver";
 import { User2 } from "lucide-react";
 
 //functions
-import { checkFeatureAccess } from "@/lib/guards/checkFeatureAccess";
-
-//libs
 import { getUserData } from "@/lib/getUserData";
-import { getUserBusinesses } from "@/lib/getUserBusinesses";
+import getBranches from "@/lib/business/getBranches";
+import { getUserBusinesses } from "@/lib/business/getUserBusinesses";
 import { getBusinessSubscription } from "@/lib/subscription/getBusinessSubscription";
+import { checkFeatureAccess } from "@/lib/guards/checkFeatureAccess";
 
 //types
 import { type Subscription } from "@/app/types/api/subscription";
-
-//configs
-import { SERVER_API_BASE_URL } from "@/lib/config";
-
-// get all branches of active business
-async function getBranches(business_slug: string) {
-  const data = await fetch(
-    `${SERVER_API_BASE_URL}/businesses/${business_slug}/branches/`,
-    {
-      next: { tags: ["branches"] },
-    }
-  );
-  if (!data.ok) {
-    throw new Error("Failed to fetch data");
-  }
-  return data.json();
-}
+import { Business } from "@/app/types/api/business";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export async function DashboardHeader({
   business_slug,
@@ -51,8 +36,6 @@ export async function DashboardHeader({
   const subscription: Subscription = await getBusinessSubscription(
     business_slug
   );
-  const user = await getUserData();
-  const businesses = await getUserBusinesses();
   const subEndDate = new Date(subscription.end_date);
   const now = new Date();
 
@@ -67,17 +50,28 @@ export async function DashboardHeader({
             <SubscriptionPopOver subscription={subscription} />
           )}
         </div>
-        {user && businesses && (
-          <UserProfile user={user} businesses={businesses}>
-            <Button
-              size="icon"
-              className=" hover:bg-white/5 transition-all duration-300"
-            >
-              <User2 className="h-6 w-6 text-soft-blue"></User2>
-            </Button>
-          </UserProfile>
-        )}
+        <Suspense fallback={<Skeleton className="size-10" />}>
+          <UserProfileSection />
+        </Suspense>
       </div>
     </header>
   );
+}
+
+async function UserProfileSection() {
+  const user = await getUserData();
+  const businesses: Business[] = await getUserBusinesses();
+
+  return <div>
+    {user && businesses && (
+      <UserProfile user={user} businesses={businesses}>
+        <Button
+          size="icon"
+          className=" hover:bg-white/5 transition-all duration-300"
+        >
+          <User2 className="h-6 w-6 text-soft-blue"></User2>
+        </Button>
+      </UserProfile>
+    )}
+  </div>;
 }

@@ -1,78 +1,72 @@
-import React from "react";
+import React, { Suspense } from "react";
 
 //components
 import { DashboardHeader } from "../../components/DashboardHeader";
 import ToolBar from "../../components/ToolBar";
+import DashboardHeaderSkeleton from "@/app/components/skeletons/DashboardHeaderSkeleton";
+import DashboardToolbarSkeleton from "@/app/components/skeletons/DashboardToolbarSkeleton";
 
 //function 
-import { getAssetGroups } from "@/lib/assets/getAssetGroups";
+import getAssetGroups from "@/lib/assets/getAssetGroups";
+import getMenuCategories from "@/lib/business/getMenuCategories";
+import getBranches from "@/lib/business/getBranches";
 
-//configs
-import { SERVER_API_BASE_URL } from "@/lib/config";
 
-// TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
-// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
-export const instant = false;
-
-const getCategories = async (businessSlug: string) => {
-  const res = await fetch(
-    `${SERVER_API_BASE_URL}/businesses/${businessSlug}/categories`
-  );
-  if (!res.ok) {
-    throw new Error(
-      `Failed to fetch asset groups: ${res.status} ${res.statusText}`
-    );
-  }
-  return await res.json();
-};
-
-async function getBranches(business_slug: string) {
-  const data = await fetch(
-    `${SERVER_API_BASE_URL}/businesses/${business_slug}/branches/`,
-    {
-      next: { tags: ["branches"] },
-    }
-  );
-  if (!data.ok) {
-    throw new Error("Failed to fetch data");
-  }
-  return data.json();
-}
-
-export default async function DashboardPanelLayout(props: {
+export default function DashboardPanelLayout(props: {
   children: React.ReactNode;
   params: Promise<{ business_slug: string; branch_slug: string }>;
 }) {
-  const params = await props.params;
   const { children } = props;
-
-  const assetGroups = await getAssetGroups('icon');
-  const categories = await getCategories(params.business_slug);
-  const branches = await getBranches(params.business_slug);
-
-  const branchOptions = branches.map(
-    (branch: { id: number; name: string }) => ({
-      id: branch.id,
-      name: branch.name,
-    })
-  );
 
   return (
     <div className="h-screen flex flex-col">
-      <DashboardHeader
-        business_slug={params.business_slug}
-        branch_slug={params.branch_slug}
-      ></DashboardHeader>
+      <Suspense fallback={<DashboardHeaderSkeleton />}>
+        <HeaderSection paramsPromise={props.params} />
+      </Suspense>
+
       <div className="bg-white flex flex-col p-4 flex-1 overflow-y-auto! xl:rounded-tr-[40px]">
-        <ToolBar
-          branches={branches}
-          categories={categories}
-          assetGroups={assetGroups}
-        ></ToolBar>
+        <Suspense fallback={<DashboardToolbarSkeleton />}>
+          <ToolBarSection paramsPromise={props.params} />
+        </Suspense>
+
         <div className="mt-4 flex-1 flex flex-col">
           {children}
         </div>
       </div>
     </div>
+  );
+}
+
+async function HeaderSection({
+  paramsPromise,
+}: {
+  paramsPromise: Promise<{ business_slug: string; branch_slug: string }>;
+}) {
+  const { business_slug, branch_slug } = await paramsPromise;
+  return (
+    <DashboardHeader business_slug={business_slug} branch_slug={branch_slug} />
+  );
+}
+
+async function ToolBarSection({
+  paramsPromise,
+}: {
+  paramsPromise: Promise<{ business_slug: string; branch_slug: string }>;
+}) {
+  const { business_slug } = await paramsPromise;
+
+  // run these in parallel instead of sequential awaits
+  const [assetGroups, categories, branches] = await Promise.all([
+    getAssetGroups('icon'),
+    getMenuCategories(business_slug),
+    getBranches(business_slug),
+  ]);
+
+  return (
+    <ToolBar
+      branches={branches}
+      categories={categories}
+      assetGroups={assetGroups}
+    />
   );
 }

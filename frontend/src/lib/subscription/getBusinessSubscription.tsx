@@ -1,19 +1,30 @@
 //functions
 import { cookies } from "next/headers";
+import { cacheLife, cacheTag } from "next/cache";
 
 //configs
 import { SERVER_API_BASE_URL } from "@/lib/config";
 
-export async function getBusinessSubscription(business_slug: string) {
-  const accessToken = (await cookies()).get("access");
+export async function getBusinessSubscription(businessSlug: string) {
+  const accessToken = (await cookies()).get("access")?.value;
+  if (!accessToken) return [];
+
+  return getCachedBusinessSubscription(accessToken, businessSlug);
+}
+
+async function getCachedBusinessSubscription(accessToken: string, businessSlug: string) {
+  "use cache";
+  cacheLife("days");
+  cacheTag(`business-subscription-${accessToken}`);
+
   try {
     const res = await fetch(
-      `${SERVER_API_BASE_URL}/subscriptions/business/${business_slug}/subscription/`,
+      `${SERVER_API_BASE_URL}/subscriptions/business/${businessSlug}/subscription/`,
       {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken?.value}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       }
     );

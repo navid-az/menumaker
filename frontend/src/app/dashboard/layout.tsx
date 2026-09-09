@@ -1,44 +1,46 @@
+import { Suspense } from "react";
+
 //components
 import {
   ResizablePanelGroup,
   ResizableHandle,
+  ResizablePanel
 } from "@/components/ui/resizable";
 import DashboardSidebar from "./components/DashboardSidebar";
-import DashboardPanel from "./components/DashboardPanel";
 import DemoBanner from "./components/DemoBanner";
 
 //functions
-import { getUserBusinesses } from "@/lib/getUserBusinesses";
 import { getUserData } from "@/lib/getUserData";
 
-//types
-import { type Business } from "../types/api/business";
-import { type User } from "../types/api/auth";
-
-// TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
-// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
-export const instant = false;
-
-export default async function DashboardLayout({
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const businesses: Business[] = await getUserBusinesses();
-  const userData: User | null = await getUserData();
-
   return (
     <div className="flex h-screen flex-col bg-primary">
-      {userData && <DemoBanner isDemo={userData.is_demo}></DemoBanner>}
+      <Suspense fallback={null}>
+        <DemoBannerSection />
+      </Suspense>
+
       <ResizablePanelGroup
         autoSaveId="dashboard-size"
         direction="horizontal"
         className="flex flex-1"
       >
-        <DashboardSidebar businesses={businesses}></DashboardSidebar>
-        <ResizableHandle withHandle></ResizableHandle>
-        <DashboardPanel>{children}</DashboardPanel>
+        <DashboardSidebar />
+
+        <ResizableHandle withHandle />
+
+        <ResizablePanel className="relative bg-primary" defaultSize={80}>
+          {children}
+        </ResizablePanel>
       </ResizablePanelGroup>
     </div>
   );
+}
+
+async function DemoBannerSection() {
+  const userData = await getUserData();
+  return userData ? <DemoBanner isDemo={userData.is_demo} /> : null;
 }

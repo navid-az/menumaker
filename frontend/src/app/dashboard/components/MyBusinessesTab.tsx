@@ -83,7 +83,7 @@ export default function MyBusinessesTab({
       ref={tab}
       className={`transition-height flex ${isCollapsed
         ? "h-auto rounded-xl"
-        : "min-h-[84px] rounded-xl rounded-tl-[36px]"
+        : "min-h-[84px] rounded-xl"
         } w-full select-none flex-col overflow-hidden border-4 border-sad-blue bg-soft-blue text-primary duration-300 ease-in-out`}
     >
       <Button

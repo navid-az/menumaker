@@ -2,7 +2,7 @@ import { verifyToken } from "@/app/actions/auth/register";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { getUserData } from "@/lib/getUserData";
-import { getUserBusinesses } from "@/lib/getUserBusinesses";
+import { getUserBusinesses } from "@/lib/business/getUserBusinesses";
 
 export async function GET() {
   const cookieStore = await cookies();

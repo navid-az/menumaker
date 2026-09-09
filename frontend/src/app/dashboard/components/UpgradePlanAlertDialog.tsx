@@ -9,15 +9,22 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
 } from "@/components/ui/alert-dialog";
-import React from "react";
 
-export default function UpgradePlanAlertDialog({
+//functions
+import { checkFeatureAccess } from "@/lib/guards/checkFeatureAccess";
+
+export default async function UpgradePlanAlertDialog({
   businessSlug,
-  hasFeature = false,
+  featureCode
 }: {
   businessSlug: string;
-  hasFeature?: boolean;
+  featureCode: string;
 }) {
+  const { hasFeature } = await checkFeatureAccess(
+    businessSlug,
+    featureCode
+  );
+
   return (
     <AlertDialog defaultOpen={!hasFeature}>
       <AlertDialogContent>
