@@ -1,18 +1,17 @@
 
 //functions
-import { cookies } from "next/headers";
+import { cacheLife, cacheTag } from "next/cache";
 
 //configs
 import { SERVER_API_BASE_URL } from "@/lib/config";
 
-export async function getAssetGroups(kind?: "icon" | "pattern") {
-    const accessToken = (await cookies()).get("access");
+export default async function getAssetGroups(kind?: "icon" | "pattern") {
+    'use cache'
+    cacheLife('weeks')
+
     const query = kind ? `?kind=${kind}` : "";
 
-    const res = await fetch(`${SERVER_API_BASE_URL}/assets/group/${query}`, {
-        headers: { Authorization: `Bearer ${accessToken?.value}` },
-        next: { revalidate: 60 },
-    });
+    const res = await fetch(`${SERVER_API_BASE_URL}/assets/group/${query}`);
 
     if (!res.ok) {
         throw new Error(`Failed to fetch asset groups: ${res.status} ${res.statusText}`);

@@ -13,12 +13,14 @@ import {
 
 export default function PersonnelClientWrapper({
   businessSlug,
+  branchSlug,
   personnel,
 }: {
   businessSlug: string;
+  branchSlug: string;
   personnel: Personnel[];
 }) {
-  const PersonnelColumns = personnelColumns(businessSlug);
+  const PersonnelColumns = personnelColumns(businessSlug, branchSlug);
 
   return <DataTable columns={PersonnelColumns} data={personnel} />;
 }

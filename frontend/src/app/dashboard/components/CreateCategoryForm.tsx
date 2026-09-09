@@ -43,12 +43,13 @@ type CreateCategoryFormType = {
   assetGroups: AssetGroupType[];
   title: string;
   description: string;
-  defaultValues?: z.infer<typeof FormSchema>;
+  defaultValues?: { name?: string, icon?: CategoryIcon };
   categoryId?: number;
 };
 
 //actions
 import { createCategory, updateCategory } from "@/app/actions";
+import { CategoryIcon } from "@/app/types/api/menu";
 
 // zod schema
 const IconSchema = z.object({
@@ -109,7 +110,7 @@ export function CreateCategoryForm({
           toast.error(res?.error || "خطایی در ایجاد دسته بندی رخ داد.");
         }
       } else if (defaultValues && categoryId) {
-        const res = await updateCategory(categoryId, {
+        const res = await updateCategory(businessSlug, categoryId, {
           name: data.name,
           icon: data.icon ? data.icon.id : null, // Explicitly send null if icon is null
         });

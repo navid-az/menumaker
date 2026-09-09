@@ -61,7 +61,7 @@ export const categoryColumns = (
             <Image
               className="rounded-md"
               fill
-              alt={props.row.original.icon?.name}
+              alt={props.row.original.icon?.name ?? 'item image'}
               src={props.row.original.icon?.url}
             ></Image>
           ) : (
@@ -95,7 +95,7 @@ export const categoryColumns = (
       cell: ({ row, cell }) => (
         <CategoryTableSwitch
           originalValue={cell.getValue() as boolean}
-          business={row.original.business}
+          businessSlug={row.original.business}
           categoryId={row.original.id}
           rowId={row.id}
         />
@@ -139,7 +139,7 @@ export const categoryColumns = (
               description="با تغییر موارد زیر دسته بندی را ویرایش کنید"
               defaultValues={{
                 name: props.row.original.name,
-                icon: props.row.original.icon || undefined,
+                icon: props.row.original.icon,
               }}
               categoryId={props.row.original.id}
             />

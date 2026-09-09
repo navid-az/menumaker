@@ -1,20 +1,26 @@
-import React from "react";
+//components
+import { Suspense } from "react";
 import UpdateMenuBtn from "./components/UpdateMenuBtn";
-
-// TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
-// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
-export const instant = false;
 
 export default async function page(props: {
   params: Promise<{ business_slug: string; branch_slug: string }>;
 }) {
-  const params = await props.params;
   return (
     <div className="flex -mt-4 justify-center flex-col items-center">
-      <UpdateMenuBtn
-        businessSlug={params.business_slug}
-        branchSlug={params.branch_slug}
-      ></UpdateMenuBtn>
+      <Suspense>
+        <UpdateMenuSection paramsPromise={props.params}></UpdateMenuSection>
+      </Suspense>
     </div>
   );
+}
+
+async function UpdateMenuSection({ paramsPromise }: { paramsPromise: Promise<{ business_slug: string; branch_slug: string }>; }) {
+  const { business_slug, branch_slug } = await paramsPromise;
+
+  return (
+    <UpdateMenuBtn
+      businessSlug={business_slug}
+      branchSlug={branch_slug}
+    ></UpdateMenuBtn>
+  )
 }

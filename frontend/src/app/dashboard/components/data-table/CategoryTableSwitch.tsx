@@ -9,12 +9,12 @@ import { updateCategory } from "@/app/actions";
 
 export default function CategoryTableSwitch({
   originalValue,
-  business,
+  businessSlug,
   categoryId,
   rowId,
 }: {
   originalValue: boolean;
-  business: string;
+  businessSlug: string;
   categoryId: number;
   rowId: string;
 }) {
@@ -25,7 +25,7 @@ export default function CategoryTableSwitch({
     setChecked(checked);
 
     startTransition(async () => {
-      const isUpdated = await updateCategory(business, categoryId, {
+      const isUpdated = await updateCategory(businessSlug, categoryId, {
         is_active: checked,
       });
 

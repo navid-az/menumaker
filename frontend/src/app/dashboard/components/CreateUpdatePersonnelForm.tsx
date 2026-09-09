@@ -61,7 +61,7 @@ const roleMap: Record<string, number> = {
 import { type Personnel } from "../personnel/columns";
 type CreateUpdatePersonnelForm = {
   businessSlug: string;
-  branchSlug?: string;
+  branchSlug: string;
   title: string;
   description: string;
   defaultValues?: Personnel;
@@ -131,7 +131,7 @@ export function CreateUpdatePersonnelForm({
     };
     console.log(normalizedData);
 
-    const res = await invitePersonnel(businessSlug, normalizedData);
+    const res = await invitePersonnel(businessSlug, branchSlug, normalizedData);
     if (res?.success) {
       //wait for route revalidation to happen first
       setTimeout(() => {

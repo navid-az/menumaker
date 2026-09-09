@@ -126,6 +126,7 @@ export default function ToolBar({
         )}
         {parentSection === "liveManagement" && childSection === "all" && (
           <CreateTableForm
+            businessSlug={params.business_slug}
             branchSlug={params.branch_slug}
             title="ایجاد میز"
             description="با انتخاب گزینه های مورد نظر دسته بندی جدید به منو اضافه کنید"
@@ -142,6 +143,7 @@ export default function ToolBar({
         {parentSection === "personnel" && childSection === "all" && (
           <CreateUpdatePersonnelForm
             businessSlug={params.business_slug}
+            branchSlug={params.branch_slug}
             branches={branches}
             title="دعوت پرسنل"
             description="اعضای جدید را به پرسنل مجموعه اضافه کنید"

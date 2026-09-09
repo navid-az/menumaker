@@ -1,8 +1,8 @@
 "use server";
 
-//components
+//functions
 import { cookies } from "next/headers";
-import { revalidateTag } from "next/cache";
+import { updateTag } from "next/cache";
 
 //types
 import { type Personnel } from "@/app/dashboard/personnel/columns";
@@ -10,11 +10,11 @@ import { type Personnel } from "@/app/dashboard/personnel/columns";
 //configs
 import { SERVER_API_BASE_URL } from "@/lib/config";
 
-export async function invitePersonnel(business_slug: string, data: Personnel) {
+export async function invitePersonnel(businessSlug: string, branchSlug: string, data: Personnel) {
   const accessToken = (await cookies()).get("access");
   try {
     const res = await fetch(
-      `${SERVER_API_BASE_URL}/personnel/business/${business_slug}/personnel/assign/`,
+      `${SERVER_API_BASE_URL}/personnel/business/${businessSlug}/personnel/assign/`,
       {
         method: "POST",
         headers: {
@@ -32,7 +32,8 @@ export async function invitePersonnel(business_slug: string, data: Personnel) {
         detail: errorData.detail || "Failed to invite personnel",
       };
     }
-    revalidateTag("personnel");
+
+    updateTag(`personnel-${businessSlug}-${branchSlug}`)
     return { success: true, detail: "Personnel invited successfully" };
   } catch (error: any) {
     return {
@@ -43,13 +44,14 @@ export async function invitePersonnel(business_slug: string, data: Personnel) {
 }
 
 export async function deletePersonnel(
-  business_slug: string,
-  personnel_id: number
+  businessSlug: string,
+  branchSlug: string,
+  personnelId: number
 ) {
   const accessToken = (await cookies()).get("access");
   try {
     const res = await fetch(
-      `${SERVER_API_BASE_URL}/business/${business_slug}/personnel/${personnel_id}/delete/`,
+      `${SERVER_API_BASE_URL}/business/${businessSlug}/personnel/${personnelId}/delete/`,
       {
         method: "DELETE",
         headers: {
@@ -64,7 +66,8 @@ export async function deletePersonnel(
         detail: errorData.error || "Failed to delete personnel",
       };
     }
-    revalidateTag("personnel");
+
+    updateTag(`personnel-${businessSlug}-${branchSlug}`)
     return { success: true, detail: "Personnel deleted successfully" };
   } catch (error: any) {
     return {
