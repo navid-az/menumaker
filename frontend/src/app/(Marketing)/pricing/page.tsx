@@ -1,4 +1,6 @@
 //components
+import { Suspense } from "react";
+
 import {
   ComparisonTable,
   ComparisonTableCell,
@@ -181,8 +183,13 @@ const DEFAULT_OPEN_SECTIONS = PRICING_COMPARISON.map(
   (section) => section.sectionKey
 );
 
-export default async function page() {
+async function PricingPlansSection() {
   const plans = await getSubscriptionPlans()
+
+  return <PricingPlans plans={plans}></PricingPlans>
+}
+
+export default async function page() {
 
   return (
     <div className="flex mx-auto flex-col items-center gap-24 xl:px-20 md:px-8 2xl:px-28">
@@ -196,7 +203,9 @@ export default async function page() {
             </h3>
           </div>
         </div>
-        <PricingPlans plans={plans}></PricingPlans>
+        <Suspense fallback={'loading...'}>
+          <PricingPlansSection></PricingPlansSection>
+        </Suspense>
       </section>
       {/* Comparison Table */}
       <ComparisonTable className="py-20">

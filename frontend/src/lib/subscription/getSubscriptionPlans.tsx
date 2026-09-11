@@ -7,13 +7,9 @@ type DRFErrorResponse = {
 //configs
 import { SERVER_API_BASE_URL } from "@/lib/config";
 
-//function
-import { cacheLife } from 'next/cache'
 
 // Fetches subscription plans from the backend API
 export default async function getSubscriptionPlans() {
-  'use cache'
-  cacheLife('max')
 
   try {
     const res = await fetch(`${SERVER_API_BASE_URL}/subscriptions/plans/`, {
