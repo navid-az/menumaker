@@ -3,6 +3,8 @@
 //functions
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
+import { updateTag } from "next/cache";
+import jwtDecoder from "@/lib/jwtDecoder";
 
 //configs
 import { SERVER_API_BASE_URL } from "@/lib/config";
@@ -12,7 +14,12 @@ export async function initiatePayment(
   planSlug: string,
   duration: number
 ) {
-  const accessToken = (await cookies()).get("access");
+  const accessToken = (await cookies()).get("access")?.value;
+  if (!accessToken) return
+  const userId = jwtDecoder(accessToken)?.user_id
+
+  if (!userId) return []
+
   let paymentUrl: string;
   try {
     const res = await fetch(
@@ -21,7 +28,7 @@ export async function initiatePayment(
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken?.value}`,
+          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({ plan_slug: planSlug, duration: duration }),
       }
@@ -36,6 +43,9 @@ export async function initiatePayment(
       };
     }
     const data = await res.json();
+
+    updateTag(`business-subscription-${businessSlug}`);
+    updateTag(`user-businesses-${userId}`);
 
     paymentUrl = data.payment_url;
   } catch (error: any) {

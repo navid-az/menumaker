@@ -3,6 +3,7 @@
 //functions
 import { cookies } from "next/headers";
 import { updateTag } from "next/cache";
+import jwtDecoder from "@/lib/jwtDecoder";
 
 //types
 import { type SetupSchemaType } from "./(creator)/builder/components/setup/Setup";
@@ -158,6 +159,7 @@ export async function createItem(businessSlug: string, data: Partial<MenuItem>) 
   }
 
   updateTag(`business-items-${businessSlug}`);
+  updateTag(`business-categories-${businessSlug}`);
   return { success: true };
 }
 
@@ -191,6 +193,7 @@ export async function updateItem(
   }
 
   updateTag(`business-items-${businessSlug}`);
+  updateTag(`business-categories-${businessSlug}`);
   return { success: true };
 }
 
@@ -218,6 +221,7 @@ export async function deleteItem(businessSlug: string, itemId: number) {
     };
   }
   updateTag(`business-items-${businessSlug}`);
+  updateTag(`business-categories-${businessSlug}`);
   return { success: true };
 }
 
@@ -317,14 +321,21 @@ export async function updateMenu(businessSlug: string, data: MenuType) {
 
 //create business
 export async function createBusiness(data: SetupSchemaType) {
-  const accessToken = (await cookies()).get("access");
+  const accessToken = (await cookies()).get("access")?.value;
+  if (!accessToken) return [];
+
+  const userId = jwtDecoder(accessToken)?.user_id
+
+  if (!userId) return []
+
+  updateTag(`user-businesses-${userId}`)
 
   try {
     const res = await fetch(`${SERVER_API_BASE_URL}/businesses/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken?.value}`,
+        Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify(data),
     });

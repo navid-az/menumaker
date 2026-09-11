@@ -15,7 +15,7 @@ export async function getBusinessSubscription(businessSlug: string) {
 async function getCachedBusinessSubscription(accessToken: string, businessSlug: string) {
   "use cache";
   cacheLife("days");
-  cacheTag(`business-subscription-${accessToken}`);
+  cacheTag(`business-subscription-${businessSlug}`);
 
   try {
     const res = await fetch(
