@@ -5,6 +5,9 @@ import MenuLayout from "../../components/MenuLayout";
 import { type MenuGlobalStyling } from "@/app/types/api/menu";
 import { type Menu as MenuData } from "@/app/types/api/menu";
 
+//functions
+import getMenuCategories from "@/lib/business/getMenuCategories";
+
 //configs
 import { SERVER_API_BASE_URL } from "@/lib/config";
 
@@ -32,21 +35,6 @@ async function getGlobalStyling(business_slug: string) {
   try {
     let res = await fetch(
       `${SERVER_API_BASE_URL}/businesses/${business_slug}/menu/global-styling/`
-    );
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
-    return await res.json();
-  } catch (error) {
-    console.error("error fetching menuData:", error);
-  }
-}
-
-// GET menu categories
-async function getMenuCategories(business_slug: string) {
-  try {
-    let res = await fetch(
-      `${SERVER_API_BASE_URL}/businesses/${business_slug}/categories/`
     );
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);

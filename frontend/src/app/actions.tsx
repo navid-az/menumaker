@@ -1,7 +1,8 @@
 "use server";
 
+//functions
 import { cookies } from "next/headers";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { updateTag } from "next/cache";
 
 //types
 import { type SetupSchemaType } from "./(creator)/builder/components/setup/Setup";
@@ -57,11 +58,12 @@ export async function createCategory(businessSlug: string, data: CategoryFormDat
     return { success: false, error: error.message || "An unexpected error occurred" };
   }
 
-  revalidatePath(`/dashboard/${businessSlug}/data/categories`);
+  updateTag(`business-categories-${businessSlug}`)
   return { success: true };
 }
 
 export async function updateCategory(
+  businessSlug: string,
   categoryId: number,
   data: CategoryFormData
 ) {
@@ -89,7 +91,7 @@ export async function updateCategory(
     return { success: false, error: error.message || "An unexpected error occurred" };
   }
 
-  revalidateTag("categories");
+  updateTag(`business-categories-${businessSlug}`)
   return { success: true };
 }
 
@@ -119,7 +121,7 @@ export async function deleteCategory(businessSlug: string, categoryId: number) {
       error: error.message || "An unexpected error occurred",
     };
   }
-  revalidateTag("categories");
+  updateTag(`business-categories-${businessSlug}`)
   return { success: true };
 }
 
@@ -155,7 +157,7 @@ export async function createItem(businessSlug: string, data: Partial<MenuItem>) 
     return { success: false, error: error.message || "An unexpected error occurred" };
   }
 
-  revalidatePath(`/dashboard/${businessSlug}/data/items`);
+  updateTag(`business-items-${businessSlug}`);
   return { success: true };
 }
 
@@ -188,7 +190,7 @@ export async function updateItem(
     return { success: false, error: error.message || "An unexpected error occurred" };
   }
 
-  revalidateTag("items");
+  updateTag(`business-items-${businessSlug}`);
   return { success: true };
 }
 
@@ -215,7 +217,7 @@ export async function deleteItem(businessSlug: string, itemId: number) {
       error: error.message || "An unexpected error occurred",
     };
   }
-  revalidateTag("items");
+  updateTag(`business-items-${businessSlug}`);
   return { success: true };
 }
 
@@ -350,13 +352,13 @@ export async function createBusiness(data: SetupSchemaType) {
 // branch actions
 export async function createBranch(
   data: BranchFormType,
-  business_slug: string
+  businessSlug: string
 ) {
   const accessToken = (await cookies()).get("access");
 
   try {
     const res = await fetch(
-      `${SERVER_API_BASE_URL}/businesses/${business_slug}/branches/`,
+      `${SERVER_API_BASE_URL}/businesses/${businessSlug}/branches/`,
       {
         method: "POST",
         headers: {
@@ -376,7 +378,8 @@ export async function createBranch(
       };
     }
     const responseData = await res.json();
-    revalidateTag("branches");
+    updateTag(`business-branches-${businessSlug}`);
+
     return { success: true, data: responseData };
   } catch (error: any) {
     return {
@@ -386,10 +389,10 @@ export async function createBranch(
   }
 }
 
-export async function updateBranch(branch_slug: string, data: BranchFormType) {
+export async function updateBranch(businessSlug: string, branchSlug: string, data: BranchFormType) {
   const accessToken = (await cookies()).get("access");
   try {
-    const res = await fetch(`${SERVER_API_BASE_URL}/branches/${branch_slug}/`, {
+    const res = await fetch(`${SERVER_API_BASE_URL}/branches/${branchSlug}/`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -407,7 +410,8 @@ export async function updateBranch(branch_slug: string, data: BranchFormType) {
       };
     }
     const responseData = await res.json();
-    revalidateTag("branches");
+    updateTag(`business-branches-${businessSlug}`);
+
     return { success: true, data: responseData };
   } catch (error: any) {
     return {
@@ -418,12 +422,12 @@ export async function updateBranch(branch_slug: string, data: BranchFormType) {
 }
 
 // table actions
-export async function createTable(data: any, branch_slug: string) {
+export async function createTable(data: any, businessSlug: string, branchSlug: string) {
   const accessToken = (await cookies()).get("access");
 
   try {
     const res = await fetch(
-      `${SERVER_API_BASE_URL}/branches/${branch_slug}/tables/`,
+      `${SERVER_API_BASE_URL}/branches/${branchSlug}/tables/`,
       {
         method: "POST",
         headers: {
@@ -443,7 +447,8 @@ export async function createTable(data: any, branch_slug: string) {
       };
     }
     const responseData = await res.json();
-    revalidateTag("tables");
+    updateTag(`business-tables-${businessSlug}-${branchSlug}`);
+
     return { success: true, data: responseData };
   } catch (error: any) {
     return {
@@ -455,7 +460,8 @@ export async function createTable(data: any, branch_slug: string) {
 
 export async function updateTable(
   data: any,
-  branch_slug: string,
+  businessSlug: string,
+  branchSlug: string,
   tableId: number
 ) {
   const accessToken = (await cookies()).get("access");
@@ -479,7 +485,8 @@ export async function updateTable(
       };
     }
     const responseData = await res.json();
-    revalidateTag("tables");
+    updateTag(`business-tables-${businessSlug}-${branchSlug}`);
+
     return { success: true, data: responseData };
   } catch (error: any) {
     return {
@@ -489,7 +496,7 @@ export async function updateTable(
   }
 }
 
-export async function deleteTable(branch_slug: string, tableId: number) {
+export async function deleteTable(businessSlug: string, branchSlug: string, tableId: number) {
   const accessToken = (await cookies()).get("access");
 
   try {
@@ -513,7 +520,8 @@ export async function deleteTable(branch_slug: string, tableId: number) {
       error: error.message || "An unexpected error occurred",
     };
   }
-  revalidateTag("tables");
+  updateTag(`business-tables-${businessSlug}-${branchSlug}`);
+
   return { success: true };
 }
 

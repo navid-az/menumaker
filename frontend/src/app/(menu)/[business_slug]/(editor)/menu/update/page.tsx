@@ -8,7 +8,7 @@ import { type Menu as MenuData } from "@/app/types/api/menu";
 import { type AssetGroupType } from "@/components/global/AssetPicker";
 
 //functions
-import { getAssetGroups } from "@/lib/assets/getAssetGroups";
+import getAssetGroups from "@/lib/assets/getAssetGroups";
 
 //configs
 import { SERVER_API_BASE_URL } from "@/lib/config";
