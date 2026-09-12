@@ -3,6 +3,7 @@ FROM node:26-slim AS builder
 
 WORKDIR /app
 
+RUN npm config set registry https://mirror.abrha.net/repository/npm/
 RUN npm install -g pnpm@10.12.1
 
 COPY package.json pnpm-lock.yaml ./
