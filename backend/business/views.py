@@ -29,7 +29,7 @@ from .services import clone_demo_business_data
 User = get_user_model()
 
 
-class BusinessesView(APIView):
+class BusinessesView(MethodBasedPermissionsMixin, APIView):
     permission_classes_by_method = {
         'GET': [IsAuthenticated], 'POST': [IsAuthenticated]}
 
