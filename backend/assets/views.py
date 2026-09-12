@@ -9,6 +9,10 @@ from rest_framework import status, permissions
 from .models import MediaAsset, AssetGroup, MediaCollection
 from .serializers import MediaAssetSerializer, AssetGroupSerializer
 
+# Permission Checks
+from mixins import MethodBasedPermissionsMixin
+from rest_framework.permissions import IsAuthenticated
+
 
 class MediaAssetView(APIView):
     """
@@ -76,15 +80,24 @@ class MediaAssetDetailView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class AssetGroupView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+class AssetGroupView(MethodBasedPermissionsMixin, APIView):
+    permission_classes_by_method = {
+        'POST': [IsAuthenticated]}
+    required_permission_by_method = {
+        'POST': ['assets.add_asset'],
+    }
 
     def get(self, request):
         kind = request.query_params.get("kind")
-        groups = AssetGroup.objects.filter(
-            Q(created_by__isnull=True) | Q(
-                created_by=request.user)
-        )
+
+        if request.user.is_authenticated:
+            groups = AssetGroup.objects.filter(
+                Q(created_by__isnull=True) | Q(
+                    created_by=request.user)
+            )
+        else:
+            groups = AssetGroup.objects.filter(created_by__isnull=True)
+
         # If kind is provided, only return groups of that kind
         if kind:
             groups = groups.filter(kind=kind)
@@ -99,6 +112,7 @@ class AssetGroupView(APIView):
         serializer.is_valid(raise_exception=True)
         group = serializer.save(created_by=request.user)
         return Response(
-            AssetGroupSerializer(group, context={"request": request}).data,
+            AssetGroupSerializer(
+                group, context={"request": request}).data,
             status=status.HTTP_201_CREATED,
         )
