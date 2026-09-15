@@ -2,7 +2,7 @@ import React from 'react'
 
 //components
 import { Skeleton } from '@/components/ui/skeleton'
-import { Building } from '@/app/dashboard/components/svg'
+import { Building } from '@/app/[locale]/dashboard/components/svg'
 import { ArrowLeft } from 'lucide-react'
 
 export default function BusinessSelectorSkeleton({ isCollapsed }: { isCollapsed: boolean }) {

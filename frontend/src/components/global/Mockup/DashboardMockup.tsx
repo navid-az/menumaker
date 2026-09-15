@@ -2,7 +2,7 @@ import React from "react";
 
 //components
 import { Button } from "@/components/ui/button";
-import LiveCard from "@/app/dashboard/components/LiveCard";
+import LiveCard from "@/app/[locale]/dashboard/components/LiveCard";
 import Logo from "../Logo";
 
 //functions
@@ -10,10 +10,10 @@ import { cn } from "@/lib/utils";
 
 //SVGs
 import { Building2, ChevronLeft, MapPin, Star, User2 } from "lucide-react";
-import { BarChart, Radar, ScrollText, Users, Settings } from "@/app/dashboard/components/svg";
+import { BarChart, Radar, ScrollText, Users, Settings } from "@/app/[locale]/dashboard/components/svg";
 
 //types
-import { TableType } from "@/app/dashboard/[business_slug]/[branch_slug]/liveManagement/all/page";
+import { TableType } from "@/app/[locale]/dashboard/[business_slug]/[branch_slug]/liveManagement/all/page";
 
 export function DashboardMockup({ isCompact = false, children }: { isCompact?: boolean, className?: string, children: React.ReactNode }) {
     return (

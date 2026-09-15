@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 //utils
 import { formatTime } from "@/lib/formatTime";
 import { formatElapsedTime } from "@/lib/formatElapsedTime";
-import { toPersianDigits } from "../(menu)/[business_slug]/utilities/formatCurrency";
+import { toPersianDigits } from "../[locale]/(menu)/[business_slug]/utilities/formatCurrency";
 
 // hook to calculate progress between two timestamps
 // returns progress (0-100), remaining time and elapsed time

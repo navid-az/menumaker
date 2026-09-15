@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Drawer as DrawerPrimitive } from "vaul";
 
-import { usePreviewContainer } from "@/app/(creator)/builder/components/preview/PreviewContext";
+import { usePreviewContainer } from "@/app/[locale]/(creator)/builder/components/preview/PreviewContext";
 
 import { cn } from "@/lib/utils";
 

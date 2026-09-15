@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 import { updateTag } from "next/cache";
 
 //types
-import { type Personnel } from "@/app/dashboard/personnel/columns";
+import { type Personnel } from "@/app/[locale]/dashboard/personnel/columns";
 
 //configs
 import { SERVER_API_BASE_URL } from "@/lib/config";

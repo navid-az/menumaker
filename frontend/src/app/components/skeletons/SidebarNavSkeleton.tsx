@@ -2,10 +2,10 @@ import React from 'react'
 
 //components
 import { Button } from '@/components/ui/button';
-import { DashboardNavbarBtn } from '@/app/dashboard/components/SidebarNav'
+import { DashboardNavbarBtn } from '@/app/[locale]/dashboard/components/SidebarNav'
 
 //SVGs
-import { BarChart, Radar, ScrollText, Settings, Users } from '@/app/dashboard/components/svg';
+import { BarChart, Radar, ScrollText, Settings, Users } from '@/app/[locale]/dashboard/components/svg';
 
 //functions
 import { cn } from '@/lib/utils'

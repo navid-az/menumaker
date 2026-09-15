@@ -19,11 +19,11 @@ import { Check, Sparkles } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 
 //utils
-import { formToMenuGlobalStyling } from "@/app/(creator)/builder/utils/formToMenuGlobalStyling";
-import { generateStyleVars } from "@/app/(menu)/[business_slug]/utilities/styleVars";
+import { formToMenuGlobalStyling } from "@/app/[locale]/(creator)/builder/utils/formToMenuGlobalStyling";
+import { generateStyleVars } from "@/app/[locale]/(menu)/[business_slug]/utilities/styleVars";
 
 //types
-import { type BuilderFormType } from "@/app/(creator)/builder/components/builder/BuilderTest";
+import { type BuilderFormType } from "@/app/[locale]/(creator)/builder/components/builder/BuilderTest";
 
 export default function AnimationSelector({
   defaultValue = [],
@@ -114,11 +114,10 @@ export default function AnimationSelector({
         <Button
           ref={rippleBtnRef}
           onClick={() => toggle("ripple")}
-          className={`scale-pro h-[52px] w-[52px] flex-1 gap-1 border-2 bg-sad-blue/80 px-4 text-base text-primary transition-[border-color,background-color] duration-300 ${
-            selected.includes("ripple")
-              ? "border-primary bg-primary text-primary-foreground hover:border-primary"
-              : "border-transparent hover:border-primary/30"
-          }`}
+          className={`scale-pro h-[52px] w-[52px] flex-1 gap-1 border-2 bg-sad-blue/80 px-4 text-base text-primary transition-[border-color,background-color] duration-300 ${selected.includes("ripple")
+            ? "border-primary bg-primary text-primary-foreground hover:border-primary"
+            : "border-transparent hover:border-primary/30"
+            }`}
           type="button"
         >
           {selected.includes("ripple") && <Check className="h-6 w-6"></Check>}
@@ -127,11 +126,10 @@ export default function AnimationSelector({
         <Button
           ref={tactileBtnRef}
           onClick={() => toggle("tactile")}
-          className={`scale-pro h-[52px] w-[52px] flex-1 gap-1 border-2 bg-sad-blue/80 text-base text-primary transition-[border-color,background-color] duration-300 ${
-            selected.includes("tactile")
-              ? "border-primary bg-primary text-primary-foreground hover:border-primary"
-              : "border-transparent hover:border-primary/30"
-          }`}
+          className={`scale-pro h-[52px] w-[52px] flex-1 gap-1 border-2 bg-sad-blue/80 text-base text-primary transition-[border-color,background-color] duration-300 ${selected.includes("tactile")
+            ? "border-primary bg-primary text-primary-foreground hover:border-primary"
+            : "border-transparent hover:border-primary/30"
+            }`}
           type="button"
         >
           {selected.includes("tactile") && <Check className="h-6 w-6"></Check>}

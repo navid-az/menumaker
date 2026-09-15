@@ -3,7 +3,7 @@ import { useProgress } from "./useProgress";
 import { useDeferredNow } from "./useDeferredNow";
 
 //types
-import { type TableType } from "../dashboard/[business_slug]/[branch_slug]/liveManagement/all/page";
+import { type TableType } from "../[locale]/dashboard/[business_slug]/[branch_slug]/liveManagement/all/page";
 export type progressType =
   | "call"
   | "pendingOrder"

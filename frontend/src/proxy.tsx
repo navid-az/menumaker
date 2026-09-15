@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 
 // libraries
 import * as jose from "jose";
+import createMiddleware from "next-intl/middleware";
+import { routing } from "./i18n/routing";
 
 // types
 import type { NextRequest } from "next/server";
@@ -12,150 +14,133 @@ type jwtPayloadType = {
   iat: number;
   jti: string;
   user_id: number;
-  roles: Record<
-    string,
-    { business: string; branches?: string[]; role: string }
-  >;
+  roles: Record<string, { business: string; branches?: string[]; role: string }>;
 };
 
-//configs
+// configs
 import { SERVER_API_BASE_URL } from "@/lib/config";
 
-export async function proxy(request: NextRequest) {
+const handleI18nRouting = createMiddleware(routing);
+
+// PROTECTED routes
+const PROTECTED: RegExp[] = [
+  /^\/dashboard(\/|$)/,
+  /^\/builder(\/|$)/,
+  /^\/checkout(\/|$)/,
+  /^\/[^/]+\/menu\/update(\/|$)/, // /:businessSlug/menu/update/...
+];
+
+function isProtected(pathname: string) {
+  return PROTECTED.some((re) => re.test(pathname));
+}
+
+export default async function proxy(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
 
-  // Extract business and branch slugs from the pathname
+  let authResponse: NextResponse | null = null;
+
+  if (isProtected(pathname)) {
+    authResponse = await runAuthChecks(request);
+    // If auth failed (redirect to /register or /unauthorized), short-circuit.
+    // The target page will go through this proxy on its own next request
+    // and get localized correctly then — no need to run i18n on this pass.
+    if (isRedirect(authResponse)) return authResponse;
+  }
+  // else if (pathname.startsWith("/register") && searchParams.has("token")) {
+  //   // Public route, but still needs the invitation-token check
+  //   authResponse = await runInvitationCheck(request);
+  //   if (isRedirect(authResponse)) return authResponse;
+  // }
+
+  // Runs for every route, protected or not. This is what resolves the locale.
+  const i18nResponse = handleI18nRouting(request);
+
+  // Carry over anything auth logic set (e.g. a refreshed access-token cookie)
+  if (authResponse) {
+    authResponse.cookies.getAll().forEach((cookie) => {
+      i18nResponse.cookies.set(cookie);
+    });
+  }
+
+  return i18nResponse;
+}
+
+function isRedirect(res: NextResponse) {
+  return res.status >= 300 && res.status < 400;
+}
+
+async function runAuthChecks(request: NextRequest) {
+  const { pathname } = request.nextUrl;
   const segments = pathname.split("/").filter(Boolean);
   const businessSlug = segments[1];
   const branchSlug = segments[2];
-
-  // Secret key for verifying the JWT
   const secret = new TextEncoder().encode(process.env.SECRET_KEY);
 
-  // if (pathname.startsWith("/dashboard/") && businessSlug) {
-  let token = request.cookies.get("access")?.value;
+  const token = request.cookies.get("access")?.value;
   if (!token) {
-    console.log("NO ACCESS TOKEN FOUND");
     return NextResponse.redirect(new URL("/register", request.url));
   }
 
-  let jwtPayload: jwtPayloadType;
-
-  // Verify access token
   try {
     const { payload } = await jose.jwtVerify(token, secret);
     const jwtPayload = payload as jwtPayloadType;
 
     if (pathname.startsWith("/dashboard/") && businessSlug) {
-      // Find permissions for this business
       const perm = jwtPayload.roles[businessSlug];
-
-      if (!perm) {
-        // User has no permissions for this business
-        return NextResponse.redirect(new URL("/unauthorized", request.url));
-      }
-
-      // Check if user has permissions for this branch
+      if (!perm) return NextResponse.redirect(new URL("/unauthorized", request.url));
       if (perm.role === "owner" || perm.branches?.includes(branchSlug)) {
         return NextResponse.next();
-      } else {
-        return NextResponse.redirect(new URL("/unauthorized", request.url));
       }
+      return NextResponse.redirect(new URL("/unauthorized", request.url));
     }
-    if (pathname.startsWith("/register") && searchParams.has("token")) {
-      // Handle invitation token
-      const invitationToken = searchParams.get("token");
-      if (invitationToken) {
-        try {
-          await jose.jwtVerify(invitationToken, secret);
-        } catch (error: any) {
-          if (error.code === "ERR_JWT_EXPIRED") {
-            return NextResponse.redirect(
-              new URL("/invitation-expired", request.url)
-            );
-          }
-        }
-      }
-    }
+
+    return NextResponse.next();
   } catch (error: any) {
-    // Handle expired token
     if (error.code === "ERR_JWT_EXPIRED") {
-      // Attempt token refresh
+      const refreshToken = request.cookies.get("refresh")?.value;
+      if (!refreshToken) return NextResponse.redirect(new URL("/register", request.url));
+
+      const response = await fetch(`${SERVER_API_BASE_URL}/accounts/token/refresh/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refresh: refreshToken }),
+      });
+      if (!response.ok) return NextResponse.redirect(new URL("/register", request.url));
+
+      const { access: refreshedToken } = await response.json();
+      const res = NextResponse.next();
+      res.cookies.set({ httpOnly: true, name: "access", value: refreshedToken });
+
       try {
-        const refreshToken = request.cookies.get("refresh")?.value;
-
-        // No refresh tokens found
-        if (!refreshToken) {
-          console.log("NO REFRESH TOKEN FOUND");
-
-          return NextResponse.redirect(new URL("/register", request.url));
-        }
-
-        // Fetch new access token
-        const response = await fetch(
-          `${SERVER_API_BASE_URL}/accounts/token/refresh/`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ refresh: refreshToken }),
-          }
-        );
-        if (!response.ok) {
-          console.log("FAILED TO REFRESH TOKEN");
-
-          return NextResponse.redirect(new URL("/register", request.url));
-        }
-
-        // Update token
-        const data = await response.json();
-        const refreshedToken = data.access;
-
-        const responseWithNewToken = NextResponse.next();
-        responseWithNewToken.cookies.set({
-          httpOnly: true,
-          name: "access",
-          value: refreshedToken,
-        });
-
-        // Verify new access token
-        try {
-          const { payload } = await jose.jwtVerify(refreshedToken, secret);
-          jwtPayload = payload as jwtPayloadType;
-        } catch {
-          return NextResponse.redirect(new URL("/register", request.url));
-        }
-
-        return responseWithNewToken;
+        await jose.jwtVerify(refreshedToken, secret);
       } catch {
         return NextResponse.redirect(new URL("/register", request.url));
       }
+      return res;
     }
-    // If token is expired
     return NextResponse.redirect(new URL("/register", request.url));
   }
-  // } else if (pathname.startsWith("/register") && searchParams.has("token")) {
-  //   // Handle invitation token
-  //   const invitationToken = searchParams.get("token");
-  //   if (invitationToken) {
-  //     try {
-  //       await jose.jwtVerify(invitationToken, secret);
-  //     } catch (error: any) {
-  //       if (error.code === "ERR_JWT_EXPIRED") {
-  //         return NextResponse.redirect(
-  //           new URL("/invitation-expired", request.url)
-  //         );
-  //       }
-  //     }
-  //   }
-  // }
-  return NextResponse.next();
 }
+
+// async function runInvitationCheck(request: NextRequest) {
+//   const { searchParams } = request.nextUrl;
+//   const secret = new TextEncoder().encode(process.env.SECRET_KEY);
+//   const invitationToken = searchParams.get("token");
+
+//   if (invitationToken) {
+//     try {
+//       await jose.jwtVerify(invitationToken, secret);
+//     } catch (error: any) {
+//       if (error.code === "ERR_JWT_EXPIRED") {
+//         return NextResponse.redirect(new URL("/invitation-expired", request.url));
+//       }
+//     }
+//   }
+//   return NextResponse.next();
+// }
 
 export const config = {
   matcher: [
-    "/dashboard/:path*",
-    "/builder/:path*",
-    "/checkout/:path*",
-    "/:businessSlug/menu/update/:path*",
+    "/((?!api|_next|_vercel|.*\\..*).*)",
   ],
 };

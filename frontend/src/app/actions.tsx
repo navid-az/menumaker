@@ -6,9 +6,9 @@ import { updateTag } from "next/cache";
 import jwtDecoder from "@/lib/jwtDecoder";
 
 //types
-import { type SetupSchemaType } from "./(creator)/builder/components/setup/Setup";
-import { type BranchFormType } from "./dashboard/components/CreateBranchForm";
-import { type BuilderFormType } from "./(creator)/builder/components/builder/BuilderTest";
+import { type SetupSchemaType } from "./[locale]/(creator)/builder/components/setup/Setup";
+import { type BranchFormType } from "./[locale]/dashboard/components/CreateBranchForm";
+import { type BuilderFormType } from "./[locale]/(creator)/builder/components/builder/BuilderTest";
 import { type MenuItem } from "./types/api/menu";
 
 //configs

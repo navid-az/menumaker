@@ -4,7 +4,7 @@ import { SERVER_API_BASE_URL } from "../config";
 //functions
 import { cookies } from "next/headers";
 import { cacheLife, cacheTag } from "next/cache";
-import { Personnel } from "@/app/dashboard/personnel/columns";
+import { Personnel } from "@/app/[locale]/dashboard/personnel/columns";
 
 export default async function getPersonnel(businessSlug: string, branchSlug: string): Promise<Personnel[]> {
     const accessToken = (await cookies()).get("access")?.value;
