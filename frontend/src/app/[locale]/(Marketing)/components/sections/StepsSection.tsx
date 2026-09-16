@@ -14,33 +14,15 @@ import { useIsMobile } from '@/hooks/useIsMobile'
 
 //libraries
 import { motion, Variants } from 'motion/react'
+import { useTranslations } from 'next-intl'
 
-const steps = [
-    {
-        stepNum: '۱',
-        icon: <Building2Icon className="w-5 md:w-6 lg:w-7 xl:w-8 h-5 md:h-6 lg:h-7 xl:h-8" />,
-        title: 'رستوران خود را ثبت کنید',
-        subTitle: 'در کمتر از ۵ دقیقه حساب کاربری بسازید و رستوران یا کافه‌تان را اضافه کنید.',
-    },
-    {
-        stepNum: '۲',
-        icon: <Palette className="w-5 md:w-6 lg:w-7 xl:w-8 h-5 md:h-6 lg:h-7 xl:h-8" />,
-        title: 'منوی زیبا طراحی کنید',
-        subTitle: 'آیتم‌ها، دسته‌بندی‌ها، قیمت‌ها و تصاویر را اضافه کنید. رنگ و استایل را شخصی‌سازی کنید.',
-    },
-    {
-        stepNum: '۳',
-        icon: <QrCode className="w-5 md:w-6 lg:w-7 xl:w-8 h-5 md:h-6 lg:h-7 xl:h-8" />,
-        title: 'QR کد چاپ کنید',
-        subTitle: 'QR کد اختصاصی میزتان را دریافت و چاپ کنید. مشتریان اسکن می‌کنند و سفارش می‌دهند.',
-    },
-    {
-        stepNum: '۴',
-        icon: <ChartColumn className="w-5 md:w-6 lg:w-7 xl:w-8 h-5 md:h-6 lg:h-7 xl:h-8" />,
-        title: 'از داشبورد مدیریت کنید',
-        subTitle: 'سفارش‌ها، میزها، رزروها و آمار کسب‌وکار را در یک داشبورد هوشمند ببینید.',
-    },
-];
+//types
+type Step = {
+    stepNum: string;
+    icon: React.JSX.Element;
+    title: any;
+    subTitle: any;
+}
 
 // each step scales up from 0, staggered
 const stepVariants = {
@@ -61,25 +43,53 @@ const lineVariants = {
     }),
 };
 
-export default function StepsSection() {
+export default function StepsSection({ locale }: { locale: string }) {
+    const t = useTranslations("landing.stepsSection");
+
+    const steps = [
+        {
+            stepNum: t("steps.0.stepNum"),
+            icon: <Building2Icon className="w-5 md:w-6 lg:w-7 xl:w-8 h-5 md:h-6 lg:h-7 xl:h-8" />,
+            title: t("steps.0.title"),
+            subTitle: t("steps.0.subTitle"),
+        },
+        {
+            stepNum: t("steps.1.stepNum"),
+            icon: <Palette className="w-5 md:w-6 lg:w-7 xl:w-8 h-5 md:h-6 lg:h-7 xl:h-8" />,
+            title: t("steps.1.title"),
+            subTitle: t("steps.1.subTitle"),
+        },
+        {
+            stepNum: t("steps.2.stepNum"),
+            icon: <QrCode className="w-5 md:w-6 lg:w-7 xl:w-8 h-5 md:w-6 lg:w-7 xl:h-8" />,
+            title: t("steps.2.title"),
+            subTitle: t("steps.2.subTitle"),
+        },
+        {
+            stepNum: t("steps.3.stepNum"),
+            icon: <ChartColumn className="w-5 md:w-6 lg:w-7 xl:w-8 h-5 md:h-6 lg:h-7 xl:w-8" />,
+            title: t("steps.3.title"),
+            subTitle: t("steps.3.subTitle"),
+        },
+    ];
     return (
         <Section className='flex w-full'>
             <SectionHeader className='text-center justify-center items-center max-w-full w-full'>
-                <SectionTitle className='font-bold text-4xl md:text-5xl lg:text-6xl! leading-12 md:leading-19 text-center'>شروع ساده، <br className="hidden lg:block" />
-                    <GradientSpan>نتیجه حرفه‌ای</GradientSpan>
+                <SectionTitle className='font-bold text-4xl md:text-5xl lg:text-6xl! leading-12 md:leading-19 text-center'>{t("title.0")}<br className="hidden lg:block" />
+                    <GradientSpan>{t("title.1")}</GradientSpan>
                 </SectionTitle>
                 <SectionSubtitle className='text-center text-teal-950/60 text-sm md:text-xl! max-w-full! w-full'>
-                    در کمتر از یک روز رستوران‌تان را به سیستم هوشمند منومیکر مجهز کنید.
+                    {t("subtitle")}
                 </SectionSubtitle>
                 <div className='relative flex justify-between items-center w-full pt-8 md:pt-24 gap-6'>
-                    <Steps></Steps>
+                    <Steps locale={locale} steps={steps}></Steps>
                 </div>
             </SectionHeader>
         </Section>
     )
 
 }
-function Steps() {
+function Steps({ steps, locale }: { steps: Step[], locale: string }) {
     const isMobile = useIsMobile()
 
     const segments = steps.length - 1;
@@ -101,9 +111,10 @@ function Steps() {
                             initial="hidden"
                             whileInView="visible"
                             viewport={{ once: true }}
-                            className="absolute top-0 h-0 border-t-2 border-sad-blue origin-right"
+                            className="absolute top-0 h-0 border-t-2 border-sad-blue origin-left rtl:origin-right"
                             style={{
-                                left: `${(i * 100) / segments}%`,
+                                left: locale === 'en' ? undefined : `${(i * 100) / segments}%`,
+                                right: locale === 'en' ? `${(i * 100) / segments}%` : undefined,
                                 width: `${100 / segments}%`,
                             }}
                         />
@@ -154,6 +165,6 @@ function Step({ title, subTitle, icon, stepNum }: { title: string, subTitle: str
             <div className='scale-pro absolute top-0 -translate-y-1/2 w-6 py-0.5 lg:w-9 lg:py-1.5 text-xs lg:text-sm rounded-full bg-soft-blue text-royal-green border-2 border-sad-blue group-hover:bg-royal-green group-hover:border-royal-green group-hover:text-soft-blue transition-all duration-300'>{stepNum}</div>
             {icon}</div>
         <p className='hidden md:flex text-royal-green font-semibold text-sm md:text-base xl:text-lg'>{title}</p>
-        <p className='text-teal-950/60 text-sm md:text-xs lg:text-sm text-right leading-6 pr-16 md:pr-0 md:text-center'>{subTitle}</p>
+        <p className='text-teal-950/60 text-sm md:text-xs lg:text-sm text-start leading-6 ltr:pl-16 rtl:pr-16 md:rtl:pr-0 md:ltr:pl-0 md:text-center'>{subTitle}</p>
     </div>
 }

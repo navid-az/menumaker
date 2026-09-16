@@ -1,3 +1,5 @@
+'use client'
+
 import React from "react";
 
 //components
@@ -12,19 +14,31 @@ import { cn } from "@/lib/utils";
 import { Building2, ChevronLeft, MapPin, Star, User2 } from "lucide-react";
 import { BarChart, Radar, ScrollText, Users, Settings } from "@/app/[locale]/dashboard/components/svg";
 
+//libraries
+import { useTranslations } from "next-intl";
+
 //types
 import { TableType } from "@/app/[locale]/dashboard/[business_slug]/[branch_slug]/liveManagement/all/page";
 
 export function DashboardMockup({ isCompact = false, children }: { isCompact?: boolean, className?: string, children: React.ReactNode }) {
+    const t = useTranslations("dashboardMockup");
+
+    const dashboardData = {
+        branch: t("header.branch"),
+        businessName: t("business.name"),
+        roleLabel: t("business.roleLabel"),
+        role: t("business.role")
+    };
+
     return (
         <div className={cn("flex h-max w-max flex-col items-center select-none justify-center gap-4 rounded-[40px] border-4  border-[#c5e5e929] bg-[#243B3E] p-4", isCompact && 'border-2 border-[#C5E5E9]/20 bg-[#243B3E] p-0')}>
-            {!isCompact && <DashboardHeaderMockup></DashboardHeaderMockup>}
+            {!isCompact && <DashboardHeaderMockup branch={dashboardData.branch}></DashboardHeaderMockup>}
             {children}
         </div>
     );
 };
 
-function DashboardHeaderMockup() {
+function DashboardHeaderMockup({ branch }: { branch: string }) {
     return <div className="flex items-center w-full gap-4">
         <div className="w-65 flex justify-start px-4">
             <Logo primary="white"></Logo>
@@ -33,9 +47,9 @@ function DashboardHeaderMockup() {
             <div className="border transition-all duration-300 border-[#ffffff1d] hover:border-[#C5E5E9]/40 bg-[#ffffff1d] text-white p-2 rounded-full flex justify-between items-center min-w-3/12">
                 <div className="flex gap-2 items-center">
                     <MapPin className="size-5"></MapPin>
-                    <p className="text-sm font-normal">شعبه تهران-نیاوران</p>
+                    <p className="text-sm font-normal">{branch}</p>
                 </div>
-                <ChevronLeft></ChevronLeft>
+                <ChevronLeft className="rotate-180 rtl:rotate-0"></ChevronLeft>
             </div>
             <div className="flex gap-2">
                 <Button className="rounded-full border transition-all duration-300 border-[#ffffff1d] hover:border-[#C5E5E9]/40  bg-[#ffffff1d]" size='icon'><Star className="size-5"></Star></Button>
@@ -45,33 +59,27 @@ function DashboardHeaderMockup() {
     </div>
 }
 
-function DashboardSidebarMockup() {
+function DashboardSidebarMockup({ businessTab, navigation }: { businessTab: BusinessTab, navigation: NavItem[] }) {
     return <div className="flex flex-col gap-4 w-max">
-        <BusinessSelectorMockup></BusinessSelectorMockup>
+        <BusinessSelectorMockup businessTab={businessTab}></BusinessSelectorMockup>
         <SidebarNavigationMockup itemClassName="bg-[#243B3E] opacity-40" titleClassName="text-lg text-white font-medium"
-            activeClassName="opacity-100 after:w-1.5 after:absolute after:right-1 after:h-10 after:rounded-l-lg after:bg-sky-blue"
-            items={[
-                { title: "وضعیت فروشگاه", icon: <BarChart className="h-6 w-6" /> },
-                { title: "مدیریت زنده", icon: <Radar className="h-6 w-6" />, isActive: true },
-                { title: "آيتم و دسته‌بندی", icon: <ScrollText className="h-6 w-6" /> },
-                { title: "پرسنل", icon: <Users className="h-6 w-6" /> },
-                { title: "تنظیمات", icon: <Settings className="h-6 w-6" /> },
-            ]}></SidebarNavigationMockup>
+            activeClassName="opacity-100 after:w-1.5 after:absolute ltr:after:left-1 rtl:after:right-1 after:h-10 rtl:after:rounded-l-lg ltr:after:rounded-r-lg after:bg-sky-blue"
+            items={navigation}></SidebarNavigationMockup>
     </div>
 }
 
-function BusinessSelectorMockup() {
-    return <div className="bg-soft-blue flex flex-col border-4 border-sad-blue rounded-xl rounded-tl-[34px] p-2 w-65 gap-2">
+function BusinessSelectorMockup({ businessTab }: { businessTab: BusinessTab }) {
+    return <div className="bg-soft-blue flex flex-col border-4 border-sad-blue rounded-xl rtl:rounded-tl-[34px] ltr:rounded-tr-[34px] p-2 w-65 gap-2">
         <div className="flex justify-between items-center">
             <div className="flex gap-2 items-center justify-between">
                 <Building2></Building2>
-                <p className="text-xl font-semibold">کافه نو</p>
+                <p className="text-xl font-semibold">{businessTab.name}</p>
             </div>
-            <ChevronLeft></ChevronLeft>
+            <ChevronLeft className="rotate-180 rtl:rotate-0"></ChevronLeft>
         </div>
         <div className="flex gap-2 items-center text-royal-green">
-            <p className="text-sm text-royal-green/80">سمت شما</p>
-            <div className="border-orange-900 bg-orange-200 text-orange-900 text-xs font-normal rounded-full border px-2 py-1 w-max">صاحب مجموعه</div>
+            <p className="text-sm text-royal-green/80">{businessTab.roleLabel}</p>
+            <div className="border-orange-900 bg-orange-200 text-orange-900 text-xs font-normal rounded-full border px-2 py-1 w-max">{businessTab.role}</div>
         </div>
     </div>
 }
@@ -81,6 +89,12 @@ interface NavItem {
     icon: React.ReactNode;
     onClick?: () => void;
     isActive?: boolean;
+}
+
+interface BusinessTab {
+    name: string,
+    roleLabel: string,
+    role: string,
 }
 
 interface SidebarNavigationMockupProps {
@@ -311,19 +325,50 @@ const defaultTableDummyData: TableType[] = [
 
 // Panel Mockups
 export function LiveManagementPanelMockup({ dummyData = defaultTableDummyData, isCompact = false, isInView, activeCall = false, className }: { dummyData?: TableType[], isCompact?: boolean, isInView?: boolean, activeCall?: boolean, className?: string }) {
+    const t = useTranslations("dashboardMockup");
+
+    const navigation = [
+        {
+            title: t("navigation.0"),
+            icon: <BarChart className="h-6 w-6" />,
+        },
+        {
+            title: t("navigation.1"),
+            icon: <Radar className="h-6 w-6" />,
+            isActive: true,
+        },
+        {
+            title: t("navigation.2"),
+            icon: <ScrollText className="h-6 w-6" />,
+        },
+        {
+            title: t("navigation.3"),
+            icon: <Users className="h-6 w-6" />,
+        },
+        {
+            title: t("navigation.4"),
+            icon: <Settings className="h-6 w-6" />,
+        },
+    ];
+    const businessTab = {
+        name: t("business.name"),
+        roleLabel: t("business.roleLabel"),
+        role: t("business.role"),
+    }
+
     return <div className="flex gap-4 w-max">
-        {!isCompact && <DashboardSidebarMockup></DashboardSidebarMockup>}
+        {!isCompact && <DashboardSidebarMockup businessTab={businessTab} navigation={navigation}></DashboardSidebarMockup>}
         <div className={cn("flex flex-col gap-4 rounded-[34px] bg-[#ffffff1d] p-4", isCompact && 'bg-transparent', className)}>
             <div className="w-full rounded-full border border-[#C5E5E9]/40 bg-[#C5E5E9]/20 p-2">
                 <div className="border-royal-green flex w-max gap-2 rounded-full border bg-[#F8FEFF] p-1">
                     <Button className="bg-royal-green rounded-full px-6 text-sm text-white">
-                        همه
+                        {t("liveManagement.filters.0")}
                     </Button>
                     <Button className="text-royal-green hover:bg-royal-green/10 rounded-full bg-inherit px-6 text-sm">
-                        میز ها
+                        {t("liveManagement.filters.1")}
                     </Button>
                     <Button className="text-royal-green hover:bg-royal-green/10 rounded-full bg-inherit text-sm">
-                        سفارشات آنلاین
+                        {t("liveManagement.filters.2")}
                     </Button>
                 </div>
             </div>

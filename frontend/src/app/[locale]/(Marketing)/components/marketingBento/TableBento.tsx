@@ -6,6 +6,9 @@ import React, { useState, useEffect } from "react";
 import { Bento, BentoBody, BentoHeader, BentoTitle, BentoDescription } from "../BentoBox";
 import LiveCard from "@/app/[locale]/dashboard/components/LiveCard";
 
+//libraries
+import { useTranslations } from "next-intl";
+
 function getIdleTableData() {
     // Static – no running timers
     return {
@@ -56,6 +59,9 @@ export default function TableBento() {
         }
     }, [isHovered]);
 
+    const t = useTranslations("landing.bentoFeaturesSection.bentos");
+
+
     return <Bento
         colSpan={2}
         mobileRowSpan={2}
@@ -65,14 +71,14 @@ export default function TableBento() {
         onMouseLeave={() => setIsHovered(false)}
     >
         <BentoHeader>
-            <BentoTitle>مدیریت میز و سفارشات</BentoTitle>
+            <BentoTitle>{t("2.title")}</BentoTitle>
             <BentoDescription>
-                نمایش وضعیت میز ها و سفارشات به صورت لحظه ای
+                {t("2.subtitle")}
             </BentoDescription>
         </BentoHeader>
 
         <BentoBody className="">
-            <div className="h-full w-max absolute flex gap-0 md:gap-4 left-1/2 right-1/2 translate-x-1/2 translate-y-2/12 scale-90">
+            <div className="h-full w-max absolute flex gap-0 md:gap-4 left-1/2 right-1/2 -translate-x-1/2 rtl:translate-x-1/2 translate-y-2/12 scale-90">
                 <LiveCard
                     className="border transition-all duration-300 scale-90 md:scale-100 group-hover:scale-85 md:group-hover:scale-95"
                     table={{ ...getIdleTableData(), name: 'میز VIP' }}

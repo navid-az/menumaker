@@ -1,4 +1,173 @@
 {
-  "Landing": { "title": "Ship faster with X" },
-  "Pricing": { "title": "Simple pricing", "cta": "Get started" }
+  "landing": {
+    "hero": {
+      "title": [
+        "Manage Your Restaurant",
+        "Smarter",
+        " Than Ever",
+        " Menu Builder"
+      ],
+      "subtitle": "An all-in-one restaurant and café management platform. from building digital menus to managing your business in real time, everything in one place.",
+      "buttons": {
+        "startFree": "Get Started for Free",
+        "viewDemo": "View Demo"
+      }
+    },
+    "featureNameList": {
+      "title": ["Beyond a", " Digital Menu"],
+      "subtitle": "Menomaker is a complete operating system for modern restaurants. from beautiful menus to real-time order management, reservations, and analytics.",
+      "names": [
+        "Menu Builder",
+        "Live Management",
+        "Online Ordering",
+        "Surveys",
+        "Reservations",
+        "Analytics",
+        "Access Management",
+        "Inventory Management"
+      ]
+    },
+    "bentoFeaturesSection": {
+      "title": ["Everything for a", "Modern Restaurant"],
+      "subtitle": "From menu design to order and reservation management, everything in one platform without the need for scattered tools.",
+      "bentos": [
+        {
+          "title": "Smart Menu Builder",
+          "subtitle": "Customize your menu to match your brand identity",
+          "mockup": {
+            "server": "Server",
+            "search": "Search...",
+            "categories": ["Pasta", "Pizza", "Steak", "Burger", "Drinks"],
+            "menuItems": [
+              "Pepperoni Pizza",
+              "Margherita Pizza",
+              "Chicken & Mushroom Pizza",
+              "Four Cheese Pizza",
+              "Vegetable Pizza",
+              "Beef & Mushroom Pizza"
+            ]
+          }
+        },
+        {
+          "title": "Branch Management",
+          "subtitle": "Manage all your branches from a single dashboard",
+          "mockup": {
+            "search": "Search branches...",
+            "branches": [
+              "London Branch - Camden",
+              "London Branch - Chelsea",
+              "London Branch - Shoreditch",
+              "London Branch - Kensington"
+            ],
+            "createBranch": "Create New Branch"
+          }
+        },
+        {
+          "title": "Table & Order Management",
+          "subtitle": "View table and order statuses in real time"
+        },
+        {
+          "title": "Access Management",
+          "subtitle": "Manage team members with different roles and permission levels",
+          "mockup": {
+            "headers": ["User", "Branch", "Role"],
+            "users": [
+              {
+                "name": "James Carter",
+                "branch": "London - Camden Branch",
+                "role": "Owner"
+              },
+              {
+                "name": "Sophie Williams",
+                "branch": "London - Camden Branch",
+                "role": "Branch Manager"
+              },
+              {
+                "name": "Daniel Brown",
+                "branch": "London - Camden Branch",
+                "role": "Server"
+              }
+            ],
+            "roles": [
+              "Server",
+              "Chef",
+              "Manager",
+              "Branch Manager",
+              "Delivery Driver",
+              "Inventory Manager"
+            ]
+          }
+        }
+      ]
+    },
+    "liveManagementSection": {
+      "capsule": "Live Management",
+      "title": ["All Your Orders,", "At a Glance"],
+      "subtitle": "The live dashboard shows the real-time status of all tables, active orders, and transactions, with no need to refresh."
+    },
+    "stepsSection": {
+      "title": ["Simple Start,", "Professional Results"],
+      "subtitle": "Get your restaurant up and running with Menomaker's smart management system in less than a day.",
+      "steps": [
+        {
+          "stepNum": "1",
+          "title": "Set Up Your Restaurant",
+          "subTitle": "Create your account in under 5 minutes and add your restaurant or café."
+        },
+        {
+          "stepNum": "2",
+          "title": "Design Your Menu",
+          "subTitle": "Add items, categories, prices, and images, then customize the colors and style."
+        },
+        {
+          "stepNum": "3",
+          "title": "Print Your QR Codes",
+          "subTitle": "Get and print unique QR codes for your tables. Customers scan them to view the menu and place orders."
+        },
+        {
+          "stepNum": "4",
+          "title": "Manage From Your Dashboard",
+          "subTitle": "View orders, tables, reservations, and business insights from one smart dashboard."
+        }
+      ]
+    }
+  },
+  "dashboardMockup": {
+    "header": {
+      "branch": "Tehran - Niavaran Branch"
+    },
+    "business": {
+      "name": "Nuo Café",
+      "roleLabel": "Your Role",
+      "role": "Owner"
+    },
+    "navigation": [
+      "Store Overview",
+      "Live Management",
+      "Items & Categories",
+      "Personnel",
+      "Settings"
+    ],
+    "liveManagement": {
+      "filters": ["All", "Tables", "Online Orders"],
+      "tables": [
+        "Table 1",
+        "Table 2",
+        "Table 3",
+        "Table 4",
+        "Table 6",
+        "Table 7",
+        "Table 8",
+        "Table 9"
+      ],
+      "locations": [
+        "Near window",
+        "Center hall",
+        "Patio",
+        "Balcony",
+        "Main hall",
+        "Corner"
+      ]
+    }
+  }
 }

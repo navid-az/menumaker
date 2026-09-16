@@ -224,7 +224,7 @@ const defaultTableDummyData = [
 export default function HeroSection() {
     const [activeCall, setActiveCall] = useState(false)
 
-    const t = useTranslations('Landing');
+    const t = useTranslations('landing');
 
     const ref = useRef<HTMLDivElement>(null);
 
@@ -249,33 +249,33 @@ export default function HeroSection() {
         <Section className='relative flex flex-col lg:flex-row overflow-hidden gap-16 md:gap-12 h-200 sm:h-240 md:h-270 lg:h-screen'>
             <SectionHeader className='w-full max-w-full flex-1 items-center md:items-start'>
                 <SectionTitle className='flex flex-col items-center leading-13! xl:leading-relaxed! text-4xl md:text-4xl md:items-start'>
-                    <p>{t('title')}</p>
-                    <div><GradientSpan>هوشمند</GradientSpan> تر از همیشه </div>
-                    <div><GradientSpan>+</GradientSpan> موتور منو ساز</div>
+                    <p className='text-center'>{t('hero.title.0')}</p>
+                    <div><GradientSpan>{t('hero.title.1')}</GradientSpan>{t('hero.title.2')}</div>
+                    <div><GradientSpan>+</GradientSpan>{t('hero.title.3')}</div>
                 </SectionTitle>
-                <SectionSubtitle className='leading-relaxed text-teal-950/80 text-center max-w-sm md:max-w-md md:text-right'>
-                    سیستم یکپارچه مدیریت رستوران و کافه؛ از ساخت منوی دیجیتال تا مدیریت لحظه‌ای کسب‌وکار، همه در یک پلتفرم.
+                <SectionSubtitle className='leading-relaxed text-teal-950/80 text-center max-w-sm md:max-w-md md:text-start'>
+                    {t('hero.subtitle')}
                 </SectionSubtitle>
                 <div className='flex gap-4 xl:mt-4'>
                     <Button asChild className='group lg:h-11 lg:px-8 bg-royal-green hover:scale-105 border-2 border-royal-green rounded-full text-white hover:bg-royal-green/90 transition-all duration-300'>
                         <Link href={'/builder'}>
-                            <p className='group-hover:scale-95 transition-all duration-300 scale-pro'>شروع رایگان</p>
+                            <p className='group-hover:scale-95 transition-all duration-300 scale-pro'>{t('hero.buttons.startFree')}</p>
                         </Link>
                     </Button>
                     <Button asChild className='group lg:h-11 lg:px-8 bg-soft-blue hover:scale-105 border lg:border-2 border-sad-blue rounded-full text-royal-green hover:border-royal-green/60 transition-all duration-300'>
                         <Link href={'/builder'}>
-                            <p className='group-hover:scale-95 transition-all duration-300 scale-pro'>مشاهده دمو</p>
+                            <p className='group-hover:scale-95 transition-all duration-300 scale-pro'>{t('hero.buttons.viewDemo')}</p>
                         </Link>
                     </Button>
                 </div>
             </SectionHeader>
             <div className='group relative w-7/12 sm:w-6/12 lg:w-6/12 xl:w-5/12 h-full'>
-                <motion.div ref={ref} className='absolute scale-40 sm:scale-55 md:scale-70 origin-top-right lg:scale-70 xl:scale-75 top-0 right-0'>
+                <motion.div ref={ref} className='absolute scale-40 sm:scale-55 md:scale-70 ltr:origin-top-left rtl:origin-top-right lg:scale-70 xl:scale-75 top-0 rtl:right-0 ltr:left-0'>
                     <DashboardMockup>
                         <LiveManagementPanelMockup dummyData={defaultTableDummyData} activeCall={activeCall} isInView={isInView}></LiveManagementPanelMockup>
                     </DashboardMockup>
                 </motion.div>
-                <IPhoneMockup className='select-none top-4/12 sm:top-4/12 md:top-4/12 lg:top-5/12 origin-top translate-x-1/2 absolute w-80 scale-45 sm:scale-60 md:scale-80 lg:scale-70 xl:scale-80' screenClassName='rounded-[36px]'>
+                <IPhoneMockup className='select-none top-4/12 sm:top-4/12 md:top-4/12 lg:top-5/12 origin-top ltr:-translate-x-1/2 rtl:translate-x-1/2 absolute w-80 scale-45 sm:scale-60 md:scale-80 lg:scale-70 xl:scale-80' screenClassName='rounded-[36px]'>
                     <IPhoneMockup.Screen className='hide-scrollbar overflow-hidden'>   <div id="menu-mockup" className="px-2">
                         {/* ========== Header badges ========== */}
                         <div className="h-4/12 pt-10 flex justify-between items-center">

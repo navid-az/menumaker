@@ -48,7 +48,7 @@ export function SectionTitle({
   return (
     <h2
       className={cn(
-        "text-3xl lg:text-4xl xl:text-5xl leading-snug font-semibold lg:font-bold text-royal-green text-right",
+        "text-3xl lg:text-4xl xl:text-5xl leading-snug font-semibold lg:font-bold text-royal-green",
         center && "text-center",
         className
       )}
@@ -75,7 +75,7 @@ export function SectionSubtitle({
   return (
     <p
       className={cn(
-        "text-soft-blue/60 font-light max-w-5/6 lg:max-w-md xl:max-w-xl text-right text-sm lg:text-base xl:text-lg",
+        "text-soft-blue/60 font-light max-w-5/6 lg:max-w-md xl:max-w-xl text-sm lg:text-base xl:text-lg",
         center && "mx-auto text-center",
         className
       )}
