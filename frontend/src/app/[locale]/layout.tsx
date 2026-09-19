@@ -8,6 +8,9 @@ import Providers from "../providers";
 
 import localFont from "next/font/local";
 
+//fonts
+import { Inter } from "next/font/google";
+
 //libraries
 import { NextIntlClientProvider } from 'next-intl';
 import { routing } from '@/i18n/routing';
@@ -16,11 +19,20 @@ import { routing } from '@/i18n/routing';
 import type { Metadata } from "next";
 import getLocale from "@/lib/i18n/getLocale";
 
+//contexts
+import { DirectionProvider } from "@radix-ui/react-direction";
+
 const vazirmatn = localFont({
   src: "../../fonts/Vazirmatn[wght].woff2",
   variable: "--font-vazirmatn",
   display: "swap",
   weight: "100 900",
+});
+
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -46,21 +58,24 @@ export default async function RootLayout({
   return (
     <html lang={locale} dir={locale === "fa" ? "rtl" : "ltr"} >
       <body
-        className={cn(vazirmatn.className,
+        className={cn(
+          locale === "fa" ? vazirmatn.className : inter.className,
           "overflow-x-hidden bg-white flex flex-col min-h-screen"
         )}
       >
         <NextIntlClientProvider>
 
           {/* data-vaul-drawer-wrapper */}
-          <Providers>
-            <main>
-              {children}
-              <Toaster duration={4000} />
-            </main>
-          </Providers>
+          <DirectionProvider dir={locale === "fa" ? "rtl" : "ltr"}>
+            <Providers>
+              <main>
+                {children}
+                <Toaster duration={4000} />
+              </main>
+            </Providers>
+          </DirectionProvider>
         </NextIntlClientProvider>
       </body>
-    </html>
+    </html >
   );
 }

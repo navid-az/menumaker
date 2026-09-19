@@ -3,6 +3,7 @@ import { BranchSelector } from "./BranchSelector";
 import { UserProfile } from "@/components/global/UserProfile";
 import { Button } from "@/components/ui/button";
 import SubscriptionPopOver from "./SubscriptionPopOver";
+import LocaleSwitcher from "@/components/global/LocalSwitcher";
 
 //SVGs
 import { User2 } from "lucide-react";
@@ -53,6 +54,7 @@ export async function DashboardHeader({
         <Suspense fallback={<Skeleton className="size-10" />}>
           <UserProfileSection />
         </Suspense>
+        <LocaleSwitcher />
       </div>
     </header>
   );

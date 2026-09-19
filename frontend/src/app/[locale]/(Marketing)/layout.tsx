@@ -4,14 +4,20 @@ import React from "react";
 import { Navbar } from "@/components/global/NavBar";
 import Footer from "@/components/global/Footer";
 
-export default function LandingPageLayout({
+//functions
+import getLocale from "@/lib/i18n/getLocale";
+
+export default async function LandingPageLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+
+  const locale = await getLocale()
+
   return (
     <div>
-      <Navbar></Navbar>
+      <Navbar locale={locale}></Navbar>
       {children}
       <Footer></Footer>
     </div>

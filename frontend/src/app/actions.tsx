@@ -619,3 +619,13 @@ export async function deleteImage(assetId: number) {
     return { success: false, error: error.message || "Failed to delete image" };
   }
 }
+
+// Set cookie for localization
+export async function setLocaleCookie(locale: 'en' | 'fa') {
+  const store = await cookies();
+  store.set('NEXT_LOCALE', locale, {
+    path: '/',
+    maxAge: 60 * 60 * 24 * 365,
+    sameSite: 'lax',
+  });
+}

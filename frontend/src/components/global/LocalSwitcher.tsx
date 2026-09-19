@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
 import { setLocaleCookie } from '@/app/actions';
 import { Button } from '../ui/button';
-import { Globe, Languages } from 'lucide-react';
+import { Globe } from 'lucide-react';
 
 export default function LocaleSwitcher() {
     const locale = useLocale();
@@ -22,7 +22,7 @@ export default function LocaleSwitcher() {
     }
 
     return (
-        <Button className='bg-royal-green text-soft-blue transition-all duration-300' size='icon' onClick={toggle} disabled={isPending}>
+        <Button className='size-10 text-royal-green bg-inherit hover:bg-royal-green/8 transition-all duration-300' size='icon' onClick={toggle} disabled={isPending}>
             {locale === 'fa' ? <Globe /> : <Globe />}
         </Button>
     );

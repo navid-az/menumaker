@@ -20,7 +20,10 @@ import Link from "next/link";
 import { Button } from "../ui/button";
 import { UserProfile } from "./UserProfile";
 
-export default function AuthSection() {
+//libraries
+import { useTranslations } from "next-intl";
+
+export default function AuthSection({ locale }: { locale: string }) {
   const [user, setUser] = useState<User | null>();
   const [businesses, setBusinesses] = useState<Business[] | null>();
   const [isLoading, setIsLoading] = useState(true);
@@ -28,6 +31,8 @@ export default function AuthSection() {
 
   const searchParams = useSearchParams();
   const isDemo = searchParams.get("demo") === "true";
+
+  const t = useTranslations('userProfile')
 
   useEffect(() => {
     if (user && businesses) {
@@ -57,13 +62,17 @@ export default function AuthSection() {
       className={cn(
         "transition-all duration-300",
         isLoading ? "blur-sm" : "blur-none",
-        isAuthenticated ? "w-10" : "w-[109px]"
+        isAuthenticated
+          ? "w-10"
+          : locale === "fa"
+            ? "w-[109px]"
+            : "w-20"
       )}
     >
       {user && businesses ? (
-        <UserProfile user={user} businesses={businesses}>
-          <Button disabled={isLoading} size="icon" className="size-10 bg-royal-green">
-            <User2 className="size-6 text-soft-blue"></User2>
+        <UserProfile locale={locale} user={user} businesses={businesses}>
+          <Button disabled={isLoading} size="icon" className="size-10 bg-inherit hover:bg-royal-green/8 transition-all duration-300">
+            <User2 className="size-6 text-royal-green"></User2>
           </Button>
         </UserProfile>
       ) : (
@@ -74,7 +83,7 @@ export default function AuthSection() {
         >
           <Link className="h-10 bg-red-600 w-full" href={"/register"}>
             <p className="transition-all duration-300 scale-pro group-hover:scale-90">
-              ورود | ثبت نام
+              {t('loginButton')}
             </p>
           </Link>
         </Button>

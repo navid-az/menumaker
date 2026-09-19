@@ -5,7 +5,12 @@ import Link from "next/link";
 import { Button } from "../ui/button";
 import Logo from "./Logo";
 
-function Footer() {
+//libraries
+import { getTranslations } from "next-intl/server";
+
+async function Footer() {
+  const t = await getTranslations('footer')
+
   return (
     <footer className="w-full bg-royal-green relative mt-16">
       <div className="flex flex-col gap-8 md:gap-12 items-center justify-center text-5xl md:text-6xl font-bold py-48">
@@ -32,7 +37,7 @@ function Footer() {
           }}
         />
         <div className="flex flex-col leading-16 items-center justify-center gap-4 md:gap-6 select-none">
-          <h2 className="text-soft-blue">فروشگاه خود را</h2>
+          <h2 className="text-soft-blue">{t('cta.title.0')}</h2>
           <span
             style={{
               background: `linear-gradient(135deg, #94d9e2 0%, #a1fcb5 50%, #5263ff 100%)`,
@@ -42,11 +47,10 @@ function Footer() {
             }}
             className="h-16"
           >
-            همین الان بسازید
+            {t('cta.title.1')}
           </span>
           <h4 className="text-soft-blue/40 font-light max-w-5/6 md:max-w-xl text-base md:text-xl text-center leading-6 md:leading-10">
-            به جمع رستوران‌ها و کافه‌هایی بپیوندید که با منو میکر تجربه مدیریت را
-            متحول کرده‌اند.
+            {t('cta.subtitle')}
           </h4>
         </div>
         <div className="gap-4 flex">
@@ -54,19 +58,19 @@ function Footer() {
             asChild
             className="px-6 py-5 md:px-9 md:py-7 rounded-xl text-sm md:text-xl font-medium bg-soft-blue text-royal-green border-2 border-soft-blue transition-all duration-300 hover:scale-95"
           >
-            <Link href={"/builder"}>شروع رایگان!</Link>
+            <Link href={"/builder"}>{t('cta.buttons.startFree')}</Link>
           </Button>
           <Button
             asChild
             className="px-6 py-5 md:px-9 md:py-7 rounded-xl text-sm md:text-xl font-medium bg-royal-green text-soft-blue border-2 border-soft-blue/40 hover:bg-sky-blue/15 transition-all duration-300 hover:scale-95"
           >
-            <Link href={"/builder"}>مشاهده دمو</Link>
+            <Link href={"/builder"}>{t('cta.buttons.viewDemo')}</Link>
           </Button>
         </div>
       </div>
       <div className="flex flex-col lg:flex-row justify-between gap-2 lg:gap-6 relative items-center py-4 px-4 md:px-16 text-soft-blue bg-primary backdrop-blur-2xl">
         <p className="hidden lg:block text-sm font-light absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full text-center opacity-40 select-none">
-          © 1405 منو میکر - تمامی حقوق محفوظ است.
+          {t('copyright')}
         </p>
         <div className="flex justify-between flex-col sm:flex-row items-start lg:items-center w-full gap-2">
           <Link
@@ -77,18 +81,18 @@ function Footer() {
           </Link>
           <div className="flex w-full sm:w-auto justify-center sm:justify-end">
             <Button className="text-xs lg:text-sm font-light text-soft-blue/40 hover:text-soft-blue transition-colors duration-300">
-              حریم خصوصی
+              {t('links.0')}
             </Button>
             <Button className="text-xs lg:text-sm font-light text-soft-blue/40 hover:text-soft-blue transition-colors duration-300">
-              تماس با ما
+              {t('links.1')}
             </Button>
             <Button className="text-xs lg:text-sm font-light text-soft-blue/40 hover:text-soft-blue transition-colors duration-300">
-              درباره ما
+              {t('links.2')}
             </Button>
           </div>
         </div>
         <p className="lg:hidden text-xs lg:text-sm font-light w-full text-center opacity-40 select-none">
-          © 1405 منو میکر — تمامی حقوق محفوظ است.
+          {t('copyright')}
         </p>
       </div>
     </footer>

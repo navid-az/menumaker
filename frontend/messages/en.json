@@ -132,6 +132,21 @@
       ]
     }
   },
+  "navbar": {
+    "links": ["Solutions", "Menu Builder", "Pricing", "About Us", "Contact Us"]
+  },
+  "footer": {
+    "cta": {
+      "title": ["Build Your Restaurant", "Start Today"],
+      "subtitle": "Join restaurants and cafés that are transforming the way they manage their businesses with Menomaker.",
+      "buttons": {
+        "startFree": "Get Started Free!",
+        "viewDemo": "View Demo"
+      }
+    },
+    "copyright": "© 2026 Menomaker - All rights reserved.",
+    "links": ["Privacy Policy", "Contact Us", "About Us"]
+  },
   "dashboardMockup": {
     "header": {
       "branch": "Tehran - Niavaran Branch"
@@ -169,5 +184,17 @@
         "Corner"
       ]
     }
+  },
+  "userProfile": {
+    "demo": { "capsule": "Demo" },
+    "loginButton": "Signup",
+    "navButtons": [
+      "Analytics",
+      "Live Management",
+      "Items & Categories",
+      "Personnel",
+      "Settings",
+      "Logout"
+    ]
   }
 }
