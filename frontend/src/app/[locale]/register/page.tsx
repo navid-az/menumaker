@@ -16,7 +16,7 @@ import RegisterBtn from "./components/RegisterBtn";
 import CredentialStep from "./components/CredentialStep";
 import OtpStep from "./components/OtpStep";
 import OtpCountdown from "./components/OtpCountdown";
-import DemoModeWrapper from "./components/DemoModeBtn";
+import DemoModeBtn from "./components/DemoModeBtn";
 
 
 //libraries
@@ -24,6 +24,7 @@ import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, FieldErrors } from "react-hook-form";
 import { motion, AnimatePresence } from "motion/react";
+import { useTranslations } from "next-intl";
 
 //hooks
 import { useSlider } from "@/lib/stores";
@@ -50,22 +51,24 @@ type RegisterForm = {
   otp: string;
 };
 
-//schemas
-const phoneSchema = z.object({
-  phone_number: z.string().min(11, "لطفا این قسمت را خالی نگذارید"),
-});
-const otpSchema = z.object({
-  phone_number: z
-    .string({ required_error: "لطفا این قسمت را خالی نگذارید" })
-    .min(10),
-  otp: z.string({ required_error: "لطفا این قسمت را خالی نگذارید" }),
-});
-
 export default function Page() {
   const { sectionIndex, stepIndex, setStepIndex, direction, reset } =
     useSlider();
 
   const [isLoading, setIsLoading] = useState(false);
+
+  const t = useTranslations("register");
+
+  //schemas
+  const phoneSchema = z.object({
+    phone_number: z.string().min(11, t("validation.required")),
+  });
+  const otpSchema = z.object({
+    phone_number: z
+      .string({ required_error: t("steps.credentials.subtitle") })
+      .min(10),
+    otp: z.string({ required_error: t("steps.credentials.subtitle") }),
+  });
 
   //form step state
   const [step, setStep] = useState(1);
@@ -91,17 +94,17 @@ export default function Page() {
   const sections = [
     {
       id: "register",
-      title: "ورود | ثبت نام",
+      title: t("title"),
       steps: [
         {
           id: "credentials",
-          subtitle: "لطفا شماره موبایل خود را وارد کنید",
+          subtitle: t("steps.credentials.subtitle"),
           component: <CredentialStep stepId="credentials"></CredentialStep>,
           show: true,
         },
         {
           id: "otp",
-          subtitle: "کد ارسال شده به شماره موبایل خود را وارد کنید",
+          subtitle: t("steps.otp.subtitle"),
           component: <OtpStep focus={step === 2} stepId="otp"></OtpStep>,
           show: true,
         },
@@ -186,9 +189,9 @@ export default function Page() {
         const { access, refresh } = result.tokens;
         setIsLoading(false);
         createAuthCookies(access, refresh);
-        toast.success("ورود با موفقیت انجام شد");
+        toast.success(t("toasts.loginSuccess"));
       } else {
-        toast.error("کد وارد شده اشتباه است");
+        toast.error(t("toasts.invalidOtp"));
         setIsLoading(false);
         form.setValue("otp", "");
       }
@@ -213,7 +216,7 @@ export default function Page() {
           <SliderHeader>
             <div className="flex flex-col w-full gap-6">
               <SliderTitle></SliderTitle>
-              {DEMO_MODE_ENABLED && <DemoModeWrapper></DemoModeWrapper>}
+              {DEMO_MODE_ENABLED && <DemoModeBtn t={t}></DemoModeBtn>}
             </div>
           </SliderHeader>
           <SliderBody>
@@ -246,23 +249,24 @@ export default function Page() {
                     form.trigger();
                   }}
                   retryAfter={retryAfter}
+                  t={t}
                 ></OtpCountdown>
                 <Button
                   onClick={handleCredentialReset}
                   disabled={step === 1}
                   className="flex-1 hover:scale-105 transition-all duration-300 scale-pro bg-sad-blue border-royal-green/10 border-2 text-royal-green rounded-full"
                 >
-                  ویرایش شماره موبایل
+                  {t('buttons.editPhone')}
                 </Button>
               </div>
               <div className="flex flex-col gap-4">
                 <RegisterBtn
-                  text={step === 1 ? "دریافت کد" : "ورود"}
+                  text={step === 1 ? t('submitButton.otp') : t('submitButton.signIn')}
                   isLoading={isLoading}
                 ></RegisterBtn>
-                {DEMO_MODE_ENABLED && <div className={cn('w-full opacity-0 flex justify-center items-center text-xs gap-1.5 font-light text-royal-green/60 -mt-16 transition-all duration-300', step === 2 && 'mt-0 opacity-100 delay-1000')}>
+                {DEMO_MODE_ENABLED && <div className={cn('w-full opacity-0 flex justify-center items-center text-xs gap-1.5 font-light text-royal-green/60 -mt-16 transition-all duration-300 select-none', step === 2 && 'mt-0 opacity-100 delay-1000')}>
                   <Info className="size-3.5" strokeWidth={'1.5px'}></Info>
-                  <p>در حالت دمو سرویس OTP غیر‌فعال می‌باشد</p>
+                  <p>{t('demoMode.otpDisabled')}</p>
                 </div>}
               </div>
             </div>

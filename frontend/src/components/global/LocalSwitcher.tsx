@@ -8,7 +8,10 @@ import { setLocaleCookie } from '@/app/actions';
 import { Button } from '../ui/button';
 import { Globe } from 'lucide-react';
 
-export default function LocaleSwitcher() {
+//libraries
+import { cn } from '@/lib/utils';
+
+export default function LocaleSwitcher({ className }: { className?: string }) {
     const locale = useLocale();
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
@@ -22,8 +25,8 @@ export default function LocaleSwitcher() {
     }
 
     return (
-        <Button className='size-10 text-royal-green bg-inherit hover:bg-royal-green/8 transition-all duration-300' size='icon' onClick={toggle} disabled={isPending}>
-            {locale === 'fa' ? <Globe /> : <Globe />}
+        <Button className={cn('group size-10 text-royal-green bg-inherit hover:bg-royal-green/8 hover:scale-110 scale-pro transition-all duration-300', className)} size='icon' onClick={toggle} disabled={isPending}>
+            <Globe className='transition-all duration-300 scale-pro group-hover:scale-90' />
         </Button>
     );
 }

@@ -10,16 +10,26 @@ import { formatTime } from "@/lib/formatTime";
 //functions
 import { cn } from "@/lib/utils";
 
+//libraries
+import { useLocale } from "next-intl";
+
+//types 
+import { _Translator } from "next-intl";
+
 export default function OtpCountdown({
   retryAfter,
   onClick,
   onFinish,
+  t
 }: {
   retryAfter: number;
   onClick: () => void;
   onFinish?: () => void;
+  t: _Translator<Record<string, any>, "register">
 }) {
   const [timeLeft, setTimeLeft] = useState(retryAfter);
+
+  const locale = useLocale()
 
   useEffect(() => {
     const remaining = Math.max(0, Math.floor((retryAfter - Date.now()) / 1000));
@@ -53,9 +63,12 @@ export default function OtpCountdown({
           timeLeft > 0 ? "mr-0 opacity-100" : "-mr-[54px] opacity-0"
         )}
       >
-        {toPersianDigits(formatTime(timeLeft * 1000))} تا
+        {t("buttons.resendCode.countdown", {
+          time: locale === "fa"
+            ? toPersianDigits(formatTime(timeLeft * 1000))
+            : formatTime(timeLeft * 1000),
+        })}
       </span>
-      ارسال مجدد کد
     </Button>
   );
 }

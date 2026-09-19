@@ -15,14 +15,14 @@ export default function LoginBanner() {
         width={600}
         height={600}
         alt="two squares"
-        className="absolute -left-52 -rotate-12 md:-bottom-32 md:h-[350px] md:w-[350px] lg:-bottom-52 lg:-left-52 lg:h-[450px] lg:w-[450px] xl:-bottom-72 xl:-left-80 xl:h-[600px] xl:w-[600px]"
+        className="absolute -inset-e-52 ltr:-rotate-140 rtl:-rotate-12 md:-bottom-32 md:h-[350px] md:w-[350px] lg:-bottom-52 lg:-inset-e-52 lg:h-[450px] lg:w-[450px] xl:-bottom-72 xl:-inset-e-80 xl:h-[600px] xl:w-[600px]"
       ></Image>
       <Image
         src="/images/two-square.svg"
         width={600}
         height={600}
         alt="two squares"
-        className="absolute -right-72 z-40 rotate-[160deg] md:-top-32 md:h-[350px] md:w-[350px] lg:-top-52 xl:-right-80 lg:h-[450px] lg:w-[450px] xl:-top-72 xl:-left-80 xl:h-[600px] xl:w-[600px]"
+        className="absolute -inset-s-72 z-40 ltr:rotate-35 rtl:rotate-[160deg] md:-top-32 md:h-[350px] md:w-[350px] lg:-top-52 lg:h-[450px] lg:w-[450px] xl:-top-72 xl:-inset-s-80 xl:h-[600px] xl:w-[600px]"
       ></Image>
     </div>
   );

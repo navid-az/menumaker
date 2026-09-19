@@ -1,7 +1,3 @@
-'use client'
-
-import React from 'react'
-
 //components
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -10,29 +6,33 @@ import { Button } from "@/components/ui/button";
 import { createDemoUser } from '@/app/actions/auth/register';
 import { createAuthCookies } from '@/app/actions/auth/register';
 
-export default function DemoModeWrapper() {
+//types 
+import { _Translator } from "next-intl";
+
+export default function DemoModeBtn({ t }: { t: _Translator<Record<string, any>, "register"> }) {
+
     async function startDemo() {
         const result = await createDemoUser();
         if (result.success) {
             const { access, refresh } = result.tokens;
             createAuthCookies(access, refresh);
-            toast.success("(Demo Mode)ورود با موفقیت انجام شد");
+            toast.success(t('demoMode.loginSuccess'));
         } else {
-            toast.error("خطایی رخ داد!");
+            toast.error(t('demoMode.error'));
         }
     }
     return (
         <div className="group flex flex-col gap-4 w-full p-4 rounded-md hover:border-royal-green bg-white border-2 border-sad-blue transition-all duration-300 has-[button:hover]:border-royal-green">
             <div className="flex gap-1 flex-col">
-                <div className="flex justify-between">
-                    <p className="font-medium">برای ورود به حالت دمو اینجا کلیک کنید</p>
+                <div className="flex justify-between items-center">
+                    <p className="font-medium">{t('demoMode.title')}</p>
                     <span className="px-4 py-1.5 rounded-full bg-yellow-200 text-yellow-950 w-max text-sm font-normal">
-                        <p>حالت دمو</p>
+                        <p>{t('demoMode.badge')}</p>
                     </span>
                 </div>
 
                 <p className=" font-normal text-sm text-royal-green/90 w-5/6">
-                    در حالت دمو، داشبورد مدیریتی پس از ساخت فروشگاه و منو، به‌صورت خودکار با اطلاعات نمونه تکمیل می‌شود.
+                    {t('demoMode.description')}
                 </p>
             </div>
             <Button
@@ -41,7 +41,7 @@ export default function DemoModeWrapper() {
                 type="button"
                 onClick={startDemo}
             >
-                فعالسازی حالت دمو
+                {t('demoMode.submitButton')}
             </Button>
         </div>
     );

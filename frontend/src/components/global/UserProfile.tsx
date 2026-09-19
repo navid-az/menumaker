@@ -126,7 +126,7 @@ export function UserProfile({
             <DropdownMenuItem asChild className="flex gap-2 py-2">
               <Link href={"/builder"}>
                 <Plus></Plus>
-                <p>ثبت مجموعه جدید</p>
+                <p>{t('createBusinessButton')}</p>
               </Link>
             </DropdownMenuItem>
           </DropdownMenuGroup>

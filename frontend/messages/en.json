@@ -188,6 +188,7 @@
   "userProfile": {
     "demo": { "capsule": "Demo" },
     "loginButton": "Signup",
+    "createBusinessButton": "New Business",
     "navButtons": [
       "Analytics",
       "Live Management",
@@ -196,5 +197,40 @@
       "Settings",
       "Logout"
     ]
+  },
+  "register": {
+    "title": "Sign In | Sign Up",
+    "steps": {
+      "credentials": {
+        "subtitle": "Please enter your mobile number"
+      },
+      "otp": {
+        "subtitle": "Enter the code sent to your mobile number"
+      }
+    },
+    "submitButton": { "otp": "Receive OTP", "signIn": "SignIn" },
+    "buttons": {
+      "editPhone": "Edit Mobile Number",
+      "resendCode": {
+        "countdown": "Resend code in {time}",
+        "button": "Resend Code"
+      }
+    },
+    "validation": {
+      "required": "Please fill out this field"
+    },
+    "toasts": {
+      "loginSuccess": "Signed in successfully",
+      "invalidOtp": "The code you entered is incorrect"
+    },
+    "demoMode": {
+      "otpDisabled": "The OTP service is disabled in demo mode",
+      "title": "Click here to enter demo mode",
+      "badge": "Demo Mode",
+      "description": "In demo mode, the dashboard is automatically populated with sample data after you create a store and menu.",
+      "submitButton": "Enable Demo Mode",
+      "loginSuccess": "Signed in successfully (Demo Mode)",
+      "error": "Something went wrong!"
+    }
   }
 }
