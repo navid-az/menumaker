@@ -670,7 +670,7 @@ export function LiveCardFooter({
   }, [progressType, footerAlert]);
 
   return (
-    <div className="h-10 w-full rtl:flex-row-reverse flex justify-between items-center px-2 py-2 rounded-full">
+    <div className="h-10 w-full flex justify-between items-center px-2 py-2 rounded-full">
       {/* <p className="font-semibold blur-2xl">{footerAlert}</p> */}
       <motion.p
         animate={{
