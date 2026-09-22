@@ -12,6 +12,9 @@ import getAssetGroups from "@/lib/assets/getAssetGroups";
 import getMenuItems from "@/lib/business/getMenuItems";
 import getMenuCategories from "@/lib/business/getMenuCategories";
 
+//libraries
+import { getTranslations } from "next-intl/server";
+
 //SVGs
 import { CircleAlert } from "lucide-react";
 
@@ -29,6 +32,8 @@ export default function Page(props: { params: ParamsPromise }) {
 
 async function ItemsContent({ paramsPromise }: { paramsPromise: ParamsPromise }) {
   const { business_slug, branch_slug } = await paramsPromise;
+
+  const t = await getTranslations('dashboard.data')
 
   const [visibleItems, hiddenItems, assetGroups, categories] = await Promise.all([
     getMenuItems(business_slug, branch_slug, "visible"),
@@ -48,16 +53,16 @@ async function ItemsContent({ paramsPromise }: { paramsPromise: ParamsPromise })
           <EmptyMedia variant="icon">
             <CircleAlert />
           </EmptyMedia>
-          <EmptyTitle>هیچ دسته‌بندی‌ ای برای نمایش وجود ندارد</EmptyTitle>
+          <EmptyTitle>{t('categories.empty.title')}</EmptyTitle>
           <EmptyDescription className="min-w-2xl">
-            شما هیچ دسته‌بندی‌ ای ایجاد نکرده‌ اید. با ایجاد یک دسته‌بندی جدید شروع کنید
+            {t('categories.empty.description')}
           </EmptyDescription>
         </EmptyHeader>
         <EmptyContent className="flex-row justify-center gap-2">
           <CreateCategoryForm
             assetGroups={assetGroups}
-            title="ایجاد دسته‌بندی جدید"
-            description="با انتخاب گزینه‌های مورد نظر دسته‌بندی جدید به منو اضافه کنید"
+            title={t('categories.empty.button.title')}
+            description={t('categories.empty.button.description')}
             businessSlug={business_slug}
           />
         </EmptyContent>
@@ -73,9 +78,9 @@ async function ItemsContent({ paramsPromise }: { paramsPromise: ParamsPromise })
           <EmptyMedia variant="icon">
             <CircleAlert />
           </EmptyMedia>
-          <EmptyTitle>هیچ آيتمی برای نمایش وجود ندارد</EmptyTitle>
+          <EmptyTitle>{t('items.empty.title')}</EmptyTitle>
           <EmptyDescription className="min-w-2xl">
-            شما هیچ آیتمی ایجاد نکرده اید. با ایجاد یک آیتم جدید شروع کنید
+            {t('items.empty.description')}
           </EmptyDescription>
         </EmptyHeader>
         <EmptyContent className="flex-row justify-center gap-2">
@@ -83,8 +88,8 @@ async function ItemsContent({ paramsPromise }: { paramsPromise: ParamsPromise })
             businessSlug={business_slug}
             branchSlug={branch_slug}
             categories={categories}
-            title="ایجاد آیتم جدید"
-            description="با انتخاب گزینه های مورد نظر آیتم جدید به منو اضافه کنید"
+            title={t('items.empty.button.title')}
+            description={t('items.empty.button.description')}
           />
         </EmptyContent>
       </Empty>

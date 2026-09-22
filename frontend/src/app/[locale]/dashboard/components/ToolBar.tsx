@@ -1,7 +1,5 @@
 "use client";
 
-import React from "react";
-
 import { useParams } from "next/navigation";
 
 //components
@@ -11,6 +9,9 @@ import { CreateItemForm } from "./CreateItemForm";
 import { CreateTableForm } from "./CreateTableForm";
 import { CreateCategoryForm } from "./CreateCategoryForm";
 import { CreateUpdatePersonnelForm } from "./CreateUpdatePersonnelForm";
+
+//libraries
+import { useTranslations } from "next-intl";
 
 //hooks
 import { usePathname } from "next/navigation";
@@ -41,6 +42,8 @@ export default function ToolBar({
   const parentSection = lastTwoSections[0];
   const childSection = lastTwoSections[1];
 
+  const t = useTranslations('dashboard.toolbar')
+
   if (childSection === "settings") {
     return null;
   } else {
@@ -51,47 +54,47 @@ export default function ToolBar({
           <DashboardTabs>
             <DashboardTabsTrigger
               path="items"
-              title="آیتم ها"
+              title={t("data.tabs.items")}
             ></DashboardTabsTrigger>
             <DashboardTabsTrigger
               path="categories"
-              title="دسته بندی ها"
+              title={t("data.tabs.categories")}
             ></DashboardTabsTrigger>
             <DashboardTabsTrigger
               disabled
               path="offers"
-              title="تخفیف ها"
+              title={t("data.tabs.offers")}
             ></DashboardTabsTrigger>
             <DashboardTabsTrigger
               disabled
               path="costs"
-              title="هزینه های مازاد"
+              title={t("data.tabs.additionalCosts")}
             ></DashboardTabsTrigger>
           </DashboardTabs>
         ) : parentSection === "liveManagement" && childSection === "all" ? (
           <DashboardTabs>
-            <DashboardTabsTrigger path="all" title="همه"></DashboardTabsTrigger>
+            <DashboardTabsTrigger path="all" title={t("liveManagement.tabs.all")}></DashboardTabsTrigger>
             <DashboardTabsTrigger
               disabled
               path="in-person"
-              title="بر روی میز"
+              title={t("liveManagement.tabs.inPerson")}
             ></DashboardTabsTrigger>
             <DashboardTabsTrigger
               disabled
               path="online"
-              title="سفارش آنلاین"
+              title={t("liveManagement.tabs.online")}
             ></DashboardTabsTrigger>
           </DashboardTabs>
         ) : parentSection === "personnel" && childSection === "all" ? (
           <DashboardTabs>
             <DashboardTabsTrigger
               path="all"
-              title="پرسنل مجموعه"
+              title={t("personnel.tabs.all")}
             ></DashboardTabsTrigger>
             <DashboardTabsTrigger
               disabled
               path="per-branch"
-              title="پرسنل شعبه"
+              title={t("personnel.tabs.perBranch")}
             ></DashboardTabsTrigger>
           </DashboardTabs>
         ) : (
@@ -111,8 +114,8 @@ export default function ToolBar({
               businessSlug={params.business_slug}
               branchSlug={params.branch_slug}
               categories={categories}
-              title="ایجاد آیتم"
-              description="با انتخاب گزینه های مورد نظر آیتم جدید به منو اضافه کنید"
+              title={t("data.items.create.title")}
+              description={t("data.items.create.description")}
             ></CreateItemForm>
           </div>
         )}
@@ -120,23 +123,23 @@ export default function ToolBar({
           <CreateCategoryForm
             businessSlug={businessSlug}
             assetGroups={assetGroups}
-            title="ایجاد دسته بندی"
-            description="با انتخاب گزینه های مورد نظر دسته بندی جدید به منو اضافه کنید"
+            title={t("data.categories.create.title")}
+            description={t("data.categories.create.description")}
           ></CreateCategoryForm>
         )}
         {parentSection === "liveManagement" && childSection === "all" && (
           <CreateTableForm
             businessSlug={params.business_slug}
             branchSlug={params.branch_slug}
-            title="ایجاد میز"
-            description="با انتخاب گزینه های مورد نظر دسته بندی جدید به منو اضافه کنید"
+            title={t("liveManagement.tables.create.title")}
+            description={t("liveManagement.tables.create.description")}
           >
             <Button
               size="lg"
               className="scale-pro rounded-full border-2 border-primary bg-soft-blue px-4 font-semibold text-primary transition-all duration-200 hover:scale-95 hover:bg-primary hover:text-primary-foreground data-[state=open]:scale-95 data-[state=open]:bg-primary data-[state=open]:text-primary-foreground"
             >
-              <Plus className="ml-2 h-5 w-5"></Plus>
-              <p>ایجاد میز</p>
+              <Plus className="size-5"></Plus>
+              <p>{t("liveManagement.tables.create.title")}</p>
             </Button>
           </CreateTableForm>
         )}
@@ -145,8 +148,8 @@ export default function ToolBar({
             businessSlug={params.business_slug}
             branchSlug={params.branch_slug}
             branches={branches}
-            title="دعوت پرسنل"
-            description="اعضای جدید را به پرسنل مجموعه اضافه کنید"
+            title={t("personnel.invite.title")}
+            description={t("personnel.invite.description")}
           ></CreateUpdatePersonnelForm>
         )}
         {/* add more here if needed */}

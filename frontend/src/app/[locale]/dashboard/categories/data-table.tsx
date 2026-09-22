@@ -48,8 +48,7 @@ export function DataTable<TData, TValue>({
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
-                  //text-align should change depending on rtl/ltr *************
-                  <TableHead className="text-right" key={header.id}>
+                  <TableHead className="text-start" key={header.id}>
                     {header.isPlaceholder
                       ? null
                       : flexRender(

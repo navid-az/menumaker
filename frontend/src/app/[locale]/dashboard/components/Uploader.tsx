@@ -5,12 +5,6 @@ import { useFormContext, Controller } from "react-hook-form";
 
 //components
 import { Input } from "@/components/ui/input";
-import {
-  FormControl,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import { toast } from "sonner";
 
 //libraries
@@ -96,13 +90,13 @@ export default function Uploader({
 
   const handleDrop =
     (onChange: (value: any) => void) =>
-    (e: React.DragEvent<HTMLDivElement>) => {
-      e.preventDefault();
-      e.stopPropagation();
-      setIsDragging(false);
-      const file = e.dataTransfer.files?.[0];
-      handleImageChange(file, onChange);
-    };
+      (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragging(false);
+        const file = e.dataTransfer.files?.[0];
+        handleImageChange(file, onChange);
+      };
 
   // Handle click to open file picker
   const handleClick = () => {
@@ -112,12 +106,12 @@ export default function Uploader({
   // Handle file input change
   const handleFileInputChange =
     (onChange: (value: any) => void) =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (file) {
-        handleImageChange(file, onChange);
-      }
-    };
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+          handleImageChange(file, onChange);
+        }
+      };
 
   // Accessibility: Handle keyboard events
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {

@@ -42,6 +42,7 @@ import { Plus, Loader2, Edit2, UserPlus2 } from "lucide-react";
 
 //libraries
 import { FieldErrors } from "react-hook-form";
+import { useTranslations } from "next-intl";
 
 //hooks
 import { useForm } from "react-hook-form";
@@ -68,30 +69,6 @@ type CreateUpdatePersonnelForm = {
   branches: Tag[];
 };
 
-const FormSchema = z.object({
-  role: z.enum(["manager", "chef", "cashier", "waiter", "storekeeper"]),
-
-  first_name: z
-    .string()
-    .trim()
-    .min(1, "نام الزامی است.")
-    .max(100),
-
-  last_name: z
-    .string()
-    .trim()
-    .min(1, "نام خانوادگی الزامی است.")
-    .max(100),
-
-  invited_email: z
-    .string()
-    .email("ایمیل معتبر وارد کنید"),
-
-  branches: z
-    .array(z.number())
-    .min(1, "انتخاب شعبه الزامی است.")
-});
-
 export function CreateUpdatePersonnelForm({
   businessSlug,
   branchSlug,
@@ -100,6 +77,38 @@ export function CreateUpdatePersonnelForm({
   defaultValues,
   branches,
 }: CreateUpdatePersonnelForm) {
+  const t = useTranslations("dashboard.personnel.form")
+
+  const FormSchema = z.object({
+    role: z.enum([
+      "manager",
+      "chef",
+      "cashier",
+      "waiter",
+      "storekeeper",
+    ]),
+
+    first_name: z
+      .string()
+      .trim()
+      .min(1, t("validation.firstNameRequired"))
+      .max(100),
+
+    last_name: z
+      .string()
+      .trim()
+      .min(1, t("validation.lastNameRequired"))
+      .max(100),
+
+    invited_email: z
+      .string()
+      .email(t("validation.emailInvalid")),
+
+    branches: z
+      .array(z.number())
+      .min(1, t("validation.branchRequired")),
+  });
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: defaultValues
@@ -137,20 +146,19 @@ export function CreateUpdatePersonnelForm({
       setTimeout(() => {
         setOpen(false);
       }, 300);
-      toast.success("پرسنل با موفقیت دعوت شد");
+      toast.success(t('toasts.createSuccess'));
       form.reset();
     } else {
-      toast.error(res?.detail || "خطایی در ایجاد آیتم رخ داد.");
+      toast.error(t('toasts.createError'));
     }
   }
 
   const onError = (errors: FieldErrors<any>) => {
     form.setError("root", {
       type: "required",
-      message: "لطفا موارد الزامی را وارد کنید",
+      message: t("toasts.onError"),
     });
   };
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -159,12 +167,12 @@ export function CreateUpdatePersonnelForm({
             size="lg"
             className="scale-pro rounded-full border-2 border-primary bg-soft-blue px-4 font-semibold text-primary transition-all duration-200 hover:scale-95 hover:bg-primary hover:text-primary-foreground data-[state=open]:scale-95 data-[state=open]:bg-primary data-[state=open]:text-primary-foreground"
           >
-            <UserPlus2 className="ml-2 h-5 w-5"></UserPlus2>
+            <UserPlus2 className="size-5"></UserPlus2>
             <p>{title}</p>
           </Button>
         ) : (
           <Button size="icon" variant="ghost" className="rounded-full">
-            <Edit2 className="h-5 w-5"></Edit2>
+            <Edit2 className="size-5"></Edit2>
           </Button>
         )}
       </DialogTrigger>
@@ -187,10 +195,10 @@ export function CreateUpdatePersonnelForm({
                 name="first_name"
                 render={({ field }) => (
                   <FormItem className="flex-1">
-                    <FormLabel htmlFor={field.name}>نام</FormLabel>
+                    <FormLabel htmlFor={field.name}>{t("inputs.firstName.label")}</FormLabel>
                     <FormControl>
                       <div className="flex w-full items-center gap-2">
-                        <Input id={field.name} {...field} />
+                        <Input id={field.name} placeholder={t("inputs.firstName.placeHolder")} {...field} />
                       </div>
                     </FormControl>
                     <FormMessage className="font-normal" />
@@ -202,10 +210,16 @@ export function CreateUpdatePersonnelForm({
                 name="last_name"
                 render={({ field }) => (
                   <FormItem className="flex-1">
-                    <FormLabel htmlFor={field.name}>نام خانوادگی</FormLabel>
+                    <FormLabel htmlFor={field.name}>
+                      {t("inputs.lastName.label")}
+                    </FormLabel>
                     <FormControl>
                       <div className="flex w-full items-center gap-2">
-                        <Input id={field.name} {...field} />
+                        <Input
+                          id={field.name}
+                          placeholder={t("inputs.lastName.placeHolder")}
+                          {...field}
+                        />
                       </div>
                     </FormControl>
                     <FormMessage className="font-normal" />
@@ -218,10 +232,10 @@ export function CreateUpdatePersonnelForm({
               name="invited_email"
               render={({ field }) => (
                 <FormItem className="flex-1">
-                  <FormLabel htmlFor={field.name}>ایمیل</FormLabel>
+                  <FormLabel htmlFor={field.name}>{t("inputs.email.label")}</FormLabel>
                   <FormControl>
                     <div className="flex w-full items-center gap-2">
-                      <Input type="email" id={field.name} {...field} />
+                      <Input type="email" placeholder={t("inputs.email.placeHolder")} id={field.name} {...field} />
                     </div>
                   </FormControl>
                   <FormMessage className="font-normal" />
@@ -233,30 +247,45 @@ export function CreateUpdatePersonnelForm({
               name="role"
               render={({ field }) => (
                 <FormItem className="flex-1">
-                  <FormLabel htmlFor={field.name}>سمت</FormLabel>
+                  <FormLabel htmlFor={field.name}>
+                    {t("inputs.role.label")}
+                  </FormLabel>
+
                   <FormControl>
-                    {/* ~~~~~ direction setter ~~~~~ */}
                     <Select
-                      dir="rtl"
                       onValueChange={(value) => field.onChange(value)}
                       value={field.value}
                     >
                       <SelectTrigger id={field.name}>
-                        <SelectValue placeholder="سمت"></SelectValue>
+                        <SelectValue
+                          placeholder={t("inputs.role.placeHolder")}
+                        />
                       </SelectTrigger>
+
                       <SelectContent>
                         <SelectItem value="manager">
-                          <div>مدیر</div>
+                          {t("inputs.role.options.manager")}
                         </SelectItem>
-                        <SelectItem value="chef">آشپز</SelectItem>
-                        <SelectItem value="cashier">صندوق دار</SelectItem>
-                        <SelectItem value="waiter">سالن دار</SelectItem>
+
+                        <SelectItem value="chef">
+                          {t("inputs.role.options.chef")}
+                        </SelectItem>
+
+                        <SelectItem value="cashier">
+                          {t("inputs.role.options.cashier")}
+                        </SelectItem>
+
+                        <SelectItem value="waiter">
+                          {t("inputs.role.options.waiter")}
+                        </SelectItem>
+
                         <SelectItem disabled value="storekeeper">
-                          انبار دار
+                          {t("inputs.role.options.storekeeper")}
                         </SelectItem>
                       </SelectContent>
                     </Select>
                   </FormControl>
+
                   <FormMessage className="font-normal" />
                 </FormItem>
               )}
@@ -266,12 +295,13 @@ export function CreateUpdatePersonnelForm({
               name="branches"
               render={({ field }) => (
                 <FormItem className="flex-1">
-                  <FormLabel htmlFor={field.name}>شعبه ها</FormLabel>
+                  <FormLabel htmlFor={field.name}>{t("inputs.branches.label")}</FormLabel>
                   <FormControl>
                     <TagSelector
                       value={field.value}
                       onChange={field.onChange}
                       data={branches}
+                      t={t}
                     ></TagSelector>
                   </FormControl>
                   <FormMessage className="font-normal" />
@@ -287,9 +317,10 @@ export function CreateUpdatePersonnelForm({
             type="submit"
           >
             {form.formState.isSubmitting && (
-              <Loader2 className="ml-2 h-4 w-4 animate-spin"></Loader2>
+              <Loader2 className="h-4 w-4 animate-spin" />
             )}
-            دعوت پرسنل
+
+            {t("buttons.invite")}
           </Button>
         </DialogFooter>
       </DialogContent>

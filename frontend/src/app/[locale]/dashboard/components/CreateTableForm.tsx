@@ -38,6 +38,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 // actions
 import { createTable, updateTable } from "@/app/actions";
+import { useTranslations } from "next-intl";
 
 // types
 type CreateTableFormType = {
@@ -50,18 +51,6 @@ type CreateTableFormType = {
   children: React.ReactNode;
 };
 
-//actions
-// import { createTable, updateTable } from "@/app/actions";
-
-const FormSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(1, "نام میز الزامی است."),
-  seats: z.coerce.number().int().min(1, "تعداد صندلی باید حداقل ۱ باشد."),
-  location_description: z.string().optional(),
-});
-
 export function CreateTableForm({
   businessSlug,
   branchSlug,
@@ -71,6 +60,20 @@ export function CreateTableForm({
   tableId,
   children,
 }: CreateTableFormType) {
+  const t = useTranslations('dashboard.liveManagement.form')
+
+  const FormSchema = z.object({
+    name: z
+      .string()
+      .trim()
+      .min(1, t("validation.nameRequired")),
+    seats: z.coerce
+      .number()
+      .int()
+      .min(1, t("validation.seatsMin")),
+    location_description: z.string().optional(),
+  });
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: defaultValues
@@ -98,10 +101,10 @@ export function CreateTableForm({
           setTimeout(() => {
             setOpen(false);
           }, 300);
-          toast.success("میز با موفقیت ایجاد شد");
+          toast.success(t('toasts.createSuccess'));
           form.reset();
         } else {
-          toast.error(res?.error || "خطایی در ایجاد میز رخ داد.");
+          toast.error(t('toasts.createError'));
         }
       } else if (defaultValues && tableId) {
         // Update table
@@ -110,21 +113,21 @@ export function CreateTableForm({
           setTimeout(() => {
             setOpen(false);
           }, 300);
-          toast.success("میز با موفقیت ویرایش شد");
+          toast.success(t('toasts.editSuccess'));
           form.reset();
         } else {
-          toast.error(res?.error || "خطایی در ویرایش میز رخ داد.");
+          toast.error(t('toasts.createError'));
         }
       }
     } catch (error) {
-      toast.error("خطایی در پردازش درخواست رخ داد. لطفاً دوباره تلاش کنید.");
+      toast.error(t('toasts.requestError'));
     }
   }
 
   const onError = (errors: FieldErrors<any>) => {
     form.setError("root", {
       type: "required",
-      message: "لطفا موارد الزامی را وارد کنید",
+      message: t('toasts.onError')
     });
   };
 
@@ -146,13 +149,13 @@ export function CreateTableForm({
                 name="name"
                 render={({ field }) => (
                   <FormItem className="w-full">
-                    <FormLabel>نام میز</FormLabel>
+                    <FormLabel>{t("inputs.name.label")}</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="تراس ۲، سالن غربی ۳،VIP -1"
+                        placeholder={t("inputs.name.placeHolder")}
                         type="text"
                         {...field}
-                      ></Input>
+                      />
                     </FormControl>
                   </FormItem>
                 )}
@@ -162,14 +165,14 @@ export function CreateTableForm({
                 name="seats"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>تعداد صندلی</FormLabel>
+                    <FormLabel>{t("inputs.seats.label")}</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="تعداد صندلی"
+                        placeholder={t("inputs.seats.placeHolder")}
                         type="number"
                         {...field}
                         onChange={(e) => field.onChange(e.target.valueAsNumber)}
-                      ></Input>
+                      />
                     </FormControl>
                   </FormItem>
                 )}
@@ -194,13 +197,13 @@ export function CreateTableForm({
               name="location_description"
               render={({ field }) => (
                 <FormItem className="pt-6">
-                  <FormLabel>توضیجات</FormLabel>
+                  <FormLabel>{t("inputs.locationDescription.label")}</FormLabel>
                   <FormControl>
                     <Textarea
                       className="max-h-40"
-                      placeholder="توضیحات محل میز..."
+                      placeholder={t("inputs.locationDescription.placeHolder")}
                       {...field}
-                    ></Textarea>
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -221,7 +224,7 @@ export function CreateTableForm({
             type="submit"
           >
             {form.formState.isSubmitting && (
-              <Loader2 className="ml-2 h-4 w-4 animate-spin"></Loader2>
+              <Loader2 className="h-4 w-4 animate-spin"></Loader2>
             )}
             {title}
           </Button>

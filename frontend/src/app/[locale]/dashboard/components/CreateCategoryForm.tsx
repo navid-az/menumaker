@@ -50,6 +50,7 @@ type CreateCategoryFormType = {
 //actions
 import { createCategory, updateCategory } from "@/app/actions";
 import { CategoryIcon } from "@/app/types/api/menu";
+import { useTranslations } from "next-intl";
 
 // zod schema
 const IconSchema = z.object({
@@ -61,15 +62,6 @@ const IconSchema = z.object({
   order: z.number().default(0),
 });
 
-const FormSchema = z
-  .object({
-    name: z.string().optional(),
-    icon: IconSchema.optional().nullable(),
-  })
-  .refine((data) => data.name || data.icon, {
-    message: "Either name or icon must be provided.",
-  });
-
 export function CreateCategoryForm({
   businessSlug,
   assetGroups,
@@ -78,6 +70,17 @@ export function CreateCategoryForm({
   defaultValues,
   categoryId,
 }: CreateCategoryFormType) {
+  const t = useTranslations('dashboard.data.categories.form')
+
+  const FormSchema = z
+    .object({
+      name: z.string().optional(),
+      icon: IconSchema.optional().nullable(),
+    })
+    .refine((data) => data.name || data.icon, {
+      message: "Either name or icon must be provided.",
+    });
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: defaultValues
@@ -104,10 +107,10 @@ export function CreateCategoryForm({
           setTimeout(() => {
             setOpen(false);
           }, 300);
-          toast.success("دسته بندی با موفقیت ایجاد شد");
+          toast.success(t("toasts.createSuccess"));
           form.reset();
         } else {
-          toast.error(res?.error || "خطایی در ایجاد دسته بندی رخ داد.");
+          toast.error(t("toasts.createError"));
         }
       } else if (defaultValues && categoryId) {
         const res = await updateCategory(businessSlug, categoryId, {
@@ -119,20 +122,20 @@ export function CreateCategoryForm({
           setTimeout(() => {
             setOpen(false);
           }, 300);
-          toast.success("دسته بندی با موفقیت ویرایش شد");
+          toast.success(t("toasts.editSuccess"));
         } else {
-          toast.error(res?.error || "خطایی در ویرایش دسته بندی رخ داد.");
+          toast.error(t("toasts.editError"));
         }
       }
     } catch (error) {
-      toast.error("خطایی در پردازش درخواست رخ داد. لطفاً دوباره تلاش کنید.");
+      toast.error(t("toasts.requestError"));
     }
   }
 
   const onError = (errors: FieldErrors<any>) => {
     form.setError("root", {
       type: "required",
-      message: "لطفاً حداقل نام یا آیکون را وارد کنید",
+      message: t("toasts.onError"),
     });
   };
 
@@ -144,12 +147,12 @@ export function CreateCategoryForm({
             size="lg"
             className="scale-pro rounded-full border-2 border-primary bg-soft-blue px-4 font-semibold text-primary transition-all duration-200 hover:scale-95 hover:bg-primary hover:text-primary-foreground data-[state=open]:scale-95 data-[state=open]:bg-primary data-[state=open]:text-primary-foreground"
           >
-            <Plus className="ml-2 h-5 w-5"></Plus>
+            <Plus className="size-5"></Plus>
             <p>{title}</p>
           </Button>
         ) : (
           <Button size="icon" variant="ghost" className="rounded-full">
-            <Edit2 className="h-5 w-5"></Edit2>
+            <Edit2 className="size-5"></Edit2>
           </Button>
         )}
       </DialogTrigger>
@@ -171,10 +174,10 @@ export function CreateCategoryForm({
                 name="name"
                 render={({ field }) => (
                   <FormItem className="w-full">
-                    <FormLabel>نام دسته</FormLabel>
+                    <FormLabel>{t('inputs.name.label')}</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="پیتزا، برگر، نوشیدنی سرد، ..."
+                        placeholder={t('inputs.name.placeHolder')}
                         type="text"
                         {...field}
                       ></Input>
@@ -216,7 +219,7 @@ export function CreateCategoryForm({
             type="submit"
           >
             {form.formState.isSubmitting && (
-              <Loader2 className="ml-2 h-4 w-4 animate-spin"></Loader2>
+              <Loader2 className="size-4 animate-spin"></Loader2>
             )}
             {title}
           </Button>

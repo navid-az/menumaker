@@ -1,3 +1,4 @@
+'use client'
 import React, { useState, useEffect } from "react";
 
 //components
@@ -31,6 +32,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { type FieldErrors } from "react-hook-form";
+import { useTranslations } from "next-intl";
 
 //server actions
 import { createBranch, updateBranch } from "@/app/actions";
@@ -45,36 +47,30 @@ type CreateBranchFormType = {
   children: React.ReactNode;
 };
 
-//zod schema
-const FormSchema = z.object({
-  name: z.string().trim().min(2, {
-    message: "نام شعبه باید حداقل ۲ حرف باشد",
-  }),
-  slug: z.string().optional(),
-  address: z
-    .string()
-    .trim()
-    .max(255, {
-      message: "آدرس نمی‌تواند بیشتر از ۲۵۵ کاراکتر باشد",
-    })
-    .optional(),
-  phone_number: z
-    .string()
-    .max(20)
-    .refine(
-      (value) => value === "" || /^\d+$/.test(value),
-      {
-        message: "فقط عدد وارد کنید",
-      }
-    ),
-});
-
 export default function CreateBranchForm({
   defaultValues,
   business_slug,
   branch_slug,
   children,
 }: CreateBranchFormType) {
+  const t = useTranslations("dashboard.header.branchSelector.form");
+
+  const FormSchema = z.object({
+    name: z.string().trim().min(2, {
+      message: t("validation.nameMin"),
+    }),
+    slug: z.string().optional(),
+    address: z.string().trim().max(255, {
+      message: t("validation.addressMax"),
+    }).optional(),
+    phone_number: z.string().max(20).refine(
+      (value) => value === "" || /^\d+$/.test(value),
+      {
+        message: t("validation.phoneNumbersOnly"),
+      }
+    ),
+  });
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: defaultValues
@@ -103,26 +99,28 @@ export default function CreateBranchForm({
   async function onSubmit(data: BranchFormType) {
     if (defaultValues && branch_slug) {
       const res = await updateBranch(business_slug, branch_slug, data);
+
       if (res?.success) {
-        //wait for route revalidation to happen first
         setTimeout(() => {
           setOpen(false);
         }, 300);
-        toast.success("شعبه با موفقیت ایجاد شد");
+
+        toast.success(t("toasts.editSuccess"));
       } else {
-        toast.error(res?.error || "خطایی در ایجاد شعبه رخ داد.");
+        toast.error(t("toasts.editError"));
       }
     } else {
       const res = await createBranch(data, business_slug);
+
       if (res?.success) {
-        //wait for route revalidation to happen first
         setTimeout(() => {
           setOpen(false);
         }, 300);
-        toast.success("شعبه با موفقیت ایجاد شد");
+
+        toast.success(t("toasts.createSuccess"));
         form.reset();
       } else {
-        toast.error(res?.error || "خطایی در ایجاد شعبه رخ داد.");
+        toast.error(t("toasts.createError"));
       }
     }
   }
@@ -130,17 +128,18 @@ export default function CreateBranchForm({
   const onError = (errors: FieldErrors<any>) => {
     form.setError("root", {
       type: "required",
-      message: "لطفا موارد الزامی را وارد کنید",
+      message: t("toasts.onError"),
     });
   };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader className="items-start">
-          <DialogTitle>ایجاد شعبه جدید</DialogTitle>
+          <DialogTitle>{t("title")}</DialogTitle>
           <DialogDescription className="font-normal">
-            شعبه جدیدی برای مجموعه خود ثبت کنید
+            {t("description")}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -154,11 +153,11 @@ export default function CreateBranchForm({
               name="name"
               render={({ field }) => (
                 <FormItem className="flex-1">
-                  <FormLabel htmlFor={field.name}>نام</FormLabel>
+                  <FormLabel>{t("inputs.name.label")}</FormLabel>
                   <FormControl>
                     <Input
                       id={field.name}
-                      placeholder='مثلاً "تهران-فرمانیه"'
+                      placeholder={t("inputs.name.placeHolder")}
                       {...field}
                     />
                   </FormControl>
@@ -171,11 +170,11 @@ export default function CreateBranchForm({
               name="phone_number"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>شماره تماس</FormLabel>
+                  <FormLabel>{t("inputs.phoneNumber.label")}</FormLabel>
                   <FormControl>
                     <Input
                       id={field.name}
-                      placeholder="شماره تماس شعبه را وارد کنید"
+                      placeholder={t("inputs.phoneNumber.placeHolder")}
                       {...field}
                     />
                   </FormControl>
@@ -188,13 +187,13 @@ export default function CreateBranchForm({
               name="address"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>آدرس شعبه</FormLabel>
+                  <FormLabel>{t("inputs.address.label")}</FormLabel>
                   <FormControl>
                     <Textarea
                       className="max-h-40"
-                      placeholder='مثلاً "تهران، اکباتان، فاز ۳، روبه‌روی نانوایی"'
+                      placeholder={t("inputs.address.placeHolder")}
                       {...field}
-                    ></Textarea>
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -209,9 +208,9 @@ export default function CreateBranchForm({
             type="submit"
           >
             {form.formState.isSubmitting && (
-              <Loader2 className="ml-2 h-4 w-4 animate-spin"></Loader2>
+              <Loader2 className="h-4 w-4 animate-spin" />
             )}
-            ایجاد شعبه جدید
+            {t("buttons.create")}
           </Button>
         </DialogFooter>
       </DialogContent>

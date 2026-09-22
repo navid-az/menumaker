@@ -20,6 +20,7 @@ import { type Subscription } from "@/app/types/api/subscription";
 import { Business } from "@/app/types/api/business";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getLocale } from "next-intl/server";
 
 export async function DashboardHeader({
   business_slug,
@@ -40,38 +41,41 @@ export async function DashboardHeader({
   const subEndDate = new Date(subscription.end_date);
   const now = new Date();
 
+  const locale = await getLocale()
+
   return (
-    <header className="flex w-full gap-2 justify-between bg-primary p-2 md:px-4 md:py-4">
-      <div className="flex gap-2 flex-1 min-w-0">
+    <header className="flex w-full gap-2 justify-between bg-primary p-2 md:px-4 md:py-3">
+      <div className="flex gap-2 flex-1 items-center min-w-0">
         {hasFeature && <BranchSelector branches={branches}></BranchSelector>}
       </div>
-      <div className="flex gap-2 flex-none">
+      <div className="flex gap-1 flex-none items-center">
+        <LocaleSwitcher size='sm' className="text-white hover:bg-white/5 " />
         <div className="flex gap-2">
           {subscription.status === "active" && subEndDate > now && (
-            <SubscriptionPopOver subscription={subscription} />
+            <SubscriptionPopOver locale={locale} subscription={subscription} />
           )}
         </div>
         <Suspense fallback={<Skeleton className="size-10" />}>
-          <UserProfileSection />
+          <UserProfileSection locale={locale} />
         </Suspense>
-        <LocaleSwitcher />
       </div>
     </header>
   );
 }
 
-async function UserProfileSection() {
+async function UserProfileSection({ locale }: { locale: string }) {
   const user = await getUserData();
   const businesses: Business[] = await getUserBusinesses();
 
+
   return <div>
     {user && businesses && (
-      <UserProfile user={user} businesses={businesses}>
+      <UserProfile locale={locale} user={user} businesses={businesses}>
         <Button
           size="icon"
-          className=" hover:bg-white/5 transition-all duration-300"
+          className=" hover:bg-white/5 transition-all duration-300 size-9"
         >
-          <User2 className="h-6 w-6 text-soft-blue"></User2>
+          <User2 className="size-5 text-soft-blue"></User2>
         </Button>
       </UserProfile>
     )}

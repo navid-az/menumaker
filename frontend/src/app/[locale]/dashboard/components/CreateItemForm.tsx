@@ -60,6 +60,7 @@ import ImageUploader from "@/components/global/ImageUploader";
 
 //types
 import { MenuCategory, MenuItem } from "@/app/types/api/menu";
+import { useTranslations } from "next-intl";
 type CreateItemFormType = {
   businessSlug: string;
   branchSlug?: string;
@@ -75,17 +76,6 @@ const ItemImageSchema = z.object({
   url: z.string(),
 });
 
-const FormSchema = z.object({
-  scope: z.enum(["all", "only", "except"]).optional(),
-  item_images: z.array(ItemImageSchema).optional(),
-  frontend_only: z.object({
-    temp_id: z.string(),
-  }),
-  name: z.string().min(2, { message: "نام آیتم باید حداقل ۲ حرف باشد" }),
-  description: z.string().optional(),
-  price: z.coerce.number(),
-  category: z.number({ required_error: "لطفا یک دسته را انتخاب کنید" }),
-});
 
 export function CreateItemForm({
   businessSlug,
@@ -96,6 +86,20 @@ export function CreateItemForm({
   defaultValues,
   itemId,
 }: CreateItemFormType) {
+  const t = useTranslations('dashboard.data.items.form')
+
+  const FormSchema = z.object({
+    scope: z.enum(["all", "only", "except"]).optional(),
+    item_images: z.array(ItemImageSchema).optional(),
+    frontend_only: z.object({
+      temp_id: z.string(),
+    }),
+    name: z.string().min(2, { message: "نام آیتم باید حداقل ۲ حرف باشد" }),
+    description: z.string().optional(),
+    price: z.coerce.number(),
+    category: z.number({ required_error: "لطفا یک دسته را انتخاب کنید" }),
+  });
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: defaultValues
@@ -135,29 +139,29 @@ export function CreateItemForm({
         const res = await createItem(businessSlug, payload);
         if (res?.success) {
           setTimeout(() => setOpen(false), 300);
-          toast.success("آیتم با موفقیت ایجاد شد");
+          toast.success(t('toasts.createSuccess'));
           form.reset();
         } else {
-          toast.error(res?.error || "خطایی در ایجاد آیتم رخ داد.");
+          toast.error(t('toasts.createError'));
         }
       } else if (defaultValues && itemId) {
         const res = await updateItem(businessSlug, itemId, payload);
         if (res?.success) {
           setTimeout(() => setOpen(false), 300);
-          toast.success("آیتم با موفقیت ویرایش شد");
+          toast.success(t('toasts.editSuccess'));
         } else {
-          toast.error(res?.error || "خطایی در ویرایش آیتم رخ داد.");
+          toast.error(t('toasts.editError'));
         }
       }
     } catch (error) {
-      toast.error("خطایی در ویرایش آیتم رخ داد. لطفاً دوباره تلاش کنید.");
+      toast.error(t('toasts.requestError'));
     }
   }
 
   const onError = (errors: FieldErrors<any>) => {
     form.setError("root", {
       type: "required",
-      message: "لطفا موارد الزامی را وارد کنید",
+      message: t('toasts.onError'),
     });
   };
 
@@ -170,12 +174,12 @@ export function CreateItemForm({
             size="lg"
             className="scale-pro rounded-full border-2 border-primary bg-soft-blue px-4 font-semibold text-primary transition-all duration-200 hover:scale-95 hover:bg-primary hover:text-primary-foreground data-[state=open]:scale-95 data-[state=open]:bg-primary data-[state=open]:text-primary-foreground"
           >
-            <Plus className="ml-2 h-5 w-5"></Plus>
+            <Plus className="size-5"></Plus>
             <p>{title}</p>
           </Button>
         ) : (
           <Button size="icon" variant="ghost" className="rounded-full">
-            <Edit2 className="h-5 w-5"></Edit2>
+            <Edit2 className="size-5"></Edit2>
           </Button>
         )}
       </DialogTrigger>
@@ -206,59 +210,58 @@ export function CreateItemForm({
                         <div className="flex flex-col gap-3 w-full">
                           <div
                             className={cn(
-                              "flex items-center gap-2 rounded-lg border-2 flex-row-reverse transition-colors duration-200",
+                              "flex items-center gap-2 rounded-lg border-2 transition-colors duration-200",
                               field.value === "all" && "border-primary"
                             )}
                           >
                             <Label
                               htmlFor="all"
-                              className="flex gap-2 p-3 items-center flex-row-reverse font-medium w-full"
+                              className="flex gap-2 p-3 items-center font-medium w-full"
                             >
                               <RadioGroupItem value="all" id="all" />
-                              <div className="flex flex-col items-end gap-2">
-                                <p>همه شعبه ‌ها</p>
+                              <div className="flex flex-col gap-2">
+                                <p>{t('inputs.scope.all.title')}</p>
 
                                 <p className="text-sm text-muted-foreground">
-                                  این آیتم در تمام شعب نمایش داده خواهد شد
+                                  {t('inputs.scope.all.description')}
                                 </p>
                               </div>
                             </Label>
                           </div>
                           <div
                             className={cn(
-                              "flex items-center gap-2 rounded-lg border-2 flex-row-reverse transition-colors duration-200",
+                              "flex items-center gap-2 rounded-lg border-2 transition-colors duration-200",
                               field.value === "only" && "border-primary"
                             )}
                           >
                             <Label
                               htmlFor="only"
-                              className="flex gap-2 p-3 items-center flex-row-reverse font-medium w-full"
+                              className="flex gap-2 p-3 items-center font-medium w-full"
                             >
                               <RadioGroupItem value="only" id="only" />
-                              <div className="flex flex-col items-end gap-2">
-                                <p>فقط این شعبه</p>
+                              <div className="flex flex-col gap-2">
+                                <p>{t('inputs.scope.only.title')}</p>
                                 <p className="text-sm text-muted-foreground">
-                                  این آیتم فقط در همین شعبه نمایش داده می‌شود
+                                  {t('inputs.scope.only.description')}
                                 </p>
                               </div>
                             </Label>
                           </div>
                           <div
                             className={cn(
-                              "flex items-center gap-2 rounded-lg border-2 flex-row-reverse transition-colors duration-200",
+                              "flex items-center gap-2 rounded-lg border-2 transition-colors duration-200",
                               field.value === "except" && "border-primary"
                             )}
                           >
                             <Label
                               htmlFor="except"
-                              className="flex gap-2 p-3 items-center flex-row-reverse font-medium w-full"
+                              className="flex gap-2 p-3 items-center font-medium w-full"
                             >
                               <RadioGroupItem value="except" id="except" />
-                              <div className="flex flex-col items-end gap-2">
-                                <p>همه به‌ جز این شعبه</p>
+                              <div className="flex flex-col gap-2">
+                                <p>{t('inputs.scope.except.title')}</p>
                                 <p className="text-sm text-muted-foreground">
-                                  این آیتم در همه‌ی شعب نمایش داده می‌شود، به‌جز
-                                  شعبه‌ی فعلی
+                                  {t('inputs.scope.except.description')}
                                 </p>
                               </div>
                             </Label>
@@ -276,7 +279,7 @@ export function CreateItemForm({
               name="item_images"
               render={({ field }) => (
                 <FormItem className="flex-1">
-                  <FormLabel htmlFor={field.name}>تصویر</FormLabel>
+                  <FormLabel htmlFor={field.name}>{t('inputs.image.label')}</FormLabel>
                   <FormControl>
                     <ImageUploader collection='item_gallery' maxFiles={1} value={field.value} onChange={field.onChange}></ImageUploader>
                   </FormControl>
@@ -290,16 +293,14 @@ export function CreateItemForm({
                 name="category"
                 render={({ field }) => (
                   <FormItem className="flex-1">
-                    <FormLabel htmlFor={field.name}>گروه</FormLabel>
+                    <FormLabel htmlFor={field.name}>{t('inputs.category.label')}</FormLabel>
                     <FormControl>
-                      {/* ~~~~~ direction setter ~~~~~ */}
                       <Select
-                        dir="rtl"
                         onValueChange={(value) => field.onChange(Number(value))}
                         value={field.value?.toString()}
                       >
                         <SelectTrigger id={field.name}>
-                          <SelectValue placeholder="دسته بندی"></SelectValue>
+                          <SelectValue placeholder={t('inputs.category.placeholder')}></SelectValue>
                         </SelectTrigger>
                         <SelectContent>
                           {categories.map((category) => (
@@ -330,12 +331,12 @@ export function CreateItemForm({
                 name="name"
                 render={({ field }) => (
                   <FormItem className="flex-1">
-                    <FormLabel htmlFor={field.name}>نام</FormLabel>
+                    <FormLabel htmlFor={field.name}>{t('inputs.name.label')}</FormLabel>
                     <FormControl>
                       <div className="flex w-full items-center gap-2">
                         <Input
                           id={field.name}
-                          placeholder="پیتزا پپرونی"
+                          placeholder={t('inputs.name.placeholder')}
                           {...field}
                         />
                       </div>
@@ -350,11 +351,11 @@ export function CreateItemForm({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>توضیحات</FormLabel>
+                  <FormLabel>{t('inputs.description.label')}</FormLabel>
                   <FormControl>
                     <Textarea
                       className="max-h-40"
-                      placeholder="توضیحات مربوط به آیتم"
+                      placeholder={t('inputs.description.placeholder')}
                       {...field}
                     ></Textarea>
                   </FormControl>
@@ -367,7 +368,7 @@ export function CreateItemForm({
               name="price"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>قیمت</FormLabel>
+                  <FormLabel>{t('inputs.price.label')}</FormLabel>
                   <FormControl>
                     <Input type="number" className="text-left" {...field} />
                   </FormControl>
@@ -384,7 +385,7 @@ export function CreateItemForm({
             type="submit"
           >
             {form.formState.isSubmitting && (
-              <Loader2 className="ml-2 h-4 w-4 animate-spin"></Loader2>
+              <Loader2 className=" h-4 w-4 animate-spin"></Loader2>
             )}
             {title}
           </Button>

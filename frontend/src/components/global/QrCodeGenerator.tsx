@@ -11,6 +11,7 @@ import { Check, Copy, Download } from "lucide-react";
 //libraries
 import QRCodeStyling, { Options, FileExtension } from "qr-code-styling";
 import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
+import { useTranslations } from "next-intl";
 
 export default function QrCodeGenerator({ url, isMockup = false }: { url: string, isMockup?: boolean }) {
   const [options, setOptions] = useState<Options>({
@@ -64,6 +65,8 @@ export default function QrCodeGenerator({ url, isMockup = false }: { url: string
     qrCode?.update(options);
   }, [qrCode, options]);
 
+  const t = useTranslations('dashboard.liveManagement.liveCard.qrCode.buttons')
+
   const onDataChange = (event: ChangeEvent<HTMLInputElement>) => {
     setOptions((options) => ({
       ...options,
@@ -111,7 +114,7 @@ export default function QrCodeGenerator({ url, isMockup = false }: { url: string
           className="rounded-full transition-all duration-300 basis-2/3 bg-soft-blue border-sad-blue border-2 text-royal-green/50 hover:text-royal-green hover:border-royal-green scale-pro"
         >
           <Download className="w-4 h-4" />
-          <p>دانلود QR کد</p>
+          <p>{t('download')}</p>
         </Button>
         <Button
           ref={copyBtnRef}

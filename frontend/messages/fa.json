@@ -132,6 +132,441 @@
       ]
     }
   },
+  "dashboard": {
+    "header": {
+      "subscriptionPopover": {
+        "renew": "تمدید اشتراک",
+        "startDate": "تاریخ شروع:",
+        "expirationDate": "تاریخ انقضا:",
+        "days": "{days} روز",
+        "remaining": "باقی‌مانده",
+        "plan": "پلن",
+        "duration": "{months} ماهه",
+        "status": "وضعیت اشتراک",
+        "plans": {
+          "franchiser": "فرنچایزر",
+          "pro": "پرو",
+          "basic": "بیسیک"
+        }
+      },
+      "branchSelector": {
+        "placeholder": "شعبه را انتخاب کنید...",
+        "search": "جستجوی شعبه...",
+        "empty": "هیچ شعبه‌ای یافت نشد",
+        "active": "فعال",
+        "create": "ایجاد شعبه جدید",
+        "form": {
+          "title": "ایجاد شعبه جدید",
+          "description": "شعبه جدیدی برای مجموعه خود ثبت کنید",
+          "toasts": {
+            "createSuccess": "شعبه با موفقیت ایجاد شد",
+            "createError": "خطایی در ایجاد شعبه رخ داد.",
+            "editSuccess": "شعبه با موفقیت ویرایش شد",
+            "editError": "خطایی در ویرایش شعبه رخ داد.",
+            "requestError": "خطایی در پردازش درخواست رخ داد. لطفاً دوباره تلاش کنید.",
+            "onError": "لطفاً موارد الزامی را وارد کنید"
+          },
+          "validation": {
+            "nameMin": "نام شعبه باید حداقل ۲ حرف باشد",
+            "addressMax": "آدرس نمی‌تواند بیشتر از ۲۵۵ کاراکتر باشد",
+            "phoneNumbersOnly": "فقط عدد وارد کنید"
+          },
+          "inputs": {
+            "name": {
+              "label": "نام",
+              "placeHolder": "مثلاً «تهران - فرمانیه»"
+            },
+            "phoneNumber": {
+              "label": "شماره تماس",
+              "placeHolder": "شماره تماس شعبه را وارد کنید"
+            },
+            "address": {
+              "label": "آدرس شعبه",
+              "placeHolder": "مثلاً «تهران، اکباتان، فاز ۳، روبه‌روی نانوایی»"
+            }
+          },
+          "buttons": {
+            "create": "ایجاد شعبه جدید"
+          }
+        }
+      }
+    },
+    "toolbar": {
+      "data": {
+        "tabs": {
+          "items": "آیتم‌ها",
+          "categories": "دسته‌بندی‌ها",
+          "offers": "تخفیف‌ها",
+          "additionalCosts": "هزینه‌های مازاد"
+        },
+        "items": {
+          "create": {
+            "title": "ایجاد آیتم",
+            "description": "با انتخاب گزینه‌های مورد نظر، آیتم جدید به منو اضافه کنید"
+          }
+        },
+        "categories": {
+          "create": {
+            "title": "ایجاد دسته‌بندی",
+            "description": "با انتخاب گزینه‌های مورد نظر، دسته‌بندی جدید به منو اضافه کنید"
+          }
+        }
+      },
+      "liveManagement": {
+        "tabs": {
+          "all": "همه",
+          "inPerson": "بر روی میز",
+          "online": "سفارش آنلاین"
+        },
+        "tables": {
+          "create": {
+            "title": "ایجاد میز",
+            "description": "با انتخاب گزینه‌های مورد نظر، میز جدید به مجموعه اضافه کنید"
+          },
+          "button": "ایجاد میز"
+        }
+      },
+      "personnel": {
+        "tabs": {
+          "all": "پرسنل مجموعه",
+          "perBranch": "پرسنل شعبه"
+        },
+        "invite": {
+          "title": "دعوت پرسنل",
+          "description": "اعضای جدید را به پرسنل مجموعه اضافه کنید"
+        }
+      }
+    },
+    "sidebar": {
+      "business": {
+        "roleLabel": "سمت شما",
+        "role": "صاحب مجموعه"
+      },
+      "sidebarNav": [
+        "وضعیت فروشگاه",
+        "مدیریت زنده",
+        "آیتم و دسته‌بندی",
+        "پرسنل",
+        "تنظیمات"
+      ]
+    },
+    "liveManagement": {
+      "form": {
+        "toasts": {
+          "createSuccess": "میز با موفقیت ایجاد شد",
+          "createError": "خطایی در ایجاد میز رخ داد.",
+          "editSuccess": "میز با موفقیت ویرایش شد",
+          "editError": "خطایی در ویرایش میز رخ داد.",
+          "requestError": "خطایی در پردازش درخواست رخ داد. لطفاً دوباره تلاش کنید.",
+          "onError": "لطفاً موارد الزامی را وارد کنید"
+        },
+        "validation": {
+          "nameRequired": "نام میز الزامی است.",
+          "seatsMin": "تعداد صندلی باید حداقل ۱ باشد."
+        },
+        "inputs": {
+          "name": {
+            "label": "نام میز",
+            "placeHolder": "تراس ۲، سالن غربی ۳، VIP-۱"
+          },
+          "seats": {
+            "label": "تعداد صندلی",
+            "placeHolder": "تعداد صندلی"
+          },
+          "locationDescription": {
+            "label": "توضیحات محل",
+            "placeHolder": "توضیحات محل قرارگیری میز..."
+          }
+        },
+        "buttons": {
+          "create": "افزودن میز",
+          "update": "ویرایش میز"
+        }
+      },
+      "empty": {
+        "title": "میزی برای نمایش وجود ندارد",
+        "description": "هنوز هیچ میزی ایجاد نکرده‌اید. با افزودن اولین میز شروع کنید.",
+        "button": {
+          "title": "افزودن میز",
+          "description": "با تعیین نام، محل قرارگیری و سایر جزئیات، یک میز جدید ایجاد کنید."
+        }
+      },
+      "liveCard": {
+        "header": {
+          "dropdown": {
+            "buttons": {
+              "tableDetails": "مشخصات میز",
+              "orderDetails": "مشخصات سفارش",
+              "viewQrCode": "مشاهده QR کد",
+              "editTable": "ویرایش میز",
+              "deleteTable": "حذف میز",
+              "cancelOrder": "لغو سفارش"
+            },
+            "deleteConfirmation": {
+              "title": "آیا مطمئنی که میخوای میز «{name}» رو حذف کنی؟",
+              "description": "این عمل قابل بازگشت نیست.",
+              "cancel": "انصراف",
+              "confirm": "حذفش کن"
+            }
+          },
+          "toasts": {
+            "deleteSuccess": "میز با موفقیت حذف شد",
+            "deleteError": "خطایی در هنگام حذف میز رخ داد"
+          }
+        },
+        "timer": {
+          "progressMessages": {
+            "call": "مشتری {duration} پیش صدا زده",
+            "readyOrder": "سفارش {duration} پیش آماده شده",
+            "servedOrder": "سفارش {duration} پیش تحویل داده شده",
+            "pendingOrder": "مشتری {duration} پیش سفارش داده",
+            "session": "مشتری {duration} پیش اسکن کرده"
+          },
+          "emptyTable": {
+            "title": "{tableName} خالی است",
+            "description": "به محض باز شدن منو توسط مشتری، میز فعال می‌شود."
+          }
+        },
+        "qrCode": {
+          "buttons": { "download": "دانلود QR‌ کد" }
+        },
+        "status": {
+          "waiter": "!سالن دار‍",
+          "newOrder": "سفارش جدید",
+          "activeOrder": "سفارش فعال",
+          "orderReady": "سفارش آماده",
+          "viewingMenu": "مشاهده منو",
+          "orderServed": "سرو شد!"
+        },
+        "footer": {
+          "status": {
+            "pendingOrder": "سفارش جدید",
+            "session": "سفارش روی میز",
+            "call": "درخواست فعال",
+            "readyOrder": "آماده تحویل",
+            "servedOrder": "در صف پرداخت",
+            "default": "سفارش جدید"
+          }
+        }
+      }
+    },
+    "data": {
+      "categories": {
+        "form": {
+          "update": {
+            "title": "ویرایش آیتم",
+            "description": "اطلاعات آيتم منو را ویرایش کنید"
+          },
+          "toasts": {
+            "createSuccess": "دسته بندی با موفقیت ایجاد شد",
+            "createError": "خطایی در ایجاد دسته بندی رخ داد.",
+            "editSuccess": "دسته بندی با موفقیت ویرایش شد",
+            "editError": "خطایی در ویرایش دسته بندی رخ داد.",
+            "requestError": "خطایی در پردازش درخواست رخ داد. لطفاً دوباره تلاش کنید.",
+            "onError": "لطفاً حداقل نام یا آیکون را وارد کنید"
+          },
+          "inputs": {
+            "icon": {
+              "label": "آیکون"
+            },
+            "name": {
+              "label": "نام دسته",
+              "placeHolder": "پیتزا، برگر، نوشیدنی سرد، ..."
+            }
+          }
+        },
+        "empty": {
+          "title": "هیچ دسته‌بندی‌ای برای نمایش وجود ندارد",
+          "description": "شما هیچ دسته‌بندی‌ای ایجاد نکرده‌اید. با ایجاد یک دسته‌بندی جدید شروع کنید",
+          "button": {
+            "title": "ایجاد دسته‌بندی جدید",
+            "description": "با انتخاب گزینه‌های موردنظر، دسته‌بندی جدیدی به منو اضافه کنید"
+          }
+        },
+        "dataTable": {
+          "title": "دسته‌بندی‌ ها",
+          "headers": {
+            "icon": "آیکون",
+            "name": "نام",
+            "isActive": "فعال"
+          },
+          "deleteConfirmation": {
+            "title": "آیا مطمئنی که میخوای دسته‌بندی «{name}» رو حذف کنی؟",
+            "description": "این عمل قابل بازگشت نیست.",
+            "cancel": "انصراف",
+            "confirm": "حذفش کن"
+          },
+          "toasts": {
+            "deleteSuccess": "دسته‌بندی با موفقیت حذف شد",
+            "deleteError": "حذف دسته‌بندی با خطا مواجه شد"
+          }
+        }
+      },
+      "items": {
+        "form": {
+          "update": {
+            "title": "ویرایش آیتم",
+            "description": "اطلاعات آيتم منو را ویرایش کنید"
+          },
+          "toasts": {
+            "createSuccess": "آیتم با موفقیت ایجاد شد",
+            "createError": "خطایی در ایجاد آیتم رخ داد.",
+            "editSuccess": "آیتم با موفقیت ویرایش شد",
+            "editError": "خطایی در ویرایش آیتم رخ داد.",
+            "requestError": "خطایی در پردازش درخواست رخ داد. لطفاً دوباره تلاش کنید.",
+            "onError": "لطفا موارد الزامی را وارد کنید"
+          },
+          "inputs": {
+            "scope": {
+              "all": {
+                "title": "همه شعبه‌ها",
+                "description": "این آیتم در تمام شعب نمایش داده خواهد شد"
+              },
+              "only": {
+                "title": "فقط این شعبه",
+                "description": "این آیتم فقط در همین شعبه نمایش داده می‌شود"
+              },
+              "except": {
+                "title": "همه به‌جز این شعبه",
+                "description": "این آیتم در همه شعب نمایش داده می‌شود، به‌جز شعبه فعلی"
+              }
+            },
+            "image": {
+              "label": "تصویر"
+            },
+            "category": {
+              "label": "گروه",
+              "placeholder": "دسته‌بندی",
+              "iconAlt": "آیکون دسته‌بندی"
+            },
+            "name": {
+              "label": "نام",
+              "placeholder": "پیتزا پپرونی"
+            },
+            "description": {
+              "label": "توضیحات",
+              "placeholder": "توضیحات مربوط به آیتم"
+            },
+            "price": {
+              "label": "قیمت"
+            }
+          }
+        },
+        "empty": {
+          "title": "هیچ آیتمی برای نمایش وجود ندارد",
+          "description": "شما هیچ آیتمی ایجاد نکرده‌اید. با ایجاد یک آیتم جدید شروع کنید",
+          "button": {
+            "title": "ایجاد آیتم جدید",
+            "description": "با انتخاب گزینه‌های موردنظر، آیتم جدیدی به منو اضافه کنید"
+          }
+        },
+        "dataTable": {
+          "titles": {
+            "branchItems": "آیتم های شعبه",
+            "hiddenItems": "آیتم های پنهان"
+          },
+          "headers": {
+            "image": "تصویر",
+            "name": "نام",
+            "category": "دسته‌بندی",
+            "price": "قیمت",
+            "isAvailable": "موجود",
+            "isActive": "فعال"
+          },
+          "deleteConfirmation": {
+            "title": "آیا مطمئنی که میخوای آیتم «{name}» رو حذف کنی؟",
+            "description": "این عمل قابل بازگشت نیست.",
+            "cancel": "انصراف",
+            "confirm": "حذفش کن"
+          },
+          "toasts": {
+            "deleteSuccess": "آیتم با موفقیت حذف شد",
+            "deleteError": "حذف آیتم با خطا مواجه شد"
+          }
+        }
+      }
+    },
+    "personnel": {
+      "form": {
+        "toasts": {
+          "createSuccess": "پرسنل با موفقیت دعوت شد",
+          "createError": "خطایی در دعوت پرسنل رخ داد.",
+          "editSuccess": "اطلاعات پرسنل با موفقیت ویرایش شد",
+          "editError": "خطایی در ویرایش اطلاعات پرسنل رخ داد.",
+          "requestError": "خطایی در پردازش درخواست رخ داد. لطفاً دوباره تلاش کنید.",
+          "onError": "لطفاً موارد الزامی را وارد کنید"
+        },
+        "validation": {
+          "firstNameRequired": "نام الزامی است.",
+          "lastNameRequired": "نام خانوادگی الزامی است.",
+          "emailInvalid": "ایمیل معتبر وارد کنید",
+          "branchRequired": "انتخاب شعبه الزامی است."
+        },
+        "inputs": {
+          "firstName": {
+            "label": "نام",
+            "placeHolder": "نام پرسنل"
+          },
+          "lastName": {
+            "label": "نام خانوادگی",
+            "placeHolder": "نام خانوادگی پرسنل"
+          },
+          "email": {
+            "label": "ایمیل",
+            "placeHolder": "staff@gmail.com"
+          },
+          "branches": {
+            "label": "شعب",
+            "all": "همه"
+          },
+          "role": {
+            "label": "سمت",
+            "placeHolder": "انتخاب سمت",
+            "options": {
+              "manager": "مدیر",
+              "chef": "آشپز",
+              "cashier": "صندوق‌دار",
+              "waiter": "سالن‌دار",
+              "storekeeper": "انباردار"
+            }
+          }
+        },
+        "buttons": {
+          "invite": "دعوت پرسنل",
+          "update": "ویرایش پرسنل"
+        }
+      },
+      "empty": {
+        "title": "پرسنلی برای نمایش وجود ندارد",
+        "description": "هنوز هیچ پرسنلی اضافه نکرده‌اید. با دعوت از اولین عضو تیم شروع کنید.",
+        "button": {
+          "title": "دعوت از پرسنل",
+          "description": "با وارد کردن اطلاعات پرسنل و تعیین سمت و شعبه‌های مربوطه، یک عضو جدید اضافه کنید."
+        }
+      },
+      "dataTable": {
+        "headers": {
+          "user": "پرسنل",
+          "role": "سمت",
+          "branches": "شعب"
+        },
+        "cells": { "branchCapsule": "شعبه", "title": "لیست شعبه ها" },
+        "invited": "دعوت‌شده",
+        "deleteConfirmation": {
+          "title": "آیا مطمئنی که میخوای پرسنل «{name}» رو حذف کنی؟",
+          "description": "این عمل قابل بازگشت نیست.",
+          "cancel": "انصراف",
+          "confirm": "حذفش کن"
+        }
+      }
+    },
+    "settings": {
+      "updateMenuBtn": {
+        "title": "ویرایش منوی دیجیتال",
+        "description": "برای ویرایش منوی دیجیتال کلیک کنید"
+      }
+    }
+  },
   "navbar": {
     "links": [
       "راهکارها",
@@ -238,5 +673,33 @@
       "loginSuccess": "ورود با موفقیت انجام شد (حالت دمو)",
       "error": "خطایی رخ داد!"
     }
+  },
+  "assetPicker": {
+    "tabs": {
+      "icon": "آیکون",
+      "pattern": "پس‌زمینه‌ها"
+    },
+    "icon": {
+      "title": "لیست آیکون‌ها",
+      "description": "آیکون مورد نظر خود را از بین گروه‌های زیر انتخاب کنید"
+    },
+    "pattern": {
+      "title": "لیست پس‌زمینه‌ها",
+      "description": "پس‌زمینه مورد نظر خود را از بین گروه‌های زیر انتخاب کنید"
+    }
+  },
+  "uploader": {
+    "uploadedImages": "تصاویر آپلود شده ({count})",
+    "add": "اضافه کن",
+    "removeImage": "حذف تصویر",
+    "dropImages": "تصاویر خود را اینجا بیندازید",
+    "fileTypes": "(حداکثر {maxSizeMB}MB) SVG، PNG، JPG، WebP یا GIF",
+    "selectImages": "انتخاب تصاویر"
+  },
+  "roles": {
+    "owner": "صاحب مجموعه",
+    "manager": "مدیر",
+    "waiter": "سالن‌دار",
+    "chef": "سرآشپز"
   }
 }

@@ -13,6 +13,7 @@ import { ArrowLeft } from "lucide-react";
 import { gsap } from "gsap";
 
 //types
+import { _Translator } from "next-intl";
 export type AssetType = {
   id: number;
   url: string;
@@ -37,6 +38,7 @@ type AssetPickerType = {
   onChange?: (selectedItem: AssetType) => void;
   defaultTab?: "icons" | "patterns";
   kind?: "icon" | "pattern";
+  t: _Translator<Record<string, any>, "assetPicker">
 };
 
 type AssetSelectorType = {
@@ -57,7 +59,8 @@ export default function AssetPicker({
   assetGroups,
   value,
   onChange,
-  kind
+  kind,
+  t
 }: AssetPickerType) {
   // Split once per render of the incoming list, rather than fetching twice
   // or requiring the parent to pre-filter by kind.
@@ -76,21 +79,20 @@ export default function AssetPicker({
       className="flex h-full w-full flex-col gap-3"
     >
       {!kind && <TabsList
-        dir="rtl"
         className="flex h-max w-full gap-2 rounded-md border-2 border-primary bg-soft-blue p-1.5"
       >
         <TabsTrigger className="h-10 flex-1 rounded-md" value="icon">
-          آیکون
+          {t("tabs.icon")}
         </TabsTrigger>
         <TabsTrigger className="h-10 flex-1 rounded-md" value="pattern">
-          پس زمینه ها
+          {t("tabs.pattern")}
         </TabsTrigger>
       </TabsList>}
       <TabsContent value="icon">
         <AssetTab
           data={iconGroups}
-          title="لیست آیکون ها"
-          description="آیکون مورد نظر خود را از بین گروه های زیر انتخاب کنید"
+          title={t("icon.title")}
+          description={t("icon.description")}
           value={value}
           onChange={onChange}
         />
@@ -98,8 +100,8 @@ export default function AssetPicker({
       <TabsContent value="pattern">
         <AssetTab
           data={patternGroups}
-          title="لیست پس زمینه ها"
-          description="پس زمینه مورد نظر خود را از بین گروه های زیر انتخاب کنید"
+          title={t("pattern.title")}
+          description={t("pattern.title")}
           value={value}
           onChange={onChange}
         />
@@ -154,22 +156,22 @@ function AssetTab({
 
   return (
     <div className="flex h-full w-full select-none flex-col gap-3 rounded-lg transition-all ease-in-out">
-      <header className="flex flex-col items-end gap-1">
-        <div className="flex w-full items-center justify-between">
+      <header className="flex flex-col gap-1">
+        <div className="flex w-full justify-between">
+          <h2 className="text-xl font-bold text-primary">
+            {groupIsOpen ? data[groupIndex].name : title}
+          </h2>
           <button
             type="button"
             ref={goBackBtnRef}
             id="go-back-btn"
-            className="rounded-md bg-primary p-1 opacity-0"
+            className="rounded-md bg-primary p-1 opacity-0 rotate-180 rtl:rotate-0"
             onClick={() => setGroupIsOpen(false)}
           >
             <ArrowLeft className="text-primary-foreground" />
           </button>
-          <h2 className="text-xl font-bold text-primary">
-            {groupIsOpen ? data[groupIndex].name : title}
-          </h2>
         </div>
-        <p className="text-right text-sm font-light text-primary">
+        <p className="text-sm font-light text-primary">
           {groupIsOpen ? data[groupIndex].description : description}
         </p>
       </header>

@@ -25,6 +25,7 @@ import { BranchCell } from "../[business_slug]/[branch_slug]/personnel/all/compo
 
 //actions
 import { deletePersonnel } from "@/app/actions/dashboard/personnel";
+import { _Translator } from "next-intl";
 
 //types
 // NEEDS TO CHANGE !!!
@@ -49,11 +50,12 @@ const handleDelete = async (businessSlug: string, branchSlug: string, personnelI
 
 export const personnelColumns = (
   businessSlug: string,
-  branchSlug: string
+  branchSlug: string,
+  t: _Translator<Record<string, any>, "dashboard.personnel.dataTable">
 ): ColumnDef<Personnel>[] => [
     {
       accessorKey: "user",
-      header: "پرسنل",
+      header: t("headers.user"),
       cell: ({ row }) => {
         const { first_name, last_name, user } = row.original as {
           first_name?: string;
@@ -61,14 +63,21 @@ export const personnelColumns = (
           user?: string;
         };
 
-        const fullName = [first_name, last_name].filter(Boolean).join(" ").trim();
+        const fullName = [first_name, last_name]
+          .filter(Boolean)
+          .join(" ")
+          .trim();
 
-        return <div className="capitalize">{fullName || user || "دعوت شده"}</div>;
+        return (
+          <div className="capitalize">
+            {fullName || user || t("invited")}
+          </div>
+        );
       },
     },
     {
       accessorKey: "role",
-      header: "سمت",
+      header: t("headers.role"),
       cell: ({ row }) => {
         const role = row.getValue("role") as string;
         return <RoleBadge role={role} />;
@@ -76,9 +85,9 @@ export const personnelColumns = (
     },
     {
       accessorKey: "branches",
-      header: "شعب",
+      header: t("headers.branches"),
       cell: ({ row }) => (
-        <BranchCell branches={row.getValue("branches")}></BranchCell>
+        <BranchCell t={t} branches={row.getValue("branches")} />
       ),
     },
 
@@ -95,19 +104,19 @@ export const personnelColumns = (
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>مطمعنی؟</AlertDialogTitle>
+                  <AlertDialogTitle>{t('deleteConfirmation.title', { "name": props.row.getValue("user") })}</AlertDialogTitle>
                   <AlertDialogDescription>
-                    آیا از حذف پرسنل ({props.row.getValue("user")}) مطمعنی؟
+                    {t('deleteConfirmation.description')}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>انصراف</AlertDialogCancel>
+                  <AlertDialogCancel>{t('deleteConfirmation.cancel')}</AlertDialogCancel>
                   <AlertDialogAction asChild>
                     <Button
                       onClick={() => handleDelete(businessSlug, branchSlug, props.row.original.id)}
                       variant="destructive"
                     >
-                      حذف کن
+                      {t('deleteConfirmation.confirm')}
                     </Button>
                   </AlertDialogAction>
                 </AlertDialogFooter>

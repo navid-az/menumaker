@@ -16,6 +16,7 @@ import { Plus, CircleAlert } from "lucide-react";
 
 //types
 import { type Order } from "@/app/types/api/menu";
+import { getTranslations } from "next-intl/server";
 export type TableType = {
   id: number;
   code: string;
@@ -60,8 +61,10 @@ async function LiveManagementContent({
   const { business_slug, branch_slug } = await paramsPromise;
   const tables = await getTables(business_slug, branch_slug);
 
+  const t = await getTranslations('dashboard.liveManagement')
+
   return (
-    <section className="flex gap-4 flex-row-reverse flex-wrap w-full">
+    <section className="flex gap-4 flex-wrap w-full">
       {tables.length > 0 ? (
         <LiveCards
           businessSlug={business_slug}
@@ -72,28 +75,29 @@ async function LiveManagementContent({
         <Empty className="w-full h-full">
           <EmptyHeader>
             <EmptyMedia variant="icon">
-              <CircleAlert></CircleAlert>
+              <CircleAlert />
             </EmptyMedia>
-            <EmptyTitle>هیچ میز و یا سفارشی برای نمایش وجود ندارد</EmptyTitle>
-            <EmptyDescription>
-              شما هیچ میزی ایجاد نکرده اید. با ساخت یک میز جدید شروع کنید
+            <EmptyTitle>{t('empty.title')}</EmptyTitle>
+            <EmptyDescription className="min-w-2xl">
+              {t('empty.description')}
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent className="flex-row justify-center gap-2">
             <CreateTableForm
               businessSlug={business_slug}
               branchSlug={branch_slug}
-              title="ایجاد میز"
-              description="با انتخاب گزینه های مورد نظر دسته بندی جدید به منو اضافه کنید"
+              title={t('empty.button.title')}
+              description={t('empty.button.description')}
             >
               <Button
                 size="lg"
                 className="scale-pro rounded-full border-2 border-primary bg-soft-blue px-4 font-semibold text-primary transition-all duration-200 hover:scale-95 hover:bg-primary hover:text-primary-foreground data-[state=open]:scale-95 data-[state=open]:bg-primary data-[state=open]:text-primary-foreground"
               >
-                <Plus className="ml-2 h-5 w-5"></Plus>
-                <p>ایجاد میز جدید</p>
+                <Plus className="h-5 w-5"></Plus>
+                <p>{t('empty.button.title')}</p>
               </Button>
             </CreateTableForm>
+
           </EmptyContent>
         </Empty>
       )}

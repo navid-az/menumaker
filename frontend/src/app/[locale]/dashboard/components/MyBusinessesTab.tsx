@@ -17,12 +17,14 @@ import { ArrowLeft } from "lucide-react";
 
 //types
 import { type Business } from "@/app/types/api/business";
+import { _Translator } from "next-intl";
 
 type MyBusinessesTabType = {
   position: string;
   businesses: Business[];
   isCollapsed: boolean;
   collapsePanel: () => void;
+  t: _Translator<Record<string, any>, "dashboard.sidebar">
   //   venueType: "restaurant" | "cafe" | "buffet" | "food truck";
 };
 
@@ -31,6 +33,7 @@ export default function MyBusinessesTab({
   businesses,
   isCollapsed,
   collapsePanel,
+  t
 }: MyBusinessesTabType) {
   const router = useRouter();
   const tab = useRef(null);
@@ -101,7 +104,7 @@ export default function MyBusinessesTab({
             </p>
           </div>
           <ArrowLeft
-            className={` transition-all ${isCollapsed ? "hidden" : "flex"} ${!isOpen ? "rotate-0" : "-rotate-90"
+            className={` transition-all ${isCollapsed ? "hidden" : "flex"} ${!isOpen ? "rotate-180 rtl:rotate-0" : "rotate-270 rtl:-rotate-90"
               } ${businesses.length <= 1 ? "hidden" : "flex"}`}
           ></ArrowLeft>
         </section>
@@ -109,7 +112,7 @@ export default function MyBusinessesTab({
           className={`${isCollapsed ? "hidden" : "flex"
             } flex w-full items-center gap-2`}
         >
-          <p>سمت شما</p>
+          <p>{t("business.roleLabel")}</p>
           <p className=" w-max rounded-full bg-yellow-400 px-3 py-1 text-xs text-yellow-900">
             {position}
           </p>

@@ -13,6 +13,9 @@ import getMenuCategories from "@/lib/business/getMenuCategories";
 //SVGs
 import { CircleAlert } from "lucide-react";
 
+//libraries
+import { getTranslations } from "next-intl/server";
+
 type ParamsPromise = Promise<{ business_slug: string }>;
 
 export default function Page(props: { params: ParamsPromise }) {
@@ -28,6 +31,8 @@ export default function Page(props: { params: ParamsPromise }) {
 async function CategoriesContent({ paramsPromise }: { paramsPromise: ParamsPromise }) {
   const { business_slug } = await paramsPromise;
 
+  const t = await getTranslations('dashboard.data')
+
   const [assetGroups, categoriesData] = await Promise.all([
     getAssetGroups("icon"),
     getMenuCategories(business_slug),
@@ -40,16 +45,16 @@ async function CategoriesContent({ paramsPromise }: { paramsPromise: ParamsPromi
           <EmptyMedia variant="icon">
             <CircleAlert />
           </EmptyMedia>
-          <EmptyTitle>هیچ دسته‌بندی ای برای نمایش وجود ندارد</EmptyTitle>
+          <EmptyTitle>{t('categories.empty.title')}</EmptyTitle>
           <EmptyDescription className="min-w-2xl">
-            شما هیچ دسته‌بندی ای ایجاد نکرده اید. با ایجاد یک دسته‌بندی جدید شروع کنید
+            {t('categories.empty.description')}
           </EmptyDescription>
         </EmptyHeader>
         <EmptyContent className="flex-row justify-center gap-2">
           <CreateCategoryForm
             assetGroups={assetGroups}
-            title="ایجاد دسته‌بندی جدید"
-            description="با انتخاب گزینه های مورد نظر دسته بندی جدید به منو اضافه کنید"
+            title={t('categories.empty.button.title')}
+            description={t('categories.empty.button.description')}
             businessSlug={business_slug}
           />
         </EmptyContent>
@@ -58,9 +63,6 @@ async function CategoriesContent({ paramsPromise }: { paramsPromise: ParamsPromi
   }
 
   return (
-    <>
-      <h2 className="text-xl">دسته بندی ها</h2>
-      <CategoryClientWrapper businessSlug={business_slug} assetGroups={assetGroups} categories={categoriesData} />
-    </>
+    <CategoryClientWrapper businessSlug={business_slug} assetGroups={assetGroups} categories={categoriesData} />
   );
 }

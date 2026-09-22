@@ -10,6 +10,7 @@ import { DataTable } from "@/app/[locale]/dashboard/categories/data-table";
 import { itemColumns } from "@/app/[locale]/dashboard/items/columns";
 import { MenuCategory } from "@/app/types/api/menu";
 import { MenuItem } from "@/app/types/api/menu";
+import { _Translator, useTranslations } from "next-intl";
 
 //SVGs
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
@@ -26,9 +27,12 @@ export default function ItemClientWrapper({
   visibleItems: MenuItem[];
   hiddenItems: MenuItem[];
 }) {
-  const visibleItemColumns = itemColumns(businessSlug, categories, "visible");
-  const hiddenItemColumns = itemColumns(businessSlug, categories, "hidden");
+  const t = useTranslations('dashboard.data.items')
+
+  const visibleItemColumns = itemColumns(businessSlug, categories, "visible", t);
+  const hiddenItemColumns = itemColumns(businessSlug, categories, "hidden", t);
   const [isCollapsed, setIsCollapsed] = useState(true);
+
 
   useEffect(() => {
     if (hiddenItems.length === 0) {
@@ -43,7 +47,7 @@ export default function ItemClientWrapper({
         <div className="flex items-center gap-2">
           <Button variant="ghost" className="w-max">
             <Eye className="w-5 h-5 text-muted-foreground"></Eye>
-            <p className="text-muted-foreground text-base">آیتم های شعبه</p>
+            <p className="text-muted-foreground text-base">{t('dataTable.titles.branchItems')}</p>
           </Button>
         </div>
         <DataTable columns={visibleItemColumns} data={visibleItems} />
@@ -61,12 +65,12 @@ export default function ItemClientWrapper({
           >
             <div className="flex items-center gap-2">
               <EyeOff className="w-5 h-5 text-muted-foreground"></EyeOff>
-              <p className="text-muted-foreground text-base">آیتم های پنهان</p>
+              <p className="text-muted-foreground text-base">{t('dataTable.titles.hiddenItems')}</p>
             </div>
             <ArrowLeft
               className={cn(
-                "w-5 h-5 text-muted-foreground mt-0.5 transition-all",
-                !isCollapsed && "-rotate-90"
+                "w-5 h-5 rotate-180 rtl:rotate-0 text-muted-foreground mt-0.5 transition-all",
+                !isCollapsed && "rotate-270 rtl:-rotate-90"
               )}
             ></ArrowLeft>
           </Button>

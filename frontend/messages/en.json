@@ -132,6 +132,444 @@
       ]
     }
   },
+  "dashboard": {
+    "header": {
+      "subscriptionPopover": {
+        "renew": "Renew Subscription",
+        "startDate": "Start Date:",
+        "expirationDate": "Expiration Date:",
+        "days": "{days} days",
+        "remaining": "remaining",
+        "plan": "Plan",
+        "duration": "{months} months",
+        "status": "Subscription Status",
+        "plans": {
+          "franchiser": "Franchiser",
+          "pro": "Pro",
+          "basic": "Basic"
+        }
+      },
+      "branchSelector": {
+        "placeholder": "Select a branch...",
+        "search": "Search branches...",
+        "empty": "No branches found",
+        "active": "Active",
+        "create": "Create New Branch",
+        "form": {
+          "title": "Create New Branch",
+          "description": "Add a new branch to your business",
+          "toasts": {
+            "createSuccess": "Branch created successfully",
+            "createError": "An error occurred while creating the branch.",
+            "editSuccess": "Branch updated successfully",
+            "editError": "An error occurred while updating the branch.",
+            "requestError": "An error occurred while processing the request. Please try again.",
+            "onError": "Please fill in all required fields"
+          },
+          "validation": {
+            "nameMin": "Branch name must be at least 2 characters long",
+            "addressMax": "Address cannot exceed 255 characters",
+            "phoneNumbersOnly": "Please enter numbers only"
+          },
+          "inputs": {
+            "name": {
+              "label": "Name",
+              "placeHolder": "e.g. \"Tehran - Farmanieh\""
+            },
+            "phoneNumber": {
+              "label": "Phone Number",
+              "placeHolder": "Enter the branch phone number"
+            },
+            "address": {
+              "label": "Branch Address",
+              "placeHolder": "e.g. \"Tehran, Ekbatan, Phase 3, across from the bakery\""
+            }
+          },
+          "buttons": {
+            "create": "Create New Branch"
+          }
+        }
+      }
+    },
+    "toolbar": {
+      "data": {
+        "tabs": {
+          "items": "Items",
+          "categories": "Categories",
+          "offers": "Discounts",
+          "additionalCosts": "Additional Costs"
+        },
+        "items": {
+          "create": {
+            "title": "Create Item",
+            "description": "Add a new item to your menu by selecting the desired options"
+          }
+        },
+        "categories": {
+          "create": {
+            "title": "Create Category",
+            "description": "Add a new category to your menu by selecting the desired options"
+          }
+        }
+      },
+      "liveManagement": {
+        "tabs": {
+          "all": "All",
+          "inPerson": "At the Table",
+          "online": "Online Orders"
+        },
+        "tables": {
+          "create": {
+            "title": "Add Table",
+            "description": "Add a new table to your restaurant by selecting the desired options"
+          },
+          "button": "Add Table"
+        }
+      },
+      "personnel": {
+        "tabs": {
+          "all": "All Staff",
+          "perBranch": "Branch Staff"
+        },
+        "invite": {
+          "title": "Invite Staff",
+          "description": "Add new members to your staff"
+        }
+      }
+    },
+    "sidebar": {
+      "business": {
+        "roleLabel": "Your Role",
+        "role": "Owner"
+      },
+      "sidebarNav": [
+        "Insights",
+        "Live Management",
+        "Items & Categories",
+        "Staff",
+        "Settings"
+      ]
+    },
+    "liveManagement": {
+      "form": {
+        "toasts": {
+          "createSuccess": "Table created successfully",
+          "createError": "An error occurred while creating the table.",
+          "editSuccess": "Table updated successfully",
+          "editError": "An error occurred while updating the table.",
+          "requestError": "An error occurred while processing the request. Please try again.",
+          "onError": "Please fill in all required fields"
+        },
+        "validation": {
+          "nameRequired": "Table name is required.",
+          "seatsMin": "The table must have at least 1 seat."
+        },
+        "inputs": {
+          "name": {
+            "label": "Table Name",
+            "placeHolder": "Patio 2, West Hall 3, VIP-1"
+          },
+          "seats": {
+            "label": "Number of Seats",
+            "placeHolder": "Number of seats"
+          },
+          "locationDescription": {
+            "label": "Location Description",
+            "placeHolder": "Describe where the table is located..."
+          }
+        },
+        "buttons": {
+          "create": "Add Table",
+          "update": "Update Table"
+        }
+      },
+      "empty": {
+        "title": "No tables to display",
+        "description": "You haven't created any tables yet. Get started by adding your first table.",
+        "button": {
+          "title": "Add Table",
+          "description": "Create a new table by setting its name, location, and other details."
+        }
+      },
+      "liveCard": {
+        "header": {
+          "dropdown": {
+            "buttons": {
+              "tableDetails": "Table Details",
+              "orderDetails": "Order Details",
+              "viewQrCode": "View QR Code",
+              "editTable": "Edit Table",
+              "deleteTable": "Delete Table",
+              "cancelOrder": "Cancel Order"
+            },
+            "deleteConfirmation": {
+              "title": "Are you sure you want to delete table \"{name}\"?",
+              "description": "This action cannot be undone.",
+              "cancel": "Cancel",
+              "confirm": "Delete"
+            }
+          },
+          "toasts": {
+            "deleteSuccess": "Table deleted successfully",
+            "deleteError": "An error occurred while deleting the table"
+          }
+        },
+        "timer": {
+          "progressMessages": {
+            "call": "called {duration} ago",
+            "readyOrder": "Order was ready {duration} ago",
+            "servedOrder": "Order was served {duration} ago",
+            "pendingOrder": "ordered {duration} ago",
+            "session": "scanned {duration} ago"
+          },
+          "emptyTable": {
+            "title": "\"{tableName}\" is empty",
+            "description": "The table will become active as soon as a customer opens the menu."
+          }
+        },
+        "qrCode": {
+          "buttons": { "download": "Download" }
+        },
+        "status": {
+          "waiter": "Waiter!",
+          "newOrder": "New Order",
+          "activeOrder": "Active Order",
+          "orderReady": "Order Ready",
+          "viewingMenu": "Viewing Menu",
+          "orderServed": "Order Served"
+        },
+        "footer": {
+          "status": {
+            "pendingOrder": "New Order",
+            "session": "Order at Table",
+            "call": "Active Request",
+            "readyOrder": "Ready for Pickup",
+            "servedOrder": "Awaiting Payment",
+            "default": "New Order"
+          }
+        }
+      }
+    },
+    "data": {
+      "categories": {
+        "form": {
+          "update": {
+            "title": "Update Category",
+            "description": "Update menu category information"
+          },
+          "toasts": {
+            "createSuccess": "Category created successfully",
+            "createError": "An error occurred while creating the category.",
+            "editSuccess": "Category updated successfully",
+            "editError": "An error occurred while updating the category.",
+            "requestError": "An error occurred while processing the request. Please try again.",
+            "onError": "Please enter at least a name or an icon"
+          },
+          "inputs": {
+            "icon": {
+              "label": "Icon"
+            },
+            "name": {
+              "label": "Category Name",
+              "placeHolder": "Pizza, Burger, Cold Brew, etc."
+            }
+          }
+        },
+        "empty": {
+          "title": "No categories to display",
+          "description": "You haven't created any categories yet. Get started by creating a new category.",
+          "button": {
+            "title": "Create New Category",
+            "description": "Add a new category to your menu by selecting the options you want."
+          }
+        },
+        "dataTable": {
+          "title": "Categories",
+          "headers": {
+            "icon": "Icon",
+            "name": "Name",
+            "isActive": "Active"
+          },
+          "deleteConfirmation": {
+            "title": "Are you sure you want to delete category \"{name}\"?",
+            "description": "This action cannot be undone.",
+            "cancel": "Cancel",
+            "confirm": "Delete"
+          },
+          "toasts": {
+            "deleteSuccess": "Category deleted successfully",
+            "deleteError": "Failed to delete category"
+          }
+        }
+      },
+      "items": {
+        "form": {
+          "update": {
+            "title": "Update Item",
+            "description": "Update menu item information"
+          },
+          "toasts": {
+            "createSuccess": "Item created successfully",
+            "createError": "An error occurred while creating the item.",
+            "editSuccess": "Item updated successfully",
+            "editError": "An error occurred while updating the item.",
+            "requestError": "An error occurred while processing the request. Please try again.",
+            "onError": "Please fill out required fields"
+          },
+          "inputs": {
+            "scope": {
+              "all": {
+                "title": "All Branches",
+                "description": "This item will be displayed across all branches"
+              },
+              "only": {
+                "title": "This Branch Only",
+                "description": "This item will only be displayed at this branch"
+              },
+              "except": {
+                "title": "All Except This Branch",
+                "description": "This item will be displayed at all branches except the current branch"
+              }
+            },
+            "image": {
+              "label": "Image"
+            },
+            "category": {
+              "label": "Category",
+              "placeholder": "Category",
+              "iconAlt": "Category Icon"
+            },
+            "name": {
+              "label": "Name",
+              "placeholder": "Pepperoni Pizza"
+            },
+            "description": {
+              "label": "Description",
+              "placeholder": "Description for this item"
+            },
+            "price": {
+              "label": "Price"
+            }
+          }
+        },
+        "empty": {
+          "title": "No items to display",
+          "description": "You haven't created any items yet. Get started by creating a new item.",
+          "button": {
+            "title": "Create New Item",
+            "description": "Add a new item to your menu by selecting the options you want."
+          }
+        },
+        "dataTable": {
+          "titles": {
+            "branchItems": "Branch Items",
+            "hiddenItems": "Hidden Items"
+          },
+          "headers": {
+            "image": "Image",
+            "name": "Name",
+            "category": "Category",
+            "price": "Price",
+            "isAvailable": "Available",
+            "isActive": "Active"
+          },
+          "deleteConfirmation": {
+            "title": "Are you sure you want to delete item \"{name}\"?",
+            "description": "This action cannot be undone.",
+            "cancel": "Cancel",
+            "confirm": "Delete"
+          },
+          "toasts": {
+            "deleteSuccess": "Item deleted successfully",
+            "deleteError": "Failed to delete item"
+          }
+        }
+      }
+    },
+    "personnel": {
+      "form": {
+        "toasts": {
+          "createSuccess": "Staff member invited successfully",
+          "createError": "An error occurred while inviting the staff member.",
+          "editSuccess": "Staff member updated successfully",
+          "editError": "An error occurred while updating the staff member.",
+          "requestError": "An error occurred while processing the request. Please try again.",
+          "onError": "Please fill in all required fields"
+        },
+        "validation": {
+          "firstNameRequired": "First name is required.",
+          "lastNameRequired": "Last name is required.",
+          "emailInvalid": "Please enter a valid email address",
+          "branchRequired": "Please select at least one branch."
+        },
+        "inputs": {
+          "firstName": {
+            "label": "First Name",
+            "placeHolder": "Staff member's first name"
+          },
+          "lastName": {
+            "label": "Last Name",
+            "placeHolder": "Staff member's last name"
+          },
+          "email": {
+            "label": "Email",
+            "placeHolder": "staff@gmail.com"
+          },
+          "branches": {
+            "label": "Branches",
+            "all": "All"
+          },
+          "role": {
+            "label": "Role",
+            "placeHolder": "Select a role",
+            "options": {
+              "manager": "Manager",
+              "chef": "Chef",
+              "cashier": "Cashier",
+              "waiter": "Server",
+              "storekeeper": "Inventory Manager"
+            }
+          }
+        },
+        "buttons": {
+          "invite": "Invite Staff",
+          "update": "Update Staff"
+        }
+      },
+      "empty": {
+        "title": "No Staff to display",
+        "description": "You haven't added any staff yet. Get started by inviting your first staff member.",
+        "button": {
+          "title": "Invite Staff",
+          "description": "Add a staff member by entering their information and assigning their role and branches."
+        }
+      },
+      "dataTable": {
+        "headers": {
+          "user": "Staff",
+          "role": "Role",
+          "branches": "Branches"
+        },
+        "cells": {
+          "branchCapsule": "branches",
+          "title": "Associated Branches"
+        },
+        "invited": "Invited",
+        "deleteConfirmation": {
+          "title": "Are you sure you want to remove staff \"{name}\"?",
+          "description": "This action cannot be undone.",
+          "cancel": "Cancel",
+          "confirm": "Delete"
+        }
+      }
+    },
+    "settings": {
+      "updateMenuBtn": {
+        "title": "Edit Digital Menu",
+        "description": "Click to edit your digital menu"
+      }
+    }
+  },
   "navbar": {
     "links": ["Solutions", "Menu Builder", "Pricing", "About Us", "Contact Us"]
   },
@@ -157,10 +595,10 @@
       "role": "Owner"
     },
     "navigation": [
-      "Store Overview",
+      "Insights",
       "Live Management",
       "Items & Categories",
-      "Personnel",
+      "Staff",
       "Settings"
     ],
     "liveManagement": {
@@ -193,7 +631,7 @@
       "Analytics",
       "Live Management",
       "Items & Categories",
-      "Personnel",
+      "Staff",
       "Settings",
       "Logout"
     ]
@@ -232,5 +670,33 @@
       "loginSuccess": "Signed in successfully (Demo Mode)",
       "error": "Something went wrong!"
     }
+  },
+  "assetPicker": {
+    "tabs": {
+      "icon": "Icon",
+      "pattern": "Backgrounds"
+    },
+    "icon": {
+      "title": "Icon List",
+      "description": "Choose an icon from the groups below"
+    },
+    "pattern": {
+      "title": "Background List",
+      "description": "Choose a background from the groups below"
+    }
+  },
+  "uploader": {
+    "uploadedImages": "Uploaded images ({count})",
+    "add": "Add",
+    "removeImage": "Remove image",
+    "dropImages": "Drop your images here",
+    "fileTypes": "(Maximum {maxSizeMB}MB) SVG, PNG, JPG, WebP, or GIF",
+    "selectImages": "Select images"
+  },
+  "roles": {
+    "owner": "Owner",
+    "manager": "Manager",
+    "waiter": "Server",
+    "chef": "Chef"
   }
 }

@@ -15,6 +15,9 @@ import AssetPicker from "../AssetPicker";
 //SVGs
 import { Plus } from "lucide-react";
 
+//libraries
+import { useTranslations } from "next-intl";
+
 //types
 import { AssetType, AssetGroupType } from "../AssetPicker";
 
@@ -34,6 +37,8 @@ export function AssetPickerPopOver({
   kind?: 'icon' | 'pattern'
 }) {
   const [isOpen, setIsOpen] = useState(false);
+
+  const t = useTranslations('assetPicker')
 
   const handleOnChange = (selectedAsset: AssetType) => {
     setIsOpen(false);
@@ -79,7 +84,7 @@ export function AssetPickerPopOver({
               </div>
             </div>
           ) : (
-            <p>آیکون</p>
+            <p>{t("tabs.icon")}</p>
           )}
         </Button>
       </PopoverTrigger>
@@ -92,6 +97,7 @@ export function AssetPickerPopOver({
             }}
             assetGroups={assetGroups}
             kind={kind}
+            t={t}
           />
         </div>
       </PopoverContent>

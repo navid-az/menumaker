@@ -27,22 +27,24 @@ import { toPersianDigits } from "@/app/[locale]/(menu)/[business_slug]/utilities
 //types
 import { type Subscription } from "@/app/types/api/subscription";
 
+//libraries
+import { useTranslations } from "next-intl";
+
 export default function SubscriptionPopOver({
   subscription,
+  locale
 }: {
   subscription: Subscription;
+  locale: string
 }) {
+  const t = useTranslations('dashboard.header.subscriptionPopover')
+
   type planType = "franchiser" | "pro" | "basic";
-  const plans: Record<
-    planType,
-    {
-      title: string;
-      color: string;
-    }
-  > = {
-    franchiser: { title: "فرنچایزر", color: "text-yellow-400" },
-    pro: { title: "پرو", color: "text-purple-400" },
-    basic: { title: "بیسیک", color: "text-cyan-400" },
+
+  const plans: Record<planType, { color: string }> = {
+    franchiser: { color: "text-yellow-400" },
+    pro: { color: "text-purple-400" },
+    basic: { color: "text-cyan-400" },
   };
 
   const { progress } = useProgress(
@@ -76,25 +78,30 @@ export default function SubscriptionPopOver({
     <Popover modal={false}>
       <PopoverTrigger asChild>
         <Button
-          className="bg-primary hover:bg-white/5 transition-all duration-300"
+          className="bg-primary hover:bg-white/5 transition-all size-9 duration-300"
           size="icon"
         >
-          <Star className="h-6 w-6"></Star>
+          <Star className="size-5"></Star>
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-64 p-2 flex flex-col" align="end">
         <div className="w-full pb-2 border-b-2 border-gray-100">
-          <p>وضعیت اشتراک</p>
+          <p>{t('status')}</p>
         </div>
         <div className="flex flex-col gap-3">
           <div className="flex gap-1 text-sm pt-2">
-            <p>پلن</p>
+            <p>{t("plan")}</p>
             <p className={plans[subscription.plan.slug].color}>
-              {plans[subscription.plan.slug].title}
+              {t(`plans.${subscription.plan.slug}`)}
             </p>
             <p>.</p>
             <p className="text-gray-600 font-normal">
-              {toPersianDigits(durationInMonths)} ماهه
+              {t("duration", {
+                months:
+                  locale === "fa"
+                    ? toPersianDigits(durationInMonths)
+                    : durationInMonths,
+              })}
             </p>
           </div>
           <div className="w-full flex flex-col justify-center items-center">
@@ -105,10 +112,12 @@ export default function SubscriptionPopOver({
                   reminder && "text-red-600"
                 )}
               >
-                {/* needs to change */}
-                {toPersianDigits(daysLeft)} روز
+                {t("days", { days: locale === "fa" ? toPersianDigits(daysLeft) : daysLeft })}
               </p>
-              <p className={cn("text-xs font-normal")}>باقی مانده</p>
+
+              <p className="text-xs font-normal">
+                {t("remaining")}
+              </p>
             </div>
             <ProgressBar
               innerColor={reminder ? "oklch(57.7% 0.245 27.325)" : "#0f2c30"}
@@ -117,14 +126,19 @@ export default function SubscriptionPopOver({
             ></ProgressBar>
           </div>
           <div className="flex flex-col gap-2">
-            <p className="text-xs font-normal text-gray-500">تاریخ شروع:</p>
-            <p className="text-xs font-normal text-gray-500">تاریخ انقضا:</p>
+            <p className="text-xs font-normal text-gray-500">
+              {t("startDate")}
+            </p>
+            <p className="text-xs font-normal text-gray-500">
+              {t("expirationDate")}
+            </p>
           </div>
+
           {reminder && (
             <Button size="lg" asChild>
               <Link href="/pricing">
-                <Star className="h-5 w-5"></Star>
-                <p>تمدید اشتراک</p>
+                <Star className="h-5 w-5" />
+                <p>{t("renew")}</p>
               </Link>
             </Button>
           )}

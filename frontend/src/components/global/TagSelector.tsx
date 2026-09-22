@@ -4,8 +4,15 @@ import React, { useState } from "react";
 
 //SVGs
 import { Check, CheckCheck } from "lucide-react";
+
+//components
 import { Button } from "../ui/button";
+
+//functions
 import { cn } from "@/lib/utils";
+
+//libraries
+import { _Translator } from "next-intl";
 
 //types
 export type Tag = { id: number; name: string };
@@ -14,6 +21,7 @@ type TagSelector = {
   value?: number[];
   onChange?: (value: number[]) => void;
   defaultValues?: number[];
+  t: _Translator<Record<string, any>, "dashboard.personnel.form">
 };
 
 export default function TagSelector({
@@ -21,6 +29,7 @@ export default function TagSelector({
   value,
   onChange,
   defaultValues,
+  t
 }: TagSelector) {
   const [state, setState] = useState(defaultValues || []);
   const isControlled = value !== undefined;
@@ -65,7 +74,7 @@ export default function TagSelector({
           allToggled && "bg-primary text-primary-foreground"
         )}
       >
-        <p>همه</p>
+        <p>{t('inputs.branches.all')}</p>
         <CheckCheck className="h-5 w-5"></CheckCheck>
       </Button>
       {data.map((tag) => {

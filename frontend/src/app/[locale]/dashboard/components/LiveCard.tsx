@@ -52,6 +52,7 @@ import { TableType } from "../[business_slug]/[branch_slug]/liveManagement/all/p
 
 //libraries
 import { cn } from "@/lib/utils";
+import { _Translator, useTranslations, useLocale } from "next-intl";
 
 //utils
 import { toPersianDigits } from "@/app/[locale]/(menu)/[business_slug]/utilities/formatCurrency";
@@ -141,9 +142,12 @@ export default function LiveCard({
   isMockup = false,
   className
 }: LiveCardType) {
+  const t = useTranslations('dashboard.liveManagement.liveCard')
+  const locale = useLocale()
+
   const [showCode, setShowCode] = useState(false);
   const [state, setState] = useState<LiveCardState>("default");
-  const [footerAlert, setFooterAlert] = useState("سفارش روی میز");
+  const [footerAlert, setFooterAlert] = useState(t('footer.status.session'));
   const [title, setTitle] = useState("مشاهده منو");
   const [showOrder, setShowOrder] = useState(false);
 
@@ -169,16 +173,16 @@ export default function LiveCard({
       if (progressType === "call") {
         setState("attention");
         setShowOrder(false);
-        setTitle("سالن دار!");
+        setTitle(t('status.waiter'));
       }
       if (progressType === "pendingOrder") {
         setState("attention");
-        setTitle("سفارش جدید");
+        setTitle(t('status.newOrder'));
 
         const timeoutId = setTimeout(() => {
           setShowOrder(true);
           setState("default");
-          setTitle("سفارش فعال");
+          setTitle(t('status.activeOrder'));
         }, 5000);
 
         return () => {
@@ -188,16 +192,16 @@ export default function LiveCard({
       if (progressType === "readyOrder") {
         setShowOrder(false);
         setState("attention");
-        setTitle("سفارش آماده");
+        setTitle(t('status.orderReady'));
       }
       if (progressType === "servedOrder") {
         setState("success");
         setTitle("سرو شد!");
-        setFooterAlert("سفارش روی میز");
+        setFooterAlert(t('status.orderServed'));
       }
       if (progressType === "session") {
         setState("default");
-        setTitle("مشاهده منو");
+        setTitle(t('status.viewingMenu'));
       }
       if (progressType === "none") {
         setState("disabled");
@@ -254,6 +258,8 @@ export default function LiveCard({
           elapsedDuration={elapsedDuration}
           progressType={progressType}
           isMockup={isMockup}
+          locale={locale}
+          t={t}
         ></LiveCardHeader>
         {showCode ? (
           <QRCodeView
@@ -286,12 +292,12 @@ export default function LiveCard({
             >
               <div
                 className={cn(
-                  "flex absolute w-full left-1/2 top-1/2 transition-all duration-100 -translate-x-1/2 -translate-y-1/2 gap-2 flex-col items-center justify-center text-2xl font-semibold mx-auto text-(--livecard-text)"
+                  "flex absolute w-full px-6 left-1/2 top-1/2 transition-all duration-100 -translate-x-1/2 -translate-y-1/2 gap-2 flex-col items-center justify-center text-2xl font-semibold mx-auto text-(--livecard-text)"
                 )}
               >
                 {/* central progress text  */}
                 {title && !showOrder && (
-                  <p className="line-clamp-2 text-center text-[clamp(16px,20px,24px)] block group-hover:hidden">
+                  <p className="block w-full text-center text-xl line-clamp-2 group-hover:hidden">
                     {title}
                   </p>
                 )}
@@ -335,8 +341,8 @@ export default function LiveCard({
             {showOrder ? (
               <OrderList table={table}></OrderList>
             ) : (
-              <div className={cn("flex gap-1 transition-all duration-300")}>
-                <CircleAlert className="w-4 h-4 text-(--livecard-text)"></CircleAlert>
+              <div className={cn("flex gap-1.5 transition-all duration-300 items-center")}>
+                <CircleAlert className="size-3.5 text-(--livecard-text)"></CircleAlert>
                 <p className={cn("text-xs text-(--livecard-text)")}>
                   {progressMessage}
                 </p>
@@ -344,7 +350,7 @@ export default function LiveCard({
             )}
           </motion.div>
         ) : (
-          <EmptyView table={table}></EmptyView>
+          <EmptyView table={table} t={t}></EmptyView>
         )}
       </LiveCardBody>
 
@@ -355,19 +361,20 @@ export default function LiveCard({
         progressType={progressType}
         isReady={isReady}
         serviceType={serviceType}
+        t={t}
       ></LiveCardFooter>
     </div>
   );
 }
 
-function EmptyView({ table }: { table: TableType }) {
+function EmptyView({ table, t }: { table: TableType, t: _Translator<Record<string, any>, "dashboard.liveManagement.liveCard"> }) {
   return (
     <div className="flex justify-center items-center flex-col h-full gap-2 mb-10">
       <p className="text-primary text-2xl font-bold text-center">
-        {table.name} خالی میباشد
+        {t("timer.emptyTable.title", { tableName: table.name })}
       </p>
       <p className="text-secondary-foreground text-sm text-center justify-self-center">
-        به محض باز شدن منو توسط مشتری کارت فعال میشود
+        {t('timer.emptyTable.description')}
       </p>
     </div>
   );
@@ -425,6 +432,8 @@ export function LiveCardHeader({
   elapsedDuration,
   progressType,
   isMockup = false,
+  t,
+  locale
 }: {
   table: TableType;
   businessSlug: string;
@@ -434,13 +443,15 @@ export function LiveCardHeader({
   elapsedDuration: string;
   progressType: progressType;
   isMockup?: boolean;
+  t: _Translator<Record<string, any>, "dashboard.liveManagement.liveCard">
+  locale: string
 }) {
   async function handleTableDelete() {
     const res = await deleteTable(businessSlug, branchSlug, table.id);
     if (res.success) {
-      toast.success("میز با موفقیت حذف شد");
+      toast.success(t('header.toasts.deleteSuccess'));
     } else {
-      toast.error("خطایی در هنگام حذف میز رخ داد");
+      toast.error(t('header.toasts.deleteError'));
     }
   }
 
@@ -450,114 +461,7 @@ export function LiveCardHeader({
 
   return (
     <div className="relative w-full flex justify-between items-center rounded-full">
-      <div className="flex justify-between w-full transition-all duration-300">
-        <DropdownMenu dir="rtl">
-          <DropdownMenuTrigger asChild>
-            <Button
-              size="icon"
-              className="rounded-full border-(--livecard-primary)/20 border hover:border-(--livecard-primary) text-royal-green bg-inherit hover:bg-(--livecard-primary)/5"
-            >
-              <EllipsisVertical></EllipsisVertical>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="rounded-xl w-44">
-            <DropdownMenuLabel className="flex justify-between items-center border-b border-primary/5">
-              <p className="text-medium">{table.name}</p>
-              <div className="flex gap-2 bg-primary text-secondary rounded-full px-2 py-1 items-center">
-                <Users2 className="size-4"></Users2>
-                <p className="font-normal">{toPersianDigits(table.seats)}</p>
-              </div>
-            </DropdownMenuLabel>
-            <DropdownMenuGroup>
-              <DropdownMenuItem disabled={isMockup}>
-                <Info></Info>
-                مشخصات میز
-              </DropdownMenuItem>
-              <OrderDataDialog table={table}>
-                <DropdownMenuItem
-                  disabled={!table.order || progressType === "none"}
-                  onSelect={(e) => e.preventDefault()}
-                >
-                  <ScrollText></ScrollText>
-                  مشخصات سفارش
-                </DropdownMenuItem>
-              </OrderDataDialog>
-
-              <DropdownMenuItem onClick={handleViewQrCode}>
-                <QrCode></QrCode>
-                مشاهده QR کد
-              </DropdownMenuItem>
-              {isMockup ? (
-                <DropdownMenuItem disabled>
-                  <Pen></Pen>
-                  ویرایش میز
-                </DropdownMenuItem>
-              ) : (
-                <CreateTableForm
-                  businessSlug={businessSlug}
-                  branchSlug={branchSlug}
-                  defaultValues={table}
-                  tableId={table.id}
-                  title="ویرایش میز"
-                >
-                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                    <Pen></Pen>
-                    ویرایش میز
-                  </DropdownMenuItem>
-                </CreateTableForm>
-              )}
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem
-                disabled={isMockup}
-                onClick={(e) => e.preventDefault()}
-                className="text-red-600 p-0 focus:text-red-600 focus:bg-red-50"
-              >
-                <AlertDialog>
-                  <AlertDialogTrigger
-                    asChild
-                    className="w-full h-full flex items-center gap-2 py-1.5 px-2"
-                  >
-                    <div>
-                      <Trash2></Trash2>
-                      حذف میز
-                    </div>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        آیا مطمعنی که میخوای میز &rsquo;{table.name}&rsquo; رو
-                        حذف کنی؟
-                      </AlertDialogTitle>
-                      <AlertDialogDescription>
-                        این عمل غیر قابل بازگشت میباشد
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter className="mt-8">
-                      <AlertDialogCancel>انصراف</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={(e) => {
-                          handleTableDelete();
-                        }}
-                      >
-                        حذفش کن
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                disabled
-                className="text-red-600 focus:text-red-600 focus:bg-red-50"
-              >
-                <CircleX></CircleX>
-                لغو سفارش
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-
+      <div dir="ltr" className="flex justify-between w-full transition-all duration-300">
         <div className="flex justify-between gap-2">
           <Button
             size="icon"
@@ -578,6 +482,114 @@ export function LiveCardHeader({
             <User2 className="text-(--livecard-primary)"></User2>
           </Button> */}
         </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              size="icon"
+              className="rounded-full border-(--livecard-primary)/20 border hover:border-(--livecard-primary) text-royal-green bg-inherit hover:bg-(--livecard-primary)/5"
+            >
+              <EllipsisVertical></EllipsisVertical>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align={locale === 'fa' ? 'start' : "end"} className="rounded-xl w-44">
+            <DropdownMenuLabel className="flex justify-between items-center border-b border-primary/5">
+              <p className="text-medium">{table.name}</p>
+              <div className="flex gap-2 bg-primary text-secondary rounded-full px-2 py-1 items-center">
+                <Users2 className="size-4"></Users2>
+                <p className="font-normal">{locale === 'fa' ? toPersianDigits(table.seats) : table.seats}</p>
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuGroup>
+              <DropdownMenuItem disabled={isMockup}>
+                <Info></Info>
+                {t('header.dropdown.buttons.tableDetails')}
+              </DropdownMenuItem>
+              <OrderDataDialog table={table}>
+                <DropdownMenuItem
+                  disabled={!table.order || progressType === "none"}
+                  onSelect={(e) => e.preventDefault()}
+                >
+                  <ScrollText></ScrollText>
+                  {t('header.dropdown.buttons.orderDetails')}
+                </DropdownMenuItem>
+              </OrderDataDialog>
+
+              <DropdownMenuItem onClick={handleViewQrCode}>
+                <QrCode></QrCode>
+                {t('header.dropdown.buttons.viewQrCode')}
+              </DropdownMenuItem>
+              {isMockup ? (
+                <DropdownMenuItem disabled>
+                  <Pen></Pen>
+                  {t('header.dropdown.buttons.editTable')}
+                </DropdownMenuItem>
+              ) : (
+                <CreateTableForm
+                  businessSlug={businessSlug}
+                  branchSlug={branchSlug}
+                  defaultValues={table}
+                  tableId={table.id}
+                  title={t('header.dropdown.buttons.editTable')}
+                >
+                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                    <Pen></Pen>
+                    {t('header.dropdown.buttons.editTable')}
+                  </DropdownMenuItem>
+                </CreateTableForm>
+              )}
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem
+                disabled={isMockup}
+                onClick={(e) => e.preventDefault()}
+                className="text-red-600 p-0 focus:text-red-600 focus:bg-red-50"
+              >
+                <AlertDialog>
+                  <AlertDialogTrigger
+                    asChild
+                    className="w-full h-full flex items-center gap-2 py-1.5 px-2"
+                  >
+                    <div>
+                      <Trash2 className="text-red-600 "></Trash2>
+                      {t('header.dropdown.buttons.deleteTable')}
+                    </div>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        {t('header.dropdown.deleteConfirmation.title', { name: table.name })}
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        {t('header.dropdown.deleteConfirmation.description')}
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="mt-8">
+                      <AlertDialogCancel>
+                        {t('header.dropdown.deleteConfirmation.cancel')}
+                      </AlertDialogCancel>
+                      <AlertDialogAction
+                        className="hover:bg-red-600 transition-all duration-300"
+                        onClick={(e) => {
+                          handleTableDelete();
+                        }}
+                      >
+                        {t('header.dropdown.deleteConfirmation.confirm')}
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                disabled
+                className="text-red-600 focus:text-red-600 focus:bg-red-50"
+              >
+                <CircleX className="text-red-600 "></CircleX>
+                {t('header.dropdown.buttons.cancelOrder')}
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* transaction success message */}
@@ -608,6 +620,7 @@ export function LiveCardFooter({
   progressType,
   isReady,
   serviceType,
+  t
 }: {
   table: TableType;
   footerAlert: string;
@@ -615,22 +628,23 @@ export function LiveCardFooter({
   progressType: progressType;
   isReady: boolean;
   serviceType?: ServiceType;
+  t: _Translator<Record<string, any>, "dashboard.liveManagement.liveCard">
 }) {
   // What should be shown right now according to props/state
   const getTargetText = (): string => {
     switch (progressType) {
       case "pendingOrder":
-        return "سفارش جدید";
+        return t('footer.status.pendingOrder');
       case "session":
-        return "سفارش روی میز";
+        return t('footer.status.session');
       case "call":
-        return "درخواست فعال";
+        return t('footer.status.call');
       case "readyOrder":
-        return "آماده تحویل";
+        return t('footer.status.readyOrder');
       case "servedOrder":
-        return "در سف پرداخت";
+        return t('footer.status.servedOrder');
       default:
-        return "سفارش جدید";
+        return t('footer.status.default');
     }
   };
 
@@ -656,7 +670,7 @@ export function LiveCardFooter({
   }, [progressType, footerAlert]);
 
   return (
-    <div className="h-10 w-full flex justify-between items-center px-2 py-2 rounded-full">
+    <div className="h-10 w-full rtl:flex-row-reverse flex justify-between items-center px-2 py-2 rounded-full">
       {/* <p className="font-semibold blur-2xl">{footerAlert}</p> */}
       <motion.p
         animate={{
@@ -674,14 +688,13 @@ export function LiveCardFooter({
       </motion.p>
       <div
         className={cn(
-          "rounded-full bg-(--livecard-accent) text-(--livecard-primary) h-full text-xs px-2 flex items-center hover:scale-105 duration-300 transition-all scale-pro cursor-pointer"
+          "rounded-full font-sans bg-(--livecard-accent) text-(--livecard-primary) h-full text-xs px-2 flex items-center hover:scale-105 duration-300 transition-all scale-pro cursor-pointer"
           // type != "in-person"
           //   ? "bg-primary-foreground text-primary"
           //   : "bg-dark-brown text-happy-yellow"
         )}
       >
-        <p className="font-medium">{table.active_session?.code}</p>
-        <p className="font-medium">#</p>
+        <p className="font-medium">{table.active_session?.code}#</p>
       </div>
     </div>
   );

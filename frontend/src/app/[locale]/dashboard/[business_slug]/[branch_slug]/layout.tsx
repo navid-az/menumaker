@@ -24,7 +24,7 @@ export default function DashboardPanelLayout(props: {
         <HeaderSection paramsPromise={props.params} />
       </Suspense>
 
-      <div className="bg-white flex flex-col p-4 flex-1 overflow-y-auto! xl:rounded-tr-[40px]">
+      <div className="bg-white flex flex-col p-4 flex-1 overflow-y-auto! xl:rounded-ss-[40px]">
         <Suspense fallback={<DashboardToolbarSkeleton />}>
           <ToolBarSection paramsPromise={props.params} />
         </Suspense>

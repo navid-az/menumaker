@@ -10,6 +10,7 @@ import {
   type Personnel,
   personnelColumns,
 } from "@/app/[locale]/dashboard/personnel/columns";
+import { useTranslations } from "next-intl";
 
 export default function PersonnelClientWrapper({
   businessSlug,
@@ -20,7 +21,8 @@ export default function PersonnelClientWrapper({
   branchSlug: string;
   personnel: Personnel[];
 }) {
-  const PersonnelColumns = personnelColumns(businessSlug, branchSlug);
+  const t = useTranslations("dashboard.personnel.dataTable")
+  const PersonnelColumns = personnelColumns(businessSlug, branchSlug, t);
 
   return <DataTable columns={PersonnelColumns} data={personnel} />;
 }

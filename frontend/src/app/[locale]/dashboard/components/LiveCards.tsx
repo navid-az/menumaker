@@ -96,7 +96,7 @@ export default function LiveCards({
   }, [branchSlug]);
 
   return (
-    <div className="flex-1 justify-start flex-row-reverse flex gap-4 flex-wrap">
+    <div dir="ltr" className="flex-1 justify-start items-start flex gap-4 flex-wrap">
       {mergedTables.map((table: TableType) => (
         <LiveCard
           businessSlug={businessSlug}

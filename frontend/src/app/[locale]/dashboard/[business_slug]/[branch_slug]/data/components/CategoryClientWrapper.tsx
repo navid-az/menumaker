@@ -9,6 +9,7 @@ import { categoryColumns } from "@/app/[locale]/dashboard/categories/columns";
 
 //types
 import { MenuCategory } from "@/app/types/api/menu";
+import { useTranslations } from "next-intl";
 
 export default function CategoryClientWrapper({
   businessSlug,
@@ -19,6 +20,11 @@ export default function CategoryClientWrapper({
   categories: MenuCategory[];
   assetGroups: any[];
 }) {
-  const columns = categoryColumns(assetGroups);
-  return <DataTable columns={columns} data={categories} />;
+  const t = useTranslations('dashboard.data.categories')
+
+  const columns = categoryColumns(assetGroups, t);
+  return (<div className="flex flex-col gap-4">
+    <h2 className="text-xl">{t('dataTable.title')}</h2>
+    <DataTable columns={columns} data={categories} />
+  </div>);
 }

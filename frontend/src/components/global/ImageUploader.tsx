@@ -27,6 +27,7 @@ type ImageRef = {
 };
 
 import { type MediaAssetCollection } from "@/app/types/api/asset";
+import { useTranslations } from "next-intl";
 type ImageUploaderProps = {
   value: ImageRef[];
   onChange: (value: ImageRef[]) => void;
@@ -58,6 +59,8 @@ export default function ImageUploader({
 
   // Keep latest controlled value available to async callbacks.
   const valueRef = useRef(value);
+
+  const t = useTranslations('uploader')
 
   useEffect(() => {
     valueRef.current = value;
@@ -178,7 +181,7 @@ export default function ImageUploader({
           <div className="flex w-full flex-col gap-3">
             <div className="flex items-center justify-between gap-2">
               <h3 className="truncate text-sm font-medium">
-                تصاویر آپلود شده ({files.length})
+                {t("uploadedImages", { count: files.length })}
               </h3>
 
               <Button
@@ -189,7 +192,7 @@ export default function ImageUploader({
                 className="flex gap-2"
               >
                 <UploadIcon className="h-4 w-4" aria-hidden="true" />
-                اضافه کن
+                {t("add")}
               </Button>
             </div>
 
@@ -214,7 +217,7 @@ export default function ImageUploader({
                     onClick={() => handleFileRemove(file.id)}
                     size="icon"
                     className="absolute -right-2 -top-2 size-5 rounded-full bg-primary"
-                    aria-label="Remove image"
+                    aria-label={t("removeImage")}
                   >
                     <XIcon className="size-4" />
                   </Button>
@@ -232,11 +235,11 @@ export default function ImageUploader({
             </div>
 
             <p className="mb-1.5 text-sm font-medium">
-              تصاویر خود را اینجا بیاندازید
+              {t("dropImages")}
             </p>
 
             <p className="text-xs text-muted-foreground">
-              (حداکثر . {maxSizeMB}MB) SVG, PNG, JPG, WebP یا GIF
+              {t("fileTypes", { "maxSizeMB": maxSizeMB })}
             </p>
 
             <Button
@@ -245,7 +248,7 @@ export default function ImageUploader({
               onClick={openFileDialog}
             >
               <UploadIcon className="h-4 w-4" aria-hidden="true" />
-              انتخاب تصاویر
+              {t("selectImages")}
             </Button>
           </div>
         )}

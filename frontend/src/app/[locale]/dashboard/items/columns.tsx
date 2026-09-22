@@ -21,9 +21,6 @@ import ItemTableSwitch from "../components/ItemTableSwitch";
 //actions
 import { deleteItem } from "@/app/actions";
 
-//configs
-import { MEDIA_BASE_URL } from "@/lib/config";
-
 //SVGs
 import { ArrowUpDown, Trash2, ImageIcon } from "lucide-react";
 
@@ -34,27 +31,29 @@ import { CellContext } from "@tanstack/react-table";
 //types
 import { MenuCategory } from "@/app/types/api/menu";
 import { MenuItem } from "@/app/types/api/menu";
+import { _Translator } from "next-intl";
 
-const handleDelete = async (props: CellContext<MenuItem, unknown>) => {
+const handleDelete = async (props: CellContext<MenuItem, unknown>, successMessage: string, errorMessage: string) => {
   const res = await deleteItem(
     props.row.original.business,
     props.row.original.id
   );
   if (res.success) {
-    toast.success("آیتم با موفقیت حذف شد");
+    toast.success(successMessage);
   } else {
-    toast.error(res.error);
+    toast.error(errorMessage);
   }
 };
 
 export const itemColumns = (
   businessSlug: string,
   categories: MenuCategory[],
-  scope: "visible" | "hidden"
+  scope: "visible" | "hidden",
+  t: _Translator<Record<string, any>, "dashboard.data.items">
 ): ColumnDef<MenuItem>[] => [
     {
       accessorKey: "item_images",
-      header: "تصویر",
+      header: t('dataTable.headers.image'),
       cell: ({ row }) => {
         const image = row.original.item_images?.[0];
 
@@ -84,7 +83,7 @@ export const itemColumns = (
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            نام
+            {t('dataTable.headers.name')}
             <ArrowUpDown className="mr-2 h-4 w-4" />
           </Button>
         );
@@ -92,7 +91,7 @@ export const itemColumns = (
     },
     {
       accessorKey: "category",
-      header: "گروه",
+      header: t('dataTable.headers.category'),
     },
 
     {
@@ -105,7 +104,7 @@ export const itemColumns = (
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            قیمت
+            {t('dataTable.headers.price')}
             <ArrowUpDown className="mr-2 h-4 w-4" />
           </Button>
         );
@@ -113,7 +112,7 @@ export const itemColumns = (
     },
     {
       accessorKey: "branch_exceptions.is_available",
-      header: "موجود",
+      header: t('dataTable.headers.isAvailable'),
       cell: (props) => {
         const branchExceptions = props.row.original.branch_exceptions;
         const value = branchExceptions
@@ -133,7 +132,7 @@ export const itemColumns = (
     },
     {
       accessorKey: "branch_exceptions.is_active",
-      header: "فعال",
+      header: t('dataTable.headers.isActive'),
       cell: (props) => {
         const branchExceptions = props.row.original.branch_exceptions;
         const value = branchExceptions
@@ -163,19 +162,19 @@ export const itemColumns = (
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>مطمعنی؟</AlertDialogTitle>
+                <AlertDialogTitle>{t('dataTable.deleteConfirmation.title', { "name": props.row.getValue("name") })}</AlertDialogTitle>
                 <AlertDialogDescription>
-                  آیا از حذف این آیتم({props.row.getValue("name")}) مطمعنی؟
+                  {t('dataTable.deleteConfirmation.description')}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>انصراف</AlertDialogCancel>
+                <AlertDialogCancel>{t('dataTable.deleteConfirmation.cancel')}</AlertDialogCancel>
                 <AlertDialogAction asChild>
                   <Button
-                    onClick={() => handleDelete(props)}
+                    onClick={() => handleDelete(props, t('dataTable.toasts.deleteSuccess'), t('dataTable.toasts.deleteError'))}
                     variant="destructive"
                   >
-                    حذف کن
+                    {t('dataTable.deleteConfirmation.confirm')}
                   </Button>
                 </AlertDialogAction>
               </AlertDialogFooter>
@@ -183,8 +182,8 @@ export const itemColumns = (
           </AlertDialog>
           <CreateItemForm
             businessSlug={props.row.original.business}
-            title="ویرایش آیتم"
-            description="با تغییر موارد زیر آیتم را ویرایش کنید"
+            title={t('form.update.title')}
+            description={t('form.update.description')}
             defaultValues={props.row.original}
             categories={categories}
             itemId={props.row.original.id}

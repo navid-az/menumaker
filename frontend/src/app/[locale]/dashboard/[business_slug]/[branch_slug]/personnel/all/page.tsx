@@ -13,6 +13,7 @@ import { DataTableSkeleton } from "@/app/components/skeletons/DataTableSkeleton"
 
 //SVGs
 import { CircleAlert } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 export default function Page(props: {
   params: Promise<{ business_slug: string; branch_slug: string }>;
@@ -35,6 +36,7 @@ async function PersonnelContent({
 
   const personnelData = await getPersonnel(business_slug, branch_slug,);
   const branches = await getBranches(business_slug)
+  const t = await getTranslations('dashboard.personnel')
 
   return (
     <section className="flex gap-4 flex-row-reverse flex-wrap w-full">
@@ -43,14 +45,15 @@ async function PersonnelContent({
           businessSlug={business_slug}
           branchSlug={branch_slug}
           personnel={personnelData}
-        ></PersonnelClientWrapper> : <Empty className="w-full h-full">
+        ></PersonnelClientWrapper> :
+        <Empty className="w-full h-full">
           <EmptyHeader>
             <EmptyMedia variant="icon">
-              <CircleAlert></CircleAlert>
+              <CircleAlert />
             </EmptyMedia>
-            <EmptyTitle>هیچ پرسنلی برای نمایش وجود ندارد</EmptyTitle>
+            <EmptyTitle>{t('empty.title')}</EmptyTitle>
             <EmptyDescription className="min-w-2xl">
-              شما هیچ پرسنلی دعوت نکرده اید. با دعوت یک پرسنل جدید شروع کنید
+              {t('empty.description')}
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent className="flex-row justify-center gap-2">
@@ -58,8 +61,8 @@ async function PersonnelContent({
               businessSlug={business_slug}
               branchSlug={branch_slug}
               branches={branches}
-              title="دعوت پرسنل"
-              description="با انتخاب گزینه های مورد نظر دسته بندی جدید به منو اضافه کنید"
+              title={t('empty.button.title')}
+              description={t('empty.button.description')}
             >
             </CreateUpdatePersonnelForm>
           </EmptyContent>

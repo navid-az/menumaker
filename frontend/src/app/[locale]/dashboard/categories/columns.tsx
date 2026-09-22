@@ -36,25 +36,27 @@ import { AssetGroupType } from "@/components/global/AssetPicker";
 
 //types
 import { MenuCategory } from "@/app/types/api/menu";
+import { _Translator } from "next-intl";
 
-const handleDelete = async (props: CellContext<MenuCategory, unknown>) => {
+const handleDelete = async (props: CellContext<MenuCategory, unknown>, successMessage: string, errorMessage: string) => {
   const res = await deleteCategory(
     props.row.original.business,
     props.row.original.id
   );
   if (res.success) {
-    toast.success("دسته بندی با موفقیت حذف شد");
+    toast.success(successMessage);
   } else {
-    toast.error(res.error);
+    toast.error(errorMessage);
   }
 };
 
 export const categoryColumns = (
-  assetGroups: AssetGroupType[]
+  assetGroups: AssetGroupType[],
+  t: _Translator<Record<string, any>, "dashboard.data.items">
 ): ColumnDef<MenuCategory>[] => [
     {
       accessorKey: "icon",
-      header: "آیکون",
+      header: t('dataTable.headers.icon'),
       cell: (props) => (
         <div className="relative h-12 w-12 rounded-md">
           {props.row.original.icon ? (
@@ -84,14 +86,14 @@ export const categoryColumns = (
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             <ArrowUpDown className="ml-2 h-4 w-4" />
-            نام
+            {t('dataTable.headers.name')}
           </Button>
         );
       },
     },
     {
       accessorKey: "is_active",
-      header: "فعال",
+      header: t('dataTable.headers.isActive'),
       cell: ({ row, cell }) => (
         <CategoryTableSwitch
           originalValue={cell.getValue() as boolean}
@@ -114,19 +116,19 @@ export const categoryColumns = (
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>مطمعنی؟</AlertDialogTitle>
+                  <AlertDialogTitle>{t('dataTable.deleteConfirmation.title', { "name": props.row.getValue("name") })}</AlertDialogTitle>
                   <AlertDialogDescription>
-                    آیا از حذف این دسته بندی({props.row.getValue("name")}) مطمعنی؟
+                    {t('dataTable.deleteConfirmation.description')}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>انصراف</AlertDialogCancel>
+                  <AlertDialogCancel>{t('dataTable.deleteConfirmation.cancel')}</AlertDialogCancel>
                   <AlertDialogAction asChild>
                     <Button
-                      onClick={() => handleDelete(props)}
+                      onClick={() => handleDelete(props, t('dataTable.toasts.deleteSuccess'), t('dataTable.toasts.deleteError'))}
                       variant="destructive"
                     >
-                      حذف کن
+                      {t('dataTable.deleteConfirmation.confirm')}
                     </Button>
                   </AlertDialogAction>
                 </AlertDialogFooter>
@@ -135,8 +137,8 @@ export const categoryColumns = (
             <CreateCategoryForm
               businessSlug={props.row.original.business}
               assetGroups={assetGroups}
-              title="ویرایش دسته بندی"
-              description="با تغییر موارد زیر دسته بندی را ویرایش کنید"
+              title={t('form.update.title')}
+              description={t('form.update.description')}
               defaultValues={{
                 name: props.row.original.name,
                 icon: props.row.original.icon,

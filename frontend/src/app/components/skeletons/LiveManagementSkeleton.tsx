@@ -33,7 +33,7 @@ export function LiveCardSkeleton() {
 
 export function LiveManagementSkeleton() {
     return (
-        <div className="flex-1 justify-start flex-row-reverse flex gap-4 flex-wrap">
+        <div className="flex-1 rtl:justify-end flex gap-4 flex-wrap">
             <LiveCardSkeleton />
             <LiveCardSkeleton />
             <LiveCardSkeleton />

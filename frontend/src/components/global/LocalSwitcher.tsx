@@ -11,7 +11,7 @@ import { Globe } from 'lucide-react';
 //libraries
 import { cn } from '@/lib/utils';
 
-export default function LocaleSwitcher({ className }: { className?: string }) {
+export default function LocaleSwitcher({ className, size }: { className?: string, size?: 'sm' | 'default' }) {
     const locale = useLocale();
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
@@ -25,8 +25,8 @@ export default function LocaleSwitcher({ className }: { className?: string }) {
     }
 
     return (
-        <Button className={cn('group size-10 text-royal-green bg-inherit hover:bg-royal-green/8 hover:scale-110 scale-pro transition-all duration-300', className)} size='icon' onClick={toggle} disabled={isPending}>
-            <Globe className='transition-all duration-300 scale-pro group-hover:scale-90' />
+        <Button className={cn('group size-10 text-royal-green bg-inherit hover:bg-royal-green/8 hover:scale-110 scale-pro transition-all duration-300', size === 'sm' && 'size-9', className)} size='icon' onClick={toggle} disabled={isPending}>
+            <Globe className={cn('transition-all duration-300 scale-pro group-hover:scale-90', size === 'sm' && "size-5")} />
         </Button>
     );
 }

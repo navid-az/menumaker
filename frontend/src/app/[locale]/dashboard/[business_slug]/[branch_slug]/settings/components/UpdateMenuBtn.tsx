@@ -19,6 +19,7 @@ import {
   SquareRoundCorner,
   SwatchBook,
 } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 const iconRows: readonly (readonly (typeof Palette)[])[] = [
   // Row 1
@@ -41,13 +42,15 @@ const iconRows: readonly (readonly (typeof Palette)[])[] = [
 
 const rowHasHoverPush = [true, false, true, false];
 
-export default function UpdateMenuBtn({
+export default async function UpdateMenuBtn({
   businessSlug,
   branchSlug,
 }: {
   businessSlug: string;
   branchSlug: string;
 }) {
+  const t = await getTranslations('dashboard.settings.updateMenuBtn')
+
   return (
     <Button
       asChild
@@ -57,14 +60,14 @@ export default function UpdateMenuBtn({
         href={`/${businessSlug}/menu/update?returnTo=/dashboard/${businessSlug}/${branchSlug}/settings`}
       >
         <div className="flex items-start flex-col justify-between gap-4">
-          <h4 className="font-semibold text-4xl">ویرایش منو دیجیتال</h4>
-          <p className="">برای ویرایش منو دیجیتال کلیک کنید</p>
+          <h4 className="font-semibold text-4xl">{t("title")}</h4>
+          <p>{t("description")}</p>
         </div>
-        <div className="flex flex-col gap-4 -rotate-45 absolute -top-24 -left-40 text-red-400">
+        <div className="flex flex-col gap-4 rotate-45 rtl:-rotate-45 absolute -top-24 -inset-e-40 text-red-400">
           {iconRows.map((icons, index) => (
             <div
               key={index}
-              className={`flex gap-4 transition-all duration-300 ${rowHasHoverPush[index] ? "group-hover:pr-12" : ""
+              className={`flex gap-4 transition-all duration-300 ${rowHasHoverPush[index] ? "group-hover:ps-12" : ""
                 }`}
             >
               {icons.map((Icon, colIdx) => (
@@ -83,7 +86,7 @@ export default function UpdateMenuBtn({
 function IconSquare({ children }: { children: React.ReactNode }) {
   return (
     <div className="size-20 items-center flex justify-center shadow-lg shadow-zinc-700 rounded-xl bg-royal-green text-soft-blue transition-all duration-300 group-hover:text-yellow-200">
-      <div className="rotate-45">{children}</div>
+      <div className="-rotate-45 rtl:rotate-45">{children}</div>
     </div>
   );
 }

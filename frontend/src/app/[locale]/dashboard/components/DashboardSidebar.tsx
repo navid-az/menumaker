@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 //libraries
 import { cn } from "@/lib/utils";
 import { ImperativePanelHandle } from "react-resizable-panels";
+import { useTranslations } from "next-intl";
 
 //components
 import Link from "next/link";
@@ -27,6 +28,8 @@ export default function DashboardSidebar() {
   const md = useMediaQuery("(min-width: 768px)");
   const lg = useMediaQuery("(min-width: 1024px)");
   const resizablePanel = useRef<ImperativePanelHandle>(null);
+
+  const t = useTranslations('dashboard.sidebar')
 
   const { data: businesses, isLoading } = useQuery({
     queryKey: ["businesses"],
@@ -72,9 +75,10 @@ export default function DashboardSidebar() {
           ) : (
             <MyBusinessesTab
               businesses={businesses ?? []}
-              position="صاحب مجموعه"
+              position={t("business.role")}
               isCollapsed={isCollapsed}
               collapsePanel={collapsePanel}
+              t={t}
             />
           )}
           <Suspense fallback={<SidebarNavSkeleton isCollapsed={isCollapsed} isLoading={isLoading} />}>

@@ -10,6 +10,7 @@ import { ChevronsUpDown, MapPin, Edit2, Plus } from "lucide-react";
 
 //libraries
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 //components
 import { Button } from "@/components/ui/button";
@@ -21,7 +22,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-
+import CreateBranchForm from "./CreateBranchForm";
 import {
   Popover,
   PopoverContent,
@@ -30,7 +31,6 @@ import {
 
 //types
 import { type Branch } from "@/app/types/api/business";
-import CreateBranchForm from "./CreateBranchForm";
 type branchSelectorType = {
   branches: Branch[];
   defaultValues?: {
@@ -46,6 +46,8 @@ export function BranchSelector({
   branches,
   defaultValues,
 }: branchSelectorType) {
+  const t = useTranslations('dashboard.header.branchSelector')
+
   const [open, setOpen] = React.useState(false);
 
   const router = useRouter();
@@ -77,16 +79,17 @@ export function BranchSelector({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="group shrink w-72 justify-between transition-colors duration-300 bg-soft-blue border-sad-blue"
+          className="group shrink h-9 w-72 justify-between transition-colors duration-300 bg-soft-blue border-sad-blue"
         >
           <div className="flex gap-2">
-            <MapPin className="w-5 h-5"></MapPin>
+            <MapPin className="w-5 h-5" />
 
             {value
               ? branches.find((branch) => branch.slug === value)?.name
-              : "شعبه را انتخاب کنید..."}
+              : t("placeholder")}
           </div>
-          <ChevronsUpDown className="opacity-50 group-hover:opacity-100 transition-opacity duration-300" />
+
+          <ChevronsUpDown className="opacity-50 size-5 group-hover:opacity-100 transition-opacity duration-300" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-72 p-0">
@@ -99,11 +102,15 @@ export function BranchSelector({
           }}
           className="p-1"
         >
-          <CommandInput placeholder="جستوجو شعبه..." className="h-9" />
+          <CommandInput
+            placeholder={t("search")}
+            className="h-9"
+          />
           <CommandList>
-            <CommandEmpty>هیچ شعبه ای یافت نشد</CommandEmpty>
+            <CommandEmpty>
+              {t("empty")}
+            </CommandEmpty>
             <CommandGroup
-              dir="ltr"
               className="h-[118px] p-0 pt-2 overflow-y-auto scrollbar-thin scrollbar-thumb-muted-foreground scrollbar-track-transparent"
             >
               {branches.map((branch) => (
@@ -113,20 +120,17 @@ export function BranchSelector({
                   onSelect={(currentValue) => {
                     handleBranchChange(currentValue);
                   }}
-                  className="group flex h-9 justify-between flex-row items-center"
+                  className="group flex h-9 justify-between items-center"
                 >
+
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-5 h-5"></MapPin>
+                    {branch.name}
+                  </div>
                   <div
                     onClick={(e) => e.stopPropagation()}
                     className="flex gap-1 items-center"
                   >
-                    <span
-                      className={cn(
-                        "bg-sad-blue text-royal-green px-4 text-xs rounded-full py-1 border-2 border-royal-green",
-                        value === branch.slug ? "flex" : "hidden"
-                      )}
-                    >
-                      فعال
-                    </span>
                     <CreateBranchForm
                       branch_slug={branch.slug}
                       defaultValues={branch}
@@ -136,10 +140,14 @@ export function BranchSelector({
                         <Edit2></Edit2>
                       </Button>
                     </CreateBranchForm>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {branch.name}
-                    <MapPin className="w-5 h-5"></MapPin>
+                    <span
+                      className={cn(
+                        "bg-sad-blue text-royal-green px-4 text-xs rounded-full py-1 border-2 border-royal-green",
+                        value === branch.slug ? "flex" : "hidden"
+                      )}
+                    >
+                      {t("active")}
+                    </span>
                   </div>
                 </CommandItem>
               ))}
@@ -147,8 +155,8 @@ export function BranchSelector({
           </CommandList>
           <CreateBranchForm business_slug={params.business_slug}>
             <Button className="scale-pro mt-2 border-2 border-primary bg-soft-blue px-4 font-semibold text-primary transition-all duration-200 hover:bg-primary hover:text-primary-foreground data-[state=open]:scale-95 data-[state=open]:bg-primary data-[state=open]:text-primary-foreground">
-              <Plus className="ml-1 h-5 w-5"></Plus>
-              <p>ایجاد شعبه جدید</p>
+              <Plus className="ml-1 h-5 w-5" />
+              <p>{t("create")}</p>
             </Button>
           </CreateBranchForm>
         </Command>

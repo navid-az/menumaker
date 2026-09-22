@@ -5,6 +5,9 @@ import { formatTime } from "@/lib/formatTime";
 import { formatElapsedTime } from "@/lib/formatElapsedTime";
 import { toPersianDigits } from "../[locale]/(menu)/[business_slug]/utilities/formatCurrency";
 
+//libraries
+import { useLocale } from "next-intl";
+
 // hook to calculate progress between two timestamps
 // returns progress (0-100), remaining time and elapsed time
 export function useProgress(
@@ -18,6 +21,8 @@ export function useProgress(
   const [progress, setProgress] = useState(100);
   const [remainingMs, setRemainingMs] = useState(0);
   const [elapsedMs, setElapsedMs] = useState(0);
+
+  const locale = useLocale()
 
   useEffect(() => {
     // If isInView boolean is provided AND progress is NOT in view do not start the progress
@@ -52,12 +57,16 @@ export function useProgress(
     return () => clearInterval(id);
   }, [startTime, endTime, onExpire, isInView]);
 
+  const formattedElapsed = formatElapsed
+    ? formatElapsedTime(elapsedMs, locale as 'en' | 'fa') // Add type safety later
+    : formatTime(elapsedMs);
+
   const result = {
     progress: progress,
-    remainingMs: toPersianDigits(formatTime(remainingMs)),
-    elapsedMs: toPersianDigits(
-      formatElapsed ? formatElapsedTime(elapsedMs) : formatTime(elapsedMs)
-    ),
+    remainingMs: locale === 'fa' ? toPersianDigits(formatTime(remainingMs)) : formatTime(remainingMs),
+    elapsedMs: locale === "fa"
+      ? toPersianDigits(formattedElapsed)
+      : formattedElapsed,
   };
 
   return {
