@@ -15,6 +15,7 @@ import ItemAdder from "@/components/global/ItemAdder";
 
 //libraries
 import { useFormContext } from "react-hook-form";
+import { useTranslations } from "next-intl";
 
 //types
 import { type AssetGroupType } from "@/components/global/AssetPicker";
@@ -27,6 +28,7 @@ export default function MenuSectionStep({
   assetGroups: AssetGroupType[];
 }) {
   const { control } = useFormContext();
+  const t = useTranslations('builder.builder.sections.welcomePage.steps.menuSection')
 
   return (
     <SliderStep stepId={stepId}>
@@ -37,7 +39,6 @@ export default function MenuSectionStep({
           <FormItem>
             <FormControl>
               <RadioGroup
-                dir="rtl"
                 onValueChange={field.onChange}
                 defaultValue={field.value}
                 value={field.value}
@@ -50,8 +51,8 @@ export default function MenuSectionStep({
                       isActive={field.value === "single"}
                     >
                       <SliderTabTitle
-                        title="تک بخشی"
-                        description="یک دکمه اصلی برای ورود به صفحه منو"
+                        title={t('options.single.title')}
+                        description={t('options.single.description')}
                         iconSrc="/images/form-icons/single.svg"
                       >
                         <RadioGroupItem value="single"></RadioGroupItem>
@@ -68,7 +69,7 @@ export default function MenuSectionStep({
                                 limit={1}
                                 value={field.value}
                                 onChange={field.onChange}
-                                placeholder="نام بخش"
+                                placeholder={t('inputs.sectionName.placeholder')}
                               ></ItemAdder>
                             </FormControl>
                           )}
@@ -84,8 +85,8 @@ export default function MenuSectionStep({
                       isActive={field.value === "couple"}
                     >
                       <SliderTabTitle
-                        title="چند بخشی"
-                        description="دارای بخش های جداگانه مانند منو کافه و منو رستوران"
+                        title={t('options.couple.title')}
+                        description={t('options.couple.description')}
                         iconSrc="/images/form-icons/couple.svg"
                       >
                         <RadioGroupItem value="couple"></RadioGroupItem>
@@ -102,7 +103,7 @@ export default function MenuSectionStep({
                                 limit={3}
                                 value={field.value}
                                 onChange={field.onChange}
-                                placeholder="نام بخش"
+                                placeholder={t('inputs.sectionName.placeholder')}
                               ></ItemAdder>
                             </FormControl>
                           )}
@@ -118,8 +119,8 @@ export default function MenuSectionStep({
                       isActive={field.value === "none"}
                     >
                       <SliderTabTitle
-                        title="بدون صفحه اصلی"
-                        description="مشتری بلافاصله پس از اسکن QR کد وارد صفحه آیتم ها میشود"
+                        title={t('options.none.title')}
+                        description={t('options.none.description')}
                         iconSrc="/images/form-icons/none.svg"
                       >
                         <RadioGroupItem value="none"></RadioGroupItem>

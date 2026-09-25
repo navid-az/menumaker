@@ -14,9 +14,12 @@ import {
 
 //libraries
 import { useFormContext } from "react-hook-form";
+import { useTranslations } from "next-intl";
 
 export default function MenuLayoutStep({ stepId }: { stepId: string }) {
   const { control } = useFormContext();
+  const t = useTranslations('builder.builder.sections.itemsPage.steps.menuLayout')
+
 
   return (
     <SliderStep stepId={stepId}>
@@ -26,7 +29,6 @@ export default function MenuLayoutStep({ stepId }: { stepId: string }) {
         render={({ field }) => (
           <FormControl>
             <RadioGroup
-              dir="rtl"
               onValueChange={field.onChange}
               defaultValue={field.value}
               value={field.value}
@@ -39,8 +41,8 @@ export default function MenuLayoutStep({ stepId }: { stepId: string }) {
                     isActive={field.value === "horizontal"}
                   >
                     <SliderTabTitle
-                      title="افقی"
-                      description="لیست آیتم ها به صورت افقی نمایش داده میشود"
+                      title={t('options.horizontal.title')}
+                      description={t('options.horizontal.description')}
                       iconSrc="/images/form-icons/horizontal-layout.svg"
                     >
                       <RadioGroupItem value="horizontal"></RadioGroupItem>
@@ -55,8 +57,8 @@ export default function MenuLayoutStep({ stepId }: { stepId: string }) {
                     isActive={field.value === "vertical"}
                   >
                     <SliderTabTitle
-                      title="عمودی"
-                      description="لیست آیتم ها به صورت عمودی نمایش داده میشود"
+                      title={t('options.vertical.title')}
+                      description={t('options.vertical.description')}
                       iconSrc="/images/form-icons/vertical-layout.svg"
                     >
                       <RadioGroupItem value="vertical"></RadioGroupItem>

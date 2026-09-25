@@ -16,6 +16,7 @@ import PaletteBuilder from "@/components/global/PaletteBuilder";
 
 //libraries
 import { useFormContext } from "react-hook-form";
+import { useTranslations } from "next-intl";
 
 export default function ThemeStep({
   stepId,
@@ -25,6 +26,7 @@ export default function ThemeStep({
   globalStyle: "default" | "retro";
 }) {
   const { control } = useFormContext();
+  const t = useTranslations('builder.builder.sections.customization.steps.theme.options')
 
   return (
     <SliderStep stepId={stepId}>
@@ -37,8 +39,8 @@ export default function ThemeStep({
             isActive={field.value}
           >
             <SliderTabTitle
-              title="پالت های پیشنهادی"
-              description="پالت های پیشنهادی با توجه به استایل انتخاب شده"
+              title={t("recommendedPalettes.title")}
+              description={t("recommendedPalettes.description")}
               iconSrc="/images/form-icons/palette.svg"
             >
               <FormItem>
@@ -73,8 +75,8 @@ export default function ThemeStep({
 
       <SliderTab onClick={() => console.log("clicked")} isActive>
         <SliderTabTitle
-          title="رنگ بندی منو"
-          description="پالت رنگی دلخواه خود را برای ظاهر منوی ایجاد کنید"
+          title={t("customColors.title")}
+          description={t("customColors.description")}
           iconSrc="/images/form-icons/pallet.svg"
         ></SliderTabTitle>
         <SliderTabBody isOpen>

@@ -23,6 +23,7 @@ import { Edit3, ImageOff, Trash2, Plus } from "lucide-react";
 
 //types
 import { type AssetGroupType, type AssetType } from "./AssetPicker";
+import { useTranslations } from "next-intl";
 export type ItemType = { id: string; name?: string; asset?: AssetType | null };
 type ItemAdderType = {
   placeholder: string;
@@ -32,6 +33,7 @@ type ItemAdderType = {
   value?: ItemType[];
   onChange?: (value: ItemType[]) => void;
   assetGroups: AssetGroupType[];
+  locale?: 'en' | 'fa'
 };
 
 type ItemAction =
@@ -64,6 +66,7 @@ export default function ItemAdder({
   value,
   onChange,
   assetGroups,
+  locale
 }: ItemAdderType) {
   const [internalState, dispatch] = useReducer(reducer, defaultValue);
   const isControlled = value !== undefined;
@@ -77,8 +80,10 @@ export default function ItemAdder({
 
   const [currentItemIndex, setCurrentItemIndex] = useState("");
 
-  const [direction, setDirection] = useState<"ltr" | "rtl">("rtl");
+  const [direction, setDirection] = useState<"ltr" | "rtl">(locale === 'fa' ? 'rtl' : locale === 'en' ? 'ltr' : 'rtl');
   const [inputError, setInputError] = useState("");
+
+  const t = useTranslations('itemAdder')
 
   const assetPickerRef = useRef<HTMLButtonElement>(null);
   // const linkActionRef = useRef<HTMLButtonElement>(null);
@@ -240,7 +245,7 @@ export default function ItemAdder({
               onClick={editMode ? handleEditItem : handleAddItem}
             >
               {editMode ? (
-                <p>ویرایش</p>
+                <p>{t('buttons.edit')}</p>
               ) : (
                 <Plus className="size-5 sm:size-6" />
               )}

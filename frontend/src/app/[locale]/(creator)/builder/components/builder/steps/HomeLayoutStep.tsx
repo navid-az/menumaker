@@ -18,6 +18,7 @@ import { useFormContext } from "react-hook-form";
 //types
 import { type AssetGroupType } from "@/components/global/AssetPicker";
 import { Input } from "@/components/ui/input";
+import { useTranslations } from "next-intl";
 
 export default function HomeLayoutStep({
   stepId,
@@ -27,7 +28,7 @@ export default function HomeLayoutStep({
   assetGroups: AssetGroupType[];
 }) {
   const { control } = useFormContext();
-
+  const t = useTranslations('builder.builder.sections.welcomePage.steps.homeLayout')
 
   return (
     <SliderStep stepId={stepId}>
@@ -39,8 +40,8 @@ export default function HomeLayoutStep({
             <FormControl>
               <SliderTab onClick={() => console.log("clicked")} isActive>
                 <SliderTabTitle
-                  title="تصاویر"
-                  description="تصاویری برای شخصی سازی صفحه اصلی"
+                  title={t("options.images.title")}
+                  description={t("options.images.description")}
                   iconSrc="/images/form-icons/images.svg"
                 ></SliderTabTitle>
                 <SliderTabBody isOpen>
@@ -58,8 +59,8 @@ export default function HomeLayoutStep({
       />
       <SliderTab onClick={() => console.log("clicked")} isActive>
         <SliderTabTitle
-          title="متن خوش‌آمدگویی"
-          description="عنوان و متنی کوتاه برای خوش‌آمدگویی به بازدیدکنندگان "
+          title={t("options.welcomeText.title")}
+          description={t("options.welcomeText.description")}
           iconSrc="/images/form-icons/text-cursor-input.svg"
         />
         <SliderTabBody isOpen>
@@ -70,7 +71,7 @@ export default function HomeLayoutStep({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder={"مثلا نام مجموعه"} {...field}></Input>
+                    <Input placeholder={t("inputs.businessName.placeholder")} {...field}></Input>
                   </FormControl>
                 </FormItem>
               )}
@@ -81,7 +82,7 @@ export default function HomeLayoutStep({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder={"متنی کوتاه"} {...field}></Input>
+                    <Input placeholder={t("inputs.welcomeMessage.placeholder")} {...field}></Input>
                   </FormControl>
                 </FormItem>
               )}

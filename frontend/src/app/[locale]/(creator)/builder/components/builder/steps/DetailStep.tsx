@@ -20,9 +20,11 @@ import {
 
 //libraries
 import { useFormContext } from "react-hook-form";
+import { useTranslations } from "next-intl";
 
 export default function DetailStep({ stepId }: { stepId: string }) {
   const { control } = useFormContext();
+  const t = useTranslations("builder.builder.sections.customization.steps.detail.options");
 
   return (
     <SliderStep stepId={stepId}>
@@ -34,13 +36,13 @@ export default function DetailStep({ stepId }: { stepId: string }) {
             <FormControl>
               <SliderTab onClick={() => console.log("clicked")} isActive>
                 <SliderTabTitle
-                  title="خمیدگی گوشه ها"
-                  description="میزان خمیدگی گوشه های اجزای منو"
+                  title={t('borderRadius.title')}
+                  description={t('borderRadius.description')}
                   iconSrc="/images/form-icons/border.svg"
                 ></SliderTabTitle>
                 <SliderTabBody isOpen>
                   <ButtonSelectGroup
-                    className="flex-row-reverse"
+                    className="justify-end rtl:justify-start rtl:flex-row-reverse"
                     value={field.value}
                     onValueChange={field.onChange}
                   >
@@ -91,13 +93,13 @@ export default function DetailStep({ stepId }: { stepId: string }) {
             <FormControl>
               <SliderTab onClick={() => console.log("clicked")} isActive>
                 <SliderTabTitle
-                  title="نمایش واحد قیمت"
-                  description="نحوه نمایش واحد پول در کل منو را انتخاب کنید"
+                  title={t('priceUnit.title')}
+                  description={t('priceUnit.description')}
                   iconSrc="/images/form-icons/border.svg"
                 ></SliderTabTitle>
                 <SliderTabBody isOpen>
                   <ButtonSelectGroup
-                    className="flex-row-reverse"
+                    className="justify-end rtl:justify-start rtl:flex-row-reverse"
                     value={field.value}
                     onValueChange={field.onChange}
                   >
@@ -134,8 +136,8 @@ export default function DetailStep({ stepId }: { stepId: string }) {
             isActive={field.value}
           >
             <SliderTabTitle
-              title="انیمیشن"
-              description="انیمیشنی که هنگام کلیک روی اجزای منو اجرا میشود"
+              title={t('animation.title')}
+              description={t('animation.description')}
               iconSrc="/images/form-icons/sparkles.svg"
             >
               <FormItem>
@@ -157,6 +159,7 @@ export default function DetailStep({ stepId }: { stepId: string }) {
                       <AnimationSelector
                         value={field.value}
                         onChange={field.onChange}
+                        t={t}
                       />
                     </FormControl>
                   </FormItem>

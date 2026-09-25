@@ -8,6 +8,8 @@ import Setup from "./setup/Setup";
 import BuilderTest from "./builder/BuilderTest";
 import SuccessPage from "./success/SuccessPage";
 import PricingPlans from "@/app/[locale]/(Marketing)/pricing/components/PricingPlans";
+import LocaleSwitcher from "@/components/global/LocalSwitcher";
+import GoBackBtn from "@/components/global/GoBackBtn";
 
 //hooks
 import { useSlider } from "@/lib/stores";
@@ -104,7 +106,11 @@ export default function MenuMaker({
   };
 
   return (
-    <section className="flex h-screen w-full items-center justify-between gap-12 overflow-hidden">
+    <section className="relative flex h-screen w-full items-center justify-between gap-12 overflow-hidden">
+      <div dir="ltr" className="absolute top-0 flex gap-2 z-20 mx-auto w-full p-2 md:p-4">
+        <GoBackBtn />
+        <LocaleSwitcher size="sm" className="rounded-full h-8 w-12 bg-royal-green text-soft-blue hover:scale-110 scale-pro hover:bg-royal-green" />
+      </div>
       <AnimatePresence mode="wait">
         {activeForm === "setup" && (
           <motion.div

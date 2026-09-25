@@ -14,9 +14,12 @@ import {
 
 //libraries
 import { useFormContext } from "react-hook-form";
+import { useTranslations } from "next-intl";
 
 export default function StyleStep({ stepId }: { stepId: string }) {
   const { control } = useFormContext();
+
+  const t = useTranslations("builder.builder.sections.customization.steps.style.options");
 
   return (
     <SliderStep stepId={stepId}>
@@ -26,7 +29,6 @@ export default function StyleStep({ stepId }: { stepId: string }) {
         render={({ field }) => (
           <FormControl>
             <RadioGroup
-              dir="rtl"
               onValueChange={field.onChange}
               defaultValue={field.value}
               value={field.value}
@@ -39,11 +41,13 @@ export default function StyleStep({ stepId }: { stepId: string }) {
                     isActive={field.value === "default"}
                   >
                     <SliderTabTitle
-                      title="پیش فرض"
-                      description="طراحی مدرن و مینیمال با تمرکز بر خوانایی، سادگی و تجربه کاربری روان."
+                      title={t("default.title")}
+                      description={t(
+                        "default.description"
+                      )}
                       iconSrc="/images/form-icons/vertical-layout.svg"
                     >
-                      <RadioGroupItem value="default"></RadioGroupItem>
+                      <RadioGroupItem value="default" />
                     </SliderTabTitle>
                   </SliderTab>
                 </FormControl>
@@ -55,11 +59,13 @@ export default function StyleStep({ stepId }: { stepId: string }) {
                     isActive={field.value === "retro"}
                   >
                     <SliderTabTitle
-                      title="رترو"
-                      description="الهام‌گرفته از طراحی‌های قدیمی با خطوط ضخیم، سایه‌های پررنگ و حال‌و‌هوای نوستالژیک."
+                      title={t("retro.title")}
+                      description={t(
+                        "retro.description"
+                      )}
                       iconSrc="/images/form-icons/horizontal-layout.svg"
                     >
-                      <RadioGroupItem value="retro"></RadioGroupItem>
+                      <RadioGroupItem value="retro" />
                     </SliderTabTitle>
                   </SliderTab>
                 </FormControl>

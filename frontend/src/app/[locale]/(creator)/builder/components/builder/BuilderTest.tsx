@@ -38,6 +38,7 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { motion, AnimatePresence } from "motion/react";
+import { useTranslations } from "next-intl";
 
 //SVGs
 import { Lightbulb } from "lucide-react";
@@ -167,20 +168,22 @@ export default function BuilderTest({
   });
 
 
+  const t = useTranslations("builder");
+
   const sections = [
     {
       id: "customization",
-      title: "شخصی سازی",
+      title: t("builder.sections.customization.title"),
       steps: [
         {
           id: "style",
-          subtitle: "استایل مورد نظرت رو انتخاب کن",
+          subtitle: t("builder.sections.customization.steps.style.subtitle"),
           component: <StyleStep stepId={"style"} />,
           show: true,
         },
         {
           id: "theme",
-          subtitle: "رنگ بندی و تم مورد نظرت رو انتخاب کن",
+          subtitle: t("builder.sections.customization.steps.theme.subtitle"),
           component: (
             <ThemeStep
               globalStyle={form.watch("global_styling.style")}
@@ -191,7 +194,7 @@ export default function BuilderTest({
         },
         {
           id: "detail",
-          subtitle: "ویژگی های ظاهری مورد نظر خودت رو انتخاب کن",
+          subtitle: t("builder.sections.customization.steps.detail.subtitle"),
           component: <DetailStep stepId={"detail"} />,
           show: true,
         },
@@ -199,11 +202,11 @@ export default function BuilderTest({
     },
     {
       id: "welcomePage",
-      title: "صفحه اصلی",
+      title: t("builder.sections.welcomePage.title"),
       steps: [
         {
           id: "menuSection",
-          subtitle: "تنظیمات بخش های منو",
+          subtitle: t("builder.sections.welcomePage.steps.menuSection.subtitle"),
           component: (
             <MenuSectionStep stepId={"menuSection"} assetGroups={assetGroups} />
           ),
@@ -211,7 +214,7 @@ export default function BuilderTest({
         },
         {
           id: "homeLayout",
-          subtitle: "شخصی سازی صفحه خوش‌آمدگویی",
+          subtitle: t("builder.sections.welcomePage.steps.homeLayout.subtitle"),
           component: (
             <HomeLayoutStep stepId={"homeLayout"} assetGroups={assetGroups} />
           ),
@@ -221,7 +224,7 @@ export default function BuilderTest({
         },
         {
           id: "homeFeatures",
-          subtitle: "ویژگی های صفحه خوش‌آمدگویی",
+          subtitle: t("builder.sections.welcomePage.steps.homeFeatures.subtitle"),
           component: (
             <HomeFeatureStep
               stepId={"homeFeatures"}
@@ -236,35 +239,35 @@ export default function BuilderTest({
     },
     {
       id: "itemsPage",
-      title: "صفحه آیتم ها",
+      title: t("builder.sections.itemsPage.title"),
       steps: [
         {
           id: "menuLayout",
-          subtitle: "نوع چیدمان لیست دسته بندی ها چطوری باشه؟",
+          subtitle: t("builder.sections.itemsPage.steps.menuLayout.subtitle"),
           component: <MenuLayoutStep stepId={"menuLayout"} />,
           show: true,
         },
         // {
         //   id: "categoryStyle",
-        //   subtitle: "تنظیمات ظاهری دسته بندی ها",
+        //   subtitle: t("builder.sections.itemsPage.steps.categoryStyle.subtitle"),
         //   component: <CategoryStyleStep stepId={"categoryStyle"} />,
         //   show: true,
         // },
         {
           id: "itemStyle",
-          subtitle: "تنظیمات ظاهری آیتم ها",
+          subtitle: t("builder.sections.itemsPage.steps.itemStyle.subtitle"),
           component: <ItemStyleStep stepId={"itemStyle"} />,
           show: true,
         },
         {
           id: "cartStyle",
-          subtitle: "تنظیمات ظاهری سبد سفارشات",
+          subtitle: t("builder.sections.itemsPage.steps.cartStyle.subtitle"),
           component: <CartStyleStep stepId={"cartStyle"} />,
           show: true,
         },
         {
           id: "menuFeatures",
-          subtitle: "ویژگی های صفحه آیتم ها",
+          subtitle: t("builder.sections.itemsPage.steps.menuFeatures.subtitle"),
           component: <MenuFeatureStep stepId={"menuFeatures"} />,
           show: true,
         },
@@ -324,7 +327,7 @@ export default function BuilderTest({
         // update menu
         const res = await updateMenu(businessSlug, data);
         if (res.success) {
-          toast.success("منو با موفقیت آپدیت شد!");
+          toast.success(t('builder.toasts.menuUpdated'));
           if (onSuccess) {
             onSuccess();
           }
@@ -335,7 +338,7 @@ export default function BuilderTest({
         // create menu
         const res = await createMenu(businessSlug, data);
         if (res.success) {
-          toast.success("منو با موفقیت ساخته شد!");
+          toast.success(t('builder.toasts.menuCreated'));
           if (onSuccess) {
             onSuccess();
           }
@@ -381,7 +384,15 @@ export default function BuilderTest({
 
   return (
     <Form {...form}>
-      <div className="flex px-4 sm:px-12 md:px-16 lg:px-24 mx-auto gap-24 lg:gap-20 2xl:gap-40 xl:gap-30 h-full w-full justify-center">
+      <div className="flex rtl:flex-row-reverse px-4 sm:px-12 md:px-16 lg:px-24 mx-auto gap-24 lg:gap-20 2xl:gap-40 xl:gap-30 h-full w-full justify-center">
+        {/* live menu preview */}
+        <div className="flex relative  p-0 py-0 gap-0 w-max flex-col h-screen justify-center items-center">
+          <MenuPreview></MenuPreview>
+          <div className="rounded-md px-3 absolute -left-24 bottom-30 -rotate-90 py-2 text-xs font-medium text-zinc-400 flex gap-2">
+            <Lightbulb className="size-3.5" />
+            <span>{t("builder.preview.tip")}</span>
+          </div>
+        </div>
         <form
           name="builder-form"
           onSubmit={form.handleSubmit(onSubmit, onInvalid)}
@@ -413,14 +424,7 @@ export default function BuilderTest({
             </SliderFooter>
           </Slider>
         </form>
-        {/* live menu preview */}
-        <div className="flex relative  p-0 py-0 gap-0 w-max flex-col h-screen justify-center items-center">
-          <MenuPreview></MenuPreview>
-          <div className="rounded-md px-3 absolute -left-24 bottom-30 -rotate-90 py-2 text-xs font-medium text-zinc-400 flex gap-2">
-            <Lightbulb className="size-3.5" />
-            <span>این پیش‌نمایش تعاملی می‌باشد</span>
-          </div>
-        </div>
+
       </div>
     </Form>
   );

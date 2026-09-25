@@ -52,7 +52,7 @@ export function ButtonSelectGroup({
       value={{ value: currentValue, onValueChange: handleChange }}
     >
       <div
-        className={`flex w-full flex-wrap justify-start gap-2 rounded-md ${className || ""}`}
+        className={`flex w-full flex-wrap gap-2 rounded-md ${className || ""}`}
       >
         {children}
       </div>
@@ -79,10 +79,9 @@ export function ButtonSelect({
       disabled={disabled}
       onClick={() => context?.onValueChange?.(value)}
       className={`scale-pro cursor-pointer h-[52px] w-[52px] border-2 bg-sad-blue/80 transition-[border-color] duration-300
-        ${
-          isSelected
-            ? "border-primary hover:border-primary"
-            : "border-transparent hover:border-primary/30"
+        ${isSelected
+          ? "border-primary hover:border-primary"
+          : "border-transparent hover:border-primary/30"
         }`}
     >
       {children}

@@ -14,9 +14,11 @@ import {
 
 //libraries
 import { useFormContext } from "react-hook-form";
+import { useTranslations } from "next-intl";
 
 export default function CartStyleStep({ stepId }: { stepId: string }) {
   const { control } = useFormContext();
+  const t = useTranslations('builder.builder.sections.itemsPage.steps.cartStyle')
 
   return (
     <SliderStep stepId={stepId}>
@@ -26,7 +28,6 @@ export default function CartStyleStep({ stepId }: { stepId: string }) {
         render={({ field }) => (
           <FormControl>
             <RadioGroup
-              dir="rtl"
               onValueChange={field.onChange}
               defaultValue={field.value}
               value={field.value}
@@ -39,11 +40,13 @@ export default function CartStyleStep({ stepId }: { stepId: string }) {
                     isActive={field.value === "default"}
                   >
                     <SliderTabTitle
-                      title="حالت پیش‌فرض"
-                      description=" تصویر آیتم های انتخاب‌ شده را همراه با تعداد آن ها نشان می‌دهد"
+                      title={t("options.default.title")}
+                      description={t(
+                        "options.default.description"
+                      )}
                       iconSrc="/images/form-icons/horizontal-layout.svg"
                     >
-                      <RadioGroupItem value="default"></RadioGroupItem>
+                      <RadioGroupItem value="default" />
                     </SliderTabTitle>
                   </SliderTab>
                 </FormControl>
@@ -55,11 +58,13 @@ export default function CartStyleStep({ stepId }: { stepId: string }) {
                     isActive={field.value === "compact"}
                   >
                     <SliderTabTitle
-                      title="حالت فشرده"
-                      description="مجموع تعداد آیتم های انتخاب شده نمایش داده می‌شود"
+                      title={t("options.compact.title")}
+                      description={t(
+                        "options.compact.description"
+                      )}
                       iconSrc="/images/form-icons/vertical-layout.svg"
                     >
-                      <RadioGroupItem value="compact"></RadioGroupItem>
+                      <RadioGroupItem value="compact" />
                     </SliderTabTitle>
                   </SliderTab>
                 </FormControl>

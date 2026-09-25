@@ -132,6 +132,393 @@
       ]
     }
   },
+  "builder": {
+    "setup": {
+      "sections": {
+        "ownerInfo": {
+          "title": "Get to know you",
+          "steps": {
+            "ownerName": {
+              "subtitle": "please enter your full name",
+              "inputs": {
+                "name": {
+                  "label": "Full name",
+                  "placeholder": "owner's full name"
+                }
+              }
+            }
+          }
+        },
+        "businessInfo": {
+          "title": "Get to Know Your Business",
+          "steps": {
+            "businessName": {
+              "subtitle": "Business and Brand Name",
+              "inputs": {
+                "name": {
+                  "label": "Brand name",
+                  "placeholder": "Brand name"
+                },
+                "nameEn": {
+                  "label": "Brand name in latin",
+                  "placeholder": "Brand name"
+                }
+              }
+            },
+            "serviceType": {
+              "subtitle": "How do you provide your services?",
+              "tiles": {
+                "inPerson": { "title": "In-Person Only" },
+                "online": { "title": "Online Only" },
+                "both": { "title": "In-Person & Online" }
+              }
+            },
+            "primaryServiceType": {
+              "subtitle": "How do your customers usually place orders?",
+              "tiles": {
+                "inPerson": { "title": "Mostly In-Person" },
+                "online": { "title": "Mostly Online" }
+              }
+            },
+            "businessSize": {
+              "subtitle": "How large is your business?",
+              "tiles": {
+                "single": { "title": "Single Location" },
+                "multiple": { "title": "Multiple Locations" }
+              }
+            }
+          }
+        },
+        "menuPrefrence": {
+          "title": "Build Your Digital Menu",
+          "steps": {
+            "menuPrefrence": {
+              "subtitle": "How would you like to build your digital menu?",
+              "tiles": {
+                "custom": { "title": "Customize My Menu" },
+                "preBuilt": { "title": "Choose a Pre-Built Menu" }
+              }
+            }
+          }
+        }
+      },
+      "toasts": {
+        "createSuccess": "Business created successfully",
+        "onError": "Please answer all required questions"
+      }
+    },
+    "builder": {
+      "toasts": {
+        "menuUpdated": "Menu updated successfully!",
+        "menuCreated": "Menu created successfully!"
+      },
+      "sections": {
+        "customization": {
+          "title": "Customization",
+          "steps": {
+            "style": {
+              "subtitle": "Choose your preferred style",
+              "options": {
+                "default": {
+                  "title": "Default",
+                  "description": "A modern and minimal design focused on readability, simplicity, and a smooth user experience."
+                },
+                "retro": {
+                  "title": "Retro",
+                  "description": "Inspired by classic designs with bold lines, strong shadows, and a nostalgic feel."
+                }
+              }
+            },
+            "theme": {
+              "subtitle": "Choose your preferred colors and theme",
+              "options": {
+                "recommendedPalettes": {
+                  "title": "Recommended Palettes",
+                  "description": "Recommended color palettes based on your selected style"
+                },
+                "customColors": {
+                  "title": "Custom Colors",
+                  "description": "Create a custom color palette for your menu"
+                }
+              }
+            },
+            "detail": {
+              "subtitle": "Choose your preferred visual details",
+              "options": {
+                "borderRadius": {
+                  "title": "Corner Radius",
+                  "description": "Adjust the corner radius of elements throughout your menu"
+                },
+                "priceUnit": {
+                  "title": "Price Unit Display",
+                  "description": "Choose how the currency unit is displayed"
+                },
+                "animation": {
+                  "title": "Animation",
+                  "description": "Choose the animation that plays when interacting elements",
+                  "exampleBtn": "Effect Example",
+                  "types": { "tactile": "Tactile", "ripple": "Ripple" }
+                }
+              }
+            }
+          }
+        },
+        "welcomePage": {
+          "title": "Home Page",
+          "steps": {
+            "menuSection": {
+              "subtitle": "Configure your menu sections",
+              "options": {
+                "single": {
+                  "title": "Single Section",
+                  "description": "A single main button that takes customers to your menu"
+                },
+                "couple": {
+                  "title": "Multiple Sections",
+                  "description": "Separate sections such as a café menu and a restaurant menu"
+                },
+                "none": {
+                  "title": "No Home Page",
+                  "description": "Customers go directly to the items page after scanning the QR code"
+                }
+              },
+              "inputs": {
+                "sectionName": {
+                  "placeholder": "Section name"
+                }
+              }
+            },
+            "homeLayout": {
+              "subtitle": "Customize your welcome page layout",
+              "options": {
+                "images": {
+                  "title": "Images",
+                  "description": "Add images to personalize your home page"
+                },
+                "welcomeText": {
+                  "title": "Welcome Text",
+                  "description": "A title and short message to welcome your visitors"
+                }
+              },
+              "inputs": {
+                "businessName": {
+                  "placeholder": "e.g. Business Name"
+                },
+                "welcomeMessage": {
+                  "placeholder": "Short message"
+                }
+              }
+            },
+            "homeFeatures": {
+              "subtitle": "Customize your welcome page features",
+              "options": {
+                "socialLinks": {
+                  "title": "Social Links",
+                  "description": "Add links to Instagram, Telegram, and more"
+                },
+                "phoneNumbers": {
+                  "title": "Phone Numbers",
+                  "description": "Add phone numbers for your customers to contact you"
+                }
+              },
+              "inputs": {
+                "socialLink": {
+                  "placeholder": "Social media link"
+                },
+                "phoneNumber": {
+                  "placeholder": "Phone number"
+                }
+              }
+            }
+          }
+        },
+        "itemsPage": {
+          "title": "Items Page",
+          "steps": {
+            "menuLayout": {
+              "subtitle": "Choose how your category list should be displayed",
+              "options": {
+                "horizontal": {
+                  "title": "Horizontal",
+                  "description": "Display the category list horizontally"
+                },
+                "vertical": {
+                  "title": "Vertical",
+                  "description": "Display the category list vertically"
+                }
+              }
+            },
+            "itemStyle": {
+              "subtitle": "Customize the appearance of your items",
+              "options": {
+                "halfImageStacked": {
+                  "title": "Stacked Image",
+                  "description": "The item image covers the full card"
+                },
+                "fullBleedOverlay": {
+                  "title": "Image Overlay",
+                  "description": "The item image covers only part of the card"
+                }
+              }
+            },
+            "cartStyle": {
+              "subtitle": "Customize the appearance of your order cart",
+              "options": {
+                "default": {
+                  "title": "Default",
+                  "description": "Show selected items with their quantities"
+                },
+                "compact": {
+                  "title": "Compact",
+                  "description": "Show the total number of selected items"
+                }
+              }
+            },
+            "menuFeatures": {
+              "subtitle": "Customize your item page features",
+              "options": {
+                "callServer": {
+                  "title": "Call a Server",
+                  "description": "Allow customers to call a server from the menu"
+                },
+                "itemSearch": {
+                  "title": "Item Search",
+                  "description": "Allow customers to search for menu items"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "successPage": {
+      "title": "Your menu has been created successfully!",
+      "description": [
+        "Simply place the QR code below on your tables or anywhere else",
+        "so your customers can view your menu."
+      ],
+      "buttons": {
+        "continue": "Continue",
+        "edit": "Edit"
+      }
+    },
+    "preview": {
+      "tip": "Preview is fully intractable",
+      "categories": {
+        "pizza": {
+          "name": "Pizza"
+        },
+        "burgers": {
+          "name": "Burgers"
+        },
+        "pasta": {
+          "name": "Pasta"
+        },
+        "appetizers": {
+          "name": "Appetizers"
+        },
+        "sandwiches": {
+          "name": "Sandwiches"
+        }
+      },
+      "items": {
+        "margheritaPizza": {
+          "name": "Margherita Pizza",
+          "description": "Tomato sauce, mozzarella, and fresh basil"
+        },
+        "pepperoniPizza": {
+          "name": "Pepperoni Pizza",
+          "description": "Pepperoni, mozzarella, and house sauce"
+        },
+        "calzone": {
+          "name": "Calzone",
+          "description": "Handmade dough, ham, mushrooms, and mozzarella"
+        },
+        "fourCheesePizza": {
+          "name": "Four Cheese Pizza",
+          "description": "Mozzarella, Parmesan, Gouda, and blue cheese"
+        },
+        "beefMushroomPizza": {
+          "name": "Beef & Mushroom Pizza",
+          "description": "Seasoned beef, fresh mushrooms, and mozzarella"
+        },
+        "mushroomBurger": {
+          "name": "Mushroom Burger",
+          "description": "180g beef patty, grilled mushrooms, and cheddar cheese"
+        },
+        "classicCheeseburger": {
+          "name": "Classic Cheeseburger",
+          "description": "Grilled beef, cheddar cheese, lettuce, and house sauce"
+        },
+        "doubleBurger": {
+          "name": "Double Burger",
+          "description": "Two beef patties, cheddar cheese, and caramelized onions"
+        },
+        "baconBurger": {
+          "name": "Bacon Burger",
+          "description": "180g beef patty, turkey bacon, cheddar cheese, and BBQ sauce"
+        },
+        "crispyChickenBurger": {
+          "name": "Crispy Chicken Burger",
+          "description": "Crispy chicken fillet, cheddar cheese, lettuce, and garlic sauce"
+        },
+        "chickenAlfredoPasta": {
+          "name": "Chicken Alfredo Pasta",
+          "description": "Chicken fillet, mushrooms, and Alfredo sauce"
+        },
+        "pestoPasta": {
+          "name": "Pesto Pasta",
+          "description": "Penne, grilled chicken, pesto sauce, and Parmesan"
+        },
+        "chickenParmesanPasta": {
+          "name": "Chicken Parmesan Pasta",
+          "description": "Crispy chicken, tomato sauce, and Parmesan"
+        },
+        "beefLasagna": {
+          "name": "Beef Lasagna",
+          "description": "Lasagna with beef, béchamel sauce, and mozzarella"
+        },
+        "baconCheeseFries": {
+          "name": "Bacon Cheese Fries",
+          "description": "French fries, cheddar cheese, and turkey bacon"
+        },
+        "roastBeefSandwich": {
+          "name": "Roast Beef Sandwich",
+          "description": "Roast beef, Gouda cheese, caramelized onions, and house sauce"
+        },
+        "chickenFilletSandwich": {
+          "name": "Chicken Fillet Sandwich",
+          "description": "Crispy chicken fillet, lettuce, pickles, and garlic sauce"
+        },
+        "specialHotDog": {
+          "name": "Special Hot Dog",
+          "description": "German-style hot dog, cheddar cheese, mushrooms, and fries"
+        }
+      }
+    }
+  },
+  "menu": {
+    "pages": {
+      "welcomePage": {
+        "buttons": {
+          "enterMenu": "Enter Menu"
+        }
+      },
+      "itemsPage": {
+        "header": { "buttons": { "waiter": "Waiter" } }
+      },
+      "cartPage": {
+        "header": {
+          "title": "List of orders"
+        },
+        "orderList": {
+          "empty": { "title": "There are no items in your cart" },
+          "total": "Total"
+        },
+        "footer": { "buttons": { "placeOrder": "Place Order" } }
+      }
+    }
+  },
   "dashboard": {
     "header": {
       "subscriptionPopover": {
@@ -685,6 +1072,11 @@
       "description": "Choose a background from the groups below"
     }
   },
+  "itemAdder": {
+    "buttons": {
+      "edit": "Edit"
+    }
+  },
   "uploader": {
     "uploadedImages": "Uploaded images ({count})",
     "add": "Add",
@@ -698,5 +1090,16 @@
     "manager": "Manager",
     "waiter": "Server",
     "chef": "Chef"
+  },
+  "sliderNavigator": {
+    "buttons": {
+      "next": "Next",
+      "previous": "Previous",
+      "create": "Create Menu",
+      "edit": "Edit Menu"
+    }
+  },
+  "globalComponents": {
+    "addToCartBtn": { "buttons": { "add": "Add" } }
   }
 }

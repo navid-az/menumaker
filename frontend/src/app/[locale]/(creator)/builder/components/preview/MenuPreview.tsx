@@ -9,6 +9,7 @@ import CartLayout from "@/app/[locale]/(menu)/[business_slug]/(public-menu)/orde
 
 //libraries
 import { useFormContext } from "react-hook-form";
+import { useTranslations } from "next-intl";
 
 //utils
 import { generateStyleVars } from "@/app/[locale]/(menu)/[business_slug]/utilities/styleVars";
@@ -28,18 +29,20 @@ export default function MenuPreview() {
   //separates and normalizes form data
   const { globalStyling, menu } = formToMenuGlobalStyling(data);
 
+  const t = useTranslations('builder.builder.preview')
+
   const mockCategories: MenuCategory[] = [
     {
       id: 1,
       business: "lamiz",
-      name: "پیتزا",
+      name: t("categories.pizza.name"),
       is_active: true,
       items: [
         {
           id: 1,
           business: "lamiz",
-          name: "پیتزا مارگاریتا",
-          description: "سس گوجه، پنیر موزارلا، ریحان تازه",
+          name: t("items.margheritaPizza.name"),
+          description: t("items.margheritaPizza.description"),
           item_images: [
             {
               id: 1,
@@ -57,8 +60,8 @@ export default function MenuPreview() {
         {
           id: 2,
           business: "lamiz",
-          name: "پیتزا پپرونی",
-          description: "پپرونی، پنیر موزارلا و سس مخصوص",
+          name: t("items.pepperoniPizza.name"),
+          description: t("items.pepperoniPizza.description"),
           item_images: [
             {
               id: 2,
@@ -76,8 +79,8 @@ export default function MenuPreview() {
         {
           id: 3,
           business: "lamiz",
-          name: "کالزونه",
-          description: "خمیر دست‌ساز، ژامبون، قارچ و پنیر موزارلا",
+          name: t("items.calzone.name"),
+          description: t("items.calzone.description"),
           item_images: [
             {
               id: 3,
@@ -95,8 +98,8 @@ export default function MenuPreview() {
         {
           id: 4,
           business: "lamiz",
-          name: "پیتزا چهار پنیر",
-          description: "موزارلا، پارمزان، گودا و بلوچیز",
+          name: t("items.fourCheesePizza.name"),
+          description: t("items.fourCheesePizza.description"),
           item_images: [
             {
               id: 4,
@@ -114,8 +117,8 @@ export default function MenuPreview() {
         {
           id: 23,
           business: "lamiz",
-          name: "پیتزا گوشت و قارچ",
-          description: "گوشت مزه‌دار، قارچ تازه و پنیر موزارلا",
+          name: t("items.beefMushroomPizza.name"),
+          description: t("items.beefMushroomPizza.description"),
           item_images: [
             {
               id: 23,
@@ -132,17 +135,18 @@ export default function MenuPreview() {
         },
       ],
     },
+
     {
       id: 2,
       business: "lamiz",
-      name: "برگر",
+      name: t("categories.burgers.name"),
       is_active: true,
       items: [
         {
           id: 5,
           business: "lamiz",
-          name: "ماشروم برگر",
-          description: "برگر گوشت ۱۸۰ گرمی، قارچ گریل شده و پنیر چدار",
+          name: t("items.mushroomBurger.name"),
+          description: t("items.mushroomBurger.description"),
           item_images: [
             {
               id: 5,
@@ -160,8 +164,8 @@ export default function MenuPreview() {
         {
           id: 6,
           business: "lamiz",
-          name: "چیز برگر کلاسیک",
-          description: "گوشت گریل شده، پنیر چدار، کاهو و سس مخصوص",
+          name: t("items.classicCheeseburger.name"),
+          description: t("items.classicCheeseburger.description"),
           item_images: [
             {
               id: 6,
@@ -179,8 +183,8 @@ export default function MenuPreview() {
         {
           id: 7,
           business: "lamiz",
-          name: "دبل برگر",
-          description: "دو لایه گوشت، پنیر چدار و پیاز کاراملی",
+          name: t("items.doubleBurger.name"),
+          description: t("items.doubleBurger.description"),
           item_images: [
             {
               id: 7,
@@ -198,8 +202,8 @@ export default function MenuPreview() {
         {
           id: 27,
           business: "lamiz",
-          name: "بیکن برگر",
-          description: "گوشت ۱۸۰ گرمی، بیکن بوقلمون، پنیر چدار و سس باربیکیو",
+          name: t("items.baconBurger.name"),
+          description: t("items.baconBurger.description"),
           item_images: [
             {
               id: 27,
@@ -217,8 +221,8 @@ export default function MenuPreview() {
         {
           id: 29,
           business: "lamiz",
-          name: "کرسپی چیکن برگر",
-          description: "فیله مرغ سوخاری، پنیر چدار، کاهو و سس سیر",
+          name: t("items.crispyChickenBurger.name"),
+          description: t("items.crispyChickenBurger.description"),
           item_images: [
             {
               id: 29,
@@ -235,17 +239,18 @@ export default function MenuPreview() {
         },
       ],
     },
+
     {
       id: 3,
       business: "lamiz",
-      name: "پاستا",
+      name: t("categories.pasta.name"),
       is_active: true,
       items: [
         {
           id: 8,
           business: "lamiz",
-          name: "پاستا آلفردو",
-          description: "فیله مرغ، قارچ و سس آلفردو",
+          name: t("items.chickenAlfredoPasta.name"),
+          description: t("items.chickenAlfredoPasta.description"),
           item_images: [
             {
               id: 8,
@@ -263,8 +268,8 @@ export default function MenuPreview() {
         {
           id: 32,
           business: "lamiz",
-          name: "پاستا پستو",
-          description: "پنه، مرغ گریل، سس پستو و پنیر پارمزان",
+          name: t("items.pestoPasta.name"),
+          description: t("items.pestoPasta.description"),
           item_images: [
             {
               id: 32,
@@ -282,8 +287,8 @@ export default function MenuPreview() {
         {
           id: 34,
           business: "lamiz",
-          name: "پاستا چیکن پارمزان",
-          description: "مرغ سوخاری، سس گوجه و پنیر پارمزان",
+          name: t("items.chickenParmesanPasta.name"),
+          description: t("items.chickenParmesanPasta.description"),
           item_images: [
             {
               id: 34,
@@ -301,8 +306,8 @@ export default function MenuPreview() {
         {
           id: 35,
           business: "lamiz",
-          name: "لازانیا گوشت",
-          description: "لازانیا با گوشت، سس بشامل و پنیر موزارلا",
+          name: t("items.beefLasagna.name"),
+          description: t("items.beefLasagna.description"),
           item_images: [
             {
               id: 35,
@@ -319,17 +324,18 @@ export default function MenuPreview() {
         },
       ],
     },
+
     {
       id: 4,
       business: "lamiz",
-      name: "پیش غذا",
+      name: t("categories.appetizers.name"),
       is_active: true,
       items: [
         {
           id: 10,
           business: "lamiz",
-          name: "سیب زمینی با پنیر و بیکن",
-          description: "سیب زمینی سرخ شده، پنیر چدار و بیکن بوقلمون",
+          name: t("items.baconCheeseFries.name"),
+          description: t("items.baconCheeseFries.description"),
           item_images: [
             {
               id: 10,
@@ -346,17 +352,18 @@ export default function MenuPreview() {
         },
       ],
     },
+
     {
       id: 5,
       business: "lamiz",
-      name: "ساندویچ",
+      name: t("categories.sandwiches.name"),
       is_active: true,
       items: [
         {
           id: 11,
           business: "lamiz",
-          name: "ساندویچ رست بیف",
-          description: "گوشت رست شده، پنیر گودا، پیاز کاراملی و سس مخصوص",
+          name: t("items.roastBeefSandwich.name"),
+          description: t("items.roastBeefSandwich.description"),
           item_images: [
             {
               id: 11,
@@ -374,8 +381,8 @@ export default function MenuPreview() {
         {
           id: 12,
           business: "lamiz",
-          name: "چیکن فیله",
-          description: "فیله مرغ سوخاری، کاهو، خیارشور و سس سیر",
+          name: t("items.chickenFilletSandwich.name"),
+          description: t("items.chickenFilletSandwich.description"),
           item_images: [
             {
               id: 12,
@@ -393,8 +400,8 @@ export default function MenuPreview() {
         {
           id: 13,
           business: "lamiz",
-          name: "هات داگ ویژه",
-          description: "هات داگ آلمانی، پنیر چدار، قارچ و سیب زمینی خلال",
+          name: t("items.specialHotDog.name"),
+          description: t("items.specialHotDog.description"),
           item_images: [
             {
               id: 13,

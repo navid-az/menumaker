@@ -54,7 +54,21 @@ const PaletteBuilder = ({
   };
 
   return (
-    <section className="flex w-full gap-2 py-[6px]">
+    <section className="flex w-full gap-2 py-[6px] rtl:flex-row-reverse">
+      <Button
+        ref={removeBtnRef}
+        type="button"
+        onClick={() => handleColorRemove()}
+        disabled={colors.length < 3}
+        className="flex w-10 grow-0 cursor-pointer items-center justify-center rounded-md bg-primary p-0 text-primary transition-opacity"
+      >
+        <Minus className="text-sad-blue"></Minus>
+      </Button>
+      <Palette
+        handleRemoveColor={(index) => handleColorRemove(index)}
+        colors={colors}
+      ></Palette>
+
       <ColorPicker
         value={colors[0]}
         onChange={(color) => handleColorChange(color)}
@@ -68,19 +82,6 @@ const PaletteBuilder = ({
           <Plus className="text-sad-blue"></Plus>
         </Button>
       </ColorPicker>
-      <Palette
-        handleRemoveColor={(index) => handleColorRemove(index)}
-        colors={colors}
-      ></Palette>
-      <Button
-        ref={removeBtnRef}
-        type="button"
-        onClick={() => handleColorRemove()}
-        disabled={colors.length < 3}
-        className="flex w-10 grow-0 cursor-pointer items-center justify-center rounded-md bg-primary p-0 text-primary transition-opacity"
-      >
-        <Minus className="text-sad-blue"></Minus>
-      </Button>
     </section>
   );
 };

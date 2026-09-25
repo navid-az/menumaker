@@ -14,9 +14,11 @@ import {
 
 //libraries
 import { useFormContext } from "react-hook-form";
+import { useTranslations } from "next-intl";
 
 export default function ItemStyleStep({ stepId }: { stepId: string }) {
   const { control } = useFormContext();
+  const t = useTranslations('builder.builder.sections.itemsPage.steps.itemStyle')
 
   return (
     <SliderStep stepId={stepId}>
@@ -26,7 +28,6 @@ export default function ItemStyleStep({ stepId }: { stepId: string }) {
         render={({ field }) => (
           <FormControl>
             <RadioGroup
-              dir="rtl"
               onValueChange={field.onChange}
               defaultValue={field.value}
               value={field.value}
@@ -39,11 +40,15 @@ export default function ItemStyleStep({ stepId }: { stepId: string }) {
                     isActive={field.value === "half-image-stacked"}
                   >
                     <SliderTabTitle
-                      title="تایپ ۱"
-                      description="تصویر آیتم تمام سطح کارت رو میپوشونه"
+                      title={t(
+                        "options.halfImageStacked.title"
+                      )}
+                      description={t(
+                        "options.halfImageStacked.description"
+                      )}
                       iconSrc="/images/form-icons/horizontal-layout.svg"
                     >
-                      <RadioGroupItem value="half-image-stacked"></RadioGroupItem>
+                      <RadioGroupItem value="half-image-stacked" />
                     </SliderTabTitle>
                   </SliderTab>
                 </FormControl>
@@ -55,11 +60,15 @@ export default function ItemStyleStep({ stepId }: { stepId: string }) {
                     isActive={field.value === "full-bleed-overlay"}
                   >
                     <SliderTabTitle
-                      title="تایپ ۲"
-                      description="تصویر تنها بخشی از کارت رو میپوشونه"
+                      title={t(
+                        "options.fullBleedOverlay.title"
+                      )}
+                      description={t(
+                        "options.fullBleedOverlay.description"
+                      )}
                       iconSrc="/images/form-icons/vertical-layout.svg"
                     >
-                      <RadioGroupItem value="full-bleed-overlay"></RadioGroupItem>
+                      <RadioGroupItem value="full-bleed-overlay" />
                     </SliderTabTitle>
                   </SliderTab>
                 </FormControl>

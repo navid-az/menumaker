@@ -17,6 +17,7 @@ import { Check, Sparkles } from "lucide-react";
 
 //libraries
 import { useFormContext } from "react-hook-form";
+import { _Translator } from "next-intl";
 
 //utils
 import { formToMenuGlobalStyling } from "@/app/[locale]/(creator)/builder/utils/formToMenuGlobalStyling";
@@ -29,10 +30,12 @@ export default function AnimationSelector({
   defaultValue = [],
   value,
   onChange,
+  t
 }: {
   defaultValue?: AnimationOptionsType[];
   value?: AnimationOptionsType[];
   onChange?: (value: AnimationOptionsType[]) => void;
+  t: _Translator<Record<string, any>, "builder.builder.sections.customization.steps.detail.options">
 }) {
   const [internalValue, setInternalValue] =
     useState<AnimationOptionsType[]>(defaultValue);
@@ -107,7 +110,7 @@ export default function AnimationSelector({
         className="scale-pro flex gap-2 border-2 rounded-(--radius-base) bg-(--tertiary) border-(--category-btn-text) text-(--category-btn-text) transition-[background-color,color,box-shadow,border-radius,border-color,opacity] duration-300"
       >
         <Sparkles className="h-5 w-5"></Sparkles>
-        <p className="font-normal">نمونه افکت</p>
+        <p className="font-normal">{t('animation.exampleBtn')}</p>
       </Button>
 
       <section className="flex w-full gap-2">
@@ -121,7 +124,7 @@ export default function AnimationSelector({
           type="button"
         >
           {selected.includes("ripple") && <Check className="h-6 w-6"></Check>}
-          <p>ریپل</p>
+          <p>{t('animation.types.ripple')}</p>
         </Button>
         <Button
           ref={tactileBtnRef}
@@ -133,7 +136,7 @@ export default function AnimationSelector({
           type="button"
         >
           {selected.includes("tactile") && <Check className="h-6 w-6"></Check>}
-          <p>تکتایل</p>
+          <p>{t('animation.types.tactile')}</p>
         </Button>
       </section>
     </div>

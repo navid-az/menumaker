@@ -11,7 +11,7 @@ import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
 import { useStepValid } from "@/app/hooks/useStepValid";
 
 //libraries
-import gsap from "gsap";
+import { useTranslations } from "next-intl";
 
 //functions
 import { cn } from "@/lib/utils";
@@ -41,6 +41,8 @@ export function SliderNavigator({
     setStepIndex,
     setDirection,
   } = useSlider();
+
+  const t = useTranslations('sliderNavigator')
 
   const activeSection = validSections[sectionIndex];
   const sectionCount = validSections.length;
@@ -108,22 +110,6 @@ export function SliderNavigator({
     setNextDisabled(isLastStep || isMandatoryIncomplete);
   }, [activeStep, isStepValid, sectionCount, stepCount, stepIndex, sectionIndex]);
 
-  // Next and submit button animation
-  useEffect(() => {
-    if (!disableSubmitBtn && !isEditing) {
-      if (isLastStep) {
-        if (submitBtnRef.current) {
-          submitBtnRef.current.style.display = "flex";
-        }
-        gsap.to(submitBtnRef.current, { duration: 0.2, x: 0, opacity: 1 });
-        gsap.to(nextBtnRef.current, { duration: 0.2, x: 0 });
-      } else {
-        gsap.to(submitBtnRef.current, { duration: 0.2, x: "100%", opacity: 0 });
-        gsap.to(nextBtnRef.current, { duration: 0.2, x: "142%" });
-      }
-    }
-  }, [isLastStep]);
-
   // Go to next step/section
   const goNext = () => {
     const isLastStepInSection = stepIndex === stepCount - 1;
@@ -187,7 +173,7 @@ export function SliderNavigator({
         onClick={goBack}
         className="h-9 select-none rounded-full px-5 transition-opacity duration-300 sm:h-10 sm:px-6"
       >
-        قبلی
+        {t('buttons.previous')}
       </Button>
       <div className={cn("w-full flex justify-center transition-all duration-200 ease-in-out")}>
         <div className="flex w-max gap-2 border border-royal-green/20 rounded-full bg-soft-blue p-2 rtl:flex-row-reverse">
@@ -201,15 +187,24 @@ export function SliderNavigator({
           ))}
         </div>
       </div>
-      <div ref={buttonsContainerRef} className="flex gap-2">
+      <div ref={buttonsContainerRef} className={cn("flex gap-2 rtl:flex-row-reverse transition-all duration-300", disableSubmitBtn ? "" : " ltr:-me-36 rtl:-ms-27", nextDisabled && "ltr:me-0 rtl:ms-0")}>
+        <Button
+          ref={nextBtnRef}
+          type="button"
+          disabled={nextDisabled}
+          onClick={goNext}
+          className="h-9 select-none rounded-full px-5 transition-opacity duration-300 sm:h-10 sm:px-6"
+        >
+          {t('buttons.next')}
+        </Button>
         {!disableSubmitBtn && !isEditing && (
           <Button
             ref={submitBtnRef}
             disabled={!nextDisabled}
-            className="h-9 select-none rounded-full px-5 opacity-0 sm:h-10 sm:px-6"
+            className={cn("h-9 rounded-full px-5 sm:h-10 sm:px-6 transition-opacity duration-300", !nextDisabled && 'opacity-0! select-none')}
             type="submit"
           >
-            {submitBtnText ? submitBtnText : "ایجاد منو"}
+            {submitBtnText ? submitBtnText : t('buttons.create')}
           </Button>
         )}
         {isEditing && (
@@ -219,18 +214,9 @@ export function SliderNavigator({
             className="h-9 select-none rounded-full transition-opacity duration-300 px-5 sm:h-10 sm:px-6"
             type="submit"
           >
-            ویرایش منو
+            {t('buttons.edit')}
           </Button>
         )}
-        <Button
-          ref={nextBtnRef}
-          type="button"
-          disabled={nextDisabled}
-          onClick={goNext}
-          className="h-9 select-none rounded-full px-5 transition-opacity duration-300 sm:h-10 sm:px-6"
-        >
-          بعدی
-        </Button>
       </div>
     </div>
   );

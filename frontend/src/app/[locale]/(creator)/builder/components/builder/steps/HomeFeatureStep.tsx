@@ -15,6 +15,7 @@ import ItemAdder from "@/components/global/ItemAdder";
 
 //libraries
 import { useFormContext } from "react-hook-form";
+import { useTranslations } from "next-intl";
 
 //types
 import { type AssetGroupType } from "@/components/global/AssetPicker";
@@ -27,6 +28,8 @@ export default function HomeFeatureStep({
   assetGroups: AssetGroupType[];
 }) {
   const { control } = useFormContext();
+  const t = useTranslations('builder.builder.sections.welcomePage.steps.homeFeatures')
+
 
   return (
     <SliderStep stepId={stepId}>
@@ -41,8 +44,8 @@ export default function HomeFeatureStep({
                 isActive={field.value}
               >
                 <SliderTabTitle
-                  title="لینک ها"
-                  description="لینک های تلگرام و اینستاگرام و ..."
+                  title={t('options.socialLinks.title')}
+                  description={t('options.socialLinks.description')}
                   iconSrc="/images/form-icons/link.svg"
                 >
                   <Switch
@@ -62,7 +65,7 @@ export default function HomeFeatureStep({
                           limit={4}
                           value={field.value}
                           onChange={field.onChange}
-                          placeholder="لینک فضای مجازی"
+                          placeholder={t('inputs.socialLink.placeholder')}
                         ></ItemAdder>
                       </FormControl>
                     )}
@@ -84,8 +87,8 @@ export default function HomeFeatureStep({
                 isActive={field.value}
               >
                 <SliderTabTitle
-                  title="شماره تماس"
-                  description="لینک های تلگرام و اینستاگرام و ..."
+                  title={t('options.phoneNumbers.title')}
+                  description={t('options.phoneNumbers.description')}
                   iconSrc="/images/form-icons/phone.svg"
                 >
                   <Switch
@@ -105,7 +108,7 @@ export default function HomeFeatureStep({
                           limit={3}
                           value={field.value}
                           onChange={field.onChange}
-                          placeholder="شماره تماس"
+                          placeholder={t('inputs.phoneNumber.placeholder')}
                         ></ItemAdder>
                       </FormControl>
                     )}

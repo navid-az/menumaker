@@ -25,7 +25,7 @@ const Palette = ({
   handleRemoveColor,
 }: PaletteType) => {
   return (
-    <div className="flex h-10 flex-1 flex-row-reverse rounded-full bg-white outline outline-2 outline-primary">
+    <div className="flex h-10 flex-1 rtl:flex-row-reverse rounded-full bg-white outline outline-2 outline-primary">
       {colors.map((color, index) => (
         <div
           key={index}

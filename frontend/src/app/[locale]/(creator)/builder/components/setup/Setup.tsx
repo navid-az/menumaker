@@ -39,6 +39,7 @@ import { refreshToken } from "@/app/actions/auth/register";
 
 //libraries
 import { motion, AnimatePresence } from "motion/react";
+import { useTranslations } from "next-intl";
 
 //types
 import { type Business } from "@/app/types/api/business";
@@ -74,6 +75,8 @@ export default function Setup({
   setNewBusiness: React.Dispatch<React.SetStateAction<Business | null>>;
   onSuccess: () => void;
 }) {
+  const t = useTranslations('builder.setup')
+
   const form = useForm<SetupSchemaType>({
     resolver: zodResolver(SetupSchema),
     defaultValues: {
@@ -88,11 +91,11 @@ export default function Setup({
   const sections: SliderSection[] = [
     {
       id: "business_info",
-      title: "آشنایی با شما",
+      title: t('sections.ownerInfo.title'),
       steps: [
         {
           id: "ownerInfo",
-          subtitle: "",
+          subtitle: t('sections.ownerInfo.steps.ownerName.subtitle'),
           component: (
             <SliderStep stepId="ownerInfo">
               <FormField
@@ -101,10 +104,10 @@ export default function Setup({
                 render={({ field }) => (
                   <FormControl>
                     <FormItem>
-                      <FormLabel>نام مدیر مجموعه</FormLabel>
+                      <FormLabel>{t('sections.ownerInfo.steps.ownerName.inputs.name.label')}</FormLabel>
                       <Input
                         type="text"
-                        placeholder="نام و نام خانوادگی مدیر"
+                        placeholder={t('sections.ownerInfo.steps.ownerName.inputs.name.placeholder')}
                         {...field}
                         className="h-14 border border-sad-blue bg-soft-blue text-base outline-none transition-all duration-300 focus:border-primary"
                       ></Input>
@@ -117,9 +120,15 @@ export default function Setup({
           show: true,
           fields: ['owner_name'],
         },
+      ],
+    },
+    {
+      id: "welcomePage",
+      title: t('sections.businessInfo.title'),
+      steps: [
         {
           id: "businessInfo",
-          subtitle: "نام مجموعه و برند",
+          subtitle: t('sections.businessInfo.steps.businessName.subtitle'),
           component: (
             <SliderStep stepId="businessInfo">
               <FormField
@@ -128,10 +137,10 @@ export default function Setup({
                 render={({ field }) => (
                   <FormControl>
                     <FormItem>
-                      <FormLabel>نام مجموعه</FormLabel>
+                      <FormLabel>{t('sections.businessInfo.steps.businessName.inputs.name.label')}</FormLabel>
                       <Input
                         type="text"
-                        placeholder="نام مجموعه"
+                        placeholder={t('sections.businessInfo.steps.businessName.inputs.name.placeholder')}
                         {...field}
                         className="h-14 border border-sad-blue bg-soft-blue text-base outline-none transition-all duration-300 focus:border-primary"
                       ></Input>
@@ -145,10 +154,10 @@ export default function Setup({
                 render={({ field }) => (
                   <FormControl>
                     <FormItem>
-                      <FormLabel>نام مجموعه به لاتین</FormLabel>
+                      <FormLabel>{t('sections.businessInfo.steps.businessName.inputs.nameEn.label')}</FormLabel>
                       <Input
                         type="text"
-                        placeholder="نام مجموعه (لاتین)"
+                        placeholder={t('sections.businessInfo.steps.businessName.inputs.nameEn.placeholder')}
                         {...field}
                         className="h-14 border border-sad-blue bg-soft-blue text-base outline-none transition-all duration-300 focus:border-primary"
                       ></Input>
@@ -161,15 +170,9 @@ export default function Setup({
           show: true,
           fields: ['name', 'name_en'],
         },
-      ],
-    },
-    {
-      id: "welcomePage",
-      title: "آشنایی با مجموعه شما",
-      steps: [
         {
           id: "serviceType",
-          subtitle: "روش ارائه خدمات مجموعه چجوریه؟",
+          subtitle: t('sections.businessInfo.steps.serviceType.subtitle'),
           component: (
             <SliderStep stepId="serviceType">
               <FormField
@@ -180,11 +183,10 @@ export default function Setup({
                     <RadioGroup
                       onValueChange={field.onChange}
                       defaultValue={field.value}
-                      dir="rtl"
                       className="flex flex-col sm:flex-row h-80 w-full gap-4"
                     >
                       <Tile
-                        title="فقط حضوری"
+                        title={t('sections.businessInfo.steps.serviceType.tiles.inPerson.title')}
                         isActive={field.value === "in_person"}
                       >
                         <FormItem>
@@ -194,7 +196,7 @@ export default function Setup({
                         </FormItem>
                       </Tile>
                       <Tile
-                        title="فقط آنلاین"
+                        title={t('sections.businessInfo.steps.serviceType.tiles.online.title')}
                         isActive={field.value === "online"}
                       >
                         <FormItem>
@@ -204,7 +206,7 @@ export default function Setup({
                         </FormItem>
                       </Tile>
                       <Tile
-                        title="حضوری و آنلاین"
+                        title={t('sections.businessInfo.steps.serviceType.tiles.both.title')}
                         isActive={field.value === "both"}
                       >
                         <FormItem>
@@ -226,7 +228,7 @@ export default function Setup({
         },
         {
           id: "primary_service_type",
-          subtitle: "معمولاً مشتری‌هاتون چطور سفارش میدن؟",
+          subtitle: t('sections.businessInfo.steps.primaryServiceType.subtitle'),
           component: (
             <SliderStep stepId="primary_service_type">
               <FormField
@@ -237,11 +239,10 @@ export default function Setup({
                     <RadioGroup
                       onValueChange={field.onChange}
                       defaultValue={field.value}
-                      dir="rtl"
                       className="flex flex-col sm:flex-row h-80 w-full gap-4"
                     >
                       <Tile
-                        title="بیشتر سفارش حضوری"
+                        title={t('sections.businessInfo.steps.primaryServiceType.tiles.inPerson.title')}
                         isActive={field.value === "in_person"}
                       >
                         <FormItem>
@@ -251,7 +252,7 @@ export default function Setup({
                         </FormItem>
                       </Tile>
                       <Tile
-                        title="بیشتر سفارش آنلاین"
+                        title={t('sections.businessInfo.steps.primaryServiceType.tiles.online.title')}
                         isActive={field.value === "online"}
                       >
                         <FormItem>
@@ -273,7 +274,7 @@ export default function Setup({
         },
         {
           id: "business_size",
-          subtitle: "مقیاس مجموعه شما چقدره؟",
+          subtitle: t('sections.businessInfo.steps.businessSize.subtitle'),
           component: (
             <SliderStep stepId="business_size" className="h-80 flex-row">
               <FormField
@@ -284,10 +285,9 @@ export default function Setup({
                     <RadioGroup
                       onValueChange={field.onChange}
                       defaultValue={field.value}
-                      dir="rtl"
                       className="flex flex-col sm:flex-row h-80 w-full gap-4"
                     >
-                      <Tile title="یک شعبه" isActive={field.value === "single"}>
+                      <Tile title={t('sections.businessInfo.steps.businessSize.tiles.single.title')} isActive={field.value === "single"}>
                         <FormItem>
                           <FormControl>
                             <RadioGroupItem value="single"></RadioGroupItem>
@@ -295,7 +295,7 @@ export default function Setup({
                         </FormItem>
                       </Tile>
                       <Tile
-                        title="زنجیره ای"
+                        title={t('sections.businessInfo.steps.businessSize.tiles.multiple.title')}
                         isActive={field.value === "multiple"}
                       >
                         <FormItem>
@@ -319,11 +319,11 @@ export default function Setup({
     },
     {
       id: "menu_prefrence",
-      title: "ساخت منو دیجیتال",
+      title: t('sections.menuPrefrence.title'),
       steps: [
         {
           id: "menu_preference",
-          subtitle: "دوست دارید چطور منو دیجیتال شما ساخته بشه؟",
+          subtitle: t('sections.menuPrefrence.steps.menuPrefrence.subtitle'),
           component: (
             <SliderStep
               stepId="menu_preference"
@@ -331,12 +331,12 @@ export default function Setup({
             >
               <Tile
                 isButton
-                title="شخصی سازی منو"
+                title={t('sections.menuPrefrence.steps.menuPrefrence.tiles.custom.title')}
                 onClick={() => handleSubmit("custom")}
               ></Tile>
               {/* <Tile
                 isButton
-                title="انتخاب منو از پیش ساخته شده"
+                title={t('sections.menuPrefrence.steps.menuPrefrence.tiles.preBuilt.title')}
                 onClick={() => handleSubmit("pre-built")}
               ></Tile> */}
             </SliderStep>
@@ -374,13 +374,13 @@ export default function Setup({
         toast.error(refreshed.detail);
         return;
       }
-      toast.success("مجموعه شما با موفقیت ثبت شد!");
+      toast.success(t('toasts.createSuccess'));
     }
   }
 
   //if given data is not valid
   const onInvalid = () => {
-    toast.error("لطفا به همه سوالات را پاسخ دهید");
+    toast.error(t('toasts.onError'));
   };
 
   //submit form and proceed to the next step

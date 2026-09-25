@@ -1,5 +1,7 @@
 //components
 import { MenuEditor } from "../components/MenuEditor";
+import GoBackBtn from "@/components/global/GoBackBtn";
+import LocaleSwitcher from "@/components/global/LocalSwitcher";
 
 //types
 import { type Business } from "@/app/types/api/business";
@@ -77,6 +79,10 @@ export default async function page(props: {
 
   return (
     <div className="h-screen overflow-hidden">
+      <div dir="ltr" className="absolute top-0 flex gap-2 z-20 mx-auto w-full p-2 md:p-4">
+        <GoBackBtn />
+        <LocaleSwitcher size="sm" className="rounded-full h-8 w-12 bg-royal-green text-soft-blue hover:scale-110 scale-pro hover:bg-royal-green" />
+      </div>
       <MenuEditor
         businessData={businessData}
         menuData={menuData}

@@ -13,9 +13,12 @@ import {
 
 //libraries
 import { useFormContext } from "react-hook-form";
+import { useTranslations } from "next-intl";
 
 export default function MenuFeatureStep({ stepId }: { stepId: string }) {
   const { control } = useFormContext();
+  const t = useTranslations('builder.builder.sections.itemsPage.steps.menuFeatures')
+
 
   return (
     <SliderStep stepId={stepId}>
@@ -30,14 +33,18 @@ export default function MenuFeatureStep({ stepId }: { stepId: string }) {
                 isActive={field.value}
               >
                 <SliderTabTitle
-                  title="درخواست گارسون"
-                  description="دکمه ای که به مشتری این امکان را میدهد که گارسون را صدا بزند"
+                  title={t(
+                    "options.callServer.title"
+                  )}
+                  description={t(
+                    "options.callServer.description"
+                  )}
                   iconSrc="/images/form-icons/concierge-bell.svg"
                 >
                   <Switch
                     checked={field.value}
                     onCheckedChange={field.onChange}
-                  ></Switch>
+                  />
                 </SliderTabTitle>
               </SliderTab>
             </FormControl>
@@ -55,14 +62,18 @@ export default function MenuFeatureStep({ stepId }: { stepId: string }) {
                 isActive={field.value}
               >
                 <SliderTabTitle
-                  title="جستجو آیتم ها"
-                  description="قابلیت جستجو آیتم ها"
+                  title={t(
+                    "options.itemSearch.title"
+                  )}
+                  description={t(
+                    "options.itemSearch.description"
+                  )}
                   iconSrc="/images/form-icons/search.svg"
                 >
                   <Switch
                     checked={field.value}
                     onCheckedChange={field.onChange}
-                  ></Switch>
+                  />
                 </SliderTabTitle>
               </SliderTab>
             </FormControl>
