@@ -10,18 +10,21 @@ import { Button } from "@/components/ui/button";
 
 //libraries
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 
 //functions
+import { toPersianDigits } from "../../../utilities/formatCurrency";
 import mapAnimationsToConfigs from "@/lib/mapAnimationsToConfigs";
 
 //hooks
 import { useCart } from "@/lib/stores";
+import { useRippleAnimation } from "@/app/hooks/useRippleAnimation";
+import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
 
 //types
 import { type AnimationConfigType } from "@/components/global/InteractiveWrapper";
 import { type MenuGlobalStylingUI } from "@/app/types/ui/menu";
-import { useRippleAnimation } from "@/app/hooks/useRippleAnimation";
-import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
 type AddToCartBtnType = {
   itemId: number;
   globalStyling: MenuGlobalStylingUI;
@@ -47,6 +50,9 @@ export default function AddToCartBtn({
   } = useCart();
 
   const [quantity, setQuantity] = useState(0);
+
+  const t = useTranslations('globalComponents.addToCartBtn')
+  const locale = useLocale()
 
   useEffect(() => {
     const item = cartItems.find((item) => item.id === itemId);
@@ -88,21 +94,21 @@ export default function AddToCartBtn({
           onClick={(e) => {
             e.stopPropagation();
           }}
-          className="flex w-full items-center justify-between gap-3 p-1"
+          className="flex w-full rtl:flex-row-reverse items-center justify-between gap-3 p-1"
         >
-          <StepperBtn
-            name="increase"
-            action={handleIncrement}
-            iconSrc="plus"
-            globalStyling={globalStyling}
-          ></StepperBtn>
-          <span className="mt-1 flex-initial basis-2/12 text-center text-lg">
-            <p className="text-xl">{quantity}</p>
-          </span>
           <StepperBtn
             name="decrease"
             action={handleDecrement}
             iconSrc={quantity != 1 ? "minus" : "trash"}
+            globalStyling={globalStyling}
+          ></StepperBtn>
+          <span className="rtl:mt-1 flex-initial basis-2/12 text-center text-lg">
+            <p className="text-xl">{locale === 'fa' ? toPersianDigits(quantity) : quantity}</p>
+          </span>
+          <StepperBtn
+            name="increase"
+            action={handleIncrement}
+            iconSrc="plus"
             globalStyling={globalStyling}
           ></StepperBtn>
         </div>
@@ -125,7 +131,7 @@ export default function AddToCartBtn({
               globalStyling.style === "retro" && "font-bold"
             )}
           >
-            افزودن
+            {t('buttons.add')}
           </p>
         </Button>
       )}

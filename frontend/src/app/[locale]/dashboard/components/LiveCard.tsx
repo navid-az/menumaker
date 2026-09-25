@@ -688,13 +688,14 @@ export function LiveCardFooter({
       </motion.p>
       <div
         className={cn(
-          "rounded-full font-sans bg-(--livecard-accent) text-(--livecard-primary) h-full text-xs px-2 flex items-center hover:scale-105 duration-300 transition-all scale-pro cursor-pointer"
+          "rounded-full rtl:flex-row-reverse font-sans bg-(--livecard-accent) text-(--livecard-primary) h-full text-xs px-2 flex items-center hover:scale-105 duration-300 transition-all scale-pro cursor-pointer"
           // type != "in-person"
           //   ? "bg-primary-foreground text-primary"
           //   : "bg-dark-brown text-happy-yellow"
         )}
       >
-        <p className="font-medium">{table.active_session?.code}#</p>
+        <p className="font-medium">#</p>
+        <p className="font-medium">{table.active_session?.code}</p>
       </div>
     </div>
   );

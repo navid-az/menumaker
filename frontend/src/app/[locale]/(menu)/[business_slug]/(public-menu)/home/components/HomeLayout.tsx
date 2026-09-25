@@ -9,9 +9,7 @@ import { Button } from "@/components/ui/button";
 
 //libraries
 import { cn } from "@/lib/utils";
-
-//configs
-import { MEDIA_BASE_URL } from "@/lib/config";
+import { useTranslations } from "next-intl";
 
 //SVGs
 import { AlignLeft } from "lucide-react";
@@ -36,6 +34,8 @@ export default function HomeLayout({
 }) {
   const { isPreview, setActivePage } = usePreview();
 
+  const t = useTranslations('menu.pages.welcomePage')
+
   const searchParams = useSearchParams();
   const tableCode = searchParams.get("t");
   const branchSlug = searchParams.get("branch");
@@ -47,7 +47,7 @@ export default function HomeLayout({
   return (
     <div className="relative flex h-full w-full flex-col justify-between overflow-x-hidden bg-(--primary) transition-all duration-300">
       <section className="flex flex-col gap-4">
-        <header className="flex justify-between">
+        <header className="flex rtl:justify-end rtl:flex-row-reverse">
           <svg
             className="absolute -right-20 top-[6vh] text-(--secondary)"
             width="200"
@@ -75,26 +75,26 @@ export default function HomeLayout({
               strokeWidth="2"
             />
           </svg>
+          {/* <Button
+            size="icon"
+            className="ml-4 mt-4 bg-(--secondary) text-(--tertiary) rounded-(--radius-base) transition-all duration-300"
+          >
+            <AlignLeft></AlignLeft>
+          </Button> */}
           {homeImages && homeImages[1] && (
-            <div className="relative h-[22vh] w-6/12 rounded-bl-(--radius-md)">
+            <div className="relative h-[22vh] w-6/12 rounded-ee-(--radius-md)">
               <Image
                 src={homeImages[1].url}
                 fill
                 alt="secondary_image"
                 className={cn(
-                  "rounded-bl-(--radius-md) object-cover transition-all duration-300",
+                  "rounded-ee-(--radius-md) object-cover transition-all duration-300",
                   globalStyling.style === "retro" &&
-                  "border-l-3 border-b-3 border-(--secondary)"
+                  "border-e-3 border-b-3 border-(--secondary)"
                 )}
               ></Image>
             </div>
           )}
-          <Button
-            size="icon"
-            className="ml-4 mt-4 bg-(--secondary) text-(--tertiary) rounded-(--radius-base) transition-all duration-300"
-          >
-            <AlignLeft></AlignLeft>
-          </Button>
           <svg
             className="absolute -left-1 top-[20vh] text-(--secondary)"
             width="200"
@@ -136,39 +136,20 @@ export default function HomeLayout({
         </div>
       </section>
       {homeImages && homeImages[2] && (
-        <div className="absolute left-0 top-[12vh] h-[24vh] w-[110px]">
+        <div className="absolute inset-e-0 top-[12vh] h-[24vh] w-[110px]">
           <Image
             src={homeImages[2].url}
             fill
             alt="tertiary_image"
             className={cn(
-              "rounded-r-(--radius-sm) object-cover transition-all duration-300",
+              "rounded-s-(--radius-sm) object-cover transition-all duration-300",
               globalStyling.style === "retro" &&
-              "border-3 border-l-0 border-(--secondary)"
+              "border-3 border-e-0 border-(--secondary)"
             )}
           ></Image>
         </div>
       )}
-      <footer className="flex h-[52vh] w-full">
-        <Button
-          onClick={() => isPreview && setActivePage("menu")}
-          asChild
-          className="group flex h-full w-20 flex-col gap-10 rounded-none bg-(--primary) pt-20 text-(--secondary) transition-all duration-300"
-        >
-          {isPreview ? (
-            <div>
-              <span className="-rotate-90 transform text-xl">ورود به منو</span>
-              <div className="text-4xl">↓</div>
-            </div>
-          ) : (
-            <Link
-              href={`/${businessSlug}/menu?branch=${branchSlug}&t=${tableCode}`}
-            >
-              <span className="-rotate-90 transform text-xl">ورود به منو</span>
-              <div className="text-4xl">↓</div>
-            </Link>
-          )}
-        </Button>
+      <footer className="flex h-[52vh] w-full justify-end rtl:flex-row-reverse">
         {homeImages && homeImages[0] && (
           <div className="relative h-full w-full">
             <Image
@@ -183,6 +164,25 @@ export default function HomeLayout({
             ></Image>
           </div>
         )}
+        <Button
+          onClick={() => isPreview && setActivePage("menu")}
+          asChild
+          className="group flex h-full w-20 flex-col gap-10 rounded-none bg-(--primary) pt-20 text-(--secondary) transition-all duration-300"
+        >
+          {isPreview ? (
+            <div className="ltr:space-y-4">
+              <span className="-rotate-90 transform text-xl">{t('buttons.enterMenu')}</span>
+              <div className="text-4xl">↓</div>
+            </div>
+          ) : (
+            <Link className="ltr:space-y-4"
+              href={`/${businessSlug}/menu?branch=${branchSlug}&t=${tableCode}`}
+            >
+              <span className="-rotate-90 transform text-xl">{t('buttons.enterMenu')}</span>
+              <div className="text-4xl">↓</div>
+            </Link>
+          )}
+        </Button>
       </footer>
     </div>
   );

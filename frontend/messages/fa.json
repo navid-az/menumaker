@@ -386,6 +386,100 @@
             }
           }
         }
+      },
+      "preview": {
+        "tip": "این پیش‌نمایش تعاملی می‌باشد",
+        "categories": {
+          "pizza": {
+            "name": "پیتزا"
+          },
+          "burgers": {
+            "name": "برگر"
+          },
+          "pasta": {
+            "name": "پاستا"
+          },
+          "appetizers": {
+            "name": "پیش‌غذا"
+          },
+          "sandwiches": {
+            "name": "ساندویچ"
+          }
+        },
+        "items": {
+          "margheritaPizza": {
+            "name": "پیتزا مارگاریتا",
+            "description": "سس گوجه، پنیر موزارلا، ریحان تازه"
+          },
+          "pepperoniPizza": {
+            "name": "پیتزا پپرونی",
+            "description": "پپرونی، پنیر موزارلا و سس مخصوص"
+          },
+          "calzone": {
+            "name": "کالزونه",
+            "description": "خمیر دست‌ساز، ژامبون، قارچ و پنیر موزارلا"
+          },
+          "fourCheesePizza": {
+            "name": "پیتزا چهار پنیر",
+            "description": "موزارلا، پارمزان، گودا و بلوچیز"
+          },
+          "beefMushroomPizza": {
+            "name": "پیتزا گوشت و قارچ",
+            "description": "گوشت مزه‌دار، قارچ تازه و پنیر موزارلا"
+          },
+          "mushroomBurger": {
+            "name": "ماشروم برگر",
+            "description": "برگر گوشت ۱۸۰ گرمی، قارچ گریل‌شده و پنیر چدار"
+          },
+          "classicCheeseburger": {
+            "name": "چیز برگر کلاسیک",
+            "description": "گوشت گریل‌شده، پنیر چدار، کاهو و سس مخصوص"
+          },
+          "doubleBurger": {
+            "name": "دبل برگر",
+            "description": "دو لایه گوشت، پنیر چدار و پیاز کاراملی"
+          },
+          "baconBurger": {
+            "name": "بیکن برگر",
+            "description": "گوشت ۱۸۰ گرمی، بیکن بوقلمون، پنیر چدار و سس باربیکیو"
+          },
+          "crispyChickenBurger": {
+            "name": "کرسپی چیکن برگر",
+            "description": "فیله مرغ سوخاری، پنیر چدار، کاهو و سس سیر"
+          },
+          "chickenAlfredoPasta": {
+            "name": "پاستا آلفردو",
+            "description": "فیله مرغ، قارچ و سس آلفردو"
+          },
+          "pestoPasta": {
+            "name": "پاستا پستو",
+            "description": "پنه، مرغ گریل‌شده، سس پستو و پنیر پارمزان"
+          },
+          "chickenParmesanPasta": {
+            "name": "پاستا چیکن پارمزان",
+            "description": "مرغ سوخاری، سس گوجه و پنیر پارمزان"
+          },
+          "beefLasagna": {
+            "name": "لازانیا گوشت",
+            "description": "لازانیا با گوشت، سس بشامل و پنیر موزارلا"
+          },
+          "baconCheeseFries": {
+            "name": "سیب‌زمینی با پنیر و بیکن",
+            "description": "سیب‌زمینی سرخ‌شده، پنیر چدار و بیکن بوقلمون"
+          },
+          "roastBeefSandwich": {
+            "name": "ساندویچ رست بیف",
+            "description": "گوشت رست‌شده، پنیر گودا، پیاز کاراملی و سس مخصوص"
+          },
+          "chickenFilletSandwich": {
+            "name": "چیکن فیله",
+            "description": "فیله مرغ سوخاری، کاهو، خیارشور و سس سیر"
+          },
+          "specialHotDog": {
+            "name": "هات داگ ویژه",
+            "description": "هات داگ آلمانی، پنیر چدار، قارچ و سیب‌زمینی خلال"
+          }
+        }
       }
     },
     "successPage": {
@@ -398,100 +492,6 @@
         "continue": "ادامه",
         "edit": "ویرایش"
       }
-    },
-    "preview": {
-      "tip": "این پیش‌نمایش تعاملی می‌باشد",
-      "categories": {
-        "pizza": {
-          "name": "پیتزا"
-        },
-        "burgers": {
-          "name": "برگر"
-        },
-        "pasta": {
-          "name": "پاستا"
-        },
-        "appetizers": {
-          "name": "پیش‌غذا"
-        },
-        "sandwiches": {
-          "name": "ساندویچ"
-        }
-      },
-      "items": {
-        "margheritaPizza": {
-          "name": "پیتزا مارگاریتا",
-          "description": "سس گوجه، پنیر موزارلا، ریحان تازه"
-        },
-        "pepperoniPizza": {
-          "name": "پیتزا پپرونی",
-          "description": "پپرونی، پنیر موزارلا و سس مخصوص"
-        },
-        "calzone": {
-          "name": "کالزونه",
-          "description": "خمیر دست‌ساز، ژامبون، قارچ و پنیر موزارلا"
-        },
-        "fourCheesePizza": {
-          "name": "پیتزا چهار پنیر",
-          "description": "موزارلا، پارمزان، گودا و بلوچیز"
-        },
-        "beefMushroomPizza": {
-          "name": "پیتزا گوشت و قارچ",
-          "description": "گوشت مزه‌دار، قارچ تازه و پنیر موزارلا"
-        },
-        "mushroomBurger": {
-          "name": "ماشروم برگر",
-          "description": "برگر گوشت ۱۸۰ گرمی، قارچ گریل‌شده و پنیر چدار"
-        },
-        "classicCheeseburger": {
-          "name": "چیز برگر کلاسیک",
-          "description": "گوشت گریل‌شده، پنیر چدار، کاهو و سس مخصوص"
-        },
-        "doubleBurger": {
-          "name": "دبل برگر",
-          "description": "دو لایه گوشت، پنیر چدار و پیاز کاراملی"
-        },
-        "baconBurger": {
-          "name": "بیکن برگر",
-          "description": "گوشت ۱۸۰ گرمی، بیکن بوقلمون، پنیر چدار و سس باربیکیو"
-        },
-        "crispyChickenBurger": {
-          "name": "کرسپی چیکن برگر",
-          "description": "فیله مرغ سوخاری، پنیر چدار، کاهو و سس سیر"
-        },
-        "chickenAlfredoPasta": {
-          "name": "پاستا آلفردو",
-          "description": "فیله مرغ، قارچ و سس آلفردو"
-        },
-        "pestoPasta": {
-          "name": "پاستا پستو",
-          "description": "پنه، مرغ گریل‌شده، سس پستو و پنیر پارمزان"
-        },
-        "chickenParmesanPasta": {
-          "name": "پاستا چیکن پارمزان",
-          "description": "مرغ سوخاری، سس گوجه و پنیر پارمزان"
-        },
-        "beefLasagna": {
-          "name": "لازانیا گوشت",
-          "description": "لازانیا با گوشت، سس بشامل و پنیر موزارلا"
-        },
-        "baconCheeseFries": {
-          "name": "سیب‌زمینی با پنیر و بیکن",
-          "description": "سیب‌زمینی سرخ‌شده، پنیر چدار و بیکن بوقلمون"
-        },
-        "roastBeefSandwich": {
-          "name": "ساندویچ رست بیف",
-          "description": "گوشت رست‌شده، پنیر گودا، پیاز کاراملی و سس مخصوص"
-        },
-        "chickenFilletSandwich": {
-          "name": "چیکن فیله",
-          "description": "فیله مرغ سوخاری، کاهو، خیارشور و سس سیر"
-        },
-        "specialHotDog": {
-          "name": "هات داگ ویژه",
-          "description": "هات داگ آلمانی، پنیر چدار، قارچ و سیب‌زمینی خلال"
-        }
-      }
     }
   },
   "menu": {
@@ -502,7 +502,10 @@
         }
       },
       "itemsPage": {
-        "header": { "buttons": { "waiter": "سالن دار" } }
+        "header": {
+          "buttons": { "waiter": "سالن دار" },
+          "searchBar": { "input": { "placeholder": "جستوجو آیتم..." } }
+        }
       },
       "cartPage": {
         "header": {
@@ -573,6 +576,9 @@
             "create": "ایجاد شعبه جدید"
           }
         }
+      },
+      "demoBanner": {
+        "message": "شما در حال مشاهده اکانت Demo هستید. اطلاعات اولیه صرفا برای نمایش ویژگی های پروژه میباشد."
       }
     },
     "toolbar": {

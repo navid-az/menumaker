@@ -48,17 +48,17 @@ export default function MenuLayout({
           ></MenuItemsWrapper>
         </div>
       ) : (
-        <div className="flex">
-          <MenuItemsWrapper
-            categories={categories}
-            menuData={menuData}
-            globalStyling={globalStyling}
-          ></MenuItemsWrapper>
+        <div className="flex rtl-flex-row-reverse">
           <ItemsCategory
             categories={categories}
             globalStyling={globalStyling}
             type={menuData.items_page_layout}
           ></ItemsCategory>
+          <MenuItemsWrapper
+            categories={categories}
+            menuData={menuData}
+            globalStyling={globalStyling}
+          ></MenuItemsWrapper>
         </div>
       )}
       <CartBtn

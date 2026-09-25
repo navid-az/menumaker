@@ -110,7 +110,7 @@ export default function MenuItemsWrapper({
     <section
       className={cn(
         "flex h-max w-full flex-col gap-4 pb-4 px-4",
-        menuData.items_page_layout === "vertical" && "mr-4 px-0 mt-4"
+        menuData.items_page_layout === "vertical" && "me-4 px-0 mt-4"
       )}
     >
       {(filteredCategories.length > 0 ? filteredCategories : categories).map(

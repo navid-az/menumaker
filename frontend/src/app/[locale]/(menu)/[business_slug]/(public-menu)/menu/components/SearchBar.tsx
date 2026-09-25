@@ -15,6 +15,7 @@ import { useSearchBar } from "@/lib/stores";
 import { cn } from "@/lib/utils";
 
 //types
+import { _Translator } from "next-intl";
 import { type MenuGlobalStylingUI } from "@/app/types/ui/menu";
 type SearchBar = {
   globalStyling: MenuGlobalStylingUI;
@@ -24,8 +25,10 @@ type SearchBar = {
 
 export default function SearchBar({
   globalStyling,
+  t
 }: {
   globalStyling: MenuGlobalStylingUI;
+  t: _Translator<Record<string, any>, "menu.pages.itemsPage.header">
 }) {
   const searchBtnRef = useRef<HTMLButtonElement>(null);
   // useConditionalAnimation(searchBtnRef, ["tactile"]);
@@ -58,7 +61,7 @@ export default function SearchBar({
       className={cn(
         "flex h-max flex-1 items-center justify-between rounded-(--radius-base) bg-(--primary) p-1 duration-300 transition-all",
         globalStyling.style === "retro" &&
-          "border-3 shadow-[4px_4px_0px_0px_var(--secondary)] border-(--secondary)"
+        "border-3 shadow-[4px_4px_0px_0px_var(--secondary)] border-(--secondary)"
       )}
     >
       <Button
@@ -89,11 +92,11 @@ export default function SearchBar({
         <input
           ref={inputRef}
           className={cn(
-            "h-full flex-1 rounded-full bg-inherit px-2 text-right text-xs font-normal text-(--secondary) caret-(--secondary) transition-all duration-300 outline-none placeholder:text-(--secondary)/80",
+            "h-full flex-1 rounded-full bg-inherit px-2 text-xs font-normal text-(--secondary) caret-(--secondary) transition-all duration-300 outline-none placeholder:text-(--secondary)/80",
             globalStyling.style === "retro" &&
-              "text-sm font-bold placeholder:text-(--secondary)/60"
+            "text-sm font-bold placeholder:text-(--secondary)/60"
           )}
-          placeholder="جستجو آیتم"
+          placeholder={t('searchBar.input.placeholder')}
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}

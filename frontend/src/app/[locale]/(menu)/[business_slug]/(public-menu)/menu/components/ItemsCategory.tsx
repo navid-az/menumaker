@@ -34,15 +34,12 @@ export default function ItemsCategory({
 }: ItemsCategoryType) {
   return (
     <div
-      className={`hide-scrollbar avoid-stretch ${
-        isSticky && "sticky"
-      } top-0 z-50 flex overflow-y-auto ${
-        hasBackGround && "bg-primary"
-      }transition-all duration-300 ${
-        type == "horizontal"
+      className={`hide-scrollbar avoid-stretch ${isSticky && "sticky"
+        } top-0 z-50 flex overflow-y-auto ${hasBackGround && "bg-primary"
+        }transition-all duration-300 ${type == "horizontal"
           ? "w-full flex-row gap-2 p-4 "
-          : "flex-color w-max shrink-0 flex-col gap-4 px-4 sticky top-4 h-screen pt-4"
-      }`}
+          : "flex-color w-max shrink-0 flex-col gap-4 px-4 sticky top-4 h-screen mt-4"
+        }`}
     >
       {categories.map(
         (category: MenuCategory) =>

@@ -17,6 +17,9 @@ import { MenuItem } from "@/app/types/api/menu";
 import { type MenuGlobalStylingUI } from "@/app/types/ui/menu";
 export type ValidItemType = { item: MenuItem; count?: number };
 
+//libraries
+import { useTranslations } from "next-intl";
+
 export default function OrderList({
   data,
   globalStyling,
@@ -25,6 +28,8 @@ export default function OrderList({
   globalStyling: MenuGlobalStylingUI;
 }) {
   const { cartItems } = useCart();
+
+  const t = useTranslations('menu.pages.cartPage.orderList')
 
   const [totalPrice, setTotalPrice] = useState(0);
   const [validItems, setValidItems] = useState<ValidItemType[]>();
@@ -66,7 +71,7 @@ export default function OrderList({
             />
           ))}
           <div className="flex w-full items-center justify-between justify-self-center border-t-2 border-dashed border-(--primary) pt-4 text-(--secondary)">
-            <h2 className="text-xl">مجموع پرداختی</h2>
+            <h2 className="text-xl">{t('total')}</h2>
             <PriceTag unitDisplayType="default" price={totalPrice} />
           </div>
         </>
@@ -77,7 +82,7 @@ export default function OrderList({
             strokeWidth={1.5}
           ></ShoppingBag>
           <p className="text-lg font-semibold text-(--tertiary) opacity-40">
-            آیتمی در سبد شما نیست
+            {t('empty.title')}
           </p>
         </div>
       )}

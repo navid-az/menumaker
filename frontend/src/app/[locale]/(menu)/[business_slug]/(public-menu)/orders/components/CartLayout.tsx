@@ -13,6 +13,7 @@ import { ArrowLeft, ConciergeBell } from "lucide-react";
 
 //libraries
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 //providers
 import { usePreview } from "@/app/[locale]/(creator)/builder/components/preview/PreviewContext";
@@ -50,6 +51,8 @@ export default function CartLayout({
   const tableCode = searchParams.get("t");
   const branchSlug = searchParams.get("branch");
 
+  const t = useTranslations('menu.pages.cartPage')
+
   // Get table session code form sessionStorage
   useEffect(() => {
     const code = sessionStorage.getItem("session_code");
@@ -80,8 +83,7 @@ export default function CartLayout({
 
   return (
     <div className="container flex h-full flex-col justify-between bg-(--bg) gap-8 p-4">
-      <header className="flex items-center justify-between">
-        <h3 className="text-lg text-(--secondary)">لیست سفارشات</h3>
+      <header className="flex items-center justify-between rtl:flex-row-reverse">
         <Button
           onClick={() => isPreview && setActivePage("menu")}
           size="icon"
@@ -106,9 +108,20 @@ export default function CartLayout({
             </Link>
           )}
         </Button>
+        <h3 className="text-lg text-(--secondary)">{t('header.title')}</h3>
       </header>
       <OrderList data={items} globalStyling={globalStyling} />
-      <footer className="flex gap-4">
+      <footer className="flex gap-4 rtl:flex-row-reverse">
+        <Button
+          size="icon"
+          className={cn(
+            "h-12 basis-3/12 rounded-(--radius-base) bg-(--primary) text-(--secondary)",
+            globalStyling.style === "retro" &&
+            "border-3 border-(--secondary) shadow-[4px_4px_0px_0px_var(--secondary)]"
+          )}
+        >
+          <ConciergeBell />
+        </Button>
         <Button
           disabled={placeOrderDisabled}
           className={cn(
@@ -120,17 +133,7 @@ export default function CartLayout({
           )}
           onClick={handlePlaceOrder}
         >
-          ثبت سفارش
-        </Button>
-        <Button
-          size="icon"
-          className={cn(
-            "h-12 basis-3/12 rounded-(--radius-base) bg-(--primary) text-(--secondary)",
-            globalStyling.style === "retro" &&
-            "border-3 border-(--secondary) shadow-[4px_4px_0px_0px_var(--secondary)]"
-          )}
-        >
-          <ConciergeBell />
+          {t('footer.buttons.placeOrder')}
         </Button>
       </footer>
     </div>

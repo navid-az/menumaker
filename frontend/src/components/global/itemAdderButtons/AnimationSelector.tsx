@@ -17,13 +17,13 @@ import { Check, Sparkles } from "lucide-react";
 
 //libraries
 import { useFormContext } from "react-hook-form";
-import { _Translator } from "next-intl";
 
 //utils
 import { formToMenuGlobalStyling } from "@/app/[locale]/(creator)/builder/utils/formToMenuGlobalStyling";
 import { generateStyleVars } from "@/app/[locale]/(menu)/[business_slug]/utilities/styleVars";
 
 //types
+import { _Translator } from "next-intl";
 import { type BuilderFormType } from "@/app/[locale]/(creator)/builder/components/builder/BuilderTest";
 
 export default function AnimationSelector({

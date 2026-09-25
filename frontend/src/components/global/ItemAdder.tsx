@@ -11,6 +11,7 @@ import { LinkAction } from "./itemAdderButtons/LinkAction";
 
 //libraries
 import * as z from "zod";
+import { useTranslations } from "next-intl";
 
 //hooks
 import { useTactileAnimation } from "@/app/hooks/useTactileAnimation";
@@ -23,7 +24,6 @@ import { Edit3, ImageOff, Trash2, Plus } from "lucide-react";
 
 //types
 import { type AssetGroupType, type AssetType } from "./AssetPicker";
-import { useTranslations } from "next-intl";
 export type ItemType = { id: string; name?: string; asset?: AssetType | null };
 type ItemAdderType = {
   placeholder: string;

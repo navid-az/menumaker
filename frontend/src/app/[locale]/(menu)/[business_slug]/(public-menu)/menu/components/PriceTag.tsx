@@ -17,6 +17,9 @@ import { cn } from "@/lib/utils";
 import { Toman } from "../../../components";
 import { useEffect, useState } from "react";
 
+//libraries
+import { useLocale } from "next-intl";
+
 //types
 type PriceTagType = {
   price: number;
@@ -41,6 +44,7 @@ export default function PriceTag({
 }: PriceTagType) {
   const secondaryColor = "#FFFF";
   const [validatedPrice, setValidatedPrice] = useState<string | number>(price);
+  const locale = useLocale()
 
   // Format price according to props
   useEffect(() => {
@@ -55,7 +59,7 @@ export default function PriceTag({
     formattedPrice = addCommas(formattedPrice as number);
 
     // Convert to Persian digits → still string
-    if (persianDigits) {
+    if (persianDigits && locale === 'fa') {
       formattedPrice = toPersianDigits(formattedPrice);
     }
 
@@ -67,19 +71,19 @@ export default function PriceTag({
       className={cn("flex w-max items-center justify-between gap-1", className)}
     >
       {!isLoading ? (
-        <div className="flex items-end gap-1">
+        <div className={cn("flex items-end gap-1", locale === 'en' && unitDisplayType === 'compact' && "flex-row-reverse")}>
           <p
             className={cn(
               `text-${secondaryColor}`,
               size === "sm"
                 ? "text-sm font-normal"
                 : size === "default"
-                ? "text-lg font-normal -mb-0.5"
-                : size === "lg"
-                ? "text-2xl font-medium -mb-1"
-                : size === "xl"
-                ? "text-3xl font-semibold -mb-1"
-                : ""
+                  ? "text-lg font-normal -mb-0.5"
+                  : size === "lg"
+                    ? "text-2xl font-medium -mb-1"
+                    : size === "xl"
+                      ? "text-3xl font-semibold -mb-1"
+                      : ""
             )}
           >
             {validatedPrice}
@@ -91,15 +95,15 @@ export default function PriceTag({
                 size === "sm"
                   ? "text-sm font-normal"
                   : size === "default"
-                  ? "text-base font-normal"
-                  : size === "lg"
-                  ? "text-2xl font-medium -mb-1"
-                  : size === "xl"
-                  ? "text-3xl font-semibold -mb-1"
-                  : ""
+                    ? "text-base font-normal"
+                    : size === "lg"
+                      ? "text-2xl font-medium -mb-1"
+                      : size === "xl"
+                        ? "text-3xl font-semibold -mb-1"
+                        : ""
               )}
             >
-              ت
+              {locale === 'fa' ? 'ت' : 'T'}
             </p>
           ) : unitDisplayType == "compact" ? (
             <span
@@ -108,12 +112,12 @@ export default function PriceTag({
                 size === "sm"
                   ? "size-6"
                   : size === "default"
-                  ? "size-6"
-                  : size === "lg"
-                  ? "size-7"
-                  : size === "xl"
-                  ? "size-8"
-                  : ""
+                    ? "size-6 -mb-1 ltr:-me-1 rtl:-ms-1"
+                    : size === "lg"
+                      ? "size-7 -mb-1.5"
+                      : size === "xl"
+                        ? "size-8 -mb-2.5 ltr:-me-2 rtl:-ms-2"
+                        : ""
               )}
             >
               <Toman className={`h-full w-full text-${secondaryColor}`}></Toman>
@@ -125,12 +129,12 @@ export default function PriceTag({
                 size === "sm"
                   ? "text-sm font-normal"
                   : size === "default"
-                  ? "text-base font-normal"
-                  : size === "lg"
-                  ? "text-2xl font-medium -mb-1"
-                  : size === "xl"
-                  ? "text-3xl font-semibold -mb-1"
-                  : ""
+                    ? "text-base font-normal"
+                    : size === "lg"
+                      ? "text-2xl font-medium -mb-1"
+                      : size === "xl"
+                        ? "text-3xl font-semibold -mb-1"
+                        : ""
               )}
             >
               T
@@ -142,15 +146,15 @@ export default function PriceTag({
                 size === "sm"
                   ? "text-xs font-normal"
                   : size === "default"
-                  ? "text-sm font-normal"
-                  : size === "lg"
-                  ? "text-sm font-semibold"
-                  : size === "xl"
-                  ? "text-base font-semibold"
-                  : ""
+                    ? "text-sm font-normal"
+                    : size === "lg"
+                      ? "text-sm font-semibold"
+                      : size === "xl"
+                        ? "text-base font-semibold"
+                        : ""
               )}
             >
-              تومان
+              {locale === 'fa' ? 'تومان' : 'Toman'}
             </p>
           ) : (
             ""
@@ -163,7 +167,8 @@ export default function PriceTag({
             <Skeleton className="h-full w-4/12" />
           </div>
         </div>
-      )}
-    </span>
+      )
+      }
+    </span >
   );
 }

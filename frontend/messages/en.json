@@ -389,6 +389,100 @@
             }
           }
         }
+      },
+      "preview": {
+        "tip": "Preview is fully intractable",
+        "categories": {
+          "pizza": {
+            "name": "Pizza"
+          },
+          "burgers": {
+            "name": "Burgers"
+          },
+          "pasta": {
+            "name": "Pasta"
+          },
+          "appetizers": {
+            "name": "Appetizers"
+          },
+          "sandwiches": {
+            "name": "Sandwiches"
+          }
+        },
+        "items": {
+          "margheritaPizza": {
+            "name": "Margherita Pizza",
+            "description": "Tomato sauce, mozzarella, and fresh basil"
+          },
+          "pepperoniPizza": {
+            "name": "Pepperoni Pizza",
+            "description": "Pepperoni, mozzarella, and house sauce"
+          },
+          "calzone": {
+            "name": "Calzone",
+            "description": "Handmade dough, ham, mushrooms, and mozzarella"
+          },
+          "fourCheesePizza": {
+            "name": "Four Cheese Pizza",
+            "description": "Mozzarella, Parmesan, Gouda, and blue cheese"
+          },
+          "beefMushroomPizza": {
+            "name": "Beef & Mushroom Pizza",
+            "description": "Seasoned beef, fresh mushrooms, and mozzarella"
+          },
+          "mushroomBurger": {
+            "name": "Mushroom Burger",
+            "description": "180g beef patty, grilled mushrooms, and cheddar cheese"
+          },
+          "classicCheeseburger": {
+            "name": "Classic Cheeseburger",
+            "description": "Grilled beef, cheddar cheese, lettuce, and house sauce"
+          },
+          "doubleBurger": {
+            "name": "Double Burger",
+            "description": "Two beef patties, cheddar cheese, and caramelized onions"
+          },
+          "baconBurger": {
+            "name": "Bacon Burger",
+            "description": "180g beef patty, turkey bacon, cheddar cheese, and BBQ sauce"
+          },
+          "crispyChickenBurger": {
+            "name": "Crispy Chicken Burger",
+            "description": "Crispy chicken fillet, cheddar cheese, lettuce, and garlic sauce"
+          },
+          "chickenAlfredoPasta": {
+            "name": "Chicken Alfredo Pasta",
+            "description": "Chicken fillet, mushrooms, and Alfredo sauce"
+          },
+          "pestoPasta": {
+            "name": "Pesto Pasta",
+            "description": "Penne, grilled chicken, pesto sauce, and Parmesan"
+          },
+          "chickenParmesanPasta": {
+            "name": "Chicken Parmesan Pasta",
+            "description": "Crispy chicken, tomato sauce, and Parmesan"
+          },
+          "beefLasagna": {
+            "name": "Beef Lasagna",
+            "description": "Lasagna with beef, béchamel sauce, and mozzarella"
+          },
+          "baconCheeseFries": {
+            "name": "Bacon Cheese Fries",
+            "description": "French fries, cheddar cheese, and turkey bacon"
+          },
+          "roastBeefSandwich": {
+            "name": "Roast Beef Sandwich",
+            "description": "Roast beef, Gouda cheese, caramelized onions, and house sauce"
+          },
+          "chickenFilletSandwich": {
+            "name": "Chicken Fillet Sandwich",
+            "description": "Crispy chicken fillet, lettuce, pickles, and garlic sauce"
+          },
+          "specialHotDog": {
+            "name": "Special Hot Dog",
+            "description": "German-style hot dog, cheddar cheese, mushrooms, and fries"
+          }
+        }
       }
     },
     "successPage": {
@@ -401,100 +495,6 @@
         "continue": "Continue",
         "edit": "Edit"
       }
-    },
-    "preview": {
-      "tip": "Preview is fully intractable",
-      "categories": {
-        "pizza": {
-          "name": "Pizza"
-        },
-        "burgers": {
-          "name": "Burgers"
-        },
-        "pasta": {
-          "name": "Pasta"
-        },
-        "appetizers": {
-          "name": "Appetizers"
-        },
-        "sandwiches": {
-          "name": "Sandwiches"
-        }
-      },
-      "items": {
-        "margheritaPizza": {
-          "name": "Margherita Pizza",
-          "description": "Tomato sauce, mozzarella, and fresh basil"
-        },
-        "pepperoniPizza": {
-          "name": "Pepperoni Pizza",
-          "description": "Pepperoni, mozzarella, and house sauce"
-        },
-        "calzone": {
-          "name": "Calzone",
-          "description": "Handmade dough, ham, mushrooms, and mozzarella"
-        },
-        "fourCheesePizza": {
-          "name": "Four Cheese Pizza",
-          "description": "Mozzarella, Parmesan, Gouda, and blue cheese"
-        },
-        "beefMushroomPizza": {
-          "name": "Beef & Mushroom Pizza",
-          "description": "Seasoned beef, fresh mushrooms, and mozzarella"
-        },
-        "mushroomBurger": {
-          "name": "Mushroom Burger",
-          "description": "180g beef patty, grilled mushrooms, and cheddar cheese"
-        },
-        "classicCheeseburger": {
-          "name": "Classic Cheeseburger",
-          "description": "Grilled beef, cheddar cheese, lettuce, and house sauce"
-        },
-        "doubleBurger": {
-          "name": "Double Burger",
-          "description": "Two beef patties, cheddar cheese, and caramelized onions"
-        },
-        "baconBurger": {
-          "name": "Bacon Burger",
-          "description": "180g beef patty, turkey bacon, cheddar cheese, and BBQ sauce"
-        },
-        "crispyChickenBurger": {
-          "name": "Crispy Chicken Burger",
-          "description": "Crispy chicken fillet, cheddar cheese, lettuce, and garlic sauce"
-        },
-        "chickenAlfredoPasta": {
-          "name": "Chicken Alfredo Pasta",
-          "description": "Chicken fillet, mushrooms, and Alfredo sauce"
-        },
-        "pestoPasta": {
-          "name": "Pesto Pasta",
-          "description": "Penne, grilled chicken, pesto sauce, and Parmesan"
-        },
-        "chickenParmesanPasta": {
-          "name": "Chicken Parmesan Pasta",
-          "description": "Crispy chicken, tomato sauce, and Parmesan"
-        },
-        "beefLasagna": {
-          "name": "Beef Lasagna",
-          "description": "Lasagna with beef, béchamel sauce, and mozzarella"
-        },
-        "baconCheeseFries": {
-          "name": "Bacon Cheese Fries",
-          "description": "French fries, cheddar cheese, and turkey bacon"
-        },
-        "roastBeefSandwich": {
-          "name": "Roast Beef Sandwich",
-          "description": "Roast beef, Gouda cheese, caramelized onions, and house sauce"
-        },
-        "chickenFilletSandwich": {
-          "name": "Chicken Fillet Sandwich",
-          "description": "Crispy chicken fillet, lettuce, pickles, and garlic sauce"
-        },
-        "specialHotDog": {
-          "name": "Special Hot Dog",
-          "description": "German-style hot dog, cheddar cheese, mushrooms, and fries"
-        }
-      }
     }
   },
   "menu": {
@@ -505,7 +505,10 @@
         }
       },
       "itemsPage": {
-        "header": { "buttons": { "waiter": "Waiter" } }
+        "header": {
+          "buttons": { "waiter": "Waiter" },
+          "searchBar": { "input": { "placeholder": "Search..." } }
+        }
       },
       "cartPage": {
         "header": {
@@ -576,6 +579,9 @@
             "create": "Create New Branch"
           }
         }
+      },
+      "demoBanner": {
+        "message": "You are viewing a Demo account. The data shown is provided for demonstration purposes only."
       }
     },
     "toolbar": {
