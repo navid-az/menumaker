@@ -22,6 +22,9 @@ import getLocale from "@/lib/i18n/getLocale";
 //contexts
 import { DirectionProvider } from "@radix-ui/react-direction";
 
+//fonts 
+import { Outfit } from "next/font/google";
+
 const vazirmatn = localFont({
   src: "../../fonts/Vazirmatn[wght].woff2",
   variable: "--font-vazirmatn",
@@ -45,6 +48,10 @@ export const metadata: Metadata = {
   }
 };
 
+const outfit = Outfit({
+  subsets: ['latin'],
+})
+
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
@@ -59,7 +66,7 @@ export default async function RootLayout({
     <html lang={locale} dir={locale === "fa" ? "rtl" : "ltr"} >
       <body
         className={cn(
-          locale === "fa" ? vazirmatn.className : inter.className,
+          locale === "fa" ? vazirmatn.className : outfit.className,
           "overflow-x-hidden bg-white flex flex-col min-h-screen"
         )}
       >
