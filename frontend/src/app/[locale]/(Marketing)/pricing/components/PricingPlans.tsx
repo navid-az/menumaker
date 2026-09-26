@@ -38,42 +38,8 @@ import {
 //types
 import { type SubscriptionPlan } from "@/app/types/api/subscription";
 
-// static data for plans
-const planStaticData = [
-  {
-    slug: "basic",
-    title: "بیسیک",
-    description: "شروعی راحت و بی دردسر برای مجموعه های کوچک و نوپا",
-    features: ["سیستم هوشمند منو ساز", "ثبت بی‌نهایت آیتم و دسته‌بندی"],
-  },
-  {
-    slug: "pro",
-    title: "پرو",
-    description: "طراحی شده با توجه به نیاز های مجموعه هایی با یک یا چند شعبه",
-    features: [
-      "قابلیت ثبت و مدیریت چندین شعبه ",
-      "مدیریت زنده شعب",
-      "سیستم رزرواسیون",
-      "قابلیت دریافت سفارش آنلاین",
-      "ثبت اعضای مجموعه",
-      "اعمال محدودیت و شخصی‌‌سازی دسترسی بر اساس سمت",
-    ],
-    popular: true,
-  },
-  {
-    slug: "franchiser",
-    title: "فرنچایزر",
-    description:
-      "طراحی شده برای مجموعه های بزرگ با تمرکز بالا بر روی برندینگ و کیفیت خدمات‌دهی",
-    features: [
-      "مقایسه آمار فروش و نمودار شعب",
-      "نمایش آمار و تحلیل شعب",
-      "انبارداری هوشمند",
-    ],
-    popular: false,
-    theme: "gold",
-  },
-];
+//libraries
+import { _Translator, useLocale, useTranslations } from "next-intl";
 
 const themeStyles: Record<
   string,
@@ -122,6 +88,35 @@ export default function PricingPlans({
   plans: SubscriptionPlan[];
   isCompact?: boolean;
 }) {
+
+  // static data for plans
+  const locale = useLocale()
+  const t = useTranslations("pricing");
+
+  const planStaticData = [
+    {
+      slug: "basic",
+      title: t("plans.basic.title"),
+      description: t("plans.basic.description"),
+      features: t.raw("plans.basic.features"),
+    },
+    {
+      slug: "pro",
+      title: t("plans.pro.title"),
+      description: t("plans.pro.description"),
+      features: t.raw("plans.pro.features"),
+      popular: true,
+    },
+    {
+      slug: "franchiser",
+      title: t("plans.franchiser.title"),
+      description: t("plans.franchiser.description"),
+      features: t.raw("plans.franchiser.features"),
+      popular: false,
+      theme: "gold",
+    },
+  ];
+
   const [planDuration, setPlanDuration] = useState<90 | 180 | 360>(90);
 
   return (
@@ -129,6 +124,7 @@ export default function PricingPlans({
       <PlanDurationSelector
         planDuration={planDuration}
         setPlanDuration={setPlanDuration}
+        t={t}
       ></PlanDurationSelector>
       <div
         className={cn(
@@ -164,7 +160,7 @@ export default function PricingPlans({
                           themeStyles[plan.slug].tag
                         )}
                       >
-                        <p className="text-sm font-normal">محبوب ترین</p>
+                        <p className="text-sm font-normal">{t('popularBadge')}</p>
                       </div>
                     )}
                   </div>
@@ -180,7 +176,7 @@ export default function PricingPlans({
                       <div className="flex gap-2 items-center ">
                         <CheckCheck className="w-4 h-4"></CheckCheck>
                         <p className="text-sm font-medium">
-                          تمام امکانات {plans[index - 1].name} به همراه:
+                          {t("inheritedFeatures", { plan: locale === 'fa' ? plans[index - 1].name : plans[index - 1].slug })}
                         </p>
                       </div>
                     )}
@@ -189,7 +185,7 @@ export default function PricingPlans({
                         <PlanCardFeature key={index}>{feature}</PlanCardFeature>
                       ))}
                     </PlanCardFeatureList>
-                    <PlanCardFeaturesSummery>
+                    <PlanCardFeaturesSummery t={t}>
                       <Palette className="w-5 h-5"></Palette>
                       <Radio className="w-5 h-5"></Radio>
                     </PlanCardFeaturesSummery>
@@ -213,7 +209,7 @@ export default function PricingPlans({
                         : "/builder"
                     }
                   >
-                    فعالسازی اشتراک
+                    {t("activate")}
                   </Link>
                 </Button>
               </PlanCardFooter>
@@ -231,12 +227,14 @@ export default function PricingPlans({
 function PlanDurationSelector({
   planDuration,
   setPlanDuration,
+  t
 }: {
   planDuration: 90 | 180 | 360;
   setPlanDuration: React.Dispatch<React.SetStateAction<90 | 180 | 360>>;
+  t: _Translator<Record<string, any>, "pricing">
 }) {
   return (
-    <div className="w-4/12 flex gap-1.5 bg-gray-100 border-2 border-royal-green/20 p-1.5 rounded-full mt-12">
+    <div className="w-max flex gap-1.5 bg-gray-100 border-2 border-royal-green/20 p-1.5 rounded-full mt-12">
       <Button
         onClick={() => setPlanDuration(90)}
         size="lg"
@@ -245,7 +243,7 @@ function PlanDurationSelector({
           planDuration === 90 && "bg-royal-green text-soft-blue"
         )}
       >
-        ۳ ماهه
+        {t("duration.months3")}
       </Button>
       <Button
         onClick={() => setPlanDuration(180)}
@@ -255,7 +253,7 @@ function PlanDurationSelector({
           planDuration === 180 && "bg-royal-green text-soft-blue"
         )}
       >
-        ۶ ماهه
+        {t("duration.months6")}
       </Button>
       <Button
         onClick={() => setPlanDuration(360)}
@@ -265,7 +263,7 @@ function PlanDurationSelector({
           planDuration === 360 && "bg-royal-green text-soft-blue"
         )}
       >
-        ۱۲ ماهه
+        {t("duration.months12")}
       </Button>
     </div>
   );

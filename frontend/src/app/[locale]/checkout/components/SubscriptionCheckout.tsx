@@ -50,6 +50,8 @@ const themeStyles: Record<
 
 //configs
 import { SERVER_API_BASE_URL } from "@/lib/config";
+import { getLocale, getTranslations } from "next-intl/server";
+import { locale } from "next/root-params";
 
 // Fetches plan data by slug from the backend API
 async function getPlanData(planSlug: string) {
@@ -80,6 +82,8 @@ export default async function SubscriptionCheckout({
     duration,
   } = await searchParams;
 
+  const t = await getTranslations('checkout')
+
   const planData: SubscriptionPlan = await getPlanData(planSlug);
   const planPricing = planData.pricings.find((p) => p.duration == duration);
 
@@ -94,54 +98,86 @@ export default async function SubscriptionCheckout({
     <div className="flex flex-col bg-zinc-50 text-royal-green rounded-md p-4 w-full max-w-[470px] h-full max-h-[650px] gap-4 border border-primary/20 justify-between shadow-lg">
       <div className="flex flex-col gap-10">
         <p className="text-center text-xl md:text-2xl font-semibold">
-          جزییات صورتحساب
+          {t("title")}
         </p>
+
         <div className="flex flex-col gap-4">
           <PlanInfoTab
             planSlug={planSlug}
             name={planData.name}
             planDuration={durationInMonths}
             planPrice={flatPrice}
-          ></PlanInfoTab>
+            durationLabels={{
+              month: t("duration.month"),
+              year: t("duration.year"),
+            }}
+          />
+
           {discount > 0 && (
-            <ExpenseLine title="تخفیف اشتراک" price={discount}></ExpenseLine>
+            <ExpenseLine
+              title={t("discount")}
+              price={discount}
+            />
           )}
-          <ExpenseLine title="مالیات بر ارزش افزوده" price={tax}></ExpenseLine>
+
+          <ExpenseLine
+            title={t("tax")}
+            price={tax}
+          />
+
           <ExpenseLine
             size="lg"
-            title="مبلغ قابل پرداخت"
+            title={t("total")}
             price={total}
-          ></ExpenseLine>
+          />
         </div>
+
         <div className="flex flex-col gap-2">
-          <p>درگاه پرداخت</p>
+          <p>{t("paymentGateway")}</p>
+
           <div className="w-full flex gap-2 justify-start items-center bg-white p-1 border border-primary/20 rounded-md">
             <Image
-              src={"/images/zarinpal-logo.png"}
+              src="/images/zarinpal-logo.png"
               width={50}
               height={50}
               alt="zarinpal-logo"
-            ></Image>
-            <p className="text-2xl font-medium">زرین پال</p>
+            />
+            <p className="text-2xl font-medium">{t('gateway')}</p>
           </div>
         </div>
       </div>
-      <CheckoutForm planData={planData}></CheckoutForm>
+
+      <CheckoutForm planData={planData} />
     </div>
   );
 }
 
-export function PlanInfoTab({
+export async function PlanInfoTab({
   name,
   planSlug,
   planDuration,
   planPrice,
+  durationLabels,
 }: {
   name: string;
   planSlug: string;
   planDuration: number;
   planPrice: number;
+  durationLabels: {
+    month: string;
+    year: string;
+  };
 }) {
+
+  const locale = await getLocale()
+  const formatNumber = (number: number) => {
+    if (locale === 'fa') {
+      return toPersianDigits(number)
+    } else {
+      return number
+    }
+  }
+
   return (
     <div
       className={cn(
@@ -154,25 +190,29 @@ export function PlanInfoTab({
       <div
         className={cn(
           themeStyles[planSlug].shadow,
-          "size-24 blur-2xl rounded-full absolute right-0 z-10 group-hover:size-52 group-hover:blur-3xl transition-all duration-600 ease-in"
+          "size-24 blur-2xl rounded-full absolute inset-s-0 z-10 group-hover:size-52 group-hover:blur-3xl transition-all duration-600 ease-in"
         )}
       />
-      <div className="flex gap-2 md:gap-4 items-center z-40">
-        <div className="flex gap-1 items-center">
-          <p className="text-base font-light">اشتراک</p>
-          <p className="text-lg font-black">{name}</p>
-        </div>
+      <div className="flex gap-2 items-center z-40">
+        <p className="text-lg font-black ltr:font-semibold">{locale === 'fa' ? name : planSlug}</p>
+
         <div
           className={cn(
             themeStyles[planSlug].btn,
-            "rounded-full gap-0.5 text-xs font-normal flex justify-center items-center px-3 h-6"
+            "rounded-full gap-1 text-xs font-normal flex justify-center items-center px-3 h-6"
           )}
         >
-          <p>{planDuration === 12 ? "۱" : toPersianDigits(planDuration)}</p>
-          {planDuration === 12 ? <p>ساله</p> : <p>ماهه</p>}
+          <p>{planDuration === 12 ? formatNumber(1) : formatNumber(planDuration)}</p>
+
+          <p>
+            {planDuration === 12
+              ? durationLabels.year
+              : durationLabels.month}
+          </p>
         </div>
       </div>
-      <PriceTag price={planPrice}></PriceTag>
+
+      <PriceTag price={planPrice} />
     </div>
   );
 }

@@ -132,6 +132,86 @@
       ]
     }
   },
+  "pricing": {
+    "title": "Plans",
+    "description": "Flexible plans tailored to the size and needs of your business",
+    "plans": {
+      "basic": {
+        "title": "Basic",
+        "description": "An easy, hassle-free start for small and growing businesses",
+        "features": ["Smart menu builder", "Unlimited items and categories"]
+      },
+      "pro": {
+        "title": "Pro",
+        "description": "Designed for businesses with one or multiple branches",
+        "features": [
+          "Manage multiple branches",
+          "Live branch management",
+          "Reservation system",
+          "Online ordering",
+          "Staff management",
+          "Role-based access control and customization"
+        ]
+      },
+      "franchiser": {
+        "title": "Franchiser",
+        "description": "Designed for large businesses with a strong focus on branding and service quality",
+        "features": [
+          "Compare branch sales and performance charts",
+          "Branch analytics and insights",
+          "Smart inventory management"
+        ]
+      }
+    },
+    "popularBadge": "Most Popular",
+    "inheritedFeatures": "Everything in {plan}, plus:",
+    "featuresTitle": "Plan features",
+    "free": "Free",
+    "unit": "Toman",
+    "activate": "Activate Plan",
+    "duration": {
+      "months3": "3 Months",
+      "months6": "6 Months",
+      "months12": "12 Months"
+    },
+    "comparison": {
+      "plans": { "basic": "Basic", "pro": "Pro", "franchiser": "Franchiser" },
+      "sections": {
+        "menu_builder": "Menu Builder",
+        "reservation_system": "Reservation System",
+        "online_order": "Online Ordering",
+        "live_management": "Live Management"
+      },
+      "rows": {
+        "paletteColors": "Color palettes",
+        "unlimitedTables": "Unlimited table creation",
+        "reservationStatus": "Change the reservation status of each table",
+        "reservationSms": "Send reservation confirmation SMS to customers",
+        "reservationFee": "Charge a fee for reservations",
+        "waiterRequestNotification": "View server request notifications",
+        "orderNotification": "View order notifications",
+        "reservationNotification": "View table reservation notifications",
+        "tableNeedsAttention": "Mark a table as needing attention"
+      }
+    }
+  },
+  "checkout": {
+    "title": "Billing Details",
+    "subscription": "Subscription",
+    "discount": "Subscription Discount",
+    "tax": "VAT",
+    "total": "Amount Due",
+    "paymentGateway": "Payment Gateway",
+    "gateway": "ZarinPal",
+    "duration": {
+      "month": "Months",
+      "year": "Year"
+    },
+    "form": {
+      "submitBtn": "Complete Payment",
+      "toasts": { "submitError": "Failed to initiate payment" }
+    }
+  },
   "builder": {
     "setup": {
       "sections": {

@@ -15,6 +15,9 @@ import { useSearchParams } from "next/navigation";
 //types
 import { type SubscriptionPlan } from "@/app/types/api/subscription";
 
+//libraries
+import { useTranslations } from "next-intl";
+
 export default function CheckoutForm({
   planData,
 }: {
@@ -22,6 +25,8 @@ export default function CheckoutForm({
 }) {
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
+
+  const t = useTranslations('checkout.form')
 
   const businessSlug = searchParams.get("business");
   const duration = searchParams.get("duration");
@@ -48,12 +53,12 @@ export default function CheckoutForm({
   function onError(error: unknown) {
     console.error(error);
 
-    toast.error("خطا در شروع پرداخت");
+    toast.error(t('form.toasts.onError'));
   }
 
   return (
     <form onSubmit={onSubmit}>
-      <RegisterBtn isLoading={isLoading} text="پرداخت"></RegisterBtn>
+      <RegisterBtn isLoading={isLoading} text={t('submitBtn')}></RegisterBtn>
     </form>
   );
 }

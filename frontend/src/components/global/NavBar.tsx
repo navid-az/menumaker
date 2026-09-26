@@ -64,7 +64,7 @@ export function Navbar({ locale }: { locale: string }) {
       <nav
         dir="ltr"
         className={cn(
-          "bg-sad-blue/20 w-full backdrop-blur-xl lg:gap-20 border-2 border-royal-green/5 xl:gap-32 rounded-lg flex items-center transition-all duration justify-between p-1.5 lg:p-4 text-xl text-royal-green",
+          "bg-sad-blue/20 w-full backdrop-blur-xl lg:gap-12 border-2 border-royal-green/5 xl:gap-32 rounded-lg flex items-center transition-all duration justify-between p-1.5 lg:p-4 text-xl text-royal-green",
 
         )}
       >

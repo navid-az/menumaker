@@ -1,6 +1,6 @@
-//components
 import { Suspense } from "react";
 
+//components
 import {
   ComparisonTable,
   ComparisonTableCell,
@@ -18,170 +18,17 @@ import PricingPlans from "./components/PricingPlans";
 
 //functions
 import getSubscriptionPlans from "@/lib/subscription/getSubscriptionPlans";
+import { toPersianDigits } from "../../(menu)/[business_slug]/utilities/formatCurrency";
 
 //SVGs
 import { Gem } from "lucide-react";
 
+//libraries
+import { getTranslations } from "next-intl/server";
+import getLocale from "@/lib/i18n/getLocale";
+
 const PLANS = ["basic", "pro", "franchise"] as const;
 
-const PRICING_COMPARISON = [
-  {
-    sectionKey: "menu_builder",
-    sectionTitle: "سیستم منو ساز",
-    rows: [
-      {
-        type: "value",
-        label: "رنگ پالت",
-        values: {
-          basic: "۲",
-          pro: "۴",
-          franchise: "۴",
-        },
-      },
-    ],
-  },
-
-  {
-    sectionKey: "reservation_system",
-    sectionTitle: "سیستم رزرواسیون",
-    rows: [
-      {
-        type: "boolean",
-        label: "قابلیت ایجاد بی‌نهایت میز",
-        values: {
-          basic: true,
-          pro: true,
-          franchise: true,
-        },
-      },
-      {
-        type: "boolean",
-        label: "قابلیت تغییر وضعیت رزرو هر میز",
-        values: {
-          basic: true,
-          pro: true,
-          franchise: true,
-        },
-      },
-      {
-        type: "boolean",
-        label: "ارسال SMS تایید رزرو به مشتری",
-        values: {
-          basic: true,
-          pro: true,
-          franchise: true,
-        },
-      },
-      {
-        type: "boolean",
-        label: "قابلیت دریافت فی برای رزرو",
-        values: {
-          basic: false,
-          pro: true,
-          franchise: true,
-        },
-      },
-    ],
-  },
-  {
-    sectionKey: "online_order",
-    sectionTitle: "سیستم رزرواسیون",
-    rows: [
-      {
-        type: "boolean",
-        label: "قابلیت ایجاد بی‌نهایت میز",
-        values: {
-          basic: true,
-          pro: true,
-          franchise: true,
-        },
-      },
-      {
-        type: "boolean",
-        label: "قابلیت تغییر وضعیت رزرو هر میز",
-        values: {
-          basic: true,
-          pro: true,
-          franchise: true,
-        },
-      },
-      {
-        type: "boolean",
-        label: "ارسال SMS تایید رزرو به مشتری",
-        values: {
-          basic: true,
-          pro: true,
-          franchise: true,
-        },
-      },
-      {
-        type: "boolean",
-        label: "قابلیت دریافت فی برای رزرو",
-        values: {
-          basic: false,
-          pro: true,
-          franchise: true,
-        },
-      },
-    ],
-  },
-
-  {
-    sectionKey: "live_management",
-    sectionTitle: "مدیریت زنده",
-    rows: [
-      {
-        type: "boolean",
-        label: "قابلیت ایجاد بی‌نهایت میز",
-        values: {
-          basic: false,
-          pro: true,
-          franchise: true,
-        },
-      },
-      {
-        type: "boolean",
-        label: "قابلیت مشاهده اعلان درخواست سالن‌دار",
-        values: {
-          basic: false,
-          pro: true,
-          franchise: true,
-        },
-      },
-      {
-        type: "boolean",
-        label: "قابلیت مشاهده اعلان ثبت سفارش",
-        values: {
-          basic: false,
-          pro: true,
-          franchise: true,
-        },
-      },
-      {
-        type: "boolean",
-        label: "قابلیت مشاهده اعلان رزرو میز",
-        values: {
-          basic: false,
-          pro: true,
-          franchise: true,
-        },
-      },
-      {
-        type: "boolean",
-        label: "قابلیت ثبت میز به عنوان نیاز به رسیدگی",
-        values: {
-          basic: false,
-          pro: true,
-          franchise: true,
-        },
-      },
-    ],
-  },
-];
-
-const DEFAULT_OPEN_SECTIONS = PRICING_COMPARISON.map(
-  (section) => section.sectionKey
-);
 
 async function PricingPlansSection() {
   const plans = await getSubscriptionPlans()
@@ -190,6 +37,165 @@ async function PricingPlansSection() {
 }
 
 export default async function page() {
+  const t = await getTranslations("pricing");
+  const locale = await getLocale()
+
+  const PRICING_COMPARISON = [
+    {
+      sectionKey: "menu_builder",
+      sectionTitle: t("comparison.sections.menu_builder"),
+      rows: [
+        {
+          type: "value",
+          label: t("comparison.rows.paletteColors"),
+          values: {
+            basic: 2,
+            pro: 4,
+            franchise: 4,
+          },
+        },
+      ],
+    },
+    {
+      sectionKey: "reservation_system",
+      sectionTitle: t("comparison.sections.reservation_system"),
+      rows: [
+        {
+          type: "boolean",
+          label: t("comparison.rows.unlimitedTables"),
+          values: {
+            basic: true,
+            pro: true,
+            franchise: true,
+          },
+        },
+        {
+          type: "boolean",
+          label: t("comparison.rows.reservationStatus"),
+          values: {
+            basic: true,
+            pro: true,
+            franchise: true,
+          },
+        },
+        {
+          type: "boolean",
+          label: t("comparison.rows.reservationSms"),
+          values: {
+            basic: true,
+            pro: true,
+            franchise: true,
+          },
+        },
+        {
+          type: "boolean",
+          label: t("comparison.rows.reservationFee"),
+          values: {
+            basic: false,
+            pro: true,
+            franchise: true,
+          },
+        },
+      ],
+    },
+    {
+      sectionKey: "online_order",
+      sectionTitle: t("comparison.sections.online_order"),
+      rows: [
+        {
+          type: "boolean",
+          label: t("comparison.rows.unlimitedTables"),
+          values: {
+            basic: true,
+            pro: true,
+            franchise: true,
+          },
+        },
+        {
+          type: "boolean",
+          label: t("comparison.rows.reservationStatus"),
+          values: {
+            basic: true,
+            pro: true,
+            franchise: true,
+          },
+        },
+        {
+          type: "boolean",
+          label: t("comparison.rows.reservationSms"),
+          values: {
+            basic: true,
+            pro: true,
+            franchise: true,
+          },
+        },
+        {
+          type: "boolean",
+          label: t("comparison.rows.reservationFee"),
+          values: {
+            basic: false,
+            pro: true,
+            franchise: true,
+          },
+        },
+      ],
+    },
+    {
+      sectionKey: "live_management",
+      sectionTitle: t("comparison.sections.live_management"),
+      rows: [
+        {
+          type: "boolean",
+          label: t("comparison.rows.unlimitedTables"),
+          values: {
+            basic: false,
+            pro: true,
+            franchise: true,
+          },
+        },
+        {
+          type: "boolean",
+          label: t("comparison.rows.waiterRequestNotification"),
+          values: {
+            basic: false,
+            pro: true,
+            franchise: true,
+          },
+        },
+        {
+          type: "boolean",
+          label: t("comparison.rows.orderNotification"),
+          values: {
+            basic: false,
+            pro: true,
+            franchise: true,
+          },
+        },
+        {
+          type: "boolean",
+          label: t("comparison.rows.reservationNotification"),
+          values: {
+            basic: false,
+            pro: true,
+            franchise: true,
+          },
+        },
+        {
+          type: "boolean",
+          label: t("comparison.rows.tableNeedsAttention"),
+          values: {
+            basic: false,
+            pro: true,
+            franchise: true,
+          },
+        },
+      ],
+    },
+  ];
+
+  const DEFAULT_OPEN_SECTIONS = PRICING_COMPARISON.map(
+    (section) => section.sectionKey
+  );
 
   return (
     <div className="flex mx-auto flex-col items-center gap-24 xl:px-20 md:px-8 2xl:px-28">
@@ -197,9 +203,11 @@ export default async function page() {
         <div className="w-full flex gap-4 items-center">
           <Gem className="size-20 stroke-[1.5]"></Gem>
           <div className="flex flex-col gap-3">
-            <h1 className="text-royal-green text-4xl font-bold">پلن ها</h1>
+            <h1 className="text-royal-green text-4xl font-bold">
+              {t("title")}
+            </h1>
             <h3 className="text-gray-400 text-2xl font-normal">
-              پلن‌های انعطاف‌پذیر متناسب با اندازه و نیاز کسب‌و‌کار شما
+              {t("description")}
             </h3>
           </div>
         </div>
@@ -211,13 +219,13 @@ export default async function page() {
       <ComparisonTable className="py-20">
         <ComparisonTableHeader>
           <ComparisonTableHeaderCell className="text-sky-blue">
-            بیسیک
+            {t('comparison.plans.basic')}
           </ComparisonTableHeaderCell>
           <ComparisonTableHeaderCell className="text-purple-900">
-            پرو
+            {t('comparison.plans.pro')}
           </ComparisonTableHeaderCell>
           <ComparisonTableHeaderCell className="text-yellow-300">
-            فرنچایزر
+            {t('comparison.plans.franchiser')}
           </ComparisonTableHeaderCell>
         </ComparisonTableHeader>
         <ComparisonTableContent defaultValue={DEFAULT_OPEN_SECTIONS}>
@@ -237,7 +245,7 @@ export default async function page() {
                         {row.type == "value" ? (
                           <>
                             <ComparisonTableCellTitle>
-                              {row.values[plan]}
+                              {locale === 'fa' ? toPersianDigits(row.values[plan]) : row.values[plan]}
                             </ComparisonTableCellTitle>
                             <ComparisonTableCellDescription>
                               {row.label}
