@@ -35,6 +35,7 @@
           "title": "Smart Menu Builder",
           "subtitle": "Customize your menu to match your brand identity",
           "mockup": {
+            "addToCartBtn": "Add",
             "server": "Server",
             "search": "Search...",
             "categories": ["Pasta", "Pizza", "Steak", "Burger", "Drinks"],

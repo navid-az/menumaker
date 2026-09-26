@@ -93,7 +93,7 @@ export function CategoryButton({
             className={cn(
                 `
     flex items-center gap-1.5 px-2.5 py-1.5
-    font-normal border w-max text-xs translate-x-10
+    font-normal border w-max text-xs
     transition-colors duration-300
   `,
                 active
@@ -142,9 +142,9 @@ export function QuantityControl({
                 initial='rest'
                 animate={isHovered ? "hover" : "rest"}
                 transition={radiusTransition(isHovered)}
-                className={cn(" h-6 w-10 flex items-center justify-center bg-zinc-800 text-soft-blue transition-colors duration-300", isHovered && 'group-hover:bg-orange-100 group-hover:border-orange-400 group-hover:bg-orange-500 group-hover:text-white')}
+                className={cn(" h-6 w-10 flex items-center justify-center bg-zinc-800 text-soft-blue transition-colors", isHovered && 'group-hover:bg-orange-100 group-hover:border-orange-400 duration-300 group-hover:bg-orange-500 group-hover:text-white')}
             >
-                <Plus className="w-5 h-5" />
+                <Minus className="w-5 h-5" />
             </motion.button>
 
             <p className="text-md font-medium pt-0.5">{value}</p>
@@ -155,9 +155,9 @@ export function QuantityControl({
                 initial='rest'
                 animate={isHovered ? "hover" : "rest"}
                 transition={radiusTransition(isHovered)}
-                className={cn(" h-6 w-10 flex items-center justify-center bg-zinc-800 text-soft-blue transition-colors", isHovered && 'group-hover:bg-orange-100 group-hover:border-orange-400 duration-300 group-hover:bg-orange-500 group-hover:text-white')}
+                className={cn(" h-6 w-10 flex items-center justify-center bg-zinc-800 text-soft-blue transition-colors duration-300", isHovered && 'group-hover:bg-orange-100 group-hover:border-orange-400 group-hover:bg-orange-500 group-hover:text-white')}
             >
-                <Minus className="w-5 h-5" />
+                <Plus className="w-5 h-5" />
             </motion.button>
         </motion.div>
     );
@@ -166,6 +166,8 @@ export function QuantityControl({
 function CartBtn({
     className = "",
     isHovered = false, }) {
+    const t = useTranslations("landing.bentoFeaturesSection.bentos.0.mockup");
+
     return <motion.div
         variants={fullRoundVariants}
         initial='rest'
@@ -179,8 +181,7 @@ function CartBtn({
         `, isHovered && 'group-hover:bg-orange-100 group-hover:border-orange-400 group-hover:text-orange-800', className)}
     >
         <div className='h-6 w-full flex items-center justify-center text-md font-medium'>
-            <p>افزودن</p>
-
+            <p>{t("addToCartBtn")}</p>
         </div>
     </motion.div>
 }
