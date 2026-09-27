@@ -162,33 +162,72 @@ class ItemOptionsSerializer(serializers.ModelSerializer):
 
 
 class ItemsSerializer(serializers.ModelSerializer):
-    business = serializers.SlugRelatedField(slug_field='slug', read_only=True)
+    business = serializers.SlugRelatedField(
+        slug_field="slug",
+        read_only=True,
+    )
     branch_exceptions = serializers.SerializerMethodField()
     item_images = serializers.SerializerMethodField()
     options = ItemOptionsSerializer(many=True)
 
+    # These are now calculated from the requested branch when provided.
+    is_active = serializers.SerializerMethodField()
+    is_available = serializers.SerializerMethodField()
+
     class Meta:
         model = Item
-        fields = ['id', 'business', "category", 'name', 'description', 'price',
-                  'item_images', 'options', 'branch_exceptions', "is_available", "is_active"]
+        fields = ["id", "business", "category", "name", "description", "price", "item_images", "options",
+                  "branch_exceptions", "is_available", "is_active",]
 
-    # return item branches if available
-    def get_branch_exceptions(self, obj):
-        # Retrieve branch_slug from context
+    def _get_branch_override(self, obj):
+        """
+        Return the ItemBranch override for the requested branch.
+
+        When the view prefetched `current_branch_override`, use that
+        instead of querying the database.
+        """
+        branch_overrides = getattr(obj, "current_branch_override", None)
+
+        if branch_overrides is not None:
+            return branch_overrides[0] if branch_overrides else None
+
         branch_slug = self.context.get("branch_slug")
-        if branch_slug:
-            try:
-                item_branch = ItemBranch.objects.get(
-                    branch__slug=branch_slug, item=obj.pk)
-                return ItemBranchSerializer(item_branch).data
-            except ItemBranch.DoesNotExist:
-                return None
-        return None
+
+        if not branch_slug:
+            return None
+
+        return obj.branch_overrides.filter(
+            branch__slug=branch_slug
+        ).first()
+
+    def get_is_active(self, obj):
+        override = self._get_branch_override(obj)
+
+        if override is not None:
+            return override.is_active
+
+        return obj.is_active
+
+    def get_is_available(self, obj):
+        override = self._get_branch_override(obj)
+
+        if override is not None:
+            return override.is_available
+
+        return obj.is_available
+
+    def get_branch_exceptions(self, obj):
+        override = self._get_branch_override(obj)
+
+        if override is None:
+            return None
+
+        return ItemBranchSerializer(override).data
 
     def get_item_images(self, obj):
         assets = obj.media_assets.filter(
             collection=MediaCollection.ITEM_GALLERY)
-        return MediaAssetSerializer(assets, many=True, context=self.context).data
+        return MediaAssetSerializer(assets, many=True, context=self.context,).data
 
 
 class ItemCreateUpdateSerializer(serializers.ModelSerializer):

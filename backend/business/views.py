@@ -2,7 +2,7 @@ from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Q, Prefetch
 from mixins import MethodBasedPermissionsMixin
 
 from .serializers import (BusinessesSerializer, BusinessCreateSerializer, BranchesSerializer, BranchCreateUpdateSerializer,
@@ -480,27 +480,40 @@ class ItemsView(MethodBasedPermissionsMixin, APIView):
         # if branch_slug is provided, return items relevant to the branch. else, return all business's items
         # return items relevant to the branch
         if branch_slug:
-            branch = Branch.objects.get(business=business, slug=branch_slug)
+            branch = get_object_or_404(
+                Branch, business=business, slug=branch_slug,)
 
-            # items visible to this branch
+            # Only fetch the ItemBranch override for the requested branch.
+            items = items.prefetch_related(
+                Prefetch(
+                    "branch_overrides",
+                    queryset=ItemBranch.objects.filter(
+                        branch=branch
+                    ),
+                    to_attr="current_branch_override",
+                )
+            )
+
             visible_items = get_items_for_branch(items, branch)
+
             # items hidden from this branch
             hidden_items = items.exclude(
                 pk__in=visible_items.values_list("pk", flat=True))
 
-            if scope == 'hidden':
-                # return hidden items for the branch
-                ser_data = ItemsSerializer(instance=hidden_items, many=True, context={"request": request,
-                                           "branch_slug": branch_slug})
-            else:
-                # return visible items for the branch
-                ser_data = ItemsSerializer(instance=visible_items, many=True, context={"request": request,
-                                           "branch_slug": branch_slug})
+            queryset = (
+                hidden_items
+                if scope == "hidden"
+                else visible_items
+            )
+
+            serializer = ItemsSerializer(queryset, many=True, context={
+                                         "request": request, "branch_slug": branch_slug, })
+
         else:
-            # return all business's items
-            ser_data = ItemsSerializer(
-                instance=items, many=True, context={"request": request})
-        return Response(ser_data.data)
+            serializer = ItemsSerializer(
+                items, many=True, context={"request": request})
+
+        return Response(serializer.data)
 
     # Create a new item for a business
     def post(self, request, business_slug):

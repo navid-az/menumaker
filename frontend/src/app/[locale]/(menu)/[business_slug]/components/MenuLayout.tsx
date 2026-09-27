@@ -13,10 +13,11 @@ import { cn } from "@/lib/utils";
 
 //types
 import { type MenuGlobalStylingUI, type MenuUI } from "@/app/types/ui/menu";
-import { type MenuCategory } from "@/app/types/api/menu";
+import { type MenuItem, type MenuCategory } from "@/app/types/api/menu";
 type MenuLayoutProps = {
   menuData: MenuUI;
   globalStyling: MenuGlobalStylingUI;
+  items?: MenuItem[]
   categories: MenuCategory[];
   businessSlug?: string;
 };
@@ -24,9 +25,24 @@ type MenuLayoutProps = {
 export default function MenuLayout({
   menuData,
   globalStyling,
+  items,
   categories,
   businessSlug,
 }: MenuLayoutProps) {
+
+  // When items are provided, render only active categories with their matching items.
+  // When items are not provided, use the categories as-is.
+  const menuCategories = items ? categories
+    .filter((category) => category.is_active)
+    .map((category) => ({
+      ...category,
+      items: items.filter(
+        (item) => item.category === category.id
+      ),
+    }))
+    .filter((category) => category.items.length > 0)
+    : categories
+
   return (
     <div className={cn("relative bg-(--bg) flex flex-col scrollbar-hide")}>
       <MenuHeader
@@ -37,12 +53,12 @@ export default function MenuLayout({
       {menuData.items_page_layout === "horizontal" ? (
         <div>
           <ItemsCategory
-            categories={categories}
+            categories={menuCategories}
             globalStyling={globalStyling}
             type={menuData.items_page_layout}
           ></ItemsCategory>
           <MenuItemsWrapper
-            categories={categories}
+            categories={menuCategories}
             menuData={menuData}
             globalStyling={globalStyling}
           ></MenuItemsWrapper>
