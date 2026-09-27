@@ -7,6 +7,7 @@ import { Plus, Minus, X } from "lucide-react";
 
 //components
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 //libraries
 import { cn } from "@/lib/utils";
@@ -29,6 +30,7 @@ type AddToCartBtnType = {
   itemId: number;
   globalStyling: MenuGlobalStylingUI;
   itemHasOptions?: boolean;
+  isAvailable?: boolean
 };
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -40,6 +42,7 @@ export default function AddToCartBtn({
   globalStyling,
   itemHasOptions = false,
   onClick,
+  isAvailable
 }: ButtonProps) {
   const {
     cartItems,
@@ -75,6 +78,13 @@ export default function AddToCartBtn({
   };
   const handleAdd = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation();
+
+    // If item is unavailable, don't update the cart
+    if (!isAvailable) {
+      toast.error(t('toasts.isUnavailable'))
+      return
+    }
+
     onClick?.(e);
     if (itemHasOptions) return;
     updateItems(itemId);
@@ -115,23 +125,23 @@ export default function AddToCartBtn({
       ) : (
         <Button
           className={cn(
-            "h-full w-full rounded-(--radius-inner) bg-[var(--cart-btn-bg)] text-[var(--cart-btn-text)]"
+            "h-full w-full rounded-(--radius-inner) bg-[var(--cart-btn-bg)] text-[var(--cart-btn-text)]", !isAvailable && "grayscale-80 select-none cursor-default"
           )}
           onClick={(e) => handleAdd(e)}
         >
-          <Plus
+          {isAvailable && <Plus
             className={cn(
               "h-6 w-6",
               globalStyling.style === "retro" && "stroke-2"
             )}
-          />
+          />}
           <p
             className={cn(
               "text-base",
               globalStyling.style === "retro" && "font-bold"
             )}
           >
-            {t('buttons.add')}
+            {isAvailable ? t('buttons.add') : t('buttons.unavailable')}
           </p>
         </Button>
       )}

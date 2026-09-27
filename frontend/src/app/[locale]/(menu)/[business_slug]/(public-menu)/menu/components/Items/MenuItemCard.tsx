@@ -398,13 +398,13 @@ export function MenuItemCard({
               className={cn(
                 "relative flex h-[300px] flex-none flex-col xss:col-span-1 transition-[box-shadow,border,border-radius] duration-300",
                 globalStyling.style === "retro" &&
-                "border-3 border-(--secondary) shadow-[4px_4px_0px_0px_var(--secondary)]"
+                "border-3 border-(--secondary) shadow-[4px_4px_0px_0px_var(--secondary)]", !is_available && "grayscale-80"
               )}
             >
               {/* Removing -z-5 will apply ripple animation effect BEHIND the item_images
             This only works if the element doesn't have a background(png) */}
               {item_images && item_images[0] ? <Image
-                className="rounded-(--radius-exception) absolute -z-5 object-cover "
+                className="rounded-(--radius-exception) absolute -z-5 object-cover"
                 src={item_images[0].url}
                 alt={name}
                 fill
@@ -425,6 +425,7 @@ export function MenuItemCard({
                     unitDisplayType={globalStyling.unit_display_type}
                     className="text-(--secondary)/80"
                     price={price}
+                    isAvailable={is_available}
                   ></PriceTag>
                 </div>
                 <AddToCartBtn
@@ -434,6 +435,7 @@ export function MenuItemCard({
                   onClick={() => {
                     !!options?.length && handleInnerDrawer(true);
                   }}
+                  isAvailable={is_available}
                 ></AddToCartBtn>
               </div>
             </div>

@@ -1188,6 +1188,10 @@
     }
   },
   "globalComponents": {
-    "addToCartBtn": { "buttons": { "add": "Add" } }
+    "priceTag": { "placeholder": "Unavailable" },
+    "addToCartBtn": {
+      "buttons": { "add": "Add", "unavailable": "Unavailable" },
+      "toasts": { "isUnavailable": "This Item is currently unavailable" }
+    }
   }
 }

@@ -1192,6 +1192,10 @@
     }
   },
   "globalComponents": {
-    "addToCartBtn": { "buttons": { "add": "افزودن" } }
+    "priceTag": { "placeholder": "ناموجود" },
+    "addToCartBtn": {
+      "buttons": { "add": "افزودن", "unavailable": "ناموجود" },
+      "toasts": { "isUnavailable": "این آیتم در حال حاضر ناموجود میباشد" }
+    }
   }
 }

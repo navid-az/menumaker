@@ -18,7 +18,7 @@ import { Toman } from "../../../components";
 import { useEffect, useState } from "react";
 
 //libraries
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 //types
 type PriceTagType = {
@@ -29,6 +29,7 @@ type PriceTagType = {
   removeZeroes?: boolean;
   isLoading?: boolean;
   isFree?: boolean;
+  isAvailable?: boolean
   className?: string;
 };
 
@@ -40,15 +41,18 @@ export default function PriceTag({
   removeZeroes = false,
   isLoading,
   isFree = false,
+  isAvailable,
   className,
 }: PriceTagType) {
   const secondaryColor = "#FFFF";
   const [validatedPrice, setValidatedPrice] = useState<string | number>(price);
-  const locale = useLocale()
+
+  const t = useTranslations('globalComponents.priceTag')
+  const locale = useLocale();
 
   // Format price according to props
   useEffect(() => {
-    let formattedPrice: string | number = price; // start with number
+    let formattedPrice: string | number = price;
 
     // Round if needed → still a number
     if (removeZeroes || unitDisplayType === "compact") {
@@ -63,15 +67,34 @@ export default function PriceTag({
       formattedPrice = toPersianDigits(formattedPrice);
     }
 
-    setValidatedPrice(formattedPrice as string);
-  }, [removeZeroes, price, persianDigits, unitDisplayType]);
+    setValidatedPrice(formattedPrice);
+  }, [removeZeroes, price, persianDigits, unitDisplayType, locale]);
+
+  // Item is unavailable
+  if (isAvailable === false) {
+    return (
+      <div className={cn("rounded-full px-2 py-1", className)}>
+        <p>{t('placeholder')}</p>
+      </div>
+    );
+  }
 
   return (
     <span
-      className={cn("flex w-max items-center justify-between gap-1", className)}
+      className={cn(
+        "flex w-max items-center justify-between gap-1",
+        className
+      )}
     >
       {!isLoading ? (
-        <div className={cn("flex items-end gap-1", locale === 'en' && unitDisplayType === 'compact' && "flex-row-reverse")}>
+        <div
+          className={cn(
+            "flex items-end gap-1",
+            locale === "en" &&
+            unitDisplayType === "compact" &&
+            "flex-row-reverse"
+          )}
+        >
           <p
             className={cn(
               `text-${secondaryColor}`,
@@ -88,7 +111,8 @@ export default function PriceTag({
           >
             {validatedPrice}
           </p>
-          {unitDisplayType == "persian_abbr" ? (
+
+          {unitDisplayType === "persian_abbr" ? (
             <p
               className={cn(
                 `text-${secondaryColor}`,
@@ -103,9 +127,9 @@ export default function PriceTag({
                         : ""
               )}
             >
-              {locale === 'fa' ? 'ت' : 'T'}
+              {locale === "fa" ? "ت" : "T"}
             </p>
-          ) : unitDisplayType == "compact" ? (
+          ) : unitDisplayType === "compact" ? (
             <span
               className={cn(
                 "relative flex",
@@ -120,9 +144,9 @@ export default function PriceTag({
                         : ""
               )}
             >
-              <Toman className={`h-full w-full text-${secondaryColor}`}></Toman>
+              <Toman className={`h-full w-full text-${secondaryColor}`} />
             </span>
-          ) : unitDisplayType == "english_abbr" ? (
+          ) : unitDisplayType === "english_abbr" ? (
             <p
               className={cn(
                 `text-${secondaryColor}`,
@@ -139,7 +163,7 @@ export default function PriceTag({
             >
               T
             </p>
-          ) : unitDisplayType == "default" ? (
+          ) : unitDisplayType === "default" ? (
             <p
               className={cn(
                 `text-${secondaryColor}`,
@@ -154,11 +178,9 @@ export default function PriceTag({
                         : ""
               )}
             >
-              {locale === 'fa' ? 'تومان' : 'Toman'}
+              {locale === "fa" ? "تومان" : "Toman"}
             </p>
-          ) : (
-            ""
-          )}
+          ) : null}
         </div>
       ) : (
         <div className={`text-${secondaryColor}`}>
@@ -167,8 +189,7 @@ export default function PriceTag({
             <Skeleton className="h-full w-4/12" />
           </div>
         </div>
-      )
-      }
-    </span >
+      )}
+    </span>
   );
 }
