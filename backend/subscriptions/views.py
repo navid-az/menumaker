@@ -3,6 +3,7 @@ import os
 from zarinpal import ZarinPal, Config
 from typing import Literal
 from django.shortcuts import get_object_or_404
+from django.conf import settings
 
 from rest_framework import status
 from rest_framework.views import APIView
@@ -189,6 +190,15 @@ def verify_payment(authority: str, amount: int, status: str):
         }
 
 
+# Activate(create) subscription for the verified subscription order
+def activate_subscription(order):
+    Subscription.objects.create(
+        business=order.business,
+        plan=order.plan,
+        pricing=order.pricing,
+    )
+
+
 # This view is meant to be called when user attempts to purchase a subscription.
 # It creates a SubscriptionOrder instance which tracks the purchase attempt.
 class SubscriptionOrderView(APIView):
@@ -196,6 +206,10 @@ class SubscriptionOrderView(APIView):
 
     def post(self, request):
         business_slug = request.GET.get('business_slug')
+
+        # Should be removed later, this is just an MVP payment gateway bypass for foreign users
+        locale = request.GET.get('locale')
+
         business = get_object_or_404(Business, slug=business_slug)
 
         self.check_object_permissions(request, business)
@@ -231,32 +245,53 @@ class SubscriptionOrderView(APIView):
             total_price = _calculate_total_price(
                 pricing.price, discount_percent=pricing.duration.discount)
 
-            res = initiate_payment(
-                amount=total_price,
-                description=pricing.plan.name,
-                mobile=request.user.phone_number or '',
-                email=request.user.email or '',
+            # Bypass payment gateway entirely if locale is EN and account has demo mode flag
+            should_bypass_payment = (
+                settings.DEMO_MODE_ENABLED
+                and business.owner.is_demo
+                and locale == 'en'
             )
 
-            if not res["success"]:
-                return Response(
-                    {"detail": "Payment initiation failed. Please try again."},
-                    status=status.HTTP_502_BAD_GATEWAY,
+            res = None
+
+            if not should_bypass_payment:
+                res = initiate_payment(
+                    amount=total_price,
+                    description=pricing.plan.name,
+                    mobile=request.user.phone_number or '',
+                    email=request.user.email or '',
                 )
 
-            # Save order first in PENDING state, before touching the payment gateway
-            SubscriptionOrder.objects.create(
+                if not res["success"]:
+                    return Response(
+                        {"detail": "Payment initiation failed. Please try again."},
+                        status=status.HTTP_502_BAD_GATEWAY,
+                    )
+
+            subscription_order = SubscriptionOrder.objects.create(
                 business=business,
                 plan=pricing.plan,
                 pricing=pricing,
                 name_snapshot=pricing.plan.name,
                 duration_snapshot=pricing.duration.days,
                 price_snapshot=total_price,
-                zarinpal_authority=res["authority"]
+                zarinpal_authority=res["authority"] if res else None,
+                status=(
+                    SubscriptionOrder.OrderStatus.PAID
+                    if should_bypass_payment
+                    else SubscriptionOrder.OrderStatus.PENDING
+                ),
             )
 
+            if should_bypass_payment:
+                activate_subscription(subscription_order)
+                return Response({
+                                "payment_url": None,
+                                "bypass": True
+                                }, status=status.HTTP_200_OK)
+
             return Response({
-                "payment_url": res["payment_url"],
+                "payment_url": res["payment_url"] if res else None,
             }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -295,14 +330,9 @@ class SubscriptionOrderVerifyView(APIView):
             subscription_order.save()
 
             # create subscription instance
-            Subscription.objects.create(
-                business=subscription_order.business,
-                plan=subscription_order.plan,
-                pricing=subscription_order.pricing,
-            )
+            activate_subscription(subscription_order)
             return redirect(
-                # opt-out &authority={authority}
-                f'{os.environ['NEXT_PUBLIC_APP_URL']}/builder?status=OK'
+                f"{os.environ['NEXT_PUBLIC_APP_URL']}/builder?status=OK"
             )
 
         # mark order as failed

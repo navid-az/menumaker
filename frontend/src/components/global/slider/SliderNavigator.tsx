@@ -68,8 +68,6 @@ export function SliderNavigator({
   // A dot is disabled if ANY step before it (within the same section) is mandatory and not yet valid 
   const isDotDisabled = useCallback(
     (index: number) => {
-      console.log('isDotDisabled callback just ran');
-
       for (let i = 0; i < index; i++) {
         const step = activeSection.steps[i];
         const valid = stepValidityMap[step.id] ?? false;

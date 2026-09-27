@@ -208,9 +208,10 @@
       "month": "Months",
       "year": "Year"
     },
+    "toasts": { "paymentSuccess": "Payment completed successfully" },
     "form": {
       "submitBtn": "Complete Payment",
-      "toasts": { "submitError": "Failed to initiate payment" }
+      "toasts": { "onError": "Failed to initiate payment" }
     }
   },
   "builder": {

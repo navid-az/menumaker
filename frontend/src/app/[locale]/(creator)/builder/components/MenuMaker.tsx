@@ -13,18 +13,17 @@ import GoBackBtn from "@/components/global/GoBackBtn";
 
 //hooks
 import { useSlider } from "@/lib/stores";
+import { useRouter, useSearchParams } from "next/navigation";
 
 //libraries
 import { motion, AnimatePresence } from "motion/react";
+import { useTranslations } from "next-intl";
 
 //types
 import { type AssetGroupType } from "@/components/global/AssetPicker";
 import { type SubscriptionPlan } from "@/app/types/api/subscription";
 import { type Business } from "@/app/types/api/business";
 type BuilderFormStep = "setup" | "billing" | "builder" | "qr";
-
-//hooks
-import { useRouter, useSearchParams } from "next/navigation";
 
 export default function MenuMaker({
   plans,
@@ -46,6 +45,8 @@ export default function MenuMaker({
   const builderFormRef = useRef(null);
 
   const searchParams = useSearchParams();
+
+  const t = useTranslations('checkout.toasts')
 
   // Determine onboarding step from business/subscription state
   useEffect(() => {
@@ -89,7 +90,7 @@ export default function MenuMaker({
   useEffect(() => {
     if (searchParams.get("status") === "OK") {
       const timer = setTimeout(() => {
-        toast.success("پرداخت با موفقیت انجام شد");
+        toast.success(t('paymentSuccess'));
       }, 300);
 
       return () => clearTimeout(timer);

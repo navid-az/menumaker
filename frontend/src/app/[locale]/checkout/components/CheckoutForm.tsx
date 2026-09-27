@@ -16,7 +16,7 @@ import { useSearchParams } from "next/navigation";
 import { type SubscriptionPlan } from "@/app/types/api/subscription";
 
 //libraries
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 export default function CheckoutForm({
   planData,
@@ -27,6 +27,7 @@ export default function CheckoutForm({
   const [isLoading, setIsLoading] = useState(false);
 
   const t = useTranslations('checkout.form')
+  const locale = useLocale()
 
   const businessSlug = searchParams.get("business");
   const duration = searchParams.get("duration");
@@ -42,7 +43,7 @@ export default function CheckoutForm({
     try {
       setIsLoading(true);
 
-      await initiatePayment(businessSlug, planData.slug, Number(duration));
+      await initiatePayment(businessSlug, planData.slug, Number(duration), locale); // locale should be removed later on(temporary bypass for foreign users)
     } catch (error) {
       onError(error);
     } finally {
@@ -53,7 +54,7 @@ export default function CheckoutForm({
   function onError(error: unknown) {
     console.error(error);
 
-    toast.error(t('form.toasts.onError'));
+    toast.error(t('toasts.onError'));
   }
 
   return (
