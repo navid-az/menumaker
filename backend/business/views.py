@@ -625,7 +625,7 @@ class ItemDetailView(MethodBasedPermissionsMixin, APIView):
 
 class OrdersView(MethodBasedPermissionsMixin, APIView):
     permission_classes_by_method = {
-        'GET': [demo_or_full_access], 'POST': [IsAuthenticated]}
+        'GET': [demo_or_full_access]}
     required_permission_by_method = {
         'GET': ['business.view_order'],
     }
