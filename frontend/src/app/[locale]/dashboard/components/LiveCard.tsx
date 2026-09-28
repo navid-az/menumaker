@@ -70,6 +70,7 @@ import { APP_URL } from "@/lib/config";
 
 // types
 import { type UpdateOrder } from "@/app/types/payloads/menu";
+import OrderActionBtn from "./OrderActionBtn";
 type LiveCardType = {
   table: TableType;
   businessSlug: string;
@@ -169,77 +170,65 @@ export default function LiveCard({
   } = useActiveTimer(table, isInView);
 
   useEffect(() => {
-    if (progressType) {
-      if (progressType === "call") {
+    if (!progressType) {
+      setState("default");
+      setTitle("");
+      return;
+    }
+
+    switch (progressType) {
+      case "call":
         setState("attention");
         setShowOrder(false);
-        setTitle(t('status.waiter'));
-      }
-      if (progressType === "pendingOrder") {
+        setTitle(t("status.waiter"));
+        break;
+
+      case "pendingOrder": {
         setState("attention");
-        setTitle(t('status.newOrder'));
+        setTitle(t("status.newOrder"));
+
+        const timeoutId = setTimeout(() => {
+          setShowOrder(true);
+        }, 5000);
+
+        return () => clearTimeout(timeoutId);
+      }
+
+      case "acceptedOrder": {
+        setState("success");
+        setTitle(t("status.acceptedOrder"));
 
         const timeoutId = setTimeout(() => {
           setShowOrder(true);
           setState("default");
-          setTitle(t('status.activeOrder'));
-        }, 5000);
+          setTitle(t("status.acceptedOrder"));
+        }, 2000);
 
-        return () => {
-          clearTimeout(timeoutId);
-        };
+        return () => clearTimeout(timeoutId);
       }
-      if (progressType === "readyOrder") {
+
+      case "readyOrder":
         setShowOrder(false);
         setState("attention");
-        setTitle(t('status.orderReady'));
-      }
-      if (progressType === "servedOrder") {
+        setTitle(t("status.orderReady"));
+        break;
+
+      case "servedOrder":
         setState("success");
-        setTitle("سرو شد!");
-        setFooterAlert(t('status.orderServed'));
-      }
-      if (progressType === "session") {
+        setTitle(t("status.orderServed"));
+        setFooterAlert(t("status.orderServed"));
+        break;
+
+      case "session":
         setState("default");
-        setTitle(t('status.viewingMenu'));
-      }
-      if (progressType === "none") {
+        setTitle(t("status.viewingMenu"));
+        break;
+
+      case "none":
         setState("disabled");
-      }
-    } else {
-      setState("default");
-      setTitle("");
+        break;
     }
-  }, [progressType]);
-
-  async function handleUpdateOrder() {
-    if (!table.order?.id) return;
-
-    let data: Partial<UpdateOrder> = {};
-
-    if (progressType === "pendingOrder") {
-      data = {
-        status: "ready",
-        ready_at: new Date().toISOString(),
-      };
-    } else if (progressType === "readyOrder") {
-      data = {
-        status: "served",
-        served_at: new Date().toISOString(),
-      };
-    }
-
-    if (Object.keys(data).length === 0) {
-      console.warn("No changes to send");
-      return;
-    }
-
-    const res = await updateOrder(table.order.id, data);
-
-    if (!res.success) {
-      toast.error("خطایی در انجام عملیات رخ داد، لطفا مجددا امتحان کنید");
-    }
-  }
+  }, [progressType, t]);
 
   return (
     <div
@@ -282,7 +271,7 @@ export default function LiveCard({
               initial={{ width: "180px", height: "180px" }}
               animate={
                 showOrder
-                  ? { width: "80px", height: "80px", marginTop: "-56px" }
+                  ? { width: "100px", height: "100px", marginTop: "-56px" }
                   : { width: "180px", height: "180px" }
               }
               transition={{
@@ -314,23 +303,7 @@ export default function LiveCard({
                     : elapsedDuration}
                 </p>
               </div>
-              {(progressType === "readyOrder" ||
-                progressType === "pendingOrder") && (
-                  <Button
-                    onClick={handleUpdateOrder}
-                    className="left-1/2 hidden group-hover:flex top-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-100 absolute size-[76%] font-semibold rounded-full bg-green-300 text-green-950"
-                  >
-                    <p
-                      className={cn(
-                        "font-semibold transition-all duration-300",
-                        showOrder ? "text-sm" : "text-2xl"
-                      )}
-                    >
-                      تکمیل
-                    </p>
-                  </Button>
-                )}
-              {/* <p className="absolute top-0 text-red-600">{progressType}</p> */}
+              <OrderActionBtn progressType={progressType} table={table} showOrder={showOrder}></OrderActionBtn>
               <ProgressBar
                 outerColor="var(--livecard-secondary)"
                 innerColor="var(--livecard-primary)"
@@ -500,7 +473,8 @@ export function LiveCardHeader({
               </div>
             </DropdownMenuLabel>
             <DropdownMenuGroup>
-              <DropdownMenuItem disabled={isMockup}>
+              {/* Disabled for not (should only be disabled on `isMockup`) */}
+              <DropdownMenuItem disabled>
                 <Info></Info>
                 {t('header.dropdown.buttons.tableDetails')}
               </DropdownMenuItem>
@@ -639,6 +613,8 @@ export function LiveCardFooter({
         return t('footer.status.session');
       case "call":
         return t('footer.status.call');
+      case "acceptedOrder":
+        return t('footer.status.acceptedOrder');
       case "readyOrder":
         return t('footer.status.readyOrder');
       case "servedOrder":

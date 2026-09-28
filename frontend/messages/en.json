@@ -767,6 +767,32 @@
         }
       },
       "liveCard": {
+        "orderList": {
+          "title": "Order List",
+          "order": "Order",
+          "orderDetails": "Order Details",
+          "tableOrder": "Table Order",
+          "onlineOrder": "Online Order",
+          "orderStatus": "Order Status",
+          "orderPlaced": "Order Placed",
+          "ago": "{duration} ago",
+          "totalPrice": "Total",
+          "cancelOrder": "Cancel Order",
+          "completeOrder": "Complete Order",
+          "buttons": {
+            "accept": "Accept",
+            "ready": "Ready",
+            "served": "Served"
+          },
+          "orderStatuses": {
+            "pending": "Pending Approval",
+            "accepted": "Accepted",
+            "preparing": "Preparing",
+            "ready": "Ready for Pickup",
+            "served": "Served",
+            "cancelled": "Cancelled"
+          }
+        },
         "header": {
           "dropdown": {
             "buttons": {
@@ -792,6 +818,7 @@
         "timer": {
           "progressMessages": {
             "call": "called {duration} ago",
+            "acceptedOrder": "Order was accepted {duration} ago",
             "readyOrder": "Order was ready {duration} ago",
             "servedOrder": "Order was served {duration} ago",
             "pendingOrder": "ordered {duration} ago",
@@ -809,6 +836,7 @@
           "waiter": "Waiter!",
           "newOrder": "New Order",
           "activeOrder": "Active Order",
+          "acceptedOrder": "Accepted Order",
           "orderReady": "Order Ready",
           "viewingMenu": "Viewing Menu",
           "orderServed": "Order Served"
@@ -818,6 +846,7 @@
             "pendingOrder": "New Order",
             "session": "Order at Table",
             "call": "Active Request",
+            "acceptedOrder": "Active Order",
             "readyOrder": "Ready for Pickup",
             "servedOrder": "Awaiting Payment",
             "default": "New Order"

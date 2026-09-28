@@ -768,6 +768,32 @@
         }
       },
       "liveCard": {
+        "orderList": {
+          "title": "لیست سفارشات",
+          "order": "سفارش",
+          "orderDetails": "مشخصات سفارش",
+          "tableOrder": "سفارش پشت میز",
+          "onlineOrder": "سفارش آنلاین",
+          "orderStatus": "وضعیت سفارش",
+          "orderPlaced": "زمان ثبت سفارش",
+          "ago": "{duration} پیش",
+          "totalPrice": "مجموع قیمت",
+          "cancelOrder": "لغو سفارش",
+          "completeOrder": "تکمیل سفارش",
+          "buttons": {
+            "accept": "تایید",
+            "ready": "آماده",
+            "served": "سرو شد"
+          },
+          "orderStatuses": {
+            "pending": "در انتظار تأیید",
+            "accepted": "تأیید شده",
+            "preparing": "در حال آماده‌سازی",
+            "ready": "آماده تحویل",
+            "served": "تحویل داده شده",
+            "cancelled": "لغو شده"
+          }
+        },
         "header": {
           "dropdown": {
             "buttons": {
@@ -793,6 +819,7 @@
         "timer": {
           "progressMessages": {
             "call": "مشتری {duration} پیش صدا زده",
+            "acceptedOrder": "سفارش {duration} پیش تایید شده",
             "readyOrder": "سفارش {duration} پیش آماده شده",
             "servedOrder": "سفارش {duration} پیش تحویل داده شده",
             "pendingOrder": "مشتری {duration} پیش سفارش داده",
@@ -810,7 +837,8 @@
           "waiter": "!سالن دار‍",
           "newOrder": "سفارش جدید",
           "activeOrder": "سفارش فعال",
-          "orderReady": "سفارش آماده",
+          "acceptedOrder": "تایید شده",
+          "orderReady": "آماده تحویل",
           "viewingMenu": "مشاهده منو",
           "orderServed": "سرو شد!"
         },
@@ -819,6 +847,7 @@
             "pendingOrder": "سفارش جدید",
             "session": "سفارش روی میز",
             "call": "درخواست فعال",
+            "acceptedOrder": "سفارش فعال",
             "readyOrder": "آماده تحویل",
             "servedOrder": "در صف پرداخت",
             "default": "سفارش جدید"

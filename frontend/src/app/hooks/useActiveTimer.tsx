@@ -10,6 +10,7 @@ import { type TableType } from "../[locale]/dashboard/[business_slug]/[branch_sl
 export type progressType =
   | "call"
   | "pendingOrder"
+  | "acceptedOrder"
   | "readyOrder"
   | "servedOrder"
   | "session"
@@ -34,6 +35,7 @@ export function useActiveTimer(table: TableType, isInView?: boolean): {
   const activeOrderValid = !!table.order && table.order.status != "cancelled";
 
   const orderIsReady = table.order?.status === "ready";
+  const orderIsAccepted = table.order?.status === 'accepted'
 
   const orderIsServed =
     now !== null &&
@@ -84,6 +86,13 @@ export function useActiveTimer(table: TableType, isInView?: boolean): {
     elapsedMs: elapsedOrderDuration,
   } = useProgress(table.order?.created_at || "", "", false, "countup", undefined, isInView);
 
+  //calculate order accepted_at progress
+  const {
+    progress: orderAccepted,
+    remainingMs: remainingOrderAcceptedDuration,
+    elapsedMs: elapsedOrderAcceptedDuration,
+  } = useProgress(table.order?.accepted_at || "", "", false, "countup", undefined, isInView);
+
   //calculate order ready_at progress
   const {
     progress: orderReady,
@@ -112,7 +121,18 @@ export function useActiveTimer(table: TableType, isInView?: boolean): {
   }
 
   if (activeOrderValid) {
-    if (orderIsReady) {
+    if (orderIsAccepted) {
+      return {
+        progress: orderAccepted,
+        remainingDuration: remainingOrderAcceptedDuration,
+        elapsedDuration: elapsedOrderAcceptedDuration,
+        progressType: 'acceptedOrder',
+        progressMessage: t("acceptedOrder", {
+          duration: elapsedOrderAcceptedDuration,
+        }),
+        isReady,
+      };
+    } else if (orderIsReady) {
       return {
         progress: orderReady,
         remainingDuration: remainingOrderReadyDuration,
