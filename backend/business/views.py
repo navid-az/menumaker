@@ -7,8 +7,8 @@ from mixins import MethodBasedPermissionsMixin
 
 from .serializers import (BusinessesSerializer, BusinessCreateSerializer, BranchesSerializer, BranchCreateUpdateSerializer,
                           TablesSerializer, TableCreateUpdateSerializer, CategoriesSerializer, CategoryCreateUpdateSerializer,
-                          ItemsSerializer, ItemCreateUpdateSerializer, OrdersSerializer, OrderUpdateSerializer, RoleSerializer)
-from .models import Business, Branch, Table, TableSession, CallWaiter, Category, Item, ItemBranch, Order
+                          ItemsSerializer, ItemCreateUpdateSerializer, OrdersSerializer, OrderUpdateSerializer, RoleSerializer, PaymentSerializer, PaymentCreateSerializer)
+from .models import Business, Branch, Table, TableSession, CallWaiter, Category, Item, ItemBranch, Order, Payment
 from assets.models import MediaCollection, attach_media_assets
 from personnel.models import Personnel
 
@@ -224,7 +224,7 @@ class TableSessionView(MethodBasedPermissionsMixin, APIView):
 
         # Look for an existing active session for this table
         session = TableSession.objects.filter(
-            table=table, is_active=True).first()
+            table=table, status="active").first()
 
         # If there is a session, check if it's still valid
         if session and not session.is_expired():
@@ -247,13 +247,13 @@ class TableSessionView(MethodBasedPermissionsMixin, APIView):
         # Check for existing valid session first
         existing_session = TableSession.objects.filter(
             table=table,
-            is_active=True
+            status="active"
         ).first()
 
         if existing_session:
             # deactivate existing session if expired
             if existing_session.is_expired():
-                existing_session.is_active = False
+                existing_session.status = "closed"
                 existing_session.save()
             return Response({
                 "status": "active",
@@ -266,12 +266,11 @@ class TableSessionView(MethodBasedPermissionsMixin, APIView):
         with transaction.atomic():
             TableSession.objects.filter(
                 table=table,
-                is_active=True
-            ).update(is_active=False)
+                status="active"
+            ).update(status="closed")
 
             new_session = TableSession.objects.create(
                 table=table,
-                is_active=True
             )
 
         self._notify_dashboard(new_session)
@@ -286,6 +285,7 @@ class TableSessionView(MethodBasedPermissionsMixin, APIView):
     def _notify_dashboard(self, session):
         """Send real-time update to dashboard."""
         channel_layer = get_channel_layer()
+
         group_name = (
             f"dashboard_{session.table.branch.business.slug}_"
             f"{session.table.branch.slug}"
@@ -297,20 +297,112 @@ class TableSessionView(MethodBasedPermissionsMixin, APIView):
                 "type": "dashboard.update",
                 "event": "create_session",
                 "payload": {
-                    "code": session.table.code,
+                    "table_code": session.table.code,
+                    "session_code": session.code,
                     "started_at": session.started_at.isoformat(),
                     "expires_at": session.expires_at.isoformat(),
-                    "is_active": session.is_active,
+                    "status": session.status,
                 },
-            }
+            },
         )
+
+
+class PaymentView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, session_code):
+        table_session = get_object_or_404(TableSession, code=session_code)
+
+        payments = table_session.payments.all()
+
+        serializer = PaymentSerializer(payments, many=True)
+
+        return Response(serializer.data)
+
+    def post(self, request, session_code):
+        table_session = get_object_or_404(TableSession, code=session_code)
+
+        if table_session.is_closed():
+            return Response(
+                {
+                    "detail": "This table session is already closed."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        serializer = PaymentCreateSerializer(data=request.data)
+
+        serializer.is_valid(raise_exception=True)
+
+        amount = serializer.validated_data["amount"]
+        method = serializer.validated_data["method"]
+        provider = serializer.validated_data.get(
+            "provider",
+            Payment.Provider.MANUAL,
+        )
+        metadata = serializer.validated_data.get("metadata", {})
+
+        remaining_amount = table_session.get_remaining_amount()
+
+        if amount > remaining_amount:
+            return Response(
+                {
+                    "detail": (
+                        "Payment amount cannot exceed "
+                        "the remaining balance."
+                    )
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if method in (
+            Payment.Method.CASH,
+            Payment.Method.EXTERNAL_POS,
+        ):
+            payment_status = Payment.Status.SUCCESSFUL
+            paid_at = timezone.now()
+        else:
+            payment_status = Payment.Status.PENDING
+            paid_at = None
+
+        payment = Payment.objects.create(
+            table_session=table_session,
+            amount=amount,
+            method=method,
+            provider=provider,
+            status=payment_status,
+            metadata=metadata,
+            paid_at=paid_at,
+        )
+
+        if payment_status == Payment.Status.SUCCESSFUL:
+            table_session.update_payment_status()
+
+        return Response(
+            PaymentSerializer(payment).data,
+            status=status.HTTP_201_CREATED,
+        )
+
+
+class PaymentDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, payment_id):
+        payment = get_object_or_404(
+            Payment,
+            pk=payment_id,
+        )
+
+        serializer = PaymentSerializer(payment)
+
+        return Response(serializer.data)
 
 
 class CallWaiterView(MethodBasedPermissionsMixin, APIView):
 
     def post(self, request, session_code, *args, **kwargs):
         session = get_object_or_404(
-            TableSession, code=session_code, is_active=True)
+            TableSession, code=session_code, status="active")
 
         # Check if an active call already exists (e.g. < 2 minutes old & not resolved)
         count_down = timezone.now() - timezone.timedelta(minutes=2)
@@ -324,17 +416,25 @@ class CallWaiterView(MethodBasedPermissionsMixin, APIView):
 
         # Send data to client in-real-time
         channel_layer = get_channel_layer()
+
+        group_name = (
+            f"dashboard_{call.table_session.table.branch.business.slug}_"
+            f"{call.table_session.table.branch.slug}"
+        )
+
         async_to_sync(channel_layer.group_send)(
-            f"dashboard_{call.table_session.table.branch.business.slug}_{call.table_session.table.branch.slug}", {
+            group_name,
+            {
                 "type": "dashboard.update",
                 "event": "call_waiter",
                 "payload": {
-                    "code": call.table_session.table.code,
+                    "table_code": call.table_session.table.code,
                     "resolved": call.resolved,
                     "created_at": call.created_at.isoformat(),
-                    "expires_at": call.expires_at.isoformat()
+                    "expires_at": call.expires_at.isoformat(),
                 },
-            },)
+            },
+        )
         return Response({"message": "Waiter called.", "call_id": call.id}, status=status.HTTP_201_CREATED)
 
 
@@ -347,7 +447,7 @@ class CallWaiterDetailView(MethodBasedPermissionsMixin, APIView):
     # Resolve an active call waiter request
     def patch(self, request, session_code, *args, **kwargs):
         session = get_object_or_404(
-            TableSession, code=session_code, is_active=True)
+            TableSession, code=session_code, status="active")
 
         call = CallWaiter.objects.filter(
             table_session=session, resolved=False).last()
@@ -656,12 +756,16 @@ class OrdersView(MethodBasedPermissionsMixin, APIView):
 
             # Send data to client in-real-time
             channel_layer = get_channel_layer()
+
+            group_name = f"dashboard_{branch.business.slug}_{branch.slug}"
+
             async_to_sync(channel_layer.group_send)(
-                f"dashboard_{branch.business.slug}_{branch.slug}", {
+                group_name,
+                {
                     "type": "dashboard.update",
                     "event": "new_order",
                     "payload": {
-                        "code": new_order.table_session.table.code,
+                        "table_code": new_order.table_session.table.code,
                         "id": new_order.id,
                         "status": new_order.status,
                         "total_price": str(new_order.total_price),
@@ -674,10 +778,11 @@ class OrdersView(MethodBasedPermissionsMixin, APIView):
                                 "quantity": item.quantity,
                                 "notes": item.notes or None,
                             }
-                            # or .items if related_name
                             for item in new_order.items.all()
-                        ]}
-                },)
+                        ],
+                    },
+                },
+            )
             return Response(ser_data.data, status=status.HTTP_201_CREATED)
         return Response(ser_data.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -709,7 +814,7 @@ class OrderDetailView(MethodBasedPermissionsMixin, APIView):
             # isn't supposed to pass the whole order data, but just the relevant fields that changed (e.g. status and timestamps).
             # For simplicity, I'm sending the whole order data here. Can optimize later if needed.
             payload = {
-                "code": updated_order.table_session.table.code,
+                "table_code": updated_order.table_session.table.code,
                 "id": updated_order.id,
                 "status": updated_order.status,
                 "total_price": str(updated_order.total_price),
@@ -744,12 +849,20 @@ class OrderDetailView(MethodBasedPermissionsMixin, APIView):
 
             # Send data to client in-real-time
             channel_layer = get_channel_layer()
+
+            group_name = (
+                f"dashboard_{updated_order.branch.business.slug}_"
+                f"{updated_order.branch.slug}"
+            )
+
             async_to_sync(channel_layer.group_send)(
-                f"dashboard_{updated_order.branch.business.slug}_{updated_order.branch.slug}", {
+                group_name,
+                {
                     "type": "dashboard.update",
                     "event": "update_order_status",
-                    "payload": payload
-                },)
+                    "payload": payload,
+                },
+            )
             return Response(ser_data.data)
         return Response(ser_data.errors, status.HTTP_400_BAD_REQUEST)
 

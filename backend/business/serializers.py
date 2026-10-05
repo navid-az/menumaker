@@ -1,3 +1,4 @@
+from .models import Payment, TableSession
 from rest_framework import serializers
 from django.utils import timezone
 from django.utils.text import slugify
@@ -20,7 +21,56 @@ from subscriptions.models import Subscription
 class TableSessionSerializer(serializers.ModelSerializer):
     class Meta:
         model = TableSession
-        fields = ['code', 'started_at', 'expires_at', 'is_active']
+        fields = ['code', 'status', 'started_at',
+                  'expires_at', "paid_at", "payment_status"]
+
+
+class PaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = ("id", "table_session", "amount", "method", "provider", "status",
+                  "authority", "reference_id", "metadata", "created_at", "updated_at", "paid_at")
+        read_only_fields = ("id", "table_session", "status", "authority",
+                            "reference_id", "created_at", "updated_at", "paid_at")
+
+
+class PaymentCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = ("amount", "method", "provider", "metadata")
+
+    def validate_amount(self, value):
+        if value <= Decimal("0"):
+            raise serializers.ValidationError(
+                "Payment amount must be greater than zero."
+            )
+        return value
+
+    def validate(self, attrs):
+        method = attrs["method"]
+        provider = attrs.get("provider", Payment.Provider.MANUAL)
+
+        if method in (
+            Payment.Method.CASH,
+            Payment.Method.EXTERNAL_POS,
+        ):
+            if provider != Payment.Provider.MANUAL:
+                raise serializers.ValidationError({
+                    "provider": (
+                        "Cash and external POS payments must use "
+                        "the manual provider."
+                    )
+                })
+
+        elif method == Payment.Method.ONLINE:
+            if provider != Payment.Provider.ZARINPAL:
+                raise serializers.ValidationError({
+                    "provider": (
+                        "Online payments must use the ZarinPal provider."
+                    )
+                })
+
+        return attrs
 
 
 # call waiter serializers
@@ -42,14 +92,14 @@ class TablesSerializer(serializers.ModelSerializer):
 
     def get_active_session(self, obj):
         session = obj.session.filter(
-            is_active=True, expires_at__gt=timezone.now()).first()
+            status="active", expires_at__gt=timezone.now()).first()
         if session:
             return TableSessionSerializer(session).data
         return None
 
     def get_active_call(self, obj):
         session = obj.session.filter(
-            is_active=True,
+            status="active",
             expires_at__gt=timezone.now()
         ).first()
         if not session:
@@ -65,7 +115,7 @@ class TablesSerializer(serializers.ModelSerializer):
 
     def get_order(self, obj):
         session = obj.session.filter(
-            is_active=True,
+            status="active",
             expires_at__gt=timezone.now()
         ).first()
         if not session:
@@ -423,7 +473,7 @@ class OrdersSerializer(serializers.ModelSerializer):
         table_session = get_object_or_404(
             TableSession,
             code=value,
-            is_active=True,
+            status="active",
             table__branch__slug=self.context['branch_slug']
 
         )

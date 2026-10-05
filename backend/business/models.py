@@ -3,6 +3,7 @@ from django.conf import settings
 from django.utils import timezone
 from django.utils.text import slugify
 from django.contrib.contenttypes.fields import GenericRelation
+from django.db.models import Sum
 from assets.models import MediaAsset
 
 from datetime import timedelta
@@ -117,16 +118,86 @@ class Table(models.Model):
 
 
 class TableSession(models.Model):
+    PAYMENT_STATUS_CHOICES = (
+        ("unpaid", "Unpaid"),
+        ("partial", "Partial"),
+        ("paid", "Paid"),
+    )
+
+    SESSION_STATUS_CHOICES = (
+        ("active", "Active"),
+        ("closed", "Closed"),
+    )
+
     table = models.ForeignKey(
         Table, on_delete=models.CASCADE, related_name='session')
     code = models.CharField(max_length=8, blank=True, unique=True)
+    status = models.CharField(
+        max_length=20, choices=SESSION_STATUS_CHOICES, default="active")
+
+    payment_status = models.CharField(
+        max_length=20,
+        choices=PAYMENT_STATUS_CHOICES,
+        default="unpaid"
+    )
+
     started_at = models.DateTimeField(auto_now_add=True)
     expires_at = models.DateTimeField(blank=True)
+    paid_at = models.DateTimeField(null=True, blank=True)
     last_activity = models.DateTimeField(auto_now=True)
-    is_active = models.BooleanField(default=True)
+
+    def get_total_amount(self):
+        return self.orders.exclude(
+            status="cancelled"
+        ).aggregate(
+            total=Sum("total_price")
+        )["total"] or 0
+
+    def get_paid_amount(self):
+        return self.payments.filter(
+            status=Payment.Status.SUCCESSFUL
+        ).aggregate(
+            total=Sum("amount")
+        )["total"] or 0
+
+    def get_remaining_amount(self):
+        return max(
+            self.get_total_amount() - self.get_paid_amount(),
+            0,
+        )
+
+    def update_payment_status(self):
+        total_amount = self.get_total_amount()
+        paid_amount = self.get_paid_amount()
+
+        if paid_amount <= 0:
+            self.payment_status = "unpaid"
+            self.paid_at = None
+
+        elif paid_amount < total_amount:
+            self.payment_status = "partial"
+            self.paid_at = None
+
+        else:
+            self.payment_status = "paid"
+            self.status = "closed"
+
+            if not self.paid_at:
+                self.paid_at = timezone.now()
+
+        self.save(
+            update_fields=[
+                "payment_status",
+                "paid_at",
+                "status"
+            ]
+        )
 
     def is_expired(self):
         return self.expires_at and timezone.now() > self.expires_at
+
+    def is_closed(self):
+        return self.status == "closed"
 
     def save(self, *args, **kwargs):
         # generate 8 digit code
@@ -216,6 +287,54 @@ class OrderItem(models.Model):
     price_snapshot = models.DecimalField(max_digits=8, decimal_places=2)
     quantity = models.PositiveIntegerField(default=1)
     notes = models.TextField(blank=True)
+
+
+class Payment(models.Model):
+    class Method(models.TextChoices):
+        CASH = "cash", "Cash"
+        EXTERNAL_POS = "external_pos", "External POS"
+        ONLINE = "online", "Online"
+
+    class Provider(models.TextChoices):
+        MANUAL = "manual", "Manual"
+        ZARINPAL = "zarinpal", "ZarinPal"
+
+    class Status(models.TextChoices):
+        PENDING = "pending", "Pending"
+        SUCCESSFUL = "successful", "Successful"
+        FAILED = "failed", "Failed"
+        CANCELLED = "cancelled", "Cancelled"
+        REFUNDED = "refunded", "Refunded"
+
+    table_session = models.ForeignKey(
+        "TableSession", on_delete=models.PROTECT, related_name="payments")
+
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+
+    method = models.CharField(max_length=20, choices=Method.choices)
+
+    provider = models.CharField(
+        max_length=20, choices=Provider.choices, default=Provider.MANUAL)
+
+    status = models.CharField(
+        max_length=20, choices=Status.choices, default=Status.PENDING)
+
+    authority = models.CharField(max_length=255, blank=True, null=True)
+
+    reference_id = models.CharField(max_length=255, blank=True, null=True)
+
+    metadata = models.JSONField(default=dict, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    paid_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return (
+            f"{self.table_session.code} - "
+            f"{self.amount} - "
+            f"{self.status}"
+        )
 
 
 class CallWaiter(models.Model):

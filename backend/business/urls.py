@@ -1,6 +1,6 @@
 from django.urls import path
 from business.views import (BusinessesView, BusinessDetailView, BranchesView, BranchDetailView, TablesView, TableDetailView,
-                            TableSessionView, CallWaiterView, CallWaiterDetailView, CategoriesView, CategoryDetailView, ItemsView, ItemDetailView, OrdersView, OrderDetailView, RoleView)
+                            TableSessionView, PaymentView, PaymentDetailView, CallWaiterView, CallWaiterDetailView, CategoriesView, CategoryDetailView, ItemsView, ItemDetailView, OrdersView, OrderDetailView, RoleView)
 from personnel.views import PersonnelListView
 
 
@@ -35,6 +35,12 @@ urlpatterns = [
          OrdersView.as_view(), name='branch-orders'),
     path('orders/<int:order_id>/',
          OrderDetailView.as_view(), name='order-detail'),
+
+    # Payment endpoints
+    path("sessions/<str:session_code>/payments/",
+         PaymentView.as_view(), name="table-session-payments"),
+    path("payments/<int:payment_id>/",
+         PaymentDetailView.as_view(), name="payment-detail"),
 
     # call waiter endpoints
     path('sessions/<str:session_code>/calls/',
