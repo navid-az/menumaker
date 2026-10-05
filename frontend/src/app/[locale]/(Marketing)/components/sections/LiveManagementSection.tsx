@@ -19,7 +19,7 @@ import { motion, useInView, type Transition } from "motion/react"
 import { Radio } from 'lucide-react'
 
 //types
-import { TableType } from '@/app/[locale]/dashboard/[business_slug]/[branch_slug]/liveManagement/all/page'
+import { type Table } from '@/app/types/api/business'
 import { useTranslations } from 'next-intl'
 
 export default function LiveManagementSection({ locale }: { locale: string }) {
@@ -27,20 +27,22 @@ export default function LiveManagementSection({ locale }: { locale: string }) {
     const now = useDeferredNow()
     const end = now !== null ? now + 60_000 : 0
 
-    const tableDummyData: TableType = {
+    const tableDummyData: Table = {
         id: 2,
         code: "D4E5F6",
         active_session: {
             code: "T7U8V9",
             started_at: now == null ? '0' : new Date(now).toISOString(),
             expires_at: now == null ? '0' : new Date(end).toISOString(),
-            is_active: true,
+            payment_status: 'unpaid',
+            status: "active"
         },
         name: "Table 2",
         seats: 2,
         is_active: true,
         is_occupied: true,
         is_reserved: false,
+        is_associated: true
     }
 
     const wrapperRef = useRef<HTMLDivElement>(null);

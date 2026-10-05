@@ -66,9 +66,9 @@ import { useDeferredNow } from "@/app/hooks/useDeferredNow";
 import { APP_URL } from "@/lib/config";
 
 // types
-import { TableType } from "../[business_slug]/[branch_slug]/liveManagement/all/page";
+import { type Table } from "@/app/types/api/business";
 type LiveCardProps = {
-  table: TableType;
+  table: Table;
   businessSlug: string;
   branchSlug: string;
   serviceType?: ServiceType;
@@ -77,7 +77,7 @@ type LiveCardProps = {
   hasSession?: boolean;
   isInView?: boolean
   isMockup?: boolean;
-  onPaymentCompleted: (tableCode: string) => void
+  onPaymentCompleted?: (tableCode: string) => void
   className?: string
 };
 type ServiceType = "in-person" | "on-table" | "online";
@@ -311,7 +311,9 @@ export default function LiveCard({
                     : elapsedDuration}
                 </p>
               </div>
-              <OrderActionBtn progressType={progressType} table={table} showOrder={showOrder} onPaymentCompleted={onPaymentCompleted}></OrderActionBtn>
+              {!!onPaymentCompleted &&
+                <OrderActionBtn progressType={progressType} table={table} showOrder={showOrder} onPaymentCompleted={onPaymentCompleted}></OrderActionBtn>
+              }
               <ProgressBar
                 outerColor="var(--livecard-secondary)"
                 innerColor="var(--livecard-primary)"
@@ -348,7 +350,7 @@ export default function LiveCard({
   );
 }
 
-function EmptyView({ table, t }: { table: TableType, t: _Translator<Record<string, any>, "dashboard.liveManagement.liveCard"> }) {
+function EmptyView({ table, t }: { table: Table, t: _Translator<Record<string, any>, "dashboard.liveManagement.liveCard"> }) {
   return (
     <div className="flex justify-center items-center flex-col h-full gap-2 mb-10">
       <p className="text-primary text-2xl font-bold text-center">
@@ -389,7 +391,7 @@ export function LiveCardBody({
   children,
   activeSessionValid,
 }: {
-  table: TableType;
+  table: Table;
   children: React.ReactNode;
   activeSessionValid: boolean;
 }) {
@@ -416,7 +418,7 @@ export function LiveCardHeader({
   t,
   locale
 }: {
-  table: TableType;
+  table: Table;
   businessSlug: string;
   branchSlug: string;
   setShowCode: React.Dispatch<React.SetStateAction<boolean>>;
@@ -429,10 +431,11 @@ export function LiveCardHeader({
 }) {
   async function handleTableDelete() {
     const res = await deleteTable(businessSlug, branchSlug, table.id);
+
     if (res.success) {
-      toast.success(t('header.toasts.deleteSuccess'));
+      toast.success(t("header.toasts.deleteSuccess"));
     } else {
-      toast.error(t('header.toasts.deleteError'));
+      toast.error(res.error);
     }
   }
 
@@ -523,7 +526,7 @@ export function LiveCardHeader({
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem
-                disabled={isMockup}
+                disabled={isMockup || table.is_associated}
                 onClick={(e) => e.preventDefault()}
                 className="text-red-600 p-0 focus:text-red-600 focus:bg-red-50"
               >
@@ -604,7 +607,7 @@ export function LiveCardFooter({
   serviceType,
   t
 }: {
-  table: TableType;
+  table: Table;
   footerAlert: string;
   setFooterAlert: React.Dispatch<React.SetStateAction<string>>;
   progressType: progressType;

@@ -213,7 +213,15 @@ class TableDetailView(MethodBasedPermissionsMixin, APIView):
         # check business ownership
         self.check_object_permissions(request, table.branch)
 
+        if table.is_associated:
+            # Uses should not be able to delete tables which are already used.
+            return Response(
+                {"detail": "This table cannot be deleted because it has been used."},
+                status=status.HTTP_409_CONFLICT,
+            )
+
         table.delete()
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

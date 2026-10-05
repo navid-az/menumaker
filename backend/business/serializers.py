@@ -82,6 +82,7 @@ class CallWaiterSerializer(serializers.ModelSerializer):
 
 # table serializers
 class TablesSerializer(serializers.ModelSerializer):
+    is_associated = serializers.BooleanField(read_only=True)
     active_session = serializers.SerializerMethodField()
     active_call = serializers.SerializerMethodField()
     order = serializers.SerializerMethodField()
@@ -91,14 +92,14 @@ class TablesSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_active_session(self, obj):
-        session = obj.session.filter(
+        session = obj.sessions.filter(
             status="active", expires_at__gt=timezone.now()).first()
         if session:
             return TableSessionSerializer(session).data
         return None
 
     def get_active_call(self, obj):
-        session = obj.session.filter(
+        session = obj.sessions.filter(
             status="active",
             expires_at__gt=timezone.now()
         ).first()
@@ -114,7 +115,7 @@ class TablesSerializer(serializers.ModelSerializer):
         return None
 
     def get_order(self, obj):
-        session = obj.session.filter(
+        session = obj.sessions.filter(
             status="active",
             expires_at__gt=timezone.now()
         ).first()

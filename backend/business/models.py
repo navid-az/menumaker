@@ -108,6 +108,11 @@ class Table(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
+    # Check if this table is associated with any session or not
+    @property
+    def is_associated(self):
+        return self.sessions.exists()
+
     def save(self, *args, **kwargs):
         if not self.code:
             self.code = generate_unique_code()
@@ -130,7 +135,7 @@ class TableSession(models.Model):
     )
 
     table = models.ForeignKey(
-        Table, on_delete=models.CASCADE, related_name='session')
+        Table, on_delete=models.CASCADE, related_name='sessions')
     code = models.CharField(max_length=8, blank=True, unique=True)
     status = models.CharField(
         max_length=20, choices=SESSION_STATUS_CHOICES, default="active")

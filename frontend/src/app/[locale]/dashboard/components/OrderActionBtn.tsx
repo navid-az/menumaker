@@ -14,10 +14,10 @@ import { useTranslations } from "next-intl";
 //types 
 import { type UpdateOrder } from "@/app/types/payloads/menu";
 import { type progressType } from "@/app/hooks/useActiveTimer";
-import { type TableType } from "../[business_slug]/[branch_slug]/liveManagement/all/page";
+import { type Table } from "@/app/types/api/business";
 type OrderActionBtnProps = {
   progressType: progressType
-  table: TableType
+  table: Table
   showOrder: boolean
   onPaymentCompleted: (tableCode: string) => void
 }

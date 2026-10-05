@@ -381,7 +381,6 @@ export async function createBranch(
     );
     if (!res.ok) {
       const errorData = await res.json();
-      console.log(errorData);
 
       return {
         success: false,
@@ -507,33 +506,39 @@ export async function updateTable(
   }
 }
 
-export async function deleteTable(businessSlug: string, branchSlug: string, tableId: number) {
+export async function deleteTable(
+  businessSlug: string,
+  branchSlug: string,
+  tableId: number
+) {
   const accessToken = (await cookies()).get("access");
 
   try {
     const res = await fetch(`${SERVER_API_BASE_URL}/tables/${tableId}/`, {
       method: "DELETE",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken?.value}`,
       },
     });
+
     if (!res.ok) {
       const errorData = await res.json();
+
       return {
         success: false,
-        error: errorData.error || "Failed to delete table",
+        error: errorData.detail || "Failed to delete table",
       };
     }
+
+    updateTag(`business-tables-${businessSlug}-${branchSlug}`);
+
+    return { success: true };
   } catch (error: any) {
     return {
       success: false,
       error: error.message || "An unexpected error occurred",
     };
   }
-  updateTag(`business-tables-${businessSlug}-${branchSlug}`);
-
-  return { success: true };
 }
 
 type UploadedAsset = {

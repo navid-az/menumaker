@@ -6,7 +6,7 @@ import { useDeferredNow } from "./useDeferredNow";
 import { useTranslations } from "next-intl";
 
 //types
-import { type TableType } from "../[locale]/dashboard/[business_slug]/[branch_slug]/liveManagement/all/page";
+import { type Table } from "../types/api/business";
 export type progressType =
   | "call"
   | "pendingOrder"
@@ -18,7 +18,7 @@ export type progressType =
 
 // Get table's active_call, active_session and order data
 // Return progress of the alert with highest priority
-export function useActiveTimer(table: TableType, isInView?: boolean): {
+export function useActiveTimer(table: Table, isInView?: boolean): {
   progress: number;
   remainingDuration: string;
   elapsedDuration: string;

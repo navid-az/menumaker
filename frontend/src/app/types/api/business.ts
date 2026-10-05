@@ -1,3 +1,5 @@
+import { type Order } from "./menu";
+
 export type Branch = {
   id: number;
   slug: string;
@@ -21,6 +23,33 @@ export type Business = {
   branches: Branch[];
   has_menu: boolean;
   subscription_status?: "active" | "pending" | "paused" | "canceled";
+};
+
+export type Table = {
+  id: number;
+  code: string;
+  active_session?: {
+    code: string;
+    started_at: string;
+    expires_at: string;
+    paid_at?: string;
+    payment_status: "paid" | "unpaid" | "partial";
+    status: "active" | "closed";
+  };
+  active_call?: {
+    resolved: boolean;
+    created_at: string;
+    expires_at: string;
+  };
+  order?: Order;
+  name: string;
+  seats: number;
+  location_description?: string;
+  is_active?: boolean;
+  is_occupied?: boolean;
+  is_reserved?: boolean;
+  is_requesting_assistance?: boolean;
+  is_associated: boolean;
 };
 
 export type Payment = {

@@ -9,14 +9,14 @@ import LiveCard from "./LiveCard";
 import { getWsUrl } from "@/lib/config";
 
 // types
-import { TableType } from "../[business_slug]/[branch_slug]/liveManagement/all/page";
+import { type Table } from "@/app/types/api/business";
 
 export default function LiveCards({
   tables,
   businessSlug,
   branchSlug,
 }: {
-  tables: TableType[];
+  tables: Table[];
   businessSlug: string;
   branchSlug: string;
 }) {
@@ -24,9 +24,9 @@ export default function LiveCards({
     Record<
       string,
       {
-        active_session?: TableType["active_session"];
-        active_call?: TableType["active_call"];
-        order?: TableType["order"];
+        active_session?: Table["active_session"];
+        active_call?: Table["active_call"];
+        order?: Table["order"];
       }
     >
   >({});
@@ -126,7 +126,7 @@ export default function LiveCards({
 
   return (
     <div className="flex-1 rtl:flex-row-reverse items-start flex gap-4 flex-wrap">
-      {mergedTables.map((table: TableType) => (
+      {mergedTables.map((table: Table) => (
         <LiveCard
           key={table.id}
           businessSlug={businessSlug}

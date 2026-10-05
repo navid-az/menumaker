@@ -14,34 +14,8 @@ import { LiveManagementSkeleton } from "@/app/components/skeletons/LiveManagemen
 //SVGs
 import { Plus, CircleAlert } from "lucide-react";
 
-//types
-import { type Order } from "@/app/types/api/menu";
+//libraries
 import { getTranslations } from "next-intl/server";
-export type TableType = {
-  id: number;
-  code: string;
-  active_session?: {
-    code: string;
-    started_at: string;
-    expires_at: string;
-    paid_at?: string;
-    payment_status: "paid" | "unpaid" | "partial"
-    status: "active" | "closed"
-  };
-  active_call?: {
-    resolved: boolean;
-    created_at: string;
-    expires_at: string;
-  };
-  order?: Order;
-  name: string;
-  seats: number;
-  location_description?: string;
-  is_active?: boolean;
-  is_occupied?: boolean;
-  is_reserved?: boolean;
-  is_requesting_assistance?: boolean;
-};
 
 export default function Page(props: {
   params: Promise<{ business_slug: string; branch_slug: string }>;

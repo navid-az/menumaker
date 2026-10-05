@@ -21,7 +21,7 @@ import { useTranslations } from "next-intl";
 import { useProgress } from "@/app/hooks/useProgress";
 
 //types
-import { type TableType } from "../[business_slug]/[branch_slug]/liveManagement/all/page";
+import { type Table } from "@/app/types/api/business";
 import {
   addCommas,
   toPersianDigits,
@@ -29,7 +29,7 @@ import {
 import { OrderItem } from "@/app/types/api/menu";
 import { cn } from "@/lib/utils";
 
-export function OrderList({ table }: { table: TableType }) {
+export function OrderList({ table }: { table: Table }) {
   const t = useTranslations('dashboard.liveManagement.liveCard.orderList')
   //calculate order created_at progress
 
@@ -95,7 +95,7 @@ export function OrderDataDialog({
   table,
 }: {
   children: React.ReactNode;
-  table: TableType;
+  table: Table;
 }) {
   //calculate order created_at progress
   const { elapsedMs: elapsedOrderDuration } = useProgress(

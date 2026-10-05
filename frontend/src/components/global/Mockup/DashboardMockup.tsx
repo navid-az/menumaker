@@ -18,7 +18,7 @@ import { BarChart, Radar, ScrollText, Users, Settings } from "@/app/[locale]/das
 import { useTranslations } from "next-intl";
 
 //types
-import { TableType } from "@/app/[locale]/dashboard/[business_slug]/[branch_slug]/liveManagement/all/page";
+import { type Table } from "@/app/types/api/business";
 
 export function DashboardMockup({ isCompact = false, children }: { isCompact?: boolean, className?: string, children: React.ReactNode }) {
     const t = useTranslations("dashboardMockup");
@@ -165,7 +165,7 @@ function NavigationBtnMockup({
     );
 }
 
-const defaultTableDummyData: TableType[] = [
+const defaultTableDummyData: Table[] = [
     // Batch 1
     {
         id: 1,
@@ -174,7 +174,8 @@ const defaultTableDummyData: TableType[] = [
             code: "S1X2Y3",
             started_at: new Date().toISOString(),
             expires_at: new Date(Date.now() + 60_000).toISOString(),
-            is_active: true,
+            payment_status: 'unpaid',
+            status: 'active'
         },
         active_call: {
             resolved: false,
@@ -188,6 +189,7 @@ const defaultTableDummyData: TableType[] = [
         is_occupied: true,
         is_reserved: false,
         is_requesting_assistance: true,
+        is_associated: true
     },
     {
         id: 2,
@@ -196,13 +198,15 @@ const defaultTableDummyData: TableType[] = [
             code: "T7U8V9",
             started_at: new Date().toISOString(),
             expires_at: new Date(Date.now() + 60_000).toISOString(),
-            is_active: true,
+            payment_status: 'unpaid',
+            status: 'active'
         },
         name: "میز ۲",
         seats: 2,
         is_active: true,
         is_occupied: true,
         is_reserved: false,
+        is_associated: true
     },
     {
         id: 3,
@@ -211,7 +215,8 @@ const defaultTableDummyData: TableType[] = [
             code: "X1Y2Z3",
             started_at: new Date().toISOString(),
             expires_at: new Date(Date.now() + 120_000).toISOString(),
-            is_active: true,
+            payment_status: 'unpaid',
+            status: 'active'
         },
         active_call: {
             resolved: false,
@@ -225,6 +230,7 @@ const defaultTableDummyData: TableType[] = [
         is_occupied: true,
         is_reserved: false,
         is_requesting_assistance: true,
+        is_associated: true
     },
     {
         id: 4,
@@ -233,7 +239,8 @@ const defaultTableDummyData: TableType[] = [
             code: "X1Y2Z3",
             started_at: new Date().toISOString(),
             expires_at: new Date(Date.now() + 120_000).toISOString(),
-            is_active: true,
+            payment_status: 'unpaid',
+            status: 'active'
         },
         name: "میز ۴",
         seats: 4,
@@ -242,6 +249,7 @@ const defaultTableDummyData: TableType[] = [
         is_occupied: true,
         is_reserved: false,
         is_requesting_assistance: false,
+        is_associated: true
     },
 
     // Batch 2
@@ -252,7 +260,8 @@ const defaultTableDummyData: TableType[] = [
             code: "L1M2N3",
             started_at: new Date().toISOString(),
             expires_at: new Date(Date.now() + 90_000).toISOString(),
-            is_active: true,
+            payment_status: 'unpaid',
+            status: 'active'
         },
         active_call: {
             resolved: false,
@@ -266,6 +275,7 @@ const defaultTableDummyData: TableType[] = [
         is_occupied: true,
         is_reserved: false,
         is_requesting_assistance: true,
+        is_associated: true
     },
     {
         id: 7,
@@ -274,13 +284,15 @@ const defaultTableDummyData: TableType[] = [
             code: "O4P5Q6",
             started_at: new Date().toISOString(),
             expires_at: new Date(Date.now() + 90_000).toISOString(),
-            is_active: true,
+            payment_status: 'unpaid',
+            status: 'active'
         },
         name: "میز ۷",
         seats: 2,
         is_active: true,
         is_occupied: true,
         is_reserved: false,
+        is_associated: true
     },
     {
         id: 8,
@@ -289,7 +301,8 @@ const defaultTableDummyData: TableType[] = [
             code: "R7S8T9",
             started_at: new Date().toISOString(),
             expires_at: new Date(Date.now() + 180_000).toISOString(),
-            is_active: true,
+            payment_status: 'unpaid',
+            status: 'active'
         },
         active_call: {
             resolved: false,
@@ -303,6 +316,7 @@ const defaultTableDummyData: TableType[] = [
         is_occupied: true,
         is_reserved: false,
         is_requesting_assistance: true,
+        is_associated: true
     },
     {
         id: 9,
@@ -311,7 +325,8 @@ const defaultTableDummyData: TableType[] = [
             code: "R7S8T9",
             started_at: new Date().toISOString(),
             expires_at: new Date(Date.now() + 180_000).toISOString(),
-            is_active: true,
+            payment_status: 'unpaid',
+            status: 'active'
         },
         name: "میز ۹",
         seats: 4,
@@ -320,11 +335,12 @@ const defaultTableDummyData: TableType[] = [
         is_occupied: true,
         is_reserved: false,
         is_requesting_assistance: false,
+        is_associated: true
     },
 ];
 
 // Panel Mockups
-export function LiveManagementPanelMockup({ dummyData = defaultTableDummyData, isCompact = false, isInView, activeCall = false, className }: { dummyData?: TableType[], isCompact?: boolean, isInView?: boolean, activeCall?: boolean, className?: string }) {
+export function LiveManagementPanelMockup({ dummyData = defaultTableDummyData, isCompact = false, isInView, activeCall = false, className }: { dummyData?: Table[], isCompact?: boolean, isInView?: boolean, activeCall?: boolean, className?: string }) {
     const t = useTranslations("dashboardMockup");
 
     const navigation = [
