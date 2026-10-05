@@ -853,6 +853,11 @@
             "default": "New Order"
           }
         }
+      },
+      "websocket": {
+        "connecting": "Connecting...",
+        "connected": "Live",
+        "disconnected": "Disconnected"
       }
     },
     "data": {

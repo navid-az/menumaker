@@ -4,6 +4,7 @@ import React, { useEffect, useState, useMemo } from "react";
 
 // components
 import LiveCard from "./LiveCard";
+import SocketStatus from "./SocketStatus";
 
 //configs
 import { getWsUrl } from "@/lib/config";
@@ -30,6 +31,7 @@ export default function LiveCards({
       }
     >
   >({});
+  const [socketStatus, setSocketStatus] = useState<"connecting" | "connected" | "disconnected">("connecting");
 
   // Merge the initial table data with real-time WebSocket updates.
   const mergedTables = useMemo(() => {
@@ -46,69 +48,98 @@ export default function LiveCards({
   }, [tables, liveOverlay]);
 
   useEffect(() => {
-    const socket = new WebSocket(
-      getWsUrl(`/ws/dashboard/${businessSlug}/${branchSlug}/`)
-    );
+    let socket: WebSocket | null = null;
+    let reconnectTimeout: NodeJS.Timeout | null = null;
+    let shouldReconnect = true;
 
-    socket.onopen = () => {
-      console.log("WebSocket connection established");
-    };
-
-    socket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-
-      const { event: evt, payload } = data;
-
-      if (evt === "create_session") {
-        setLiveOverlay((prev) => ({
-          ...prev,
-          [payload.table_code]: {
-            ...prev[payload.table_code],
-            active_session: {
-              code: payload.session_code,
-              started_at: payload.started_at,
-              expires_at: payload.expires_at,
-              status: payload.status,
-            },
-          },
-        }));
-      } else if (evt === "call_waiter") {
-        setLiveOverlay((prev) => ({
-          ...prev,
-          [payload.table_code]: {
-            ...prev[payload.table_code],
-            active_call: payload,
-          },
-        }));
-      } else if (evt === "new_order") {
-        setLiveOverlay((prev) => ({
-          ...prev,
-          [payload.table_code]: {
-            ...prev[payload.table_code],
-            order: payload,
-          },
-        }));
-      } else if (evt === "update_order_status") {
-        setLiveOverlay((prev) => ({
-          ...prev,
-          [payload.table_code]: {
-            ...prev[payload.table_code],
-            order: payload,
-          },
-        }));
-      }
-    };
-
-    socket.onclose = (event) => {
-      console.log(
-        "WebSocket closed:",
-        event.code,
-        event.reason
+    const connect = () => {
+      socket = new WebSocket(
+        getWsUrl(`/ws/dashboard/${businessSlug}/${branchSlug}/`)
       );
+
+      socket.onopen = () => {
+        setSocketStatus("connected");
+        console.log("WebSocket connection established");
+      };
+
+      socket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+
+        const { event: evt, payload } = data;
+
+        if (evt === "create_session") {
+          setLiveOverlay((prev) => ({
+            ...prev,
+            [payload.table_code]: {
+              ...prev[payload.table_code],
+              active_session: {
+                code: payload.session_code,
+                started_at: payload.started_at,
+                expires_at: payload.expires_at,
+                status: payload.status,
+              },
+            },
+          }));
+        } else if (evt === "call_waiter") {
+          setLiveOverlay((prev) => ({
+            ...prev,
+            [payload.table_code]: {
+              ...prev[payload.table_code],
+              active_call: payload,
+            },
+          }));
+        } else if (evt === "new_order") {
+          setLiveOverlay((prev) => ({
+            ...prev,
+            [payload.table_code]: {
+              ...prev[payload.table_code],
+              order: payload,
+            },
+          }));
+        } else if (evt === "update_order_status") {
+          setLiveOverlay((prev) => ({
+            ...prev,
+            [payload.table_code]: {
+              ...prev[payload.table_code],
+              order: payload,
+            },
+          }));
+        }
+      };
+
+      socket.onclose = (event) => {
+        setSocketStatus("disconnected");
+        console.log(
+          "WebSocket closed:",
+          event.code,
+          event.reason
+        );
+
+        if (!shouldReconnect) return;
+
+        console.log("Attempting to reconnect...");
+
+        reconnectTimeout = setTimeout(() => {
+          connect();
+        }, 3000);
+      };
+
+      socket.onerror = (error) => {
+        console.error("WebSocket error:", error);
+        socket?.close();
+      };
     };
+
+    connect();
 
     return () => {
-      socket.close();
+      shouldReconnect = false;
+
+      if (reconnectTimeout) {
+        clearTimeout(reconnectTimeout);
+      }
+
+      socket?.close();
     };
   }, [businessSlug, branchSlug]);
 
@@ -125,17 +156,20 @@ export default function LiveCards({
   };
 
   return (
-    <div className="flex-1 rtl:flex-row-reverse items-start flex gap-4 flex-wrap">
-      {mergedTables.map((table: Table) => (
-        <LiveCard
-          key={table.id}
-          businessSlug={businessSlug}
-          branchSlug={branchSlug}
-          serviceType="online"
-          table={table}
-          onPaymentCompleted={handlePaymentCompleted}
-        />
-      ))}
+    <div className="relative flex-1 rtl:flex-row-reverse">
+      <SocketStatus status={socketStatus} />
+      <div className="flex gap-4 flex-1 rtl:flex-row-reverse items-start flex gap-2 flex-wrap">
+        {mergedTables.map((table: Table) => (
+          <LiveCard
+            key={table.id}
+            businessSlug={businessSlug}
+            branchSlug={branchSlug}
+            serviceType="online"
+            table={table}
+            onPaymentCompleted={handlePaymentCompleted}
+          />
+        ))}
+      </div>
     </div>
   );
 }

@@ -854,6 +854,11 @@
             "default": "سفارش جدید"
           }
         }
+      },
+      "websocket": {
+        "connecting": "در حال اتصال...",
+        "connected": "آنلاین",
+        "disconnected": "قطع شده"
       }
     },
     "data": {
