@@ -782,7 +782,8 @@
           "buttons": {
             "accept": "Accept",
             "ready": "Ready",
-            "served": "Served"
+            "served": "Served",
+            "paid": "Paid"
           },
           "orderStatuses": {
             "pending": "Pending Approval",

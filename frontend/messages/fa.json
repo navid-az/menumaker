@@ -783,7 +783,8 @@
           "buttons": {
             "accept": "تایید",
             "ready": "آماده",
-            "served": "سرو شد"
+            "served": "سرو شد",
+            "paid": "پرداخت شد"
           },
           "orderStatuses": {
             "pending": "در انتظار تأیید",

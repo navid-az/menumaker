@@ -31,15 +31,16 @@ export default function LiveCards({
     >
   >({});
 
-  // merge tables with live overlay data
-  // this will overwrite the active_session and active_call fields with the latest data from liveOverlay
+  // Merge the initial table data with real-time WebSocket updates.
   const mergedTables = useMemo(() => {
     if (!tables) return [];
+
     return tables.map((table) => {
       const overlay = liveOverlay[table.code] || {};
+
       return {
         ...table,
-        ...overlay, // overwrite only active_session and active_call and order
+        ...overlay,
       };
     });
   }, [tables, liveOverlay]);
@@ -48,8 +49,9 @@ export default function LiveCards({
     const socket = new WebSocket(
       getWsUrl(`/ws/dashboard/${businessSlug}/${branchSlug}/`)
     );
+
     socket.onopen = () => {
-      console.log("connection established");
+      console.log("WebSocket connection established");
     };
 
     socket.onmessage = (event) => {
@@ -60,51 +62,79 @@ export default function LiveCards({
       if (evt === "create_session") {
         setLiveOverlay((prev) => ({
           ...prev,
-          [payload.code]: {
-            ...prev[payload.code],
-            active_session: payload,
+          [payload.table_code]: {
+            ...prev[payload.table_code],
+            active_session: {
+              code: payload.session_code,
+              started_at: payload.started_at,
+              expires_at: payload.expires_at,
+              status: payload.status,
+            },
           },
         }));
       } else if (evt === "call_waiter") {
         setLiveOverlay((prev) => ({
           ...prev,
-          [payload.code]: {
-            ...prev[payload.code],
+          [payload.table_code]: {
+            ...prev[payload.table_code],
             active_call: payload,
           },
         }));
       } else if (evt === "new_order") {
         setLiveOverlay((prev) => ({
           ...prev,
-          [payload.code]: {
-            ...prev[payload.code],
+          [payload.table_code]: {
+            ...prev[payload.table_code],
             order: payload,
           },
         }));
       } else if (evt === "update_order_status") {
         setLiveOverlay((prev) => ({
           ...prev,
-          [payload.code]: {
-            ...prev[payload.code],
+          [payload.table_code]: {
+            ...prev[payload.table_code],
             order: payload,
           },
         }));
       }
     };
 
-    return () => socket.close();
-  }, [branchSlug]);
+    socket.onclose = (event) => {
+      console.log(
+        "WebSocket closed:",
+        event.code,
+        event.reason
+      );
+    };
+
+    return () => {
+      socket.close();
+    };
+  }, [businessSlug, branchSlug]);
+
+  const handlePaymentCompleted = (tableCode: string) => {
+    setLiveOverlay((prev) => ({
+      ...prev,
+      [tableCode]: {
+        ...prev[tableCode],
+        active_session: undefined,
+        active_call: undefined,
+        order: undefined,
+      },
+    }));
+  };
 
   return (
     <div className="flex-1 rtl:flex-row-reverse items-start flex gap-4 flex-wrap">
       {mergedTables.map((table: TableType) => (
         <LiveCard
+          key={table.id}
           businessSlug={businessSlug}
           branchSlug={branchSlug}
           serviceType="online"
           table={table}
-          key={table.id}
-        ></LiveCard>
+          onPaymentCompleted={handlePaymentCompleted}
+        />
       ))}
     </div>
   );

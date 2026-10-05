@@ -6,7 +6,7 @@ import { toast } from "sonner";
 
 //functions
 import { cn } from "@/lib/utils";
-import { updateOrder } from "@/app/actions/dashboard/live-management";
+import { createPayment, updateOrder } from "@/app/actions/dashboard/live-management";
 
 //libraries
 import { useTranslations } from "next-intl";
@@ -15,14 +15,21 @@ import { useTranslations } from "next-intl";
 import { type UpdateOrder } from "@/app/types/payloads/menu";
 import { type progressType } from "@/app/hooks/useActiveTimer";
 import { type TableType } from "../[business_slug]/[branch_slug]/liveManagement/all/page";
+type OrderActionBtnProps = {
+  progressType: progressType
+  table: TableType
+  showOrder: boolean
+  onPaymentCompleted: (tableCode: string) => void
+}
 
-export default function OrderActionBtn({ progressType, table, showOrder }: { progressType: progressType, table: TableType, showOrder: boolean }) {
+export default function OrderActionBtn({ progressType, table, showOrder, onPaymentCompleted }: OrderActionBtnProps) {
   const t = useTranslations('dashboard.liveManagement.liveCard')
 
   const orderActionLabels = {
     pendingOrder: t("orderList.buttons.accept"),
     acceptedOrder: t("orderList.buttons.ready"),
     readyOrder: t("orderList.buttons.served"),
+    servedOrder: t('orderList.buttons.paid')
   } as const;
   const orderActionLabel = orderActionLabels[progressType as keyof typeof orderActionLabels];
 
@@ -47,6 +54,24 @@ export default function OrderActionBtn({ progressType, table, showOrder }: { pro
         status: "served",
         served_at: new Date().toISOString(),
       };
+    }
+
+    else if (progressType === "servedOrder") {
+      if (!table.active_session) return
+
+      const data = {
+        amount: table.order.total_price,
+        method: "cash",
+      };
+
+      const res = await createPayment(
+        table.active_session?.code,
+        data
+      );
+
+      if (res.success && res.paymentData?.status === "successful") {
+        onPaymentCompleted(table.code);
+      }
     }
 
     if (Object.keys(data).length === 0) {

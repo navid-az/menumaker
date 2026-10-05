@@ -24,7 +24,9 @@ export type TableType = {
     code: string;
     started_at: string;
     expires_at: string;
-    is_active: boolean;
+    paid_at?: string;
+    payment_status: "paid" | "unpaid" | "partial"
+    status: "active" | "closed"
   };
   active_call?: {
     resolved: boolean;

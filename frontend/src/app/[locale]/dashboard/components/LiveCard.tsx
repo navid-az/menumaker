@@ -31,6 +31,7 @@ import ProgressBar from "./ProgressBar";
 import { CreateTableForm } from "./CreateTableForm";
 import QrCodeGenerator from "@/components/global/QrCodeGenerator";
 import { OrderDataDialog, OrderList } from "./OrderList";
+import OrderActionBtn from "./OrderActionBtn";
 
 //SVGs
 import {
@@ -47,9 +48,6 @@ import {
   Users2,
 } from "lucide-react";
 
-//types
-import { TableType } from "../[business_slug]/[branch_slug]/liveManagement/all/page";
-
 //libraries
 import { cn } from "@/lib/utils";
 import { _Translator, useTranslations, useLocale } from "next-intl";
@@ -58,7 +56,6 @@ import { _Translator, useTranslations, useLocale } from "next-intl";
 import { toPersianDigits } from "@/app/[locale]/(menu)/[business_slug]/utilities/formatCurrency";
 
 //actions
-import { updateOrder } from "@/app/actions/dashboard/live-management";
 import { deleteTable } from "@/app/actions";
 
 //hooks
@@ -69,9 +66,8 @@ import { useDeferredNow } from "@/app/hooks/useDeferredNow";
 import { APP_URL } from "@/lib/config";
 
 // types
-import { type UpdateOrder } from "@/app/types/payloads/menu";
-import OrderActionBtn from "./OrderActionBtn";
-type LiveCardType = {
+import { TableType } from "../[business_slug]/[branch_slug]/liveManagement/all/page";
+type LiveCardProps = {
   table: TableType;
   businessSlug: string;
   branchSlug: string;
@@ -81,6 +77,7 @@ type LiveCardType = {
   hasSession?: boolean;
   isInView?: boolean
   isMockup?: boolean;
+  onPaymentCompleted: (tableCode: string) => void
   className?: string
 };
 type ServiceType = "in-person" | "on-table" | "online";
@@ -141,23 +138,25 @@ export default function LiveCard({
   branchSlug,
   isInView,
   isMockup = false,
+  onPaymentCompleted,
   className
-}: LiveCardType) {
+}: LiveCardProps) {
   const t = useTranslations('dashboard.liveManagement.liveCard')
   const locale = useLocale()
 
   const [showCode, setShowCode] = useState(false);
   const [state, setState] = useState<LiveCardState>("default");
   const [footerAlert, setFooterAlert] = useState(t('footer.status.session'));
-  const [title, setTitle] = useState("مشاهده منو");
+  const [title, setTitle] = useState("");
   const [showOrder, setShowOrder] = useState(false);
 
   const now = useDeferredNow()
 
+
   const activeSessionValid =
     now !== null &&
     table.active_session &&
-    table.active_session?.is_active &&
+    table.active_session?.status === "active" &&
     new Date(table.active_session.expires_at) > new Date(now)
 
   const {
@@ -228,7 +227,16 @@ export default function LiveCard({
         setState("disabled");
         break;
     }
+    console.log(table);
+
   }, [progressType, t]);
+
+  // const handleOnSuccessfulPayment = () => {
+  //   setState("default");
+  //   setTitle("");
+  //   setSessionIsValid(false)
+
+  // }
 
   return (
     <div
@@ -303,7 +311,7 @@ export default function LiveCard({
                     : elapsedDuration}
                 </p>
               </div>
-              <OrderActionBtn progressType={progressType} table={table} showOrder={showOrder}></OrderActionBtn>
+              <OrderActionBtn progressType={progressType} table={table} showOrder={showOrder} onPaymentCompleted={onPaymentCompleted}></OrderActionBtn>
               <ProgressBar
                 outerColor="var(--livecard-secondary)"
                 innerColor="var(--livecard-primary)"
