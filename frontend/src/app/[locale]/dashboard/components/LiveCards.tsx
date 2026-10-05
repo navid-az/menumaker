@@ -124,8 +124,7 @@ export default function LiveCards({
         }, 3000);
       };
 
-      socket.onerror = (error) => {
-        console.error("WebSocket error:", error);
+      socket.onerror = () => {
         socket?.close();
       };
     };

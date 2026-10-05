@@ -175,6 +175,9 @@ export default function LiveCard({
       return;
     }
 
+    //Hide QR code as soon as progressType changes
+    setShowCode(false)
+
     switch (progressType) {
       case "call":
         setState("attention");
@@ -227,7 +230,6 @@ export default function LiveCard({
         setState("disabled");
         break;
     }
-    console.log(table);
 
   }, [progressType, t]);
 
@@ -441,6 +443,10 @@ export function LiveCardHeader({
 
   const handleViewQrCode = () => {
     setShowCode((prev) => !prev);
+
+    setTimeout(() => {
+      setShowCode(false)
+    }, 5000);
   };
 
   return (
