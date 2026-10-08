@@ -15,6 +15,7 @@ import { useTranslations } from "next-intl";
 import { type UpdateOrder } from "@/app/types/payloads/menu";
 import { type progressType } from "@/app/hooks/useActiveTimer";
 import { type Table } from "@/app/types/api/business";
+import React from "react";
 type OrderActionBtnProps = {
   progressType: progressType
   table: Table
@@ -33,8 +34,10 @@ export default function OrderActionBtn({ progressType, table, showOrder, onPayme
   } as const;
   const orderActionLabel = orderActionLabels[progressType as keyof typeof orderActionLabels];
 
-  async function handleUpdateOrder() {
+  async function handleUpdateOrder(e: React.MouseEvent) {
     if (!table.order?.id) return;
+
+    e.stopPropagation()
 
     let data: Partial<UpdateOrder> = {};
 
@@ -91,7 +94,7 @@ export default function OrderActionBtn({ progressType, table, showOrder, onPayme
     <>
       {orderActionLabel && (
         <Button
-          onClick={handleUpdateOrder}
+          onClick={e => handleUpdateOrder(e)}
           className="absolute left-1/2 top-1/2 hidden size-[76%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-green-300 font-semibold text-green-950 transition-all duration-300 group-hover:flex"
         >
           <p

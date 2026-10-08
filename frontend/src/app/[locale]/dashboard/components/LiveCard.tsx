@@ -32,6 +32,15 @@ import { CreateTableForm } from "./CreateTableForm";
 import QrCodeGenerator from "@/components/global/QrCodeGenerator";
 import { OrderDataDialog, OrderList } from "./OrderList";
 import OrderActionBtn from "./OrderActionBtn";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuGroup,
+  ContextMenuItem,
+  ContextMenuTrigger,
+  ContextMenuLabel,
+  ContextMenuSeparator
+} from "@/components/ui/context-menu"
 
 //SVGs
 import {
@@ -67,6 +76,7 @@ import { APP_URL } from "@/lib/config";
 
 // types
 import { type Table } from "@/app/types/api/business";
+import LiveCardContextContent from "./LiveCardContextContent";
 type LiveCardProps = {
   table: Table;
   businessSlug: string;
@@ -233,122 +243,139 @@ export default function LiveCard({
 
   }, [progressType, t]);
 
-  // const handleOnSuccessfulPayment = () => {
-  //   setState("default");
-  //   setTitle("");
-  //   setSessionIsValid(false)
+  async function handleTableDelete() {
+    const res = await deleteTable(businessSlug, branchSlug, table.id);
 
-  // }
+    if (res.success) {
+      toast.success(t("header.toasts.deleteSuccess"));
+    } else {
+      toast.error(res.error);
+    }
+  }
+
+  const handleViewQrCode = () => {
+    setShowCode((prev) => !prev);
+
+    setTimeout(() => {
+      setShowCode(false)
+    }, 5000);
+  };
 
   return (
-    <div
-      style={stateColors[state]}
-      className={cn(
-        "relative border-[3px] h-max overflow-clip border-(--livecard-primary) bg-(--livecard-primary) text-(--livecard-accent) min-h-[350px] font-normal w-60 transition-all duration-300 justify-end flex items-center flex-col rounded-[26px]", className
-      )}
-    >
-      <LiveCardBody activeSessionValid={!!activeSessionValid} table={table}>
-        <LiveCardHeader
-          setShowCode={setShowCode}
-          businessSlug={businessSlug}
-          branchSlug={branchSlug}
-          table={table}
-          orderAge={progress}
-          elapsedDuration={elapsedDuration}
-          progressType={progressType}
-          isMockup={isMockup}
-          locale={locale}
-          t={t}
-        ></LiveCardHeader>
-        {showCode ? (
-          <QRCodeView
-            {...(!isMockup && {
-              businessSlug,
-              branchSlug,
-              tableCode: table.code,
-            })}
-            isMockup={isMockup}
-          ></QRCodeView>
-        ) : activeSessionValid ? (
-          <motion.div
-            className={cn(
-              "flex flex-col w-full justify-center h-full items-center",
-              showOrder ? "justify-start pt-2 gap-0" : "justify-center gap-4"
-            )}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-          >
-            <motion.div
-              initial={{ width: "180px", height: "180px" }}
-              animate={
-                showOrder
-                  ? { width: "100px", height: "100px", marginTop: "-56px" }
-                  : { width: "180px", height: "180px" }
-              }
-              transition={{
-                ease: "easeOut",
-              }}
-              className="group flex relative justify-center items-center rounded-full"
-            >
-              <div
+    <ContextMenu>
+      <ContextMenuTrigger>
+        <div
+          style={stateColors[state]}
+          className={cn(
+            "relative border-[3px] h-max overflow-clip border-(--livecard-primary) bg-(--livecard-primary) text-(--livecard-accent) min-h-[350px] font-normal w-60 transition-all duration-300 justify-end flex items-center flex-col rounded-[26px]", table.active_session && "hover:scale-102 cursor-pointer", className
+          )}
+        >
+          <LiveCardBody activeSessionValid={!!activeSessionValid} table={table}>
+            <LiveCardHeader
+              businessSlug={businessSlug}
+              branchSlug={branchSlug}
+              table={table}
+              orderAge={progress}
+              elapsedDuration={elapsedDuration}
+              progressType={progressType}
+              handleViewQrCode={handleViewQrCode}
+              handleTableDelete={handleTableDelete}
+              isMockup={isMockup}
+              locale={locale}
+              t={t}
+            ></LiveCardHeader>
+            {showCode ? (
+              <QRCodeView
+                {...(!isMockup && {
+                  businessSlug,
+                  branchSlug,
+                  tableCode: table.code,
+                })}
+                isMockup={isMockup}
+              ></QRCodeView>
+            ) : activeSessionValid ? (
+              <motion.div
                 className={cn(
-                  "flex absolute w-full px-6 left-1/2 top-1/2 transition-all duration-100 -translate-x-1/2 -translate-y-1/2 gap-2 flex-col items-center justify-center text-2xl font-semibold mx-auto text-(--livecard-text)"
+                  "flex flex-col w-full justify-center h-full items-center",
+                  showOrder ? "justify-start pt-2 gap-0" : "justify-center gap-4"
                 )}
+                transition={{ duration: 0.6, ease: "easeOut" }}
               >
-                {/* central progress text  */}
-                {title && !showOrder && (
-                  <p className="block w-full text-center text-xl line-clamp-2 group-hover:hidden">
-                    {title}
-                  </p>
-                )}
-                <p
-                  className={cn(
-                    "font-normal transition-all duration-300",
+                <motion.div
+                  initial={{ width: "180px", height: "180px" }}
+                  animate={
                     showOrder
-                      ? "text-lg block"
-                      : "text-2xl hidden group-hover:block"
-                  )}
+                      ? { width: "100px", height: "100px", marginTop: "-56px" }
+                      : { width: "180px", height: "180px" }
+                  }
+                  transition={{
+                    ease: "easeOut",
+                  }}
+                  className="group flex relative justify-center items-center rounded-full"
                 >
-                  {progressType === "call" || progressType === "session"
-                    ? remainingDuration
-                    : elapsedDuration}
-                </p>
-              </div>
-              {!!onPaymentCompleted &&
-                <OrderActionBtn progressType={progressType} table={table} showOrder={showOrder} onPaymentCompleted={onPaymentCompleted}></OrderActionBtn>
-              }
-              <ProgressBar
-                outerColor="var(--livecard-secondary)"
-                innerColor="var(--livecard-primary)"
-                size={"100%"}
-                progress={progress}
-              ></ProgressBar>
-            </motion.div>
-            {showOrder ? (
-              <OrderList table={table}></OrderList>
+                  <div
+                    className={cn(
+                      "flex absolute w-full px-6 left-1/2 top-1/2 transition-all duration-100 -translate-x-1/2 -translate-y-1/2 gap-2 flex-col items-center justify-center text-2xl font-semibold mx-auto text-(--livecard-text)"
+                    )}
+                  >
+                    {/* central progress text  */}
+                    {title && !showOrder && (
+                      <p className="block select-none w-full text-center text-xl line-clamp-2 group-hover:hidden">
+                        {title}
+                      </p>
+                    )}
+                    <p
+                      className={cn(
+                        "font-normal select-none transition-all duration-300",
+                        showOrder
+                          ? "text-lg block"
+                          : "text-2xl hidden group-hover:block"
+                      )}
+                    >
+                      {progressType === "call" || progressType === "session"
+                        ? remainingDuration
+                        : elapsedDuration}
+                    </p>
+                  </div>
+                  {!!onPaymentCompleted &&
+                    <OrderActionBtn progressType={progressType} table={table} showOrder={showOrder} onPaymentCompleted={onPaymentCompleted}></OrderActionBtn>
+                  }
+                  <ProgressBar
+                    outerColor="var(--livecard-secondary)"
+                    innerColor="var(--livecard-primary)"
+                    size={"100%"}
+                    progress={progress}
+                  ></ProgressBar>
+                </motion.div>
+                {showOrder ? (
+                  <OrderList table={table}></OrderList>
+                ) : (
+                  <div className={cn("flex gap-1.5 transition-all duration-300 items-center")}>
+                    <CircleAlert className="size-3.5 text-(--livecard-text)"></CircleAlert>
+                    <p className={cn("text-xs select-none text-(--livecard-text)")}>
+                      {progressMessage}
+                    </p>
+                  </div>
+                )}
+              </motion.div>
             ) : (
-              <div className={cn("flex gap-1.5 transition-all duration-300 items-center")}>
-                <CircleAlert className="size-3.5 text-(--livecard-text)"></CircleAlert>
-                <p className={cn("text-xs text-(--livecard-text)")}>
-                  {progressMessage}
-                </p>
-              </div>
+              <EmptyView table={table} t={t}></EmptyView>
             )}
-          </motion.div>
-        ) : (
-          <EmptyView table={table} t={t}></EmptyView>
-        )}
-      </LiveCardBody>
+          </LiveCardBody>
 
-      <LiveCardFooter
-        table={table}
-        footerAlert={footerAlert}
-        setFooterAlert={setFooterAlert}
-        progressType={progressType}
-        isReady={isReady}
-        serviceType={serviceType}
-        t={t}
-      ></LiveCardFooter>
-    </div>
+          <LiveCardFooter
+            table={table}
+            footerAlert={footerAlert}
+            setFooterAlert={setFooterAlert}
+            progressType={progressType}
+            isReady={isReady}
+            serviceType={serviceType}
+            t={t}
+          ></LiveCardFooter>
+        </div>
+      </ContextMenuTrigger>
+      <LiveCardContextContent table={table} progressType={progressType} businessSlug={businessSlug} branchSlug={branchSlug} handleViewQrCode={handleViewQrCode} handleTableDelete={handleTableDelete} t={t} isMockup={isMockup} />
+    </ContextMenu>
   );
 }
 
@@ -413,9 +440,10 @@ export function LiveCardHeader({
   table,
   businessSlug,
   branchSlug,
-  setShowCode,
   elapsedDuration,
   progressType,
+  handleViewQrCode,
+  handleTableDelete,
   isMockup = false,
   t,
   locale
@@ -423,31 +451,15 @@ export function LiveCardHeader({
   table: Table;
   businessSlug: string;
   branchSlug: string;
-  setShowCode: React.Dispatch<React.SetStateAction<boolean>>;
   orderAge: number;
   elapsedDuration: string;
   progressType: progressType;
+  handleViewQrCode: () => void
+  handleTableDelete: () => void
   isMockup?: boolean;
   t: _Translator<Record<string, any>, "dashboard.liveManagement.liveCard">
   locale: string
 }) {
-  async function handleTableDelete() {
-    const res = await deleteTable(businessSlug, branchSlug, table.id);
-
-    if (res.success) {
-      toast.success(t("header.toasts.deleteSuccess"));
-    } else {
-      toast.error(res.error);
-    }
-  }
-
-  const handleViewQrCode = () => {
-    setShowCode((prev) => !prev);
-
-    setTimeout(() => {
-      setShowCode(false)
-    }, 5000);
-  };
 
   return (
     <div className="relative w-full flex justify-between items-center rounded-full">
