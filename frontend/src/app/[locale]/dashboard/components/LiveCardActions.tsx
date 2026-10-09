@@ -2,11 +2,22 @@
 
 //components
 import { Button } from '@/components/ui/button'
+import {
+    AlertDialog,
+    AlertDialogContent,
+    AlertDialogTrigger,
+    AlertDialogDescription,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogFooter,
+    AlertDialogAction,
+    AlertDialogCancel,
+} from "@/components/ui/alert-dialog";
 
 //types
 import { Table } from '@/app/types/api/business'
 import { progressType } from '@/app/hooks/useActiveTimer'
-import { handleUpdateOrderStatus } from '../utils/handleUpdateOrderStatus'
+import { handleOrderAction } from '../utils/handleOrderAction'
 import { cn } from '@/lib/utils'
 
 
@@ -43,25 +54,53 @@ export default function LiveCardActions({
 
     return (
         <div className="absolute rtl:flex-row-reverse mx-auto bottom-0 w-full flex gap-2 -mb-16 transition-all duration-300 p-2 group-hover:mb-0">
+            <AlertDialog>
+                <AlertDialogTrigger
+                    asChild
+                >
+                    <Button
+
+                        className={cn(
+                            "flex-1 rounded-full bg-red-100 text-red-900 transition-all duration-300 hover:bg-red-500 hover:text-red-50",
+                            progressType !== "pendingOrder" && "-ml-33.5"
+                        )}
+                    >
+                        {t("orderCanceled")}
+                    </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>
+                            {t("orderCancellation.title")}
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                            {t('orderCancellation.description')}
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="mt-8">
+                        <AlertDialogCancel>
+                            {t('orderCancellation.cancel')}
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                            className="hover:bg-red-600 transition-all duration-300"
+                            onClick={() =>
+                                handleOrderAction(
+                                    table,
+                                    progressType,
+                                    "rejected",
+                                    onPaymentCompleted,
+                                )
+                            }
+                        >
+                            {t('orderCancellation.confirm')}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
             <Button
                 onClick={() =>
-                    handleUpdateOrderStatus(
-                        table,
-                        progressType,
-                        "rejected",
-                        onPaymentCompleted,
-                    )
-                }
-                className={cn(
-                    "flex-1 rounded-full bg-red-100 text-red-900 transition-all duration-300 hover:bg-red-500 hover:text-red-50",
-                    progressType !== "pendingOrder" && "-ml-33.5"
-                )}
-            >
-                {t("orderCanceled")}
-            </Button>
-            <Button
-                onClick={() =>
-                    handleUpdateOrderStatus(
+                    handleOrderAction(
                         table,
                         progressType,
                         "accepted",

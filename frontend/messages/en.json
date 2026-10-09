@@ -863,7 +863,13 @@
           "orderServed": "Order Served",
           "paymentCompleted": "Payment Completed",
           "sessionCompleted": "Session Completed",
-          "orderCanceled": "Reject"
+          "orderCanceled": "Reject",
+          "orderCancellation": {
+            "title": "Cancel Order?",
+            "description": "Are you sure you want to cancel this order? This action cannot be undone.",
+            "cancel": "Keep order",
+            "confirm": "Cancel order"
+          }
         }
       },
       "websocket": {

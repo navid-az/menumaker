@@ -864,7 +864,13 @@
           "orderServed": "سفارش تحویل شد",
           "paymentCompleted": "پرداخت تکمیل شد",
           "sessionCompleted": "جلسه تکمیل شد",
-          "orderCanceled": "رد سفارش"
+          "orderCanceled": "رد سفارش",
+          "orderCancellation": {
+            "title": "لغو سفارش؟",
+            "description": "آیا مطمئن هستید که می‌خواهید این سفارش را لغو کنید؟ این عملیات قابل بازگشت نیست.",
+            "cancel": "بازگشت به سفارش",
+            "confirm": "لغو سفارش"
+          }
         }
       },
       "websocket": {

@@ -271,7 +271,7 @@ export default function LiveCard({
 
   return (
     <ContextMenu>
-      <ContextMenuTrigger>
+      <ContextMenuTrigger asChild>
         <div
           style={stateColors[state]}
           className={cn(
