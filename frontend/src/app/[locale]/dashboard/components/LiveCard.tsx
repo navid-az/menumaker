@@ -34,13 +34,9 @@ import { OrderDataDialog, OrderList } from "./OrderList";
 import OrderActionBtn from "./OrderActionBtn";
 import {
   ContextMenu,
-  ContextMenuContent,
-  ContextMenuGroup,
-  ContextMenuItem,
   ContextMenuTrigger,
-  ContextMenuLabel,
-  ContextMenuSeparator
 } from "@/components/ui/context-menu"
+import LiveCardActions from "./LiveCardActions";
 
 //SVGs
 import {
@@ -88,6 +84,7 @@ type LiveCardProps = {
   isInView?: boolean
   isMockup?: boolean;
   onPaymentCompleted?: (tableCode: string) => void
+  onOrderRejection?: (tableCode: string) => void
   className?: string
 };
 type ServiceType = "in-person" | "on-table" | "online";
@@ -149,6 +146,7 @@ export default function LiveCard({
   isInView,
   isMockup = false,
   onPaymentCompleted,
+  onOrderRejection,
   className
 }: LiveCardProps) {
   const t = useTranslations('dashboard.liveManagement.liveCard')
@@ -211,14 +209,24 @@ export default function LiveCard({
         setTitle(t("status.acceptedOrder"));
 
         const timeoutId = setTimeout(() => {
-          setShowOrder(true);
           setState("default");
           setTitle(t("status.acceptedOrder"));
         }, 2000);
 
         return () => clearTimeout(timeoutId);
       }
+      case "canceledOrder": {
+        setState("warning");
+        setShowOrder(false)
+        setTitle(t("status.canceledOrder"));
 
+        const timeoutId = setTimeout(() => {
+          setState("default");
+          onOrderRejection?.(table.code);
+        }, 5000);
+
+        return () => clearTimeout(timeoutId);
+      }
       case "readyOrder":
         setShowOrder(false);
         setState("attention");
@@ -267,7 +275,7 @@ export default function LiveCard({
         <div
           style={stateColors[state]}
           className={cn(
-            "relative border-[3px] h-max overflow-clip border-(--livecard-primary) bg-(--livecard-primary) text-(--livecard-accent) min-h-[350px] font-normal w-60 transition-all duration-300 justify-end flex items-center flex-col rounded-[26px]", table.active_session && "hover:scale-102 cursor-pointer", className
+            "group relative border-[3px] h-max overflow-clip border-(--livecard-primary) bg-(--livecard-primary) text-(--livecard-accent) min-h-[350px] font-normal w-60 transition-all duration-300 justify-end flex items-center flex-col rounded-[26px]", table.active_session && "hover:scale-102 cursor-pointer", className
           )}
         >
           <LiveCardBody activeSessionValid={!!activeSessionValid} table={table}>
@@ -297,7 +305,7 @@ export default function LiveCard({
               <motion.div
                 className={cn(
                   "flex flex-col w-full justify-center h-full items-center",
-                  showOrder ? "justify-start pt-2 gap-0" : "justify-center gap-4"
+                  showOrder ? "justify-start pt-4 gap-0" : "justify-between py-4 gap-4"
                 )}
                 transition={{ duration: 0.6, ease: "easeOut" }}
               >
@@ -311,7 +319,7 @@ export default function LiveCard({
                   transition={{
                     ease: "easeOut",
                   }}
-                  className="group flex relative justify-center items-center rounded-full"
+                  className="flex relative justify-center items-center rounded-full"
                 >
                   <div
                     className={cn(
@@ -350,13 +358,14 @@ export default function LiveCard({
                 {showOrder ? (
                   <OrderList table={table}></OrderList>
                 ) : (
-                  <div className={cn("flex gap-1.5 transition-all duration-300 items-center")}>
+                  <div className={cn("flex gap-1.5 transition-all duration-300 items-center", table.order && "group-hover:blur-2xl")}>
                     <CircleAlert className="size-3.5 text-(--livecard-text)"></CircleAlert>
                     <p className={cn("text-xs select-none text-(--livecard-text)")}>
                       {progressMessage}
                     </p>
                   </div>
                 )}
+                <LiveCardActions table={table} progressType={progressType} onPaymentCompleted={onPaymentCompleted}></LiveCardActions>
               </motion.div>
             ) : (
               <EmptyView table={table} t={t}></EmptyView>
@@ -427,7 +436,7 @@ export function LiveCardBody({
   return (
     <div
       className={cn(
-        "flex absolute z-10 top-0 items-center overflow-hidden gap-2 flex-col justify-between flex-1 transition-all duration-300 bg-primary-foreground shadow-lg w-full rounded-3xl p-2",
+        "flex absolute z-10 top-0 items-center overflow-hidden flex-col justify-between flex-1 transition-all duration-300 bg-primary-foreground shadow-lg w-full rounded-3xl p-2",
         activeSessionValid ? "bottom-10" : "bottom-0"
       )}
     >

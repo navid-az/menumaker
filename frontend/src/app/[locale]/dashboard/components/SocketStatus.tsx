@@ -29,7 +29,7 @@ export default function SocketStatus({ status }: { status: "connecting" | "conne
     const currentSocketStatus = socketStatusConfig[status];
     return (
         <div
-            className={`absolute select-none bottom-0 right-0 flex h-max w-max items-center text-sm gap-1.5 rounded-full px-3 py-1.5 ${currentSocketStatus.className}`}
+            className={`select-none flex h-max w-max items-center text-sm gap-1.5 rounded-full px-3 py-1.5 ${currentSocketStatus.className}`}
         >
             {currentSocketStatus.showSpinner && (
                 <Loader2 className="size-4 animate-spin" />

@@ -221,7 +221,7 @@ export function OrderDataDialog({
           >
             {t("cancelOrder")}
           </Button>
-          <Button className="hover:bg-green-200 bg-green-100 text-green-800 hover:text-950 transition-colors duration-300">
+          <Button className="hover:bg-green-200 bg-green-100 text-green-800 hover:text-green-950 transition-colors duration-300">
             {t("completeOrder")}
           </Button>
         </DialogFooter>

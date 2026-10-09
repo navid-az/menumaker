@@ -821,6 +821,7 @@
           "progressMessages": {
             "call": "مشتری {duration} پیش صدا زده",
             "acceptedOrder": "سفارش {duration} پیش تایید شده",
+            "canceledOrder": "سفارش توسط پرسنل رد شد",
             "readyOrder": "سفارش {duration} پیش آماده شده",
             "servedOrder": "سفارش {duration} پیش تحویل داده شده",
             "pendingOrder": "مشتری {duration} پیش سفارش داده",
@@ -839,6 +840,7 @@
           "newOrder": "سفارش جدید",
           "activeOrder": "سفارش فعال",
           "acceptedOrder": "تایید شده",
+          "canceledOrder": "لغو شده",
           "orderReady": "آماده تحویل",
           "viewingMenu": "مشاهده منو",
           "orderServed": "سرو شد!"
@@ -853,6 +855,16 @@
             "servedOrder": "در صف پرداخت",
             "default": "سفارش جدید"
           }
+        },
+        "actions": {
+          "default": "ادامه",
+          "answerCall": "پاسخ به درخواست",
+          "orderAccepted": "تایید سفارش",
+          "orderReady": "آماده تحویل",
+          "orderServed": "سفارش تحویل شد",
+          "paymentCompleted": "پرداخت تکمیل شد",
+          "sessionCompleted": "جلسه تکمیل شد",
+          "orderCanceled": "رد سفارش"
         }
       },
       "websocket": {

@@ -820,6 +820,7 @@
           "progressMessages": {
             "call": "called {duration} ago",
             "acceptedOrder": "Order was accepted {duration} ago",
+            "canceledOrder": "Order was canceled by staff",
             "readyOrder": "Order was ready {duration} ago",
             "servedOrder": "Order was served {duration} ago",
             "pendingOrder": "ordered {duration} ago",
@@ -838,6 +839,7 @@
           "newOrder": "New Order",
           "activeOrder": "Active Order",
           "acceptedOrder": "Accepted Order",
+          "canceledOrder": "Canceled Order",
           "orderReady": "Order Ready",
           "viewingMenu": "Viewing Menu",
           "orderServed": "Order Served"
@@ -852,6 +854,16 @@
             "servedOrder": "Awaiting Payment",
             "default": "New Order"
           }
+        },
+        "actions": {
+          "default": "Continue",
+          "answerCall": "Answer Call",
+          "orderAccepted": "Accept",
+          "orderReady": "Order Ready",
+          "orderServed": "Order Served",
+          "paymentCompleted": "Payment Completed",
+          "sessionCompleted": "Session Completed",
+          "orderCanceled": "Reject"
         }
       },
       "websocket": {

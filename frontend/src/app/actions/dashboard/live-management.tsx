@@ -3,6 +3,7 @@
 //types
 import { type UpdateOrder } from "@/app/types/payloads/menu";
 import { type Payment } from "@/app/types/api/business";
+import { type Order } from "@/app/types/api/menu";
 
 //functions
 import { cookies } from "next/headers";
@@ -14,7 +15,7 @@ import { SERVER_API_BASE_URL } from "@/lib/config";
 export async function updateOrder(
   orderId: number,
   order: Partial<UpdateOrder>
-) {
+): Promise<{ success: boolean, detail: string, orderData?: Order }> {
   const accessToken = (await cookies()).get("access");
 
   try {
@@ -35,7 +36,9 @@ export async function updateOrder(
         detail: errorData.detail || "Failed to update order",
       };
     }
-    return { success: true, detail: "Order updated successfully" };
+
+    const orderData = await res.json()
+    return { success: true, detail: "Order updated successfully", orderData: orderData };
   } catch (error: any) {
     return {
       success: false,

@@ -142,6 +142,8 @@ export default function LiveCards({
     };
   }, [businessSlug, branchSlug]);
 
+
+  // On payment completion, reset liveCard data back to idle
   const handlePaymentCompleted = (tableCode: string) => {
     setLiveOverlay((prev) => ({
       ...prev,
@@ -154,10 +156,20 @@ export default function LiveCards({
     }));
   };
 
+  // On order rejection, reset table's order data
+  const handleOrderRejection = (tableCode: string) => {
+    setLiveOverlay((prev) => ({
+      ...prev,
+      [tableCode]: {
+        ...prev[tableCode],
+        order: undefined,
+      },
+    }));
+  }
+
   return (
-    <div className="relative flex-1 rtl:flex-row-reverse">
-      <SocketStatus status={socketStatus} />
-      <div className="flex gap-4 flex-1 rtl:flex-row-reverse items-start flex gap-2 flex-wrap">
+    <div className="relative flex flex-1 flex-col">
+      <div className="flex flex-1 flex-wrap items-start gap-4 rtl:flex-row-reverse">
         {mergedTables.map((table: Table) => (
           <LiveCard
             key={table.id}
@@ -166,8 +178,12 @@ export default function LiveCards({
             serviceType="online"
             table={table}
             onPaymentCompleted={handlePaymentCompleted}
+            onOrderRejection={handleOrderRejection}
           />
         ))}
+      </div>
+      <div className="sticky bottom-0 ml-auto mr-0 z-50">
+        <SocketStatus status={socketStatus} />
       </div>
     </div>
   );
