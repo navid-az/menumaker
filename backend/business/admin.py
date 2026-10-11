@@ -1,12 +1,12 @@
 from django.contrib import admin
-from .models import (Business, Branch, Table, TableSession, CallWaiter,
+from .models import (Business, Branch, Table, TableSession, ServiceRequest,
                      Category, Item, ItemBranch, ItemOption, ItemOptionChoice, Order, OrderItem, Payment)
 
 admin.site.register(Branch)
 admin.site.register(Table)
 admin.site.register(TableSession)
 admin.site.register(Payment)
-admin.site.register(CallWaiter)
+admin.site.register(ServiceRequest)
 admin.site.register(Category)
 admin.site.register(Item)
 admin.site.register(ItemBranch)

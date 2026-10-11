@@ -74,6 +74,11 @@ class Branch(models.Model):
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
+    service_request_auto_expire = models.BooleanField(default=True)
+    service_request_expiration_minutes = models.PositiveSmallIntegerField(
+        default=2,
+    )
+
     # Automatically generate a unique slug if not provided
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -342,24 +347,58 @@ class Payment(models.Model):
         )
 
 
-class CallWaiter(models.Model):
+class ServiceRequest(models.Model):
+    class RequestType(models.TextChoices):
+        CALL_WAITER = "call_waiter", "Call waiter"
+        REQUEST_BILL = "request_bill", "Request bill"
+        REQUEST_WATER = "request_water", "Request water"
+        REQUEST_CUTLERY = "request_cutlery", "Request cutlery"
+        OTHER = "other", "Other"
+
+    class Status(models.TextChoices):
+        PENDING = "pending", "Pending"
+        RESOLVED = "resolved", "Resolved"
+        EXPIRED = "expired", "Expired"
+
     table_session = models.ForeignKey(
-        TableSession, on_delete=models.CASCADE, related_name="waiter_calls")
-    resolved = models.BooleanField(default=False)
+        TableSession,  on_delete=models.PROTECT,
+        related_name="service_requests")
+
+    request_type = models.CharField(
+        max_length=20,
+        choices=RequestType.choices,
+        default=RequestType.CALL_WAITER,
+    )
+    status = models.CharField(
+        max_length=10,
+        choices=Status.choices,
+        default=Status.PENDING,
+    )
+
+    resolved_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="resolved_service_requests",
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
-    expires_at = models.DateTimeField(blank=True)
+    resolved_at = models.DateTimeField(null=True, blank=True)
+    expires_at = models.DateTimeField(null=True, blank=True)
 
     def is_expired(self):
-        return self.expires_at and timezone.now() > self.expires_at
-
-    def save(self, *args, **kwargs):
-        # set the expiration time
-        if not self.expires_at:
-            self.expires_at = timezone.now() + timedelta(minutes=2)
-        super().save(*args, **kwargs)
+        return (
+            self.status == self.Status.PENDING
+            and self.expires_at is not None
+            and timezone.now() >= self.expires_at
+        )
 
     def __str__(self):
-        return f"session: {self.table_session.code} called waiter"
+        return (
+            f"{self.get_request_type_display()} "
+            f"for session {self.table_session.code}"
+        )
 
 
 class Category(models.Model):

@@ -2,7 +2,7 @@
 from django.contrib.contenttypes.models import ContentType
 from django.core.files.base import ContentFile
 
-from .models import Business, Branch, Table, TableSession, Category, Item, CallWaiter
+from .models import Business, Branch, Table, TableSession, Category, Item, ServiceRequest
 from personnel.models import Personnel
 from business.models import generate_unique_code
 from assets.models import MediaAsset, MediaCollection
@@ -76,7 +76,7 @@ def clone_demo_business_data(new_business):
 
                 # ~35% chance this table has an active waiter call
                 if random.random() < 0.35:
-                    CallWaiter.objects.create(
+                    ServiceRequest.objects.create(
                         table_session=table_session,
                     )
 

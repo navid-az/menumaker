@@ -5,10 +5,11 @@ from django.utils.text import slugify
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.conf import settings
+from django.db import models
 
 from decimal import Decimal
 
-from .models import Business, Branch, Table, TableSession, CallWaiter, Category, Item, ItemBranch, ItemOption, ItemOptionChoice, Order, OrderItem
+from .models import Business, Branch, Table, TableSession, ServiceRequest, Category, Item, ItemBranch, ItemOption, ItemOptionChoice, Order, OrderItem
 from assets.models import MediaAsset, MediaCollection
 from assets.serializers import MediaAssetSerializer
 from personnel.models import Personnel
@@ -73,11 +74,14 @@ class PaymentCreateSerializer(serializers.ModelSerializer):
         return attrs
 
 
-# call waiter serializers
-class CallWaiterSerializer(serializers.ModelSerializer):
+# service request serializers
+class ServiceRequestSerializer(serializers.ModelSerializer):
     class Meta:
-        model = CallWaiter
-        fields = ['resolved', 'created_at', 'expires_at']
+        model = ServiceRequest
+        fields = ["id", "table_session", "request_type", "status",
+                  "created_at", "resolved_at", "resolved_by", "expires_at"]
+        read_only_fields = ["id", "table_session", "status",
+                            "created_at", "resolved_at", "resolved_by", "expires_at"]
 
 
 # table serializers
@@ -101,17 +105,24 @@ class TablesSerializer(serializers.ModelSerializer):
     def get_active_call(self, obj):
         session = obj.sessions.filter(
             status="active",
-            expires_at__gt=timezone.now()
+            expires_at__gt=timezone.now(),
         ).first()
+
         if not session:
             return None
 
-        call = session.waiter_calls.filter(
-            resolved=False,
-            expires_at__gt=timezone.now()
+        now = timezone.now()
+
+        call = session.service_requests.filter(
+            status=ServiceRequest.Status.PENDING,
+        ).filter(
+            models.Q(expires_at__isnull=True) |
+            models.Q(expires_at__gt=now)
         ).first()
+
         if call:
-            return CallWaiterSerializer(call).data
+            return ServiceRequestSerializer(call).data
+
         return None
 
     def get_order(self, obj):

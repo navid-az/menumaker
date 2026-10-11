@@ -1,3 +1,6 @@
+from .serializers import ServiceRequestSerializer
+from .models import ServiceRequest, TableSession
+from datetime import timedelta
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
@@ -8,7 +11,7 @@ from mixins import MethodBasedPermissionsMixin
 from .serializers import (BusinessesSerializer, BusinessCreateSerializer, BranchesSerializer, BranchCreateUpdateSerializer,
                           TablesSerializer, TableCreateUpdateSerializer, CategoriesSerializer, CategoryCreateUpdateSerializer,
                           ItemsSerializer, ItemCreateUpdateSerializer, OrdersSerializer, OrderUpdateSerializer, RoleSerializer, PaymentSerializer, PaymentCreateSerializer)
-from .models import Business, Branch, Table, TableSession, CallWaiter, Category, Item, ItemBranch, Order, Payment
+from .models import Business, Branch, Table, TableSession, ServiceRequest, Category, Item, ItemBranch, Order, Payment
 from assets.models import MediaCollection, attach_media_assets
 from personnel.models import Personnel
 
@@ -406,28 +409,64 @@ class PaymentDetailView(APIView):
         return Response(serializer.data)
 
 
-class CallWaiterView(MethodBasedPermissionsMixin, APIView):
+class ServiceRequestView(MethodBasedPermissionsMixin, APIView):
 
     def post(self, request, session_code, *args, **kwargs):
         session = get_object_or_404(
             TableSession, code=session_code, status="active")
 
-        # Check if an active call already exists (e.g. < 2 minutes old & not resolved)
-        count_down = timezone.now() - timezone.timedelta(minutes=2)
-        active_call = CallWaiter.objects.filter(table_session__code=session_code,
-                                                created_at__gte=count_down, resolved=False).first()
+        serializer = ServiceRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
-        if active_call:
-            return Response({"message": "A call waiter request is already active for this session.", "call_id": active_call.id}, status=status.HTTP_409_CONFLICT)
-        # Otherwise, create a new call
-        call = CallWaiter.objects.create(table_session=session)
+        branch = session.table.branch
+        request_type = serializer.validated_data.get(
+            "request_type",
+            ServiceRequest.RequestType.CALL_WAITER,
+        )
+        now = timezone.now()
 
-        # Send data to client in-real-time
+        # Mark overdue requests as expired.
+        ServiceRequest.objects.filter(
+            table_session=session,
+            status=ServiceRequest.Status.PENDING,
+            expires_at__lte=now,
+        ).update(status=ServiceRequest.Status.EXPIRED)
+
+        # Prevent duplicate pending requests of the same type.
+        active_request = ServiceRequest.objects.filter(
+            table_session=session,
+            request_type=request_type,
+            status=ServiceRequest.Status.PENDING,
+        ).first()
+
+        if active_request:
+            return Response(
+                {
+                    "detail": (
+                        "A request of this type is already active "
+                        "for this session."
+                    ),
+                    "request_id": active_request.id,
+                },
+                status=status.HTTP_409_CONFLICT,
+            )
+
+        expires_at = None
+
+        if branch.service_request_auto_expire:
+            expires_at = now + timedelta(
+                minutes=branch.service_request_expiration_minutes,
+            )
+
+        service_request = serializer.save(
+            table_session=session,
+            expires_at=expires_at,
+        )
+
         channel_layer = get_channel_layer()
 
         group_name = (
-            f"dashboard_{call.table_session.table.branch.business.slug}_"
-            f"{call.table_session.table.branch.slug}"
+            f"dashboard_{branch.business.slug}_{branch.slug}"
         )
 
         async_to_sync(channel_layer.group_send)(
@@ -436,46 +475,133 @@ class CallWaiterView(MethodBasedPermissionsMixin, APIView):
                 "type": "dashboard.update",
                 "event": "call_waiter",
                 "payload": {
-                    "table_code": call.table_session.table.code,
-                    "resolved": call.resolved,
-                    "created_at": call.created_at.isoformat(),
-                    "expires_at": call.expires_at.isoformat(),
+                    "id": service_request.id,
+                    "table_code": session.table.code,
+                    "session_code": session.code,
+                    "request_type": service_request.request_type,
+                    "status": service_request.status,
+                    "resolved": False,
+                    "created_at": service_request.created_at.isoformat(),
+                    "expires_at": (
+                        service_request.expires_at.isoformat()
+                        if service_request.expires_at
+                        else None
+                    ),
                 },
             },
         )
-        return Response({"message": "Waiter called.", "call_id": call.id}, status=status.HTTP_201_CREATED)
-
-
-class CallWaiterDetailView(MethodBasedPermissionsMixin, APIView):
-    permission_classes_by_method = {'PATCH': [demo_or_full_access]}
-    required_permission_by_method = {
-        'PATCH': ['business.change_callwaiter'],
-    }
-
-    # Resolve an active call waiter request
-    def patch(self, request, session_code, *args, **kwargs):
-        session = get_object_or_404(
-            TableSession, code=session_code, status="active")
-
-        call = CallWaiter.objects.filter(
-            table_session=session, resolved=False).last()
-        if not call:
-            return Response(
-                {"detail": "No active call to resolve."},
-                status=status.HTTP_404_NOT_FOUND
-            )
-
-        if call.is_expired():
-            return Response(
-                {"detail": "This call is already expired."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        call.resolved = True
-        call.save()
 
         return Response(
-            {"detail": "Call resolved successfully."},
+            {
+                "detail": "Service request created successfully.",
+                "request": ServiceRequestSerializer(
+                    service_request
+                ).data,
+            },
+            status=status.HTTP_201_CREATED,
+        )
+
+
+class ServiceRequestDetailView(MethodBasedPermissionsMixin, APIView):
+    permission_classes_by_method = {
+        "PATCH": [demo_or_full_access],
+    }
+    required_permission_by_method = {
+        "PATCH": ["business.change_servicerequest"],
+    }
+
+    def patch(self, request, call_id, *args, **kwargs):
+        service_request = get_object_or_404(
+            ServiceRequest.objects.select_related(
+                "table_session__table__branch",
+            ),
+            pk=call_id,
+        )
+
+        if service_request.status != ServiceRequest.Status.PENDING:
+            return Response(
+                {
+                    "detail": (
+                        f"This request is already "
+                        f"{service_request.status}."
+                    ),
+                },
+                status=status.HTTP_409_CONFLICT,
+            )
+
+        now = timezone.now()
+
+        if (
+            service_request.expires_at
+            and now >= service_request.expires_at
+        ):
+            service_request.status = ServiceRequest.Status.EXPIRED
+            service_request.save(update_fields=["status"])
+
+            return Response(
+                {"detail": "This service request has expired."},
+                status=status.HTTP_409_CONFLICT,
+            )
+
+        # Verify the staff member is authorized for this branch
+        # through your existing object/branch permission mechanism.
+        self.check_object_permissions(
+            request,
+            service_request.table_session.table.branch,
+        )
+
+        service_request.status = ServiceRequest.Status.RESOLVED
+        service_request.resolved_at = now
+        service_request.resolved_by = request.user
+
+        service_request.save(
+            update_fields=[
+                "status",
+                "resolved_at",
+                "resolved_by",
+            ],
+        )
+
+        branch = service_request.table_session.table.branch
+        session = service_request.table_session
+        channel_layer = get_channel_layer()
+
+        group_name = (
+            f"dashboard_{branch.business.slug}_{branch.slug}"
+        )
+
+        async_to_sync(channel_layer.group_send)(
+            group_name,
+            {
+                "type": "dashboard.update",
+                "event": "call_waiter",
+                "payload": {
+                    "id": service_request.id,
+                    "table_code": session.table.code,
+                    "session_code": session.code,
+                    "request_type": service_request.request_type,
+                    "status": service_request.status,
+                    "resolved": True,
+                    "created_at": service_request.created_at.isoformat(),
+                    "resolved_at": service_request.resolved_at.isoformat(),
+                    "expires_at": (
+                        service_request.expires_at.isoformat()
+                        if service_request.expires_at
+                        else None
+                    ),
+                    "resolved_by": service_request.resolved_by_id,
+                },
+            },
+        )
+
+        return Response(
+            {
+                "detail": "Service request resolved successfully.",
+                "request": ServiceRequestSerializer(
+                    service_request
+                ).data,
+            },
+            status=status.HTTP_200_OK,
         )
 
 
