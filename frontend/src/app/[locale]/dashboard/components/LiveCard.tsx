@@ -31,7 +31,7 @@ import ProgressBar from "./ProgressBar";
 import { CreateTableForm } from "./CreateTableForm";
 import QrCodeGenerator from "@/components/global/QrCodeGenerator";
 import { OrderDataDialog, OrderList } from "./OrderList";
-import OrderActionBtn from "./OrderActionBtn";
+import LiveCardProgressButton from "./LiveCardProgressButton";
 import {
   ContextMenu,
   ContextMenuTrigger,
@@ -319,7 +319,7 @@ export default function LiveCard({
                   transition={{
                     ease: "easeOut",
                   }}
-                  className="flex relative justify-center items-center rounded-full"
+                  className="group/progress flex relative justify-center items-center rounded-full"
                 >
                   <div
                     className={cn(
@@ -346,7 +346,7 @@ export default function LiveCard({
                     </p>
                   </div>
                   {!!onPaymentCompleted &&
-                    <OrderActionBtn progressType={progressType} table={table} showOrder={showOrder} onPaymentCompleted={onPaymentCompleted}></OrderActionBtn>
+                    <LiveCardProgressButton progressType={progressType} table={table} showOrder={showOrder} onPaymentCompleted={onPaymentCompleted}></LiveCardProgressButton>
                   }
                   <ProgressBar
                     outerColor="var(--livecard-secondary)"
@@ -358,7 +358,7 @@ export default function LiveCard({
                 {showOrder ? (
                   <OrderList table={table}></OrderList>
                 ) : (
-                  <div className={cn("flex gap-1.5 transition-all duration-300 items-center", table.order && "group-hover:blur-2xl")}>
+                  <div className={cn("flex gap-1.5 transition-all duration-300 items-center", table.order && table.order.status !== 'cancelled' && "group-hover:blur-2xl")}>
                     <CircleAlert className="size-3.5 text-(--livecard-text)"></CircleAlert>
                     <p className={cn("text-xs select-none text-(--livecard-text)")}>
                       {progressMessage}
@@ -472,9 +472,10 @@ export function LiveCardHeader({
 
   return (
     <div className="relative w-full flex justify-between items-center rounded-full">
-      <div dir="ltr" className="flex justify-between w-full transition-all duration-300">
+      <div dir="ltr" className="flex justify-between items-center w-full transition-all duration-300">
         <div className="flex justify-between gap-2">
           <Button
+            disabled
             size="icon"
             className="relative rounded-full border-(--livecard-primary)/20 border hover:border-(--livecard-primary) hover:bg-(--livecard-primary)/5 bg-inherit text-royal-green"
           >
@@ -493,6 +494,14 @@ export function LiveCardHeader({
             <User2 className="text-(--livecard-primary)"></User2>
           </Button> */}
         </div>
+        {/* {!table.order && <div
+          className={cn(
+            "rounded-b-xl justify-center rtl:flex-row-reverse transition-all duration-300 min-w-16 border border-gray bg-royal-green text-soft-blue h-full text-xs px-2 py-1 flex items-center  scale-pro cursor-pointer",
+            table.active_session?.status === 'active' ? '-mt-8' : '-mt-24'
+          )}
+        >
+          <p className="font-medium">{table.name}</p>
+        </div>} */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -700,16 +709,21 @@ export function LiveCardFooter({
       >
         {footerAlert}
       </motion.p>
-      <div
+      {/* <div
         className={cn(
           "rounded-full rtl:flex-row-reverse font-sans bg-(--livecard-accent) text-(--livecard-primary) h-full text-xs px-2 flex items-center hover:scale-105 duration-300 transition-all scale-pro cursor-pointer"
-          // type != "in-person"
-          //   ? "bg-primary-foreground text-primary"
-          //   : "bg-dark-brown text-happy-yellow"
+
         )}
       >
         <p className="font-medium">#</p>
         <p className="font-medium">{table.active_session?.code}</p>
+      </div> */}
+      <div
+        className={cn(
+          "rounded-full rtl:flex-row-reverse bg-(--livecard-accent) text-(--livecard-primary) h-full text-xs px-2 flex items-center cursor-pointer"
+        )}
+      >
+        <p className="rtl:pt-1 font-medium">{table.name}</p>
       </div>
     </div>
   );

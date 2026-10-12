@@ -95,7 +95,7 @@ export default function LiveCardProgressButton({
           onPaymentCompleted,
         )
       }
-      className="absolute left-1/2 top-1/2 hidden size-[76%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-green-300 font-semibold text-green-950 transition-all duration-300 group-hover:flex"
+      className="absolute left-1/2 top-1/2 hidden size-[76%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-green-300 font-semibold text-green-950 transition-all duration-300 group-hover/progress:flex"
     >
       <p
         className={cn(
