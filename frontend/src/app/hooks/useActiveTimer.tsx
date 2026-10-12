@@ -45,9 +45,11 @@ export function useActiveTimer(table: Table, isInView?: boolean): {
 
   const activeCallValid =
     now !== null &&
-    table.active_call &&
-    !table.active_call.resolved &&
-    new Date(table.active_call.expires_at) > new Date(now);
+    table.active_call?.status === "pending" &&
+    (
+      table.active_call.expires_at === null ||
+      new Date(table.active_call.expires_at).getTime() > now
+    );
 
   const activeSessionValid =
     now !== null &&

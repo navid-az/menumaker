@@ -37,9 +37,18 @@ export type Table = {
     status: "active" | "closed";
   };
   active_call?: {
-    resolved: boolean;
+    id: number;
+    request_type:
+      | "call_waiter"
+      | "request_bill"
+      | "request_water"
+      | "request_cutlery"
+      | "other";
+    status: "pending" | "resolved" | "expired";
     created_at: string;
-    expires_at: string;
+    resolved_at: string | null;
+    resolved_by: number | null;
+    expires_at: string | null;
   };
   order?: Order;
   name: string;
