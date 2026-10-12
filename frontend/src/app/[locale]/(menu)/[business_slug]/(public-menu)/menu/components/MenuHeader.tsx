@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 
 //components
 import Link from "next/link";
@@ -9,7 +9,7 @@ import SearchBar from "./SearchBar";
 import { toast } from "sonner";
 
 //SVGs
-import { ConciergeBell, House } from "lucide-react";
+import { ConciergeBell, House, LoaderCircle } from "lucide-react";
 
 //types
 import { type MenuGlobalStylingUI } from "@/app/types/ui/menu";
@@ -37,23 +37,38 @@ export default function MenuHeader({
 }) {
   const t = useTranslations('menu.pages.itemsPage.header')
 
+  const [isCallingWaiter, setIsCallingWaiter] = useState(false);
+  const [waiterRequestSubmitted, setWaiterRequestSubmitted] = useState(false);
+
+  const isWaiterButtonDisabled = isCallingWaiter || waiterRequestSubmitted;
+
   async function callWaiter() {
+    if (isWaiterButtonDisabled) return;
+
     const sessionCode = sessionStorage.getItem("session_code");
 
     if (!sessionCode) {
-
-      toast.error(t('serviceRequest.toasts.noActiveSession'));
+      toast.error(t("serviceRequest.toasts.noActiveSession"));
       return;
     }
 
-    const res = await createServiceRequest(sessionCode);
+    setIsCallingWaiter(true);
 
-    if (!res.success) {
-      toast.error(t('serviceRequest.toasts.error'));
-      return;
+    try {
+      const res = await createServiceRequest(sessionCode);
+
+      if (!res.success) {
+        toast.error(t('serviceRequest.toasts.error'));
+        return;
+      }
+
+      setWaiterRequestSubmitted(true);
+      toast.success(t("serviceRequest.toasts.waiterCalled"));
+    } catch {
+      toast.error(t("serviceRequest.toasts.errors.requestFailed"));
+    } finally {
+      setIsCallingWaiter(false);
     }
-
-    toast.success(t('serviceRequest.toasts.waiterCalled'));
   }
 
   const searchParams = useSearchParams();
@@ -97,20 +112,38 @@ export default function MenuHeader({
         <div className="flex gap-2">
           {menuData.call_waiter_enabled && (
             <Button
+              disabled={isWaiterButtonDisabled}
               onClick={() => !isPreview && callWaiter()}
               className={cn(
                 "rounded-(--radius-base) border border-transparent bg-[var(--waiter-btn-bg)] text-[var(--waiter-btn-text)] transition-all duration-300",
-                globalStyling.style === "retro" &&
-                "border-3 font-bold shadow-[4px_4px_0px_0px_var(--secondary)] border-(--secondary)"
+                globalStyling.style === "retro" && [
+                  "border-3 font-bold",
+                  "border-(--secondary) shadow-[4px_4px_0px_0px_var(--secondary)]",
+                  isWaiterButtonDisabled
+                    ? "translate-x-1 translate-y-1 shadow-none"
+                    : "active:translate-x-1 active:translate-y-1 active:shadow-none",
+                ],
+                isWaiterButtonDisabled &&
+                globalStyling.style !== "retro" &&
+                "cursor-not-allowed opacity-60",
               )}
             >
-              <ConciergeBell
-                className={cn(
-                  "text-(--secondary) size-5 transition-all duration-300",
-                  globalStyling.style === "retro" && "stroke-[2.5]"
-                )}
-              ></ConciergeBell>
-              {t('buttons.waiter')}
+              {isCallingWaiter ? (
+                <LoaderCircle className="size-5 animate-spin" />
+              ) : (
+                <ConciergeBell
+                  className={cn(
+                    "size-5 text-(--secondary) transition-all duration-300",
+                    globalStyling.style === "retro" && "stroke-[2.5]",
+                  )}
+                />
+              )}
+
+              {isCallingWaiter
+                ? t("buttons.callingWaiter")
+                : waiterRequestSubmitted
+                  ? t("buttons.waiterRequested")
+                  : t("buttons.waiter")}
             </Button>
           )}
         </div>

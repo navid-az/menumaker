@@ -17,7 +17,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       toastOptions={{
         classNames: {
           toast:
-            "group toast !bg-soft-blue/80 !text-royal-green border-royal-green backdrop-blur-sm shadow-xl",
+            "group select-none toast !bg-soft-blue/80 !text-royal-green border-royal-green backdrop-blur-sm shadow-xl",
 
           description:
             "text-muted-foreground",

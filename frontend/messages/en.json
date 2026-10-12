@@ -588,7 +588,11 @@
       },
       "itemsPage": {
         "header": {
-          "buttons": { "waiter": "Waiter" },
+          "buttons": {
+            "waiter": "Waiter",
+            "callingWaiter": "Calling waiter...",
+            "waiterRequested": "Waiter requested"
+          },
           "searchBar": { "input": { "placeholder": "Search..." } },
           "serviceRequest": {
             "toasts": {

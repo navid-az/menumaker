@@ -589,7 +589,11 @@
       },
       "itemsPage": {
         "header": {
-          "buttons": { "waiter": "سالن دار" },
+          "buttons": {
+            "waiter": "سالن دار",
+            "callingWaiter": "فراخوانی گارسون...",
+            "waiterRequested": "ثبت شد"
+          },
           "searchBar": { "input": { "placeholder": "جستوجو آیتم..." } },
           "serviceRequest": {
             "toasts": {
