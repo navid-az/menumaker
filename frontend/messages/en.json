@@ -589,7 +589,14 @@
       "itemsPage": {
         "header": {
           "buttons": { "waiter": "Waiter" },
-          "searchBar": { "input": { "placeholder": "Search..." } }
+          "searchBar": { "input": { "placeholder": "Search..." } },
+          "serviceRequest": {
+            "toasts": {
+              "noActiveSession": "No active table session.",
+              "error": "Something went wrong! Please reload Menu.",
+              "waiterCalled": "Waiter called successfully."
+            }
+          }
         }
       },
       "cartPage": {
@@ -780,6 +787,8 @@
           "cancelOrder": "Cancel Order",
           "completeOrder": "Complete Order",
           "buttons": {
+            "resolve": "Resolve",
+            "resolving": "Resolving...",
             "accept": "Accept",
             "ready": "Ready",
             "served": "Served",
@@ -863,6 +872,8 @@
           "orderServed": "Order Served",
           "paymentCompleted": "Payment Completed",
           "sessionCompleted": "Session Completed",
+          "resolve": "Resolve",
+          "resolving": "Resolving...",
           "orderCanceled": "Reject",
           "orderCancellation": {
             "title": "Cancel Order?",

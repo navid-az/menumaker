@@ -6,6 +6,7 @@ import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import SearchBar from "./SearchBar";
+import { toast } from "sonner";
 
 //SVGs
 import { ConciergeBell, House } from "lucide-react";
@@ -18,12 +19,12 @@ import { type MenuUI } from "@/app/types/ui/menu";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 
+//actions 
+import { createServiceRequest } from "@/app/actions/menu/service-request";
+
 //hooks
 import { usePreview } from "@/app/[locale]/(creator)/builder/components/preview/PreviewContext";
 import { useSearchParams } from "next/navigation";
-
-//configs
-import { API_BASE_URL } from "@/lib/config";
 
 export default function MenuHeader({
   globalStyling,
@@ -34,20 +35,31 @@ export default function MenuHeader({
   menuData: MenuUI;
   businessSlug?: string;
 }) {
+  const t = useTranslations('menu.pages.itemsPage.header')
+
   async function callWaiter() {
     const sessionCode = sessionStorage.getItem("session_code");
-    const res = await fetch(`${API_BASE_URL}/sessions/${sessionCode}/calls/`, {
-      method: "POST",
-    });
-    if (!res.ok) {
-      console.error("wtf just happened");
+
+    if (!sessionCode) {
+
+      toast.error(t('serviceRequest.toasts.noActiveSession'));
+      return;
     }
+
+    const res = await createServiceRequest(sessionCode);
+
+    if (!res.success) {
+      toast.error(t('serviceRequest.toasts.error'));
+      return;
+    }
+
+    toast.success(t('serviceRequest.toasts.waiterCalled'));
   }
+
   const searchParams = useSearchParams();
   const tableCode = searchParams.get("t");
   const branchSlug = searchParams.get("branch");
 
-  const t = useTranslations('menu.pages.itemsPage.header')
 
   const { isPreview, setActivePage } = usePreview();
   return (

@@ -590,7 +590,14 @@
       "itemsPage": {
         "header": {
           "buttons": { "waiter": "سالن دار" },
-          "searchBar": { "input": { "placeholder": "جستوجو آیتم..." } }
+          "searchBar": { "input": { "placeholder": "جستوجو آیتم..." } },
+          "serviceRequest": {
+            "toasts": {
+              "noActiveSession": "هیچ سشن فعالی برای میز وجود ندارد.",
+              "error": "خطایی رخ داد! لطفا منو را مجدد اسکن کنید.",
+              "waiterCalled": "درخواست گارسون با موفقیت ثبت شد."
+            }
+          }
         }
       },
       "cartPage": {
@@ -781,6 +788,8 @@
           "cancelOrder": "لغو سفارش",
           "completeOrder": "تکمیل سفارش",
           "buttons": {
+            "resolve": "رسیدگی شد",
+            "resolving": "در حال ثبت...",
             "accept": "تایید",
             "ready": "آماده",
             "served": "سرو شد",
@@ -836,7 +845,7 @@
           "buttons": { "download": "دانلود QR‌ کد" }
         },
         "status": {
-          "waiter": "!سالن دار‍",
+          "waiter": "سالن دار!‍",
           "newOrder": "سفارش جدید",
           "activeOrder": "سفارش فعال",
           "acceptedOrder": "تایید شده",
@@ -864,6 +873,8 @@
           "orderServed": "سفارش تحویل شد",
           "paymentCompleted": "پرداخت تکمیل شد",
           "sessionCompleted": "جلسه تکمیل شد",
+          "resolve": "رسیدگی شد",
+          "resolving": "در حال ثبت...",
           "orderCanceled": "رد سفارش",
           "orderCancellation": {
             "title": "لغو سفارش؟",
