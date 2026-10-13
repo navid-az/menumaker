@@ -104,6 +104,19 @@ export default function LiveCards({
               order: payload,
             },
           }));
+        } else if (evt === "session_ended") {
+          setLiveOverlay((prev) => ({
+            ...prev,
+            [payload.table_code]: {
+              ...prev[payload.table_code],
+              active_session: {
+                code: payload.session_code,
+                started_at: payload.started_at,
+                expires_at: payload.expires_at,
+                status: "closed",
+              },
+            },
+          }));
         }
       };
 

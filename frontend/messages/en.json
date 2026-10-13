@@ -815,7 +815,16 @@
               "viewQrCode": "View QR Code",
               "editTable": "Edit Table",
               "deleteTable": "Delete Table",
-              "cancelOrder": "Cancel Order"
+              "endSession": "End session"
+            },
+            "confirmEndSession": {
+              "title": "End this session?",
+              "description": "Are you sure you want to end this table session? Any further activity will require a new session.",
+              "cancel": "Cancel",
+              "confirm": "End session",
+              "ending": "Ending session...",
+              "success": "Session ended successfully.",
+              "error": "Failed to end the session. Please try again."
             },
             "deleteConfirmation": {
               "title": "Are you sure you want to delete table \"{name}\"?",

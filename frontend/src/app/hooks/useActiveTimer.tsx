@@ -53,7 +53,7 @@ export function useActiveTimer(table: Table, isInView?: boolean): {
 
   const activeSessionValid =
     now !== null &&
-    table.active_session && new Date(table.active_session.expires_at) > new Date(now);
+    table.active_session && table.active_session.status === 'active' && new Date(table.active_session.expires_at) > new Date(now);
 
   //calculate session progress
   const {

@@ -49,7 +49,6 @@ import {
   Pen,
   QrCode,
   Trash2,
-  User2,
   Users2,
 } from "lucide-react";
 
@@ -62,6 +61,7 @@ import { toPersianDigits } from "@/app/[locale]/(menu)/[business_slug]/utilities
 
 //actions
 import { deleteTable } from "@/app/actions";
+import { endTableSession } from "@/app/actions/dashboard/live-management";
 
 //hooks
 import { progressType, useActiveTimer } from "@/app/hooks/useActiveTimer";
@@ -72,7 +72,6 @@ import { APP_URL } from "@/lib/config";
 
 // types
 import { type Table } from "@/app/types/api/business";
-import LiveCardContextContent from "./LiveCardContextContent";
 type LiveCardProps = {
   table: Table;
   businessSlug: string;
@@ -275,7 +274,7 @@ export default function LiveCard({
         <div
           style={stateColors[state]}
           className={cn(
-            "group relative border-[3px] h-max overflow-clip border-(--livecard-primary) bg-(--livecard-primary) text-(--livecard-accent) min-h-[350px] font-normal w-60 transition-all duration-300 justify-end flex items-center flex-col rounded-[26px]", table.active_session && "hover:scale-102 cursor-pointer", className
+            "group relative border-[3px] h-max overflow-clip border-(--livecard-primary) bg-(--livecard-primary) text-(--livecard-accent) min-h-[350px] font-normal w-60 transition-all duration-300 justify-end flex items-center flex-col rounded-[26px]", table.active_session?.status === 'active' && "hover:scale-102 cursor-pointer", className
           )}
         >
           <LiveCardBody activeSessionValid={!!activeSessionValid} table={table}>
@@ -383,14 +382,14 @@ export default function LiveCard({
           ></LiveCardFooter>
         </div>
       </ContextMenuTrigger>
-      <LiveCardContextContent table={table} progressType={progressType} businessSlug={businessSlug} branchSlug={branchSlug} handleViewQrCode={handleViewQrCode} handleTableDelete={handleTableDelete} t={t} isMockup={isMockup} />
+      {/* <LiveCardContextContent table={table} progressType={progressType} businessSlug={businessSlug} branchSlug={branchSlug} handleViewQrCode={handleViewQrCode} handleTableDelete={handleTableDelete} t={t} isMockup={isMockup} /> */}
     </ContextMenu>
   );
 }
 
 function EmptyView({ table, t }: { table: Table, t: _Translator<Record<string, any>, "dashboard.liveManagement.liveCard"> }) {
   return (
-    <div className="flex justify-center items-center flex-col h-full gap-2 mb-10">
+    <div className="flex select-none justify-center items-center flex-col h-full gap-2 mb-10">
       <p className="text-primary text-2xl font-bold text-center">
         {t("timer.emptyTable.title", { tableName: table.name })}
       </p>
@@ -469,6 +468,28 @@ export function LiveCardHeader({
   t: _Translator<Record<string, any>, "dashboard.liveManagement.liveCard">
   locale: string
 }) {
+
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [isEnding, setIsEnding] = useState(false);
+
+  async function handleEndSession() {
+    if (!table.active_session) return
+    setIsEnding(true);
+
+    try {
+      const result = await endTableSession(table.active_session?.code);
+
+      if (!result.success) {
+        toast.error(t("header.dropdown.confirmEndSession.error"));
+        return;
+      }
+
+      toast.success(t("header.dropdown.confirmEndSession.success"));
+      setConfirmOpen(false);
+    } finally {
+      setIsEnding(false);
+    }
+  }
 
   return (
     <div className="relative w-full flex justify-between items-center rounded-full">
@@ -602,12 +623,47 @@ export function LiveCardHeader({
                 </AlertDialog>
               </DropdownMenuItem>
               <DropdownMenuItem
-                disabled
+                disabled={!table.active_session}
+                onSelect={(event) => {
+                  event.preventDefault();
+                  setConfirmOpen(true);
+                }}
                 className="text-red-600 focus:text-red-600 focus:bg-red-50"
               >
-                <CircleX className="text-red-600 "></CircleX>
-                {t('header.dropdown.buttons.cancelOrder')}
+                <CircleX className="text-red-600" />
+                {t("header.dropdown.buttons.endSession")}
               </DropdownMenuItem>
+              <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      {t("header.dropdown.confirmEndSession.title")}
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      {t("header.dropdown.confirmEndSession.description")}
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+
+                  <AlertDialogFooter>
+                    <AlertDialogCancel disabled={isEnding}>
+                      {t("header.dropdown.confirmEndSession.cancel")}
+                    </AlertDialogCancel>
+
+                    <AlertDialogAction
+                      disabled={isEnding}
+                      className="bg-red-600 hover:bg-red-700"
+                      onClick={(event) => {
+                        event.preventDefault();
+                        void handleEndSession();
+                      }}
+                    >
+                      {isEnding
+                        ? t("header.dropdown.confirmEndSession.ending")
+                        : t("header.dropdown.confirmEndSession.confirm")}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>

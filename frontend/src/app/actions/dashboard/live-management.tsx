@@ -11,6 +11,61 @@ import { cookies } from "next/headers";
 //configs
 import { SERVER_API_BASE_URL } from "@/lib/config";
 
+export async function endTableSession(sessionCode: string) {
+  try {
+    if (!sessionCode) {
+      return {
+        success: false as const,
+        error: "sessionNotFound",
+      };
+    }
+
+    const accessToken = (await cookies()).get("access")?.value;
+
+    if (!accessToken) {
+      return {
+        success: false as const,
+        error: "authenticationRequired",
+      };
+    }
+
+    const res = await fetch(
+      `${SERVER_API_BASE_URL}/sessions/${encodeURIComponent(sessionCode)}/`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status: "closed" }),
+        cache: "no-store",
+      },
+    );
+
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      return {
+        success: false as const,
+        error:
+          typeof data.detail === "string"
+            ? data.detail
+            : "requestFailed",
+      };
+    }
+
+    return {
+      success: true as const,
+      session: data,
+    };
+  } catch {
+    return {
+      success: false as const,
+      error: "requestFailed",
+    };
+  }
+}
+
 // update order's status and status's timestamp (ex: status=ready & prepared_at=current dateTime)
 export async function updateOrder(
   orderId: number,
