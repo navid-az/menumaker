@@ -150,7 +150,13 @@ class TableSession(models.Model):
         choices=PAYMENT_STATUS_CHOICES,
         default="unpaid"
     )
-
+    ended_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="ended_table_sessions")
+    ended_at = models.DateTimeField(null=True, blank=True)
     started_at = models.DateTimeField(auto_now_add=True)
     expires_at = models.DateTimeField(blank=True)
     paid_at = models.DateTimeField(null=True, blank=True)

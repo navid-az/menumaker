@@ -47,3 +47,6 @@ class DashboardConsumer(AsyncWebsocketConsumer):
         elif event['event'] == 'update_order_status':
             await self.send(text_data=json.dumps({"type": "dashboard_update", "event": event["event"],
                                                   "payload": event["payload"]}))
+        elif event['event'] == 'session_ended':
+            await self.send(text_data=json.dumps({"type": "dashboard_update", "event": event["event"],
+                                                  "payload": event["payload"]}))

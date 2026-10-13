@@ -9,7 +9,7 @@ from django.db.models import Q, Prefetch
 from mixins import MethodBasedPermissionsMixin
 
 from .serializers import (BusinessesSerializer, BusinessCreateSerializer, BranchesSerializer, BranchCreateUpdateSerializer,
-                          TablesSerializer, TableCreateUpdateSerializer, CategoriesSerializer, CategoryCreateUpdateSerializer,
+                          TablesSerializer, TableCreateUpdateSerializer, TableSessionSerializer, CategoriesSerializer, CategoryCreateUpdateSerializer,
                           ItemsSerializer, ItemCreateUpdateSerializer, OrdersSerializer, OrderUpdateSerializer, RoleSerializer, PaymentSerializer, PaymentCreateSerializer)
 from .models import Business, Branch, Table, TableSession, ServiceRequest, Category, Item, ItemBranch, Order, Payment
 from assets.models import MediaCollection, attach_media_assets
@@ -307,6 +307,85 @@ class TableSessionView(MethodBasedPermissionsMixin, APIView):
             {
                 "type": "dashboard.update",
                 "event": "create_session",
+                "payload": {
+                    "table_code": session.table.code,
+                    "session_code": session.code,
+                    "started_at": session.started_at.isoformat(),
+                    "expires_at": session.expires_at.isoformat(),
+                    "status": session.status,
+                },
+            },
+        )
+
+
+class TableSessionDetailView(MethodBasedPermissionsMixin, APIView):
+    permission_classes_by_method = {'PATCH': [demo_or_full_access]}
+    required_permission_by_method = {'PATCH': ['business.change_tablesession']}
+    required_feature = ['table_management']
+
+    def patch(self, request, session_code):
+        session = get_object_or_404(
+            TableSession.objects.select_related(
+                "table",
+                "table__branch",
+            ),
+            code=session_code,
+        )
+
+        # Enforce configured object-level permissions.
+        self.check_object_permissions(request, session.table.branch)
+
+        if request.data.get("status") != "closed":
+            return Response(
+                {"detail": "Only closing a session is supported."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if session.status == "closed":
+            return Response(
+                {"detail": "session_already_closed"},
+                status=status.HTTP_409_CONFLICT,
+            )
+
+        now = timezone.now()
+
+        if session.expires_at <= now:
+            return Response(
+                {"detail": "session_expired"},
+                status=status.HTTP_409_CONFLICT,
+            )
+
+        session.status = "closed"
+        session.ended_at = now
+        session.ended_by = request.user
+        session.save(
+            update_fields=[
+                "status",
+                "ended_at",
+                "ended_by",
+            ]
+        )
+        self._notify_dashboard(session)
+
+        return Response(
+            TableSessionSerializer(session).data,
+            status=status.HTTP_200_OK,
+        )
+
+    def _notify_dashboard(self, session):
+        """Send real-time update to dashboard."""
+        channel_layer = get_channel_layer()
+
+        group_name = (
+            f"dashboard_{session.table.branch.business.slug}_"
+            f"{session.table.branch.slug}"
+        )
+
+        async_to_sync(channel_layer.group_send)(
+            group_name,
+            {
+                "type": "dashboard.update",
+                "event": "session_ended",
                 "payload": {
                     "table_code": session.table.code,
                     "session_code": session.code,
