@@ -217,16 +217,6 @@ export default function LiveCard({
 
   }, [progressType, t]);
 
-  async function handleTableDelete() {
-    const res = await deleteTable(businessSlug, branchSlug, table.id);
-
-    if (res.success) {
-      toast.success(t("header.toasts.deleteSuccess"));
-    } else {
-      toast.error(res.error);
-    }
-  }
-
   const handleViewQrCode = () => {
     setShowCode((prev) => !prev);
 

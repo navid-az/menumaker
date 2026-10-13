@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { DashboardMockup, LiveManagementPanelMockup } from '@/components/global/Mockup/DashboardMockup'
 import { IPhoneMockup } from '../IphoneMockup'
 import { CategoryButton, MenuItemCard } from '../marketingBento/MenuBento'
+import Link from 'next/link'
 
 //libraries
 import { motion, useInView } from 'motion/react'
@@ -16,83 +17,84 @@ import { useTranslations } from 'next-intl';
 
 //SVGs
 import { ConciergeBell, Pizza, Beef, Menu, Hamburger, CupSoda, Search } from 'lucide-react'
-import Link from 'next/link'
+
+//functions
 import { cn } from '@/lib/utils'
 
-const defaultTableDummyData = [
+//types
+import { type TableUI } from '@/app/types/ui/business'
+
+const defaultTableDummyData: TableUI[] = [
     // Batch 1
     {
-        id: 1,
         code: "A1B2C3",
         active_session: {
             code: "S1X2Y3",
             started_at: new Date(Date.now() - 18 * 60_000).toISOString(),
             expires_at: new Date(Date.now() + 42 * 60_000).toISOString(),
-            is_active: true,
+            status: "active",
+            payment_status: 'unpaid'
         },
         active_call: {
-            resolved: false,
+            status: 'pending',
             created_at: new Date(Date.now() - 15_000).toISOString(),
             expires_at: new Date(Date.now() + 105_000).toISOString(),
         },
         name: "میز ۱",
         seats: 4,
         location_description: "Near window",
-        is_active: true,
         is_occupied: true,
         is_reserved: false,
         is_requesting_assistance: true,
     },
     {
-        id: 2,
+
         code: "D4E5F6",
         active_session: {
             code: "T7U8V9",
             started_at: new Date(Date.now() - 7 * 60_000).toISOString(),
             expires_at: new Date(Date.now() + 53 * 60_000).toISOString(),
-            is_active: true,
+            status: "active",
+            payment_status: 'unpaid'
         },
         name: "میز ۲",
         seats: 2,
-        is_active: true,
         is_occupied: true,
         is_reserved: false,
     },
     {
-        id: 3,
         code: "G7H8I9",
         active_session: {
             code: "X1Y2Z3",
             started_at: new Date(Date.now() - 31 * 60_000).toISOString(),
             expires_at: new Date(Date.now() + 29 * 60_000).toISOString(),
-            is_active: true,
+            status: "active",
+            payment_status: 'unpaid'
         },
         active_call: {
-            resolved: false,
+            status: 'pending',
             created_at: new Date(Date.now() - 72_000).toISOString(),
             expires_at: new Date(Date.now() + 48_000).toISOString(),
         },
         name: "میز ۳",
         seats: 6,
         location_description: "Center hall",
-        is_active: true,
         is_occupied: true,
         is_reserved: false,
         is_requesting_assistance: true,
     },
     {
-        id: 4,
         code: "J1K2L3",
         active_session: {
             code: "X1Y2Z3",
             started_at: new Date(Date.now() - 49 * 60_000).toISOString(),
             expires_at: new Date(Date.now() + 11 * 60_000).toISOString(),
-            is_active: true,
+            status: "active",
+            payment_status: 'unpaid'
         },
         name: "میز ۴",
         seats: 4,
         location_description: "Patio",
-        is_active: true,
         is_occupied: true,
         is_reserved: false,
         is_requesting_assistance: false,
@@ -100,77 +102,73 @@ const defaultTableDummyData = [
 
     // Batch 2
     {
-        id: 6,
         code: "P7Q8R9",
         active_session: {
             code: "L1M2N3",
             started_at: new Date(Date.now() - 12 * 60_000).toISOString(),
             expires_at: new Date(Date.now() + 48 * 60_000).toISOString(),
-            is_active: true,
+            status: "active",
+            payment_status: 'unpaid'
         },
         active_call: {
-            resolved: false,
+            status: 'pending',
             created_at: new Date(Date.now() - 97_000).toISOString(),
             expires_at: new Date(Date.now() + 23_000).toISOString(),
         },
         name: "میز ۶",
         seats: 4,
         location_description: "Balcony",
-        is_active: true,
         is_occupied: true,
         is_reserved: false,
         is_requesting_assistance: true,
     },
     {
-        id: 7,
         code: "S1T2U3",
         active_session: {
             code: "O4P5Q6",
             started_at: new Date(Date.now() - 39 * 60_000).toISOString(),
             expires_at: new Date(Date.now() + 21 * 60_000).toISOString(),
-            is_active: true,
+            status: "active",
+            payment_status: 'unpaid'
         },
         name: "میز ۷",
         seats: 2,
-        is_active: true,
         is_occupied: true,
         is_reserved: false,
     },
     {
-        id: 8,
         code: "V4W5X6",
         active_session: {
             code: "R7S8T9",
             started_at: new Date(Date.now() - 55 * 60_000).toISOString(),
             expires_at: new Date(Date.now() + 5 * 60_000).toISOString(),
-            is_active: true,
+            status: "active",
+            payment_status: 'unpaid'
         },
         active_call: {
-            resolved: false,
+            status: 'pending',
             created_at: new Date(Date.now() - 38_000).toISOString(),
             expires_at: new Date(Date.now() + 82_000).toISOString(),
         },
         name: "میز ۸",
         seats: 6,
         location_description: "Main hall",
-        is_active: true,
         is_occupied: true,
         is_reserved: false,
         is_requesting_assistance: true,
     },
     {
-        id: 9,
         code: "Y7Z8A9",
         active_session: {
             code: "R7S8T9",
             started_at: new Date(Date.now() - 24 * 60_000).toISOString(),
             expires_at: new Date(Date.now() + 36 * 60_000).toISOString(),
-            is_active: true,
+            status: "active",
+            payment_status: 'unpaid'
         },
         name: "میز ۹",
         seats: 4,
         location_description: "Corner",
-        is_active: true,
         is_occupied: true,
         is_reserved: false,
         is_requesting_assistance: false,

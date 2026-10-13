@@ -19,6 +19,7 @@ import { useTranslations } from "next-intl";
 
 //types
 import { type Table } from "@/app/types/api/business";
+import { type TableUI } from "@/app/types/ui/business";
 
 export function DashboardMockup({ isCompact = false, children }: { isCompact?: boolean, className?: string, children: React.ReactNode }) {
     const t = useTranslations("dashboardMockup");
@@ -165,10 +166,9 @@ function NavigationBtnMockup({
     );
 }
 
-const defaultTableDummyData: Table[] = [
+const defaultTableDummyData: TableUI[] = [
     // Batch 1
     {
-        id: 1,
         code: "A1B2C3",
         active_session: {
             code: "S1X2Y3",
@@ -178,7 +178,7 @@ const defaultTableDummyData: Table[] = [
             status: 'active'
         },
         active_call: {
-            resolved: false,
+            status: 'pending',
             created_at: new Date().toISOString(),
             expires_at: new Date(Date.now() + 30_000).toISOString(),
         },
@@ -189,10 +189,8 @@ const defaultTableDummyData: Table[] = [
         is_occupied: true,
         is_reserved: false,
         is_requesting_assistance: true,
-        is_associated: true
     },
     {
-        id: 2,
         code: "D4E5F6",
         active_session: {
             code: "T7U8V9",
@@ -206,10 +204,8 @@ const defaultTableDummyData: Table[] = [
         is_active: true,
         is_occupied: true,
         is_reserved: false,
-        is_associated: true
     },
     {
-        id: 3,
         code: "G7H8I9",
         active_session: {
             code: "X1Y2Z3",
@@ -219,7 +215,7 @@ const defaultTableDummyData: Table[] = [
             status: 'active'
         },
         active_call: {
-            resolved: false,
+            status: 'pending',
             created_at: new Date().toISOString(),
             expires_at: new Date(Date.now() + 90_000).toISOString(),
         },
@@ -230,10 +226,8 @@ const defaultTableDummyData: Table[] = [
         is_occupied: true,
         is_reserved: false,
         is_requesting_assistance: true,
-        is_associated: true
     },
     {
-        id: 4,
         code: "J1K2L3",
         active_session: {
             code: "X1Y2Z3",
@@ -249,12 +243,10 @@ const defaultTableDummyData: Table[] = [
         is_occupied: true,
         is_reserved: false,
         is_requesting_assistance: false,
-        is_associated: true
     },
 
     // Batch 2
     {
-        id: 6,
         code: "P7Q8R9",
         active_session: {
             code: "L1M2N3",
@@ -264,7 +256,7 @@ const defaultTableDummyData: Table[] = [
             status: 'active'
         },
         active_call: {
-            resolved: false,
+            status: 'pending',
             created_at: new Date().toISOString(),
             expires_at: new Date(Date.now() + 45_000).toISOString(),
         },
@@ -275,10 +267,8 @@ const defaultTableDummyData: Table[] = [
         is_occupied: true,
         is_reserved: false,
         is_requesting_assistance: true,
-        is_associated: true
     },
     {
-        id: 7,
         code: "S1T2U3",
         active_session: {
             code: "O4P5Q6",
@@ -292,10 +282,8 @@ const defaultTableDummyData: Table[] = [
         is_active: true,
         is_occupied: true,
         is_reserved: false,
-        is_associated: true
     },
     {
-        id: 8,
         code: "V4W5X6",
         active_session: {
             code: "R7S8T9",
@@ -305,7 +293,7 @@ const defaultTableDummyData: Table[] = [
             status: 'active'
         },
         active_call: {
-            resolved: false,
+            status: 'pending',
             created_at: new Date().toISOString(),
             expires_at: new Date(Date.now() + 120_000).toISOString(),
         },
@@ -316,31 +304,11 @@ const defaultTableDummyData: Table[] = [
         is_occupied: true,
         is_reserved: false,
         is_requesting_assistance: true,
-        is_associated: true
-    },
-    {
-        id: 9,
-        code: "Y7Z8A9",
-        active_session: {
-            code: "R7S8T9",
-            started_at: new Date().toISOString(),
-            expires_at: new Date(Date.now() + 180_000).toISOString(),
-            payment_status: 'unpaid',
-            status: 'active'
-        },
-        name: "میز ۹",
-        seats: 4,
-        location_description: "Corner",
-        is_active: true,
-        is_occupied: true,
-        is_reserved: false,
-        is_requesting_assistance: false,
-        is_associated: true
     },
 ];
 
 // Panel Mockups
-export function LiveManagementPanelMockup({ dummyData = defaultTableDummyData, isCompact = false, isInView, activeCall = false, className }: { dummyData?: Table[], isCompact?: boolean, isInView?: boolean, activeCall?: boolean, className?: string }) {
+export function LiveManagementPanelMockup({ dummyData = defaultTableDummyData, isCompact = false, isInView, activeCall = false, className }: { dummyData?: TableUI[], isCompact?: boolean, isInView?: boolean, activeCall?: boolean, className?: string }) {
     const t = useTranslations("dashboardMockup");
 
     const navigation = [
@@ -398,16 +366,16 @@ export function LiveManagementPanelMockup({ dummyData = defaultTableDummyData, i
                             table={{
                                 ...table,
                                 // activate waiter call of table with id=2
-                                ...(table.id === 2 && activeCall
+                                ...(index === 1 && activeCall
                                     ? {
                                         active_call: {
-                                            resolved: false,
+                                            status: 'pending',
                                             created_at: new Date().toISOString(),
                                             expires_at: new Date(Date.now() + 120_000).toISOString(),
                                         },
                                     }
                                     : {}),
-                            }}
+                            } as Table}
                             businessSlug="business-1"
                             branchSlug="branch-1-1"
                         ></LiveCard>
@@ -419,7 +387,7 @@ export function LiveManagementPanelMockup({ dummyData = defaultTableDummyData, i
                             isInView={isInView}
                             isMockup
                             key={index}
-                            table={table}
+                            table={table as Table}
                             businessSlug="business-1"
                             branchSlug="branch-1-1"
                         ></LiveCard>

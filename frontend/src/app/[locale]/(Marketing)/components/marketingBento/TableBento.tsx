@@ -9,10 +9,13 @@ import LiveCard from "@/app/[locale]/dashboard/components/LiveCard";
 //libraries
 import { useTranslations } from "next-intl";
 
-function getIdleTableData() {
+//types
+import { type Table } from "@/app/types/api/business";
+import { type TableUI } from "@/app/types/ui/business";
+
+function getIdleTableData(): TableUI {
     // Static – no running timers
     return {
-        id: 1,
         code: "A1B2C3",
         name: "میز ۱",
         seats: 4,
@@ -24,16 +27,16 @@ function getIdleTableData() {
     };
 }
 
-function getActiveTableData() {
+function getActiveTableData(): TableUI {
     const now = Date.now();
     return {
-        id: 1,
         code: "A1B2C3",
         active_session: {
             code: "S1X2Y3",
             started_at: new Date(now).toISOString(),
             expires_at: new Date(now + 25_000).toISOString(),
-            is_active: true,
+            status: 'active',
+            payment_status: 'unpaid'
         },
 
         name: "میز ۱",
@@ -80,20 +83,23 @@ export default function TableBento() {
         <BentoBody className="">
             <div className="h-full w-max absolute flex gap-0 md:gap-4 left-1/2 right-1/2 -translate-x-1/2 rtl:translate-x-1/2 translate-y-2/12 scale-90">
                 <LiveCard
+                    isMockup
                     className="border transition-all duration-300 scale-90 md:scale-100 group-hover:scale-85 md:group-hover:scale-95"
-                    table={{ ...getIdleTableData(), name: 'میز VIP' }}
+                    table={{ ...getIdleTableData(), name: 'میز VIP' } as Table}
                     businessSlug="mockup-business-2"
                     branchSlug="mockup-branch-2"
                 />
                 <LiveCard
+                    isMockup
                     className="border group-hover:border-2 transition-all group-hover:-translate-y-2/12 duration-300 scale-90 md:scale-100 group-hover:scale-95 md:group-hover:scale-105"
-                    table={table}
+                    table={table as Table}
                     businessSlug="mockup-business-2"
                     branchSlug="mockup-branch-2"
                 />
                 <LiveCard
+                    isMockup
                     className="border transition-all duration-300 scale-90 md:scale-100 group-hover:scale-85 md:group-hover:scale-95"
-                    table={{ ...getIdleTableData(), name: 'میز ۲' }}
+                    table={{ ...getIdleTableData(), name: 'میز ۲' } as Table}
                     businessSlug="mockup-business-2"
                     branchSlug="mockup-branch-2"
                 />
