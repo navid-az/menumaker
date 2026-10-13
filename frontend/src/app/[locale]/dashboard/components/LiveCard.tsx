@@ -9,59 +9,32 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import {
   DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogTrigger,
-  AlertDialogDescription,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogFooter,
-  AlertDialogAction,
-  AlertDialogCancel,
-} from "@/components/ui/alert-dialog";
-import ProgressBar from "./ProgressBar";
-import { CreateTableForm } from "./CreateTableForm";
-import QrCodeGenerator from "@/components/global/QrCodeGenerator";
-import { OrderDataDialog, OrderList } from "./OrderList";
-import LiveCardProgressButton from "./LiveCardProgressButton";
 import {
   ContextMenu,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu"
+import ProgressBar from "./ProgressBar";
+import QrCodeGenerator from "@/components/global/QrCodeGenerator";
+import { OrderList } from "./OrderList";
+import LiveCardProgressButton from "./LiveCardProgressButton";
 import LiveCardActions from "./LiveCardActions";
+import LiveCardMenuContent from "./LiveCardMenuContent";
 
 //SVGs
 import {
-  ScrollText,
   Bell,
   CircleAlert,
-  CircleX,
   EllipsisVertical,
-  Info,
-  Pen,
-  QrCode,
-  Trash2,
-  Users2,
 } from "lucide-react";
 
 //libraries
 import { cn } from "@/lib/utils";
 import { _Translator, useTranslations, useLocale } from "next-intl";
 
-//utils
-import { toPersianDigits } from "@/app/[locale]/(menu)/[business_slug]/utilities/formatCurrency";
-
 //actions
 import { deleteTable } from "@/app/actions";
-import { endTableSession } from "@/app/actions/dashboard/live-management";
 
 //hooks
 import { progressType, useActiveTimer } from "@/app/hooks/useActiveTimer";
@@ -77,9 +50,6 @@ type LiveCardProps = {
   businessSlug: string;
   branchSlug: string;
   serviceType?: ServiceType;
-  status?: "occupied" | "reserved" | "canceled" | "notice";
-  seats?: number;
-  hasSession?: boolean;
   isInView?: boolean
   isMockup?: boolean;
   onPaymentCompleted?: (tableCode: string) => void
@@ -137,9 +107,6 @@ const stateColors: Record<LiveCardState, Record<string, string>> = {
 export default function LiveCard({
   table,
   serviceType,
-  status = "notice",
-  seats,
-  hasSession,
   businessSlug,
   branchSlug,
   isInView,
@@ -282,13 +249,9 @@ export default function LiveCard({
               businessSlug={businessSlug}
               branchSlug={branchSlug}
               table={table}
-              orderAge={progress}
-              elapsedDuration={elapsedDuration}
+              isMockup={isMockup}
               progressType={progressType}
               handleViewQrCode={handleViewQrCode}
-              handleTableDelete={handleTableDelete}
-              isMockup={isMockup}
-              locale={locale}
               t={t}
             ></LiveCardHeader>
             {showCode ? (
@@ -364,7 +327,9 @@ export default function LiveCard({
                     </p>
                   </div>
                 )}
-                <LiveCardActions table={table} progressType={progressType} onPaymentCompleted={onPaymentCompleted}></LiveCardActions>
+                {!!onPaymentCompleted &&
+                  <LiveCardActions table={table} progressType={progressType} onPaymentCompleted={onPaymentCompleted}></LiveCardActions>
+                }
               </motion.div>
             ) : (
               <EmptyView table={table} t={t}></EmptyView>
@@ -382,7 +347,7 @@ export default function LiveCard({
           ></LiveCardFooter>
         </div>
       </ContextMenuTrigger>
-      {/* <LiveCardContextContent table={table} progressType={progressType} businessSlug={businessSlug} branchSlug={branchSlug} handleViewQrCode={handleViewQrCode} handleTableDelete={handleTableDelete} t={t} isMockup={isMockup} /> */}
+      <LiveCardMenuContent isMockup={isMockup} mode='context' handleViewQrCode={handleViewQrCode} table={table} progressType={progressType} businessSlug={businessSlug} branchSlug={branchSlug} t={t}></LiveCardMenuContent>
     </ContextMenu>
   );
 }
@@ -448,49 +413,19 @@ export function LiveCardHeader({
   table,
   businessSlug,
   branchSlug,
-  elapsedDuration,
   progressType,
+  isMockup,
   handleViewQrCode,
-  handleTableDelete,
-  isMockup = false,
   t,
-  locale
 }: {
   table: Table;
   businessSlug: string;
   branchSlug: string;
-  orderAge: number;
-  elapsedDuration: string;
   progressType: progressType;
+  isMockup: boolean
   handleViewQrCode: () => void
-  handleTableDelete: () => void
-  isMockup?: boolean;
   t: _Translator<Record<string, any>, "dashboard.liveManagement.liveCard">
-  locale: string
 }) {
-
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [isEnding, setIsEnding] = useState(false);
-
-  async function handleEndSession() {
-    if (!table.active_session) return
-    setIsEnding(true);
-
-    try {
-      const result = await endTableSession(table.active_session?.code);
-
-      if (!result.success) {
-        toast.error(t("header.dropdown.confirmEndSession.error"));
-        return;
-      }
-
-      toast.success(t("header.dropdown.confirmEndSession.success"));
-      setConfirmOpen(false);
-    } finally {
-      setIsEnding(false);
-    }
-  }
-
   return (
     <div className="relative w-full flex justify-between items-center rounded-full">
       <div dir="ltr" className="flex justify-between items-center w-full transition-all duration-300">
@@ -515,14 +450,6 @@ export function LiveCardHeader({
             <User2 className="text-(--livecard-primary)"></User2>
           </Button> */}
         </div>
-        {/* {!table.order && <div
-          className={cn(
-            "rounded-b-xl justify-center rtl:flex-row-reverse transition-all duration-300 min-w-16 border border-gray bg-royal-green text-soft-blue h-full text-xs px-2 py-1 flex items-center  scale-pro cursor-pointer",
-            table.active_session?.status === 'active' ? '-mt-8' : '-mt-24'
-          )}
-        >
-          <p className="font-medium">{table.name}</p>
-        </div>} */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -532,140 +459,7 @@ export function LiveCardHeader({
               <EllipsisVertical></EllipsisVertical>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align={locale === 'fa' ? 'start' : "end"} className="rounded-xl w-44">
-            <DropdownMenuLabel className="flex justify-between items-center border-b border-primary/5">
-              <p className="text-medium">{table.name}</p>
-              <div className="flex gap-2 bg-primary text-secondary rounded-full px-2 py-1 items-center">
-                <Users2 className="size-4"></Users2>
-                <p className="font-normal">{locale === 'fa' ? toPersianDigits(table.seats) : table.seats}</p>
-              </div>
-            </DropdownMenuLabel>
-            <DropdownMenuGroup>
-              {/* Disabled for not (should only be disabled on `isMockup`) */}
-              <DropdownMenuItem disabled>
-                <Info></Info>
-                {t('header.dropdown.buttons.tableDetails')}
-              </DropdownMenuItem>
-              <OrderDataDialog table={table}>
-                <DropdownMenuItem
-                  disabled={!table.order || progressType === "none"}
-                  onSelect={(e) => e.preventDefault()}
-                >
-                  <ScrollText></ScrollText>
-                  {t('header.dropdown.buttons.orderDetails')}
-                </DropdownMenuItem>
-              </OrderDataDialog>
-
-              <DropdownMenuItem onClick={handleViewQrCode}>
-                <QrCode></QrCode>
-                {t('header.dropdown.buttons.viewQrCode')}
-              </DropdownMenuItem>
-              {isMockup ? (
-                <DropdownMenuItem disabled>
-                  <Pen></Pen>
-                  {t('header.dropdown.buttons.editTable')}
-                </DropdownMenuItem>
-              ) : (
-                <CreateTableForm
-                  businessSlug={businessSlug}
-                  branchSlug={branchSlug}
-                  defaultValues={table}
-                  tableId={table.id}
-                  title={t('header.dropdown.buttons.editTable')}
-                >
-                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                    <Pen></Pen>
-                    {t('header.dropdown.buttons.editTable')}
-                  </DropdownMenuItem>
-                </CreateTableForm>
-              )}
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem
-                disabled={isMockup || table.is_associated}
-                onClick={(e) => e.preventDefault()}
-                className="text-red-600 p-0 focus:text-red-600 focus:bg-red-50"
-              >
-                <AlertDialog>
-                  <AlertDialogTrigger
-                    asChild
-                    className="w-full h-full flex items-center gap-2 py-1.5 px-2"
-                  >
-                    <div>
-                      <Trash2 className="text-red-600 "></Trash2>
-                      {t('header.dropdown.buttons.deleteTable')}
-                    </div>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        {t('header.dropdown.deleteConfirmation.title', { name: table.name })}
-                      </AlertDialogTitle>
-                      <AlertDialogDescription>
-                        {t('header.dropdown.deleteConfirmation.description')}
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter className="mt-8">
-                      <AlertDialogCancel>
-                        {t('header.dropdown.deleteConfirmation.cancel')}
-                      </AlertDialogCancel>
-                      <AlertDialogAction
-                        className="hover:bg-red-600 transition-all duration-300"
-                        onClick={(e) => {
-                          handleTableDelete();
-                        }}
-                      >
-                        {t('header.dropdown.deleteConfirmation.confirm')}
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                disabled={!table.active_session}
-                onSelect={(event) => {
-                  event.preventDefault();
-                  setConfirmOpen(true);
-                }}
-                className="text-red-600 focus:text-red-600 focus:bg-red-50"
-              >
-                <CircleX className="text-red-600" />
-                {t("header.dropdown.buttons.endSession")}
-              </DropdownMenuItem>
-              <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      {t("header.dropdown.confirmEndSession.title")}
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                      {t("header.dropdown.confirmEndSession.description")}
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-
-                  <AlertDialogFooter>
-                    <AlertDialogCancel disabled={isEnding}>
-                      {t("header.dropdown.confirmEndSession.cancel")}
-                    </AlertDialogCancel>
-
-                    <AlertDialogAction
-                      disabled={isEnding}
-                      className="bg-red-600 hover:bg-red-700"
-                      onClick={(event) => {
-                        event.preventDefault();
-                        void handleEndSession();
-                      }}
-                    >
-                      {isEnding
-                        ? t("header.dropdown.confirmEndSession.ending")
-                        : t("header.dropdown.confirmEndSession.confirm")}
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
+          <LiveCardMenuContent isMockup={isMockup} mode='dropdown' handleViewQrCode={handleViewQrCode} table={table} progressType={progressType} businessSlug={businessSlug} branchSlug={branchSlug} t={t}></LiveCardMenuContent>
         </DropdownMenu>
       </div>
 
