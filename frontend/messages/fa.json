@@ -762,13 +762,14 @@
         "roleLabel": "سمت شما",
         "role": "صاحب مجموعه"
       },
-      "sidebarNav": [
-        "وضعیت فروشگاه",
-        "مدیریت زنده",
-        "آیتم و دسته‌بندی",
-        "پرسنل",
-        "تنظیمات"
-      ]
+      "sidebarNav": {
+        "insights": "وضعیت فروشگاه",
+        "liveManagement": "مدیریت زنده",
+        "records": "سوابق",
+        "itemsAndCategories": "آیتم و دسته‌بندی",
+        "staff": "پرسنل",
+        "settings": "تنظیمات"
+      }
     },
     "liveManagement": {
       "form": {

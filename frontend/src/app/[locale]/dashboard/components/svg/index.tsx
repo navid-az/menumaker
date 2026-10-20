@@ -6,5 +6,5 @@ export { default as BarChart } from "./bar-chart.svg";
 export { default as Power } from "./power.svg";
 export { default as Building } from "./buidling.svg";
 export { default as ScrollText } from "./scroll-text.svg";
-
+export { default as RotateCwClock } from "./rotate-cw-clock.svg";
 export { default as TableChair } from "./table-chair.svg";

@@ -761,13 +761,14 @@
         "roleLabel": "Your Role",
         "role": "Owner"
       },
-      "sidebarNav": [
-        "Insights",
-        "Live Management",
-        "Items & Categories",
-        "Staff",
-        "Settings"
-      ]
+      "sidebarNav": {
+        "insights": "Insights",
+        "liveManagement": "Live Management",
+        "records": "Records",
+        "itemsAndCategories": "Items & Categories",
+        "staff": "Staff",
+        "settings": "Settings"
+      }
     },
     "liveManagement": {
       "form": {

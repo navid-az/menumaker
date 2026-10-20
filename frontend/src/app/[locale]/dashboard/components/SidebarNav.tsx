@@ -1,7 +1,7 @@
 "use client";
 
 //SVGs
-import { BarChart, Radar, ScrollText, Settings, Users } from "./svg";
+import { BarChart, Radar, RotateCwClock, ScrollText, Settings, Users } from "./svg";
 
 //hooks
 import { usePathname } from "next/navigation";
@@ -29,29 +29,29 @@ export default function SidebarNav({
         <section className={cn("flex gap-4 flex-col w-full")}>
             <DashboardNavbarBtn
                 disabled
-                text={t('0')}
+                text={t('insights')}
                 isCollapsed={isCollapsed}
                 basePath={`/dashboard/${params.business_slug}/${decodedBranchSlug}/insights`}
             >
                 <BarChart className={`${!isCollapsed && "me-3"} h-6 w-6`} />
             </DashboardNavbarBtn>
             <DashboardNavbarBtn
-                text={t('1')}
+                text={t('liveManagement')}
                 isCollapsed={isCollapsed}
                 basePath={`/dashboard/${params.business_slug}/${decodedBranchSlug}/liveManagement/all`}
             >
                 <Radar className={`${!isCollapsed && "me-3"} h-6 w-6`} />
             </DashboardNavbarBtn>
             <DashboardNavbarBtn
-                text={t('1')}
+                text={t('records')}
                 isCollapsed={isCollapsed}
                 basePath={`/dashboard/${params.business_slug}/${decodedBranchSlug}/records/orders`}
                 dynamicPaths={["orders", "payments", "table-sessions", "service-requests"]}
             >
-                <Radar className={`${!isCollapsed && "me-3"} h-6 w-6`} />
+                <RotateCwClock className={`${!isCollapsed && "me-3"} h-6 w-6`} />
             </DashboardNavbarBtn>
             <DashboardNavbarBtn
-                text={t('2')}
+                text={t('itemsAndCategories')}
                 isCollapsed={isCollapsed}
                 basePath={`/dashboard/${params.business_slug}/${decodedBranchSlug}/data/items`}
                 dynamicPaths={["items", "categories", "offers", "excessCosts"]}
@@ -59,14 +59,14 @@ export default function SidebarNav({
                 <ScrollText className={`${!isCollapsed && "me-3"} h-6 w-6`} />
             </DashboardNavbarBtn>
             <DashboardNavbarBtn
-                text={t('3')}
+                text={t('staff')}
                 isCollapsed={isCollapsed}
                 basePath={`/dashboard/${params.business_slug}/${decodedBranchSlug}/personnel/all`}
             >
                 <Users className={`${!isCollapsed && "me-3"} h-6 w-6`} />
             </DashboardNavbarBtn>
             <DashboardNavbarBtn
-                text={t('4')}
+                text={t('settings')}
                 isCollapsed={isCollapsed}
                 basePath={`/dashboard/${params.business_slug}/${decodedBranchSlug}/settings`}
             >
