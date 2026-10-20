@@ -712,6 +712,39 @@
           "button": "Add Table"
         }
       },
+      "records": {
+        "tabs": {
+          "orders": "Orders",
+          "tableSessions": "Table Sessions",
+          "payments": "Payments",
+          "serviceRequests": "Service Requests"
+        },
+        "searchPlaceholder": "Search records...",
+        "statusPlaceholder": "Filter by status",
+        "dateFrom": "From date",
+        "dateTo": "To date",
+        "clearFilters": "Clear filters",
+        "statuses": {
+          "all": "All",
+          "pending": "Pending",
+          "accepted": "Accepted",
+          "preparing": "Preparing",
+          "ready": "Ready",
+          "served": "Served",
+          "cancelled": "Cancelled",
+          "active": "Active",
+          "closed": "Closed",
+          "paid": "Paid",
+          "unpaid": "Unpaid",
+          "partial": "Partially Paid",
+          "successful": "Successful",
+          "failed": "Failed",
+          "canceled": "Canceled",
+          "refunded": "Refunded",
+          "resolved": "Resolved",
+          "expired": "Expired"
+        }
+      },
       "personnel": {
         "tabs": {
           "all": "All Staff",
@@ -900,6 +933,94 @@
         "connecting": "Connecting...",
         "connected": "Live",
         "disconnected": "Disconnected"
+      }
+    },
+    "records": {
+      "tabs": {
+        "orders": "Orders",
+        "tableSessions": "Table Sessions",
+        "payments": "Payments",
+        "serviceRequests": "Service Requests"
+      },
+      "search": "Search records...",
+      "status": "Status",
+      "allStatuses": "All statuses",
+      "from": "From",
+      "to": "To",
+      "clearFilters": "Clear filters",
+      "description": "Review and find historical business records.",
+      "searchPlaceholder": "Search...",
+      "resultsCount": "{count} records",
+      "empty": "No records found.",
+      "page": "Page {current} of {total}",
+      "previous": "Previous",
+      "next": "Next",
+      "notEnded": "Not ended",
+      "notPaid": "Not paid",
+      "notResolved": "Not resolved",
+      "noItems": "No items",
+      "currencyAmount": "{amount}",
+      "views": {
+        "orders": "Orders",
+        "tableSessions": "Table Sessions",
+        "payments": "Payments",
+        "serviceRequests": "Service Requests"
+      },
+      "columns": {
+        "order": "Order",
+        "session": "Session",
+        "items": "Items",
+        "total": "Total",
+        "status": "Status",
+        "createdAt": "Created at",
+        "table": "Table",
+        "startedAt": "Started at",
+        "endedAt": "Ended at",
+        "paymentStatus": "Payment status",
+        "payment": "Payment",
+        "sessionId": "Session ID",
+        "amount": "Amount",
+        "method": "Method",
+        "provider": "Provider",
+        "paidAt": "Paid at",
+        "request": "Request",
+        "requestType": "Request type",
+        "resolvedAt": "Resolved at"
+      },
+      "statuses": {
+        "pending": "Pending",
+        "accepted": "Accepted",
+        "preparing": "Preparing",
+        "ready": "Ready",
+        "served": "Served",
+        "cancelled": "Cancelled",
+        "active": "Active",
+        "closed": "Closed",
+        "paid": "Paid",
+        "unpaid": "Unpaid",
+        "partial": "Partially paid",
+        "successful": "Successful",
+        "failed": "Failed",
+        "canceled": "Canceled",
+        "refunded": "Refunded",
+        "resolved": "Resolved",
+        "expired": "Expired"
+      },
+      "methods": {
+        "cash": "Cash",
+        "external_pos": "External POS",
+        "online": "Online"
+      },
+      "providers": {
+        "manual": "Manual",
+        "zarinpal": "ZarinPal"
+      },
+      "requestTypes": {
+        "call_waiter": "Call waiter",
+        "request_bill": "Request bill",
+        "request_water": "Request water",
+        "request_cutlery": "Request cutlery",
+        "other": "Other"
       }
     },
     "data": {

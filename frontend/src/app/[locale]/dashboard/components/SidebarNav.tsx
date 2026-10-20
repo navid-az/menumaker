@@ -43,6 +43,14 @@ export default function SidebarNav({
                 <Radar className={`${!isCollapsed && "me-3"} h-6 w-6`} />
             </DashboardNavbarBtn>
             <DashboardNavbarBtn
+                text={t('1')}
+                isCollapsed={isCollapsed}
+                basePath={`/dashboard/${params.business_slug}/${decodedBranchSlug}/records/orders`}
+                dynamicPaths={["orders", "payments", "table-sessions", "service-requests"]}
+            >
+                <Radar className={`${!isCollapsed && "me-3"} h-6 w-6`} />
+            </DashboardNavbarBtn>
+            <DashboardNavbarBtn
                 text={t('2')}
                 isCollapsed={isCollapsed}
                 basePath={`/dashboard/${params.business_slug}/${decodedBranchSlug}/data/items`}

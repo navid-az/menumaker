@@ -713,6 +713,39 @@
           "button": "ایجاد میز"
         }
       },
+      "records": {
+        "tabs": {
+          "orders": "سفارش‌ها",
+          "tableSessions": "سوابق میز",
+          "payments": "پرداخت‌ها",
+          "serviceRequests": "درخواست‌ها"
+        },
+        "searchPlaceholder": "جستجو در سوابق...",
+        "statusPlaceholder": "فیلتر بر اساس وضعیت",
+        "dateFrom": "از تاریخ",
+        "dateTo": "تا تاریخ",
+        "clearFilters": "پاک کردن فیلترها",
+        "statuses": {
+          "all": "همه",
+          "pending": "در انتظار",
+          "accepted": "پذیرفته‌شده",
+          "preparing": "در حال آماده‌سازی",
+          "ready": "آماده",
+          "served": "تحویل‌شده",
+          "cancelled": "لغوشده",
+          "active": "فعال",
+          "closed": "بسته‌شده",
+          "paid": "پرداخت‌شده",
+          "unpaid": "پرداخت‌نشده",
+          "partial": "پرداخت جزئی",
+          "successful": "موفق",
+          "failed": "ناموفق",
+          "canceled": "لغوشده",
+          "refunded": "مستردشده",
+          "resolved": "رسیدگی‌شده",
+          "expired": "منقضی‌شده"
+        }
+      },
       "personnel": {
         "tabs": {
           "all": "پرسنل مجموعه",
@@ -901,6 +934,94 @@
         "connecting": "در حال اتصال...",
         "connected": "آنلاین",
         "disconnected": "قطع شده"
+      }
+    },
+    "records": {
+      "tabs": {
+        "orders": "سفارش‌ها",
+        "tableSessions": "سوابق میز",
+        "payments": "پرداخت‌ها",
+        "serviceRequests": "درخواست‌ها"
+      },
+      "search": "جست‌وجو در سوابق...",
+      "status": "وضعیت",
+      "allStatuses": "همه وضعیت‌ها",
+      "from": "از تاریخ",
+      "to": "تا تاریخ",
+      "clearFilters": "حذف فیلترها",
+      "description": "سوابق کسب‌وکار خود را بررسی و جست‌وجو کنید.",
+      "searchPlaceholder": "جست‌وجو...",
+      "resultsCount": "{count} رکورد",
+      "empty": "رکوردی یافت نشد.",
+      "page": "صفحه {current} از {total}",
+      "previous": "قبلی",
+      "next": "بعدی",
+      "notEnded": "پایان نیافته",
+      "notPaid": "پرداخت نشده",
+      "notResolved": "رسیدگی نشده",
+      "noItems": "بدون آیتم",
+      "currencyAmount": "{amount}",
+      "views": {
+        "orders": "سفارش‌ها",
+        "tableSessions": "سوابق میز",
+        "payments": "پرداخت‌ها",
+        "serviceRequests": "درخواست‌ها"
+      },
+      "columns": {
+        "order": "سفارش",
+        "session": "کد نشست",
+        "items": "اقلام",
+        "total": "مبلغ کل",
+        "status": "وضعیت",
+        "createdAt": "زمان ثبت",
+        "table": "میز",
+        "startedAt": "زمان شروع",
+        "endedAt": "زمان پایان",
+        "paymentStatus": "وضعیت پرداخت",
+        "payment": "پرداخت",
+        "sessionId": "شناسه نشست",
+        "amount": "مبلغ",
+        "method": "روش پرداخت",
+        "provider": "درگاه پرداخت",
+        "paidAt": "زمان پرداخت",
+        "request": "درخواست",
+        "requestType": "نوع درخواست",
+        "resolvedAt": "زمان رسیدگی"
+      },
+      "statuses": {
+        "pending": "در انتظار",
+        "accepted": "پذیرفته‌شده",
+        "preparing": "در حال آماده‌سازی",
+        "ready": "آماده",
+        "served": "تحویل‌شده",
+        "cancelled": "لغوشده",
+        "active": "فعال",
+        "closed": "بسته‌شده",
+        "paid": "پرداخت‌شده",
+        "unpaid": "پرداخت‌نشده",
+        "partial": "پرداخت ناقص",
+        "successful": "موفق",
+        "failed": "ناموفق",
+        "canceled": "لغوشده",
+        "refunded": "مستردشده",
+        "resolved": "رسیدگی‌شده",
+        "expired": "منقضی‌شده"
+      },
+      "methods": {
+        "cash": "نقدی",
+        "external_pos": "دستگاه کارت‌خوان",
+        "online": "آنلاین"
+      },
+      "providers": {
+        "manual": "دستی",
+        "zarinpal": "زرین‌پال"
+      },
+      "requestTypes": {
+        "call_waiter": "درخواست گارسون",
+        "request_bill": "درخواست صورت‌حساب",
+        "request_water": "درخواست آب",
+        "request_cutlery": "درخواست قاشق و چنگال",
+        "other": "سایر"
       }
     },
     "data": {
