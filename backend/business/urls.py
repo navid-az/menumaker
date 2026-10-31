@@ -1,6 +1,8 @@
 from django.urls import path
 from business.views import (BusinessesView, BusinessDetailView, BranchesView, BranchDetailView, TablesView, TableDetailView,
-                            TableSessionView, TableSessionDetailView, PaymentView, PaymentDetailView, ServiceRequestView, ServiceRequestDetailView, CategoriesView, CategoryDetailView, ItemsView, ItemDetailView, OrdersView, OrderDetailView, RoleView)
+                            TableSessionView, BranchTableSessionsView, TableSessionDetailView, PaymentView, PaymentDetailView,
+                            BranchPaymentsView, ServiceRequestView, BranchServiceRequestsView, ServiceRequestDetailView, CategoriesView,
+                            CategoryDetailView, ItemsView, ItemDetailView, OrdersView, OrderDetailView, RoleView)
 from personnel.views import PersonnelListView
 
 
@@ -31,6 +33,13 @@ urlpatterns = [
          TableSessionView.as_view(), name='table-session'),
     path("sessions/<str:session_code>/",
          TableSessionDetailView.as_view(), name="table-session-detail"),
+    # Branch records endpoints
+    path(
+        "branches/<slug:branch_slug>/sessions/",
+        BranchTableSessionsView.as_view(),
+        name="branch-table-sessions",
+    ),
+
 
     # Order endpoints
     path('branches/<str:branch_slug>/orders/',
@@ -43,6 +52,11 @@ urlpatterns = [
          PaymentView.as_view(), name="table-session-payments"),
     path("payments/<int:payment_id>/",
          PaymentDetailView.as_view(), name="payment-detail"),
+    path(
+        "branches/<slug:branch_slug>/payments/",
+        BranchPaymentsView.as_view(),
+        name="branch-payments",
+    ),
 
     # Service request endpoints
     path("sessions/<str:session_code>/service-requests/",
@@ -50,6 +64,11 @@ urlpatterns = [
     path(
         "service-requests/<int:call_id>/",
         ServiceRequestDetailView.as_view(), name="service-request-detail"),
+    path(
+        "branches/<slug:branch_slug>/service-requests/",
+        BranchServiceRequestsView.as_view(),
+        name="branch-service-requests",
+    ),
 
     # Category endpoints
     path('businesses/<str:business_slug>/categories/',

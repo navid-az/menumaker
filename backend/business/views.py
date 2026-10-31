@@ -318,6 +318,24 @@ class TableSessionView(MethodBasedPermissionsMixin, APIView):
         )
 
 
+class BranchTableSessionsView(APIView):
+    def get(self, request, branch_slug):
+        branch = get_object_or_404(
+            Branch,
+            slug=branch_slug,
+        )
+
+        sessions = TableSession.objects.filter(
+            table__branch=branch,
+        ).select_related(
+            "table",
+        ).order_by("-started_at")
+
+        serializer = TableSessionSerializer(sessions, many=True)
+
+        return Response(serializer.data)
+
+
 class TableSessionDetailView(MethodBasedPermissionsMixin, APIView):
     permission_classes_by_method = {'PATCH': [demo_or_full_access]}
     required_permission_by_method = {'PATCH': ['business.change_tablesession']}
@@ -474,6 +492,25 @@ class PaymentView(APIView):
         )
 
 
+class BranchPaymentsView(APIView):
+    def get(self, request, branch_slug):
+        branch = get_object_or_404(
+            Branch,
+            slug=branch_slug,
+        )
+
+        payments = Payment.objects.filter(
+            table_session__table__branch=branch,
+        ).select_related(
+            "table_session",
+            "table_session__table",
+        ).order_by("-created_at")
+
+        serializer = PaymentSerializer(payments, many=True)
+
+        return Response(serializer.data)
+
+
 class PaymentDetailView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -579,6 +616,29 @@ class ServiceRequestView(MethodBasedPermissionsMixin, APIView):
             },
             status=status.HTTP_201_CREATED,
         )
+
+
+class BranchServiceRequestsView(APIView):
+    def get(self, request, branch_slug):
+        branch = get_object_or_404(
+            Branch,
+            slug=branch_slug,
+        )
+
+        service_requests = ServiceRequest.objects.filter(
+            table_session__table__branch__slug=branch_slug,
+        ).select_related(
+            "table_session",
+            "table_session__table",
+            "resolved_by",
+        ).order_by("-created_at")
+
+        serializer = ServiceRequestSerializer(
+            service_requests,
+            many=True,
+        )
+
+        return Response(serializer.data)
 
 
 class ServiceRequestDetailView(MethodBasedPermissionsMixin, APIView):

@@ -22,7 +22,7 @@ from subscriptions.models import Subscription
 class TableSessionSerializer(serializers.ModelSerializer):
     class Meta:
         model = TableSession
-        fields = ['code', 'status', 'started_at',
+        fields = ['code', 'status', 'started_at', 'ended_at',
                   'expires_at', "paid_at", "payment_status"]
 
 
@@ -76,12 +76,40 @@ class PaymentCreateSerializer(serializers.ModelSerializer):
 
 # service request serializers
 class ServiceRequestSerializer(serializers.ModelSerializer):
+    table = serializers.CharField(
+        source="table_session.table.name",
+        read_only=True,
+    )
+    session_code = serializers.CharField(
+        source="table_session.code",
+        read_only=True,
+    )
+
     class Meta:
         model = ServiceRequest
-        fields = ["id", "table_session", "request_type", "status",
-                  "created_at", "resolved_at", "resolved_by", "expires_at"]
-        read_only_fields = ["id", "table_session", "status",
-                            "created_at", "resolved_at", "resolved_by", "expires_at"]
+        fields = [
+            "id",
+            "table_session",
+            "session_code",
+            "table",
+            "request_type",
+            "status",
+            "created_at",
+            "resolved_at",
+            "resolved_by",
+            "expires_at",
+        ]
+        read_only_fields = [
+            "id",
+            "table_session",
+            "session_code",
+            "table",
+            "status",
+            "created_at",
+            "resolved_at",
+            "resolved_by",
+            "expires_at",
+        ]
 
 
 # table serializers
