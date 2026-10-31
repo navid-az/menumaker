@@ -984,9 +984,15 @@
         "method": "Method",
         "provider": "Provider",
         "paidAt": "Paid at",
+        "expiresAt": "Expires At",
+        "closedBy": "Closure Type",
         "request": "Request",
         "requestType": "Request type",
         "resolvedAt": "Resolved at"
+      },
+      "closureTypes": {
+        "automatic": "Automatic",
+        "manual": "Manual"
       },
       "statuses": {
         "pending": "Pending",

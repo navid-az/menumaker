@@ -5,10 +5,10 @@ import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTi
 import { RecordsView } from "../components/RecordsView";
 import { DataTableSkeleton } from "@/app/components/skeletons/DataTableSkeleton";
 
-//SVGs
-import { CircleAlert } from "lucide-react";
+//functions
+import getServiceRequests from "@/lib/business/getServiceRequests";
 
-type ParamsPromise = Promise<{ business_slug: string }>;
+type ParamsPromise = Promise<{ branch_slug: string }>;
 
 
 export default function ServiceRequestsPage(props: { params: ParamsPromise }) {
@@ -22,6 +22,9 @@ export default function ServiceRequestsPage(props: { params: ParamsPromise }) {
 }
 
 async function ServiceRequestsContent({ paramsPromise }: { paramsPromise: ParamsPromise }) {
+    const { branch_slug } = await paramsPromise;
+
+    const serviceRequests = await getServiceRequests(branch_slug)
 
     // return (
     //     <Empty className="w-full h-full">
@@ -38,6 +41,6 @@ async function ServiceRequestsContent({ paramsPromise }: { paramsPromise: Params
     // );
 
     return (
-        <RecordsView view="service-requests" />
+        <RecordsView data={serviceRequests} view="service-requests" />
     );
 }

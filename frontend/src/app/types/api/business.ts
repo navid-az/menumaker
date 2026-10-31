@@ -61,6 +61,16 @@ export type Table = {
   is_associated: boolean;
 };
 
+export type TableSession = {
+  code: string;
+  status: "active" | "closed";
+  started_at: string;
+  ended_at: string | null;
+  expires_at: string;
+  paid_at: string | null;
+  payment_status: "paid" | "unpaid" | "partial";
+};
+
 export type Payment = {
   id: number;
   table_session: number;
@@ -74,4 +84,20 @@ export type Payment = {
   created_at?: "2026-10-05T12:13:09.739549Z";
   updated_at?: "2026-10-05T12:13:09.739705Z";
   paid_at?: "2026-10-05T12:13:09.736956Z";
+};
+
+export type ServiceRequest = {
+  id: number;
+  table_session: number;
+  request_type:
+    | "call_waiter"
+    | "request_bill"
+    | "request_water"
+    | "request_cutlery"
+    | "other";
+  status: "pending" | "resolved" | "expired";
+  created_at: string;
+  resolved_at: string | null;
+  resolved_by: number | null;
+  expires_at: string | null;
 };

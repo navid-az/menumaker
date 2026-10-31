@@ -716,7 +716,7 @@
       "records": {
         "tabs": {
           "orders": "سفارش‌ها",
-          "tableSessions": "سوابق میز",
+          "tableSessions": "سشن‌ها",
           "payments": "پرداخت‌ها",
           "serviceRequests": "درخواست‌ها"
         },
@@ -970,7 +970,7 @@
       },
       "columns": {
         "order": "سفارش",
-        "session": "کد نشست",
+        "session": "کد سشن",
         "items": "اقلام",
         "total": "مبلغ کل",
         "status": "وضعیت",
@@ -980,14 +980,20 @@
         "endedAt": "زمان پایان",
         "paymentStatus": "وضعیت پرداخت",
         "payment": "پرداخت",
-        "sessionId": "شناسه نشست",
+        "sessionId": "شناسه سشن",
         "amount": "مبلغ",
         "method": "روش پرداخت",
         "provider": "درگاه پرداخت",
         "paidAt": "زمان پرداخت",
+        "expiresAt": "زمان انقضا",
+        "closedBy": "نوع بستن سشن",
         "request": "درخواست",
         "requestType": "نوع درخواست",
         "resolvedAt": "زمان رسیدگی"
+      },
+      "closureTypes": {
+        "automatic": "خودکار",
+        "manual": "دستی"
       },
       "statuses": {
         "pending": "در انتظار",

@@ -5,11 +5,11 @@ import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTi
 import { RecordsView } from "../components/RecordsView";
 import { DataTableSkeleton } from "@/app/components/skeletons/DataTableSkeleton";
 
-//SVGs
-import { CircleAlert } from "lucide-react";
+//functions
+import getPayments from "@/lib/business/getPayments";
 
-type ParamsPromise = Promise<{ business_slug: string }>;
-
+//types
+type ParamsPromise = Promise<{ branch_slug: string }>;
 
 export default function PaymentsPage(props: { params: ParamsPromise }) {
     return (
@@ -22,6 +22,10 @@ export default function PaymentsPage(props: { params: ParamsPromise }) {
 }
 
 async function PaymentsContent({ paramsPromise }: { paramsPromise: ParamsPromise }) {
+
+    const { branch_slug } = await paramsPromise;
+
+    const payments = await getPayments(branch_slug)
 
     // return (
     //     <Empty className="w-full h-full">
@@ -38,6 +42,6 @@ async function PaymentsContent({ paramsPromise }: { paramsPromise: ParamsPromise
     // );
 
     return (
-        <RecordsView view="payments" />
+        <RecordsView data={payments} view="payments" />
     );
 }

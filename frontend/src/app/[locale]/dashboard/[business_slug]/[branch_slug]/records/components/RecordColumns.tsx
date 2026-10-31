@@ -47,11 +47,11 @@ export function useOrderColumns(): ColumnDef<Order>[] {
             ),
             cell: ({ row }) => `#${row.original.id}`,
         },
-        {
-            id: "session",
-            accessorKey: "session_code",
-            header: t("columns.session"),
-        },
+        // {
+        //     id: "session",
+        //     accessorKey: "session_code",
+        //     header: t("columns.session"),
+        // },
         {
             id: "items",
             header: t("columns.items"),
@@ -108,35 +108,37 @@ export function useTableSessionColumns(): ColumnDef<TableSessionRecord>[] {
         {
             accessorKey: "code",
             header: t("columns.session"),
-        },
-        {
-            accessorFn: (row) => row.table.name,
-            id: "table",
-            header: t("columns.table"),
+            cell: ({ row }) => `#${row.original.code}`,
         },
         {
             accessorKey: "started_at",
             header: ({ column }) => (
-                <SortableHeader label={t("columns.startedAt")} column={column as never} />
+                <SortableHeader
+                    label={t("columns.startedAt")}
+                    column={column as never}
+                />
             ),
             cell: ({ row }) =>
                 new Date(row.original.started_at).toLocaleString(),
         },
         {
-            accessorKey: "ended_at",
-            header: t("columns.endedAt"),
+            accessorKey: "expires_at",
+            header: ({ column }) => (
+                <SortableHeader
+                    label={t("columns.expiresAt")}
+                    column={column as never}
+                />
+            ),
             cell: ({ row }) =>
-                row.original.ended_at
-                    ? new Date(row.original.ended_at).toLocaleString()
-                    : t("notEnded"),
+                new Date(row.original.expires_at).toLocaleString(),
         },
         {
-            accessorKey: "total_amount",
-            header: t("columns.total"),
+            accessorKey: "paid_at",
+            header: t("columns.paidAt"),
             cell: ({ row }) =>
-                t("currencyAmount", {
-                    amount: row.original.total_amount.toLocaleString(),
-                }),
+                row.original.paid_at
+                    ? new Date(row.original.paid_at).toLocaleString()
+                    : t("notPaid"),
         },
         {
             accessorKey: "payment_status",
@@ -157,6 +159,21 @@ export function useTableSessionColumns(): ColumnDef<TableSessionRecord>[] {
                     label={ts(row.original.status)}
                 />
             ),
+        },
+        {
+            id: "closedBy",
+            header: t("columns.closedBy"),
+            cell: ({ row }) => {
+                const session = row.original;
+
+                if (session.status === "active") {
+                    return "-";
+                }
+
+                return session.ended_at
+                    ? t("closureTypes.manual")
+                    : t("closureTypes.automatic");
+            },
         },
     ];
 }
@@ -226,8 +243,7 @@ export function useServiceRequestColumns(): ColumnDef<ServiceRequestRecord>[] {
             cell: ({ row }) => `#${row.original.id}`,
         },
         {
-            accessorFn: (row) => row.table.name,
-            id: "table",
+            accessorKey: "table",
             header: t("columns.table"),
         },
         {
@@ -238,6 +254,7 @@ export function useServiceRequestColumns(): ColumnDef<ServiceRequestRecord>[] {
         {
             accessorKey: "session_code",
             header: t("columns.session"),
+            cell: ({ row }) => `#${row.original.session_code}`,
         },
         {
             accessorKey: "created_at",

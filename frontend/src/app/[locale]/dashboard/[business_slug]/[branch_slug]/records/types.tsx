@@ -3,15 +3,13 @@ import { Table } from "@/app/types/api/business";
 import { Payment } from "@/app/types/api/business";
 
 export type TableSessionRecord = {
-    id: number;
     code: string;
-    table: Pick<Table, "id" | "code" | "name">;
-    started_at: string;
-    ended_at: string | null;
-    expires_at: string;
     status: "active" | "closed";
+    started_at: string;
+    expires_at: string;
+    ended_at: string | null;
+    paid_at: string | null;
     payment_status: "paid" | "unpaid" | "partial";
-    total_amount: number;
 };
 
 export type ServiceRequestRecord = {

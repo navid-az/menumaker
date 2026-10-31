@@ -5,10 +5,10 @@ import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTi
 import { RecordsView } from "../components/RecordsView";
 import { DataTableSkeleton } from "@/app/components/skeletons/DataTableSkeleton";
 
-//SVGs
-import { CircleAlert } from "lucide-react";
+//functions
+import getOrders from "@/lib/business/getOrders";
 
-type ParamsPromise = Promise<{ business_slug: string }>;
+type ParamsPromise = Promise<{ business_slug: string, branch_slug: string }>;
 
 
 export default function OrdersPage(props: { params: ParamsPromise }) {
@@ -22,6 +22,9 @@ export default function OrdersPage(props: { params: ParamsPromise }) {
 }
 
 async function OrdersContent({ paramsPromise }: { paramsPromise: ParamsPromise }) {
+    const { branch_slug } = await paramsPromise;
+
+    const orders = await getOrders(branch_slug)
 
     // return (
     //     <Empty className="w-full h-full">
@@ -38,6 +41,6 @@ async function OrdersContent({ paramsPromise }: { paramsPromise: ParamsPromise }
     // );
 
     return (
-        <RecordsView view="orders" />
+        <RecordsView data={orders} view="orders" />
     );
 }

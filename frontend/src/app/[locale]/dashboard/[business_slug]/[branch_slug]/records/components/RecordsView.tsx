@@ -6,13 +6,16 @@ import { RecordsDataTable } from "./RecordsDataTable";
 import { useOrderColumns, useTableSessionColumns, usePaymentColumns, useServiceRequestColumns } from "./RecordColumns";
 import { mockOrders, mockPayments, mockServiceRequests, mockTableSessions, mockTables } from "../mock-data";
 
+//types
+import { Order } from "@/app/types/api/menu";
+import { Payment, ServiceRequest, TableSession } from "@/app/types/api/business";
 type RecordsViewType =
     | "orders"
     | "table-sessions"
     | "payments"
     | "service-requests";
 
-export function RecordsView({ view }: { view: RecordsViewType }) {
+export function RecordsView({ data, view }: { data: Order[] | Payment[] | ServiceRequest[] | TableSession[], view: RecordsViewType }) {
     const t = useTranslations("dashboard.records");
 
     const orderColumns = useOrderColumns();
@@ -74,7 +77,7 @@ export function RecordsView({ view }: { view: RecordsViewType }) {
             </div>
 
             <RecordsDataTable
-                data={selected.data}
+                data={data}
                 columns={selected.columns}
                 searchFields={[...selected.searchFields]}
                 dateField={selected.dateField}

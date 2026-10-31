@@ -5,10 +5,10 @@ import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTi
 import { RecordsView } from "../components/RecordsView";
 import { DataTableSkeleton } from "@/app/components/skeletons/DataTableSkeleton";
 
-//SVGs
-import { CircleAlert } from "lucide-react";
+//functions
+import getTableSessions from "@/lib/business/getTableSessions";
 
-type ParamsPromise = Promise<{ business_slug: string }>;
+type ParamsPromise = Promise<{ branch_slug: string }>;
 
 
 export default function TableSessionsPage(props: { params: ParamsPromise }) {
@@ -22,6 +22,9 @@ export default function TableSessionsPage(props: { params: ParamsPromise }) {
 }
 
 async function TableSessionsContent({ paramsPromise }: { paramsPromise: ParamsPromise }) {
+    const { branch_slug } = await paramsPromise;
+
+    const sessions = await getTableSessions(branch_slug)
 
     // return (
     //     <Empty className="w-full h-full">
@@ -38,6 +41,6 @@ async function TableSessionsContent({ paramsPromise }: { paramsPromise: ParamsPr
     // );
 
     return (
-        <RecordsView view="table-sessions" />
+        <RecordsView data={sessions} view="table-sessions" />
     );
 }
