@@ -245,8 +245,7 @@ class Order(models.Model):
     status = models.CharField(
         max_length=20, choices=STATUS_CHOICES, default="pending")
     notes = models.TextField(blank=True)
-    total_price = models.DecimalField(
-        max_digits=10, decimal_places=2, default=0)
+    total_price = models.PositiveIntegerField(default=0)
 
     # timestamps
     created_at = models.DateTimeField(auto_now_add=True)
@@ -300,7 +299,7 @@ class OrderItem(models.Model):
     )
 
     name_snapshot = models.CharField(max_length=255)
-    price_snapshot = models.DecimalField(max_digits=8, decimal_places=2)
+    price_snapshot = models.PositiveIntegerField(default=0)
     quantity = models.PositiveIntegerField(default=1)
     notes = models.TextField(blank=True)
 
@@ -325,7 +324,7 @@ class Payment(models.Model):
     table_session = models.ForeignKey(
         "TableSession", on_delete=models.PROTECT, related_name="payments")
 
-    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    amount = models.PositiveIntegerField(default=0)
 
     method = models.CharField(max_length=20, choices=Method.choices)
 
