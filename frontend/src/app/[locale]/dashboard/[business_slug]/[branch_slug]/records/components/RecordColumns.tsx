@@ -12,6 +12,12 @@ import { RecordsStatusBadge } from "./RecordsStatusBadge";
 import { TableSessionRecord, ServiceRequestRecord } from "../types";
 import { toPersianDigits } from "@/app/[locale]/(menu)/[business_slug]/utilities/formatCurrency";
 
+//libraries
+import { useLocale } from "next-intl";
+
+//functions
+import { formatDateTime } from "@/lib/formatDateTime";
+
 function SortableHeader({
     label,
     column,
@@ -38,6 +44,8 @@ function SortableHeader({
 export function useOrderColumns(): ColumnDef<Order>[] {
     const t = useTranslations("dashboard.records");
     const ts = useTranslations("dashboard.records.statuses");
+
+    const locale = useLocale();
 
     return [
         {
@@ -76,8 +84,10 @@ export function useOrderColumns(): ColumnDef<Order>[] {
             header: t("columns.total"),
             cell: ({ row }) =>
                 t("currencyAmount", {
-                    amount: toPersianDigits(row.original.total_price.toLocaleString()),
-                }) + " تومان",
+                    amount: locale === "fa"
+                        ? toPersianDigits(row.original.total_price.toLocaleString())
+                        : row.original.total_price.toLocaleString(),
+                }) + (locale === "fa" ? " تومان" : " Toman")
         },
         {
             accessorKey: "status",
@@ -95,7 +105,7 @@ export function useOrderColumns(): ColumnDef<Order>[] {
                 <SortableHeader label={t("columns.createdAt")} column={column} />
             ),
             cell: ({ row }) =>
-                new Date(row.original.created_at).toLocaleString(),
+                formatDateTime(row.original.created_at, locale),
         },
     ];
 }
@@ -104,11 +114,13 @@ export function useTableSessionColumns(): ColumnDef<TableSessionRecord>[] {
     const t = useTranslations("dashboard.records");
     const ts = useTranslations("dashboard.records.statuses");
 
+    const locale = useLocale()
+
     return [
         {
             accessorKey: "code",
             header: t("columns.session"),
-            cell: ({ row }) => `#${row.original.code}`,
+            cell: ({ row }) => row.original.code,
         },
         {
             accessorKey: "started_at",
@@ -119,7 +131,7 @@ export function useTableSessionColumns(): ColumnDef<TableSessionRecord>[] {
                 />
             ),
             cell: ({ row }) =>
-                new Date(row.original.started_at).toLocaleString(),
+                formatDateTime(row.original.started_at, locale),
         },
         {
             accessorKey: "expires_at",
@@ -130,14 +142,14 @@ export function useTableSessionColumns(): ColumnDef<TableSessionRecord>[] {
                 />
             ),
             cell: ({ row }) =>
-                new Date(row.original.expires_at).toLocaleString(),
+                formatDateTime(row.original.expires_at, locale),
         },
         {
             accessorKey: "paid_at",
             header: t("columns.paidAt"),
             cell: ({ row }) =>
                 row.original.paid_at
-                    ? new Date(row.original.paid_at).toLocaleString()
+                    ? formatDateTime(row.original.paid_at, locale)
                     : t("notPaid"),
         },
         {
@@ -182,6 +194,8 @@ export function usePaymentColumns(): ColumnDef<Payment>[] {
     const t = useTranslations("dashboard.records");
     const ts = useTranslations("dashboard.records.statuses");
 
+    const locale = useLocale()
+
     return [
         {
             accessorKey: "id",
@@ -189,17 +203,15 @@ export function usePaymentColumns(): ColumnDef<Payment>[] {
             cell: ({ row }) => `#${row.original.id}`,
         },
         {
-            accessorKey: "table_session",
-            header: t("columns.sessionId"),
-            cell: ({ row }) => `#${row.original.table_session}`,
-        },
-        {
             accessorKey: "amount",
             header: t("columns.amount"),
             cell: ({ row }) =>
                 t("currencyAmount", {
-                    amount: Number(row.original.amount).toLocaleString(),
-                }),
+                    amount:
+                        locale === "fa"
+                            ? toPersianDigits(row.original.amount.toLocaleString())
+                            : row.original.amount.toLocaleString(),
+                }) + (locale === "fa" ? " تومان" : " Toman")
         },
         {
             accessorKey: "method",
@@ -226,7 +238,7 @@ export function usePaymentColumns(): ColumnDef<Payment>[] {
             header: t("columns.paidAt"),
             cell: ({ row }) =>
                 row.original.paid_at
-                    ? new Date(row.original.paid_at).toLocaleString()
+                    ? formatDateTime(row.original.paid_at, locale)
                     : t("notPaid"),
         },
     ];
@@ -235,6 +247,8 @@ export function usePaymentColumns(): ColumnDef<Payment>[] {
 export function useServiceRequestColumns(): ColumnDef<ServiceRequestRecord>[] {
     const t = useTranslations("dashboard.records");
     const ts = useTranslations("dashboard.records.statuses");
+
+    const locale = useLocale()
 
     return [
         {
@@ -254,13 +268,13 @@ export function useServiceRequestColumns(): ColumnDef<ServiceRequestRecord>[] {
         {
             accessorKey: "session_code",
             header: t("columns.session"),
-            cell: ({ row }) => `#${row.original.session_code}`,
+            cell: ({ row }) => row.original.session_code,
         },
         {
             accessorKey: "created_at",
             header: t("columns.createdAt"),
             cell: ({ row }) =>
-                new Date(row.original.created_at).toLocaleString(),
+                formatDateTime(row.original.created_at, locale),
         },
         {
             accessorKey: "status",
@@ -277,7 +291,7 @@ export function useServiceRequestColumns(): ColumnDef<ServiceRequestRecord>[] {
             header: t("columns.resolvedAt"),
             cell: ({ row }) =>
                 row.original.resolved_at
-                    ? new Date(row.original.resolved_at).toLocaleString()
+                    ? formatDateTime(row.original.resolved_at, locale)
                     : t("notResolved"),
         },
     ];

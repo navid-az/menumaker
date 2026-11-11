@@ -1,11 +1,18 @@
 "use client";
 
-import { useState } from "react";
-
-import { faIR, enUS } from "react-day-picker/locale"
-
-import { usePathname, useParams, useRouter, useSearchParams } from "next/navigation";
-
+//components
+import { Button } from "@/components/ui/button";
+import { DashboardTabs, DashboardTabsTrigger } from "./DashboardTabs";
+import { CreateItemForm } from "./CreateItemForm";
+import { CreateTableForm } from "./CreateTableForm";
+import { CreateCategoryForm } from "./CreateCategoryForm";
+import { CreateUpdatePersonnelForm } from "./CreateUpdatePersonnelForm";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -14,38 +21,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-//components
-import { Button } from "@/components/ui/button";
-import { DashboardTabs, DashboardTabsTrigger } from "./DashboardTabs";
-import { CreateItemForm } from "./CreateItemForm";
-import { CreateTableForm } from "./CreateTableForm";
-import { CreateCategoryForm } from "./CreateCategoryForm";
-import { CreateUpdatePersonnelForm } from "./CreateUpdatePersonnelForm";
+//hooks
+import { usePathname, useParams, useRouter, useSearchParams } from "next/navigation";
 
 //libraries
 import { useLocale, useTranslations } from "next-intl";
 
-import type { DateRange } from "react-day-picker";
-
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-
-//hooks
-
 //SVGs
-import { Filter, Plus, CalendarDays, Search, X } from "lucide-react";
-
-import { Input } from "@/components/ui/input";
+import { Filter, Plus, CalendarDays, X, Search } from "lucide-react";
 
 //types
+import type { DateRange } from "react-day-picker";
 import { type AssetGroupType } from "@/components/global/AssetPicker";
 import { type MenuCategory } from "@/app/types/api/menu";
 import { type Tag } from "@/components/global/TagSelector";
-import { Calendar } from "@/components/ui/calendar";
-
 
 export default function ToolBar({
   assetGroups,
@@ -86,6 +75,8 @@ export default function ToolBar({
       }
     ).format(date);
 
+
+  //Used to inject record filters into url
   function updateRecordParam(key: string, value: string) {
     const nextParams = new URLSearchParams(searchParams.toString());
 
@@ -178,8 +169,6 @@ export default function ToolBar({
       scroll: false,
     });
   }
-
-  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
   const dateRange: DateRange | undefined = (() => {
     const from = parseLocalDate(searchParams.get("from"));
@@ -332,7 +321,7 @@ export default function ToolBar({
               updateRecordParam("status", value)
             }
           >
-            <SelectTrigger className="scale-pro h-11 w-40 rounded-full border-2 border-primary bg-soft-blue font-bold text-primary transition-all duration-200 hover:scale-95 hover:bg-primary hover:text-primary-foreground data-[state=open]:scale-95 data-[state=open]:bg-primary data-[state=open]:text-primary-foreground">
+            <SelectTrigger className="scale-pro h-11 w-max min-w-30 gap-4 rounded-full border-2 border-primary bg-soft-blue font-bold text-primary transition-all duration-200 hover:scale-95 hover:bg-primary hover:text-primary-foreground data-[state=open]:scale-95 data-[state=open]:bg-primary data-[state=open]:text-primary-foreground">
               <SelectValue placeholder={t("records.statusPlaceholder")} />
             </SelectTrigger>
 
@@ -352,8 +341,6 @@ export default function ToolBar({
           </Select>
 
           <Popover
-            open={isDatePickerOpen}
-            onOpenChange={setIsDatePickerOpen}
           >
             <PopoverTrigger asChild>
               <Button
@@ -376,23 +363,33 @@ export default function ToolBar({
             </PopoverTrigger>
 
             <PopoverContent
+              align='end'
               className="w-auto p-0"
             >
               <Calendar
                 captionLayout="dropdown"
                 mode="range"
                 selected={dateRange}
-                locale={locale === 'fa' ? faIR : enUS}
-                dir={locale === 'fa' ? 'rtl' : 'ltr'}
                 onSelect={(range) => {
                   updateRecordDateRange(range);
                 }}
                 numberOfMonths={2}
                 defaultMonth={dateRange?.from}
+                disabled={{ after: new Date() }}
               />
             </PopoverContent>
           </Popover>
 
+          <Button
+            disabled
+            size="icon"
+            className="scale-pro size-11 rounded-full border-2 border-primary bg-soft-blue font-bold text-primary transition-all duration-200 hover:scale-95 hover:bg-primary hover:text-primary-foreground data-[state=open]:scale-95 data-[state=open]:bg-primary data-[state=open]:text-primary-foreground"
+            aria-label={t("records.clearFilters")}
+            title={t("records.clearFilters")}
+            onClick={clearRecordFilters}
+          >
+            <Search className="size-5" />
+          </Button>
           {(searchParams.has("search") ||
             searchParams.has("status") ||
             searchParams.has("from") ||
