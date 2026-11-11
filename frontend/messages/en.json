@@ -721,8 +721,7 @@
         },
         "searchPlaceholder": "Search records...",
         "statusPlaceholder": "Filter by status",
-        "dateFrom": "From date",
-        "dateTo": "To date",
+        "dateRangePlaceholder": "Select date range",
         "clearFilters": "Clear filters",
         "statuses": {
           "all": "All",

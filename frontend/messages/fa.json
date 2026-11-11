@@ -722,8 +722,7 @@
         },
         "searchPlaceholder": "جستجو در سوابق...",
         "statusPlaceholder": "فیلتر بر اساس وضعیت",
-        "dateFrom": "از تاریخ",
-        "dateTo": "تا تاریخ",
+        "dateRangePlaceholder": "انتخاب بازه زمانی",
         "clearFilters": "پاک کردن فیلترها",
         "statuses": {
           "all": "همه",
@@ -971,7 +970,7 @@
       "columns": {
         "order": "سفارش",
         "session": "کد سشن",
-        "items": "اقلام",
+        "items": "آیتم ها",
         "total": "مبلغ کل",
         "status": "وضعیت",
         "createdAt": "زمان ثبت",

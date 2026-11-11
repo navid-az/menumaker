@@ -1,5 +1,9 @@
 "use client";
 
+import { useState } from "react";
+
+import { faIR, enUS } from "react-day-picker/locale"
+
 import { usePathname, useParams, useRouter, useSearchParams } from "next/navigation";
 
 import {
@@ -19,20 +23,28 @@ import { CreateCategoryForm } from "./CreateCategoryForm";
 import { CreateUpdatePersonnelForm } from "./CreateUpdatePersonnelForm";
 
 //libraries
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+
+import type { DateRange } from "react-day-picker";
+
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 //hooks
 
 //SVGs
-import { Filter, Plus } from "lucide-react";
+import { Filter, Plus, CalendarDays, Search, X } from "lucide-react";
 
-import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 //types
 import { type AssetGroupType } from "@/components/global/AssetPicker";
 import { type MenuCategory } from "@/app/types/api/menu";
 import { type Tag } from "@/components/global/TagSelector";
+import { Calendar } from "@/components/ui/calendar";
 
 
 export default function ToolBar({
@@ -60,7 +72,19 @@ export default function ToolBar({
 
   const t = useTranslations("dashboard.toolbar");
 
+  const locale = useLocale()
+
   const isRecords = parentSection === "records";
+
+  const formatDate = (date: Date) =>
+    new Intl.DateTimeFormat(
+      locale === "fa" ? "fa-IR-u-ca-persian" : "en-US",
+      {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      }
+    ).format(date);
 
   function updateRecordParam(key: string, value: string) {
     const nextParams = new URLSearchParams(searchParams.toString());
@@ -115,6 +139,54 @@ export default function ToolBar({
   if (childSection === "settings") {
     return null;
   }
+
+  function parseLocalDate(value: string | null): Date | undefined {
+    if (!value) return undefined;
+
+    const [year, month, day] = value.split("-").map(Number);
+    return new Date(year, month - 1, day);
+  }
+
+  function formatLocalDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  }
+
+  function updateRecordDateRange(range: DateRange | undefined) {
+    const nextParams = new URLSearchParams(searchParams.toString());
+
+    if (range?.from) {
+      nextParams.set("from", formatLocalDate(range.from));
+    } else {
+      nextParams.delete("from");
+    }
+
+    if (range?.to) {
+      nextParams.set("to", formatLocalDate(range.to));
+    } else {
+      nextParams.delete("to");
+    }
+
+    nextParams.delete("page");
+
+    const query = nextParams.toString();
+
+    router.replace(query ? `${pathName}?${query}` : pathName, {
+      scroll: false,
+    });
+  }
+
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+
+  const dateRange: DateRange | undefined = (() => {
+    const from = parseLocalDate(searchParams.get("from"));
+    const to = parseLocalDate(searchParams.get("to"));
+
+    return from || to ? { from, to } : undefined;
+  })();
 
   return (
     <div className="sticky top-0 z-40 flex h-max w-full items-center justify-between gap-2 rounded-full border border-royal-green/20 bg-sad-blue/60 p-2 backdrop-blur-xl">
@@ -254,26 +326,13 @@ export default function ToolBar({
       {/* Records search and filters */}
       {isRecords && (
         <div className="flex min-w-0 flex-1 flex-wrap items-center justify-end gap-2">
-          <div className="relative min-w-32 flex-1 sm:max-w-56">
-            <Search className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-
-            <Input
-              value={searchParams.get("search") ?? ""}
-              onChange={(event) =>
-                updateRecordParam("search", event.target.value)
-              }
-              placeholder={t("records.searchPlaceholder")}
-              className="h-10 rounded-full ps-9"
-            />
-          </div>
-
           <Select
             value={searchParams.get("status") ?? "all"}
             onValueChange={(value) =>
               updateRecordParam("status", value)
             }
           >
-            <SelectTrigger className="h-10 w-auto min-w-38 rounded-full">
+            <SelectTrigger className="scale-pro h-11 w-40 rounded-full border-2 border-primary bg-soft-blue font-bold text-primary transition-all duration-200 hover:scale-95 hover:bg-primary hover:text-primary-foreground data-[state=open]:scale-95 data-[state=open]:bg-primary data-[state=open]:text-primary-foreground">
               <SelectValue placeholder={t("records.statusPlaceholder")} />
             </SelectTrigger>
 
@@ -292,37 +351,60 @@ export default function ToolBar({
             </SelectContent>
           </Select>
 
-          <Input
-            type="date"
-            value={searchParams.get("from") ?? ""}
-            onChange={(event) =>
-              updateRecordParam("from", event.target.value)
-            }
-            className="h-10 w-auto min-w-32 rounded-full"
-          />
+          <Popover
+            open={isDatePickerOpen}
+            onOpenChange={setIsDatePickerOpen}
+          >
+            <PopoverTrigger asChild>
+              <Button
+                className="scale-pro h-11 w-max rounded-full border-2 border-primary bg-soft-blue font-bold text-primary transition-all duration-200 hover:scale-95 hover:bg-primary hover:text-primary-foreground data-[state=open]:scale-95 data-[state=open]:bg-primary data-[state=open]:text-primary-foreground"
+              >
+                <CalendarDays className="size-5 shrink-0" />
 
-          <Input
-            type="date"
-            value={searchParams.get("to") ?? ""}
-            onChange={(event) =>
-              updateRecordParam("to", event.target.value)
-            }
-            className="h-10 w-auto min-w-32 rounded-full"
-          />
+                {dateRange?.from ? (
+                  <span className="truncate">
+                    {dateRange.to
+                      ? `${formatDate(dateRange.from)} - ${formatDate(dateRange.to)}`
+                      : formatDate(dateRange.from)}
+                  </span>
+                ) : (
+                  <span>
+                    {t("records.dateRangePlaceholder")}
+                  </span>
+                )}
+              </Button>
+            </PopoverTrigger>
+
+            <PopoverContent
+              className="w-auto p-0"
+            >
+              <Calendar
+                captionLayout="dropdown"
+                mode="range"
+                selected={dateRange}
+                locale={locale === 'fa' ? faIR : enUS}
+                dir={locale === 'fa' ? 'rtl' : 'ltr'}
+                onSelect={(range) => {
+                  updateRecordDateRange(range);
+                }}
+                numberOfMonths={2}
+                defaultMonth={dateRange?.from}
+              />
+            </PopoverContent>
+          </Popover>
 
           {(searchParams.has("search") ||
             searchParams.has("status") ||
             searchParams.has("from") ||
             searchParams.has("to")) && (
               <Button
-                variant="ghost"
                 size="icon"
-                className="shrink-0 rounded-full"
+                className="scale-pro size-11 rounded-full border-2 border-primary bg-soft-blue font-bold text-primary transition-all duration-200 hover:scale-95 hover:bg-primary hover:text-primary-foreground data-[state=open]:scale-95 data-[state=open]:bg-primary data-[state=open]:text-primary-foreground"
                 aria-label={t("records.clearFilters")}
                 title={t("records.clearFilters")}
                 onClick={clearRecordFilters}
               >
-                <X className="size-4" />
+                <X className="size-5" />
               </Button>
             )}
         </div>
