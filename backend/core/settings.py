@@ -203,7 +203,13 @@ AUTH_USER_MODEL = "accounts.User"
 
 # cors headers
 # NEEDS TO BE CHANGED
-CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
+
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^http://([a-z0-9-]+\.)?localhost:3000$",
+]
 
 # Django REST API
 REST_FRAMEWORK = {

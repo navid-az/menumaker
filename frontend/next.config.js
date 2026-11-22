@@ -25,6 +25,7 @@ const nextConfig = {
       },
     },
   },
+  allowedDevOrigins: ["*.localhost"],
   images: {
     dangerouslyAllowLocalIP: true, // Accept media assets from localhost (DEV only)
     remotePatterns: [
