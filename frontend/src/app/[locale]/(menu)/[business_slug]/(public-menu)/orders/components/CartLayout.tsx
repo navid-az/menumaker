@@ -102,7 +102,7 @@ export default function CartLayout({
             ></ArrowLeft>
           ) : (
             <Link
-              href={`/${businessSlug}/menu?branch=${branchSlug}&t=${tableCode}`}
+              href={`/menu?branch=${branchSlug}&t=${tableCode}`}
             >
               <ArrowLeft></ArrowLeft>
             </Link>

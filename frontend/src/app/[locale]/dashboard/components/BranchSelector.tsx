@@ -64,7 +64,7 @@ export function BranchSelector({
     }
 
     const segments = pathname.split("/");
-    segments[3] = branchSlug;
+    segments[2] = branchSlug;
 
     const newPath = segments.join("/");
 

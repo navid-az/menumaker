@@ -1,5 +1,5 @@
 // The public URL of the Next.js app — used for shareable URLs, QR codes, emails, etc.
-export const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "";
+export const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 // Browser-facing — client components, goes through Nginx
 export const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL ?? ""}/api`;
@@ -11,7 +11,6 @@ export const SERVER_API_BASE_URL = `${process.env.API_URL ?? "http://backend:800
 // Media files — Nginx serves /media/ directly, so same origin
 export const MEDIA_BASE_URL =
   process.env.NEXT_PUBLIC_MEDIA_URL ?? "http://backend:8000";
-
 
 // Decide websocket protocol
 export function getWsUrl(path: string): string {

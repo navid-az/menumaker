@@ -20,6 +20,9 @@ import MyBusinessesTab from "./MyBusinessesTab";
 import BusinessSelectorSkeleton from "@/app/components/skeletons/BusinessSelectorSkeleton";
 import SidebarNavSkeleton from "@/app/components/skeletons/SidebarNavSkeleton";
 
+//configs
+import { APP_URL } from "@/lib/config";
+
 //types
 import { type Business } from "@/app/types/api/business";
 
@@ -64,7 +67,7 @@ export default function DashboardSidebar() {
               "transition-all relative duration-300",
               isCollapsed ? "w-10 h-10" : "w-32 h-10"
             )}
-            href="/"
+            href={`${APP_URL}/`}
           >
             <Logo primary="#edfdff" secondary="#94d9e2" full={!isCollapsed} />
           </Link>

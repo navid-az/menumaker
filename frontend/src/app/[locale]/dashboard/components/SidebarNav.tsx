@@ -31,21 +31,21 @@ export default function SidebarNav({
                 disabled
                 text={t('insights')}
                 isCollapsed={isCollapsed}
-                basePath={`/dashboard/${params.business_slug}/${decodedBranchSlug}/insights`}
+                basePath={`/dashboard/${decodedBranchSlug}/insights`}
             >
                 <BarChart className={`${!isCollapsed && "me-3"} h-6 w-6`} />
             </DashboardNavbarBtn>
             <DashboardNavbarBtn
                 text={t('liveManagement')}
                 isCollapsed={isCollapsed}
-                basePath={`/dashboard/${params.business_slug}/${decodedBranchSlug}/liveManagement/all`}
+                basePath={`/dashboard/${decodedBranchSlug}/liveManagement/all`}
             >
                 <Radar className={`${!isCollapsed && "me-3"} h-6 w-6`} />
             </DashboardNavbarBtn>
             <DashboardNavbarBtn
                 text={t('records')}
                 isCollapsed={isCollapsed}
-                basePath={`/dashboard/${params.business_slug}/${decodedBranchSlug}/records/orders`}
+                basePath={`/dashboard/${decodedBranchSlug}/records/orders`}
                 dynamicPaths={["orders", "payments", "table-sessions", "service-requests"]}
             >
                 <RotateCwClock className={`${!isCollapsed && "me-3"} h-6 w-6`} />
@@ -53,7 +53,7 @@ export default function SidebarNav({
             <DashboardNavbarBtn
                 text={t('itemsAndCategories')}
                 isCollapsed={isCollapsed}
-                basePath={`/dashboard/${params.business_slug}/${decodedBranchSlug}/data/items`}
+                basePath={`/dashboard/${decodedBranchSlug}/data/items`}
                 dynamicPaths={["items", "categories", "offers", "excessCosts"]}
             >
                 <ScrollText className={`${!isCollapsed && "me-3"} h-6 w-6`} />
@@ -61,14 +61,14 @@ export default function SidebarNav({
             <DashboardNavbarBtn
                 text={t('staff')}
                 isCollapsed={isCollapsed}
-                basePath={`/dashboard/${params.business_slug}/${decodedBranchSlug}/personnel/all`}
+                basePath={`/dashboard/${decodedBranchSlug}/personnel/all`}
             >
                 <Users className={`${!isCollapsed && "me-3"} h-6 w-6`} />
             </DashboardNavbarBtn>
             <DashboardNavbarBtn
                 text={t('settings')}
                 isCollapsed={isCollapsed}
-                basePath={`/dashboard/${params.business_slug}/${decodedBranchSlug}/settings`}
+                basePath={`/dashboard/${decodedBranchSlug}/settings`}
             >
                 <Settings className={`${!isCollapsed && "me-3"} h-6 w-6`} />
             </DashboardNavbarBtn>

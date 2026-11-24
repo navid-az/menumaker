@@ -66,8 +66,10 @@ async function getGlobalStyling(business_slug: string) {
 
 export default async function page(props: {
   params: Promise<{ business_slug: string }>;
+  searchParams: Promise<{ returnTo?: string }>;
 }) {
   const params = await props.params;
+  const searchParams = await props.searchParams;
 
   const businessData: Business = await getBusinessData(params.business_slug);
   const menuData: MenuData = await getMenuData(params.business_slug);
@@ -77,10 +79,11 @@ export default async function page(props: {
   );
   const assetGroups: AssetGroupType[] = await getAssetGroups('icon');
 
+
   return (
     <div className="h-screen overflow-hidden">
       <div dir="ltr" className="absolute top-0 flex gap-2 z-20 mx-auto w-full p-2 md:p-4">
-        <GoBackBtn />
+        <GoBackBtn path={searchParams.returnTo || ""} />
         <LocaleSwitcher size="sm" className="rounded-full h-8 w-12 bg-royal-green text-soft-blue hover:scale-110 scale-pro hover:bg-royal-green" />
       </div>
       <MenuEditor

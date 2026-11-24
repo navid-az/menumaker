@@ -200,7 +200,7 @@ export default function CartBtn({
           </div>
         ) : (
           <Link
-            href={`/${businessSlug}/orders?branch=${branchSlug}&t=${tableCode}`}
+            href={`/orders?branch=${branchSlug}&t=${tableCode}`}
           >
             {CartButtonContent}
           </Link>
@@ -240,7 +240,7 @@ export default function CartBtn({
             </div>
           ) : (
             <Link
-              href={`/${businessSlug}/orders?branch=${branchSlug}&t=${tableCode}`}
+              href={`/orders?branch=${branchSlug}&t=${tableCode}`}
             >
               <ShoppingBag className="h-6 w-6 text-(--secondary)"></ShoppingBag>
               {totalItemCount >= 1 && (

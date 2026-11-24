@@ -98,7 +98,7 @@ export default function MenuHeader({
             ></House>
           ) : (
             <Link
-              href={`/${businessSlug}/home?branch=${branchSlug}&t=${tableCode}`}
+              href={`/home?branch=${branchSlug}&t=${tableCode}`}
             >
               <House
                 className={cn(
